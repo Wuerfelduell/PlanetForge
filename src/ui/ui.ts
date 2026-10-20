@@ -199,6 +199,9 @@ export class Ui {
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
         break;
       }
+      case "openLobby":
+        this.actions.send({ type: "openLobby" });
+        break;
       case "surrender":
         if (confirm("Wirklich aufgeben? Dein Volk verschwindet.")) this.actions.send({ type: "surrender" });
         break;
@@ -255,6 +258,14 @@ export class Ui {
   /** Own rockets and attacks on own planets, with time to arrival. */
   private renderFlights(state: GameState): string {
     const chips: string[] = [];
+    // The server closes the lobby after 10 idle minutes; only the host can open it again.
+    if (!state.lobby.open) {
+      chips.push(
+        state.hostId === this.playerId
+          ? `<button class="chip" data-action="openLobby">🔓 Spiel geschlossen. Tippen zum Öffnen</button>`
+          : `<span class="chip">🔒 Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}</span>`,
+      );
+    }
     const result = state.result;
     if (result) {
       const text = "draw" in result ? "🤝 Unentschieden" : result.winner === this.playerId ? "🏆 Gewonnen!" : `🏁 ${this.playerName(result.winner)} hat gewonnen`;
