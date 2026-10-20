@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PlanetForge</string>
+    <string name="title_activity_main">PlanetForge</string>
+    <string name="package_name">com.wuerfelduell.planetforge</string>
+    <string name="custom_url_scheme">com.wuerfelduell.planetforge</string>
+</resources>

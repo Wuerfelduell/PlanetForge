@@ -12,10 +12,13 @@
     "build:functions": "esbuild supabase/functions/game-command/index.ts --bundle --format=esm --platform=neutral --target=es2022 --external:jsr:* --outfile=supabase/functions/game-command/dist/index.js"
   },
   "dependencies": {
-    "pixi.js": "^8.22.0",
-    "@supabase/supabase-js": "^2.45.4"
+    "@capacitor/core": "^8.5.3",
+    "@supabase/supabase-js": "^2.45.4",
+    "pixi.js": "^8.22.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
     "esbuild": "^0.25.10",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
