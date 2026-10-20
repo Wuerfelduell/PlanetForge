@@ -1,0 +1,327 @@
+import { C, svg, round, write } from './common.mjs';
+
+// Original toy architecture. Every material/state is resolved through the palette.
+// Geometry stays identical in the off state; no SVG filters are needed.
+let state = 'idle';
+const paint = (token, tone = 0) => C(state === 'off' && !['ink', 'coal', 'rock', 'rock-dark', 'snow'].includes(token)
+  ? (['cream', 'paper', 'sand'].includes(token) ? 'rock' : 'rock-dark') : token, tone);
+const fill = (token, tone = 0) => `fill="${paint(token, tone)}"`;
+const path = (d, token = 'none', extra = '') => `<path d="${d}" ${token === 'none' ? 'fill="none"' : fill(token)} ${extra}/>`;
+const rect = (x,y,w,h,token,r=8,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" ${fill(token)} ${extra}/>`;
+const circle = (x,y,r,token,extra='') => `<circle cx="${x}" cy="${y}" r="${r}" ${fill(token)} ${extra}/>`;
+const ellipse = (x,y,rx,ry,token,extra='') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" ${fill(token)} ${extra}/>`;
+const group = (id, body, extra='') => `<g id="${id}" ${extra}>${body}</g>`;
+const line = (d, token='ink', width=3) => path(d,'none',`stroke="${paint(token)}" stroke-width="${width}"`);
+const lit = () => state === 'idle' ? 'energy' : 'coal';
+const glint = d => line(d,'cream',4);
+const base = () => rect(31,225,194,12,'rock',6)+path('M42 233H214','none',`stroke="${paint('rock-dark')}" stroke-width="5"`);
+const windowPane = (x,y,w=24,h=28) => rect(x,y,w,h,lit(),8)+line(`M${x+w/2} ${y+3}V${y+h-3}`,'clay');
+const door = (x=112,y=185,w=32,h=40) => rect(x,y,w,h,'iron',12)+circle(x+w-9,y+h/2,2,'cream','stroke="none"');
+const foot = body => body+base();
+const post = (x,y,h,token='iron') => rect(x,y,12,h,token,6);
+const anchor = (id,x,y) => group(id,'',`transform="translate(${x} ${y})"`);
+const leaf = (x,y,s=1) => `<g transform="translate(${x} ${y}) scale(${s})">${path('M0 0Q-22 -30 4 -34Q22 -16 0 0Z','leaf')}${line('M0 -4L4 -25','moss')}</g>`;
+const roof = (y,token='clay') => path(`M36 ${y+30}Q28 ${y+24} 40 ${y+14}L108 ${y-28}Q128 ${y-42} 148 ${y-28}L216 ${y+14}Q228 ${y+24} 220 ${y+30}Q128 ${y+46} 36 ${y+30}Z`,token)+glint(`M53 ${y+15}L112 ${y-20}`);
+const crate = (x,y,s=34) => rect(x,y,s,s,'sand',7)+line(`M${x+6} ${y+6}L${x+s-6} ${y+s-6}M${x+s-6} ${y+6}L${x+6} ${y+s-6}`,'iron',4);
+
+function housing(tier){
+  if(tier===3){
+    const pods=[{x:62,y:151,w:132,c:'clay'},{x:81,y:94,w:113,c:'sand'},{x:62,y:37,w:132,c:'paper'}];
+    return foot(post(167,18,40,'rock')+anchor('chimney-smoke-anchor',173,18)+pods.map(p=>
+      rect(p.x,p.y,p.w,70,p.c,26)+path(`M${p.x+p.w-18} ${p.y+16}Q${p.x+p.w} ${p.y+63} ${p.x+p.w-24} ${p.y+64}H${p.x+20}`,'none',`stroke="${paint(p.c,-.18)}" stroke-width="9"`)+glint(`M${p.x+16} ${p.y+17}H${p.x+48}`)).join('')+
+      group('windows',[[83,56],[139,56],[99,113],[153,113],[79,172],[159,172]].map(([x,y])=>windowPane(x,y,20,24)).join(''))+door(114,184,31,41));
+  }
+  const chimney=tier===2?rect(170,55,25,77,'iron',9)+rect(164,49,37,15,'clay',7):'';
+  return foot(chimney+anchor('chimney-smoke-anchor',182,tier===2?49:88)+rect(52,129,152,100,tier===1?'paper':'clay',34)+
+    path('M190 148V199Q190 219 165 219H77','none',`stroke="${paint(tier===1?'paper':'clay',-.18)}" stroke-width="10"`)+
+    roof(tier===1?111:97,tier===1?'leaf':'clay')+(tier===1?line('M89 97L78 132M127 87V132M163 99L177 131','grass',5):rect(108,92,40,34,'paper',10))+
+    group('windows',windowPane(68,158)+windowPane(165,158)+(tier===2?windowPane(117,101,22,20):''))+door(110,179,36,47));
+}
+
+function mine(tier){
+  const frame=tier===1?'iron':'rock';
+  return foot(path('M34 224Q31 152 59 117Q90 77 137 95Q196 91 220 170L224 225Z','rock')+
+    path('M143 107Q201 119 208 209H191','none',`stroke="${paint('rock-dark')}" stroke-width="14"`)+
+    path('M65 221V165Q65 128 105 128Q144 128 144 165V221Z','coal')+
+    post(58,140,83,frame)+post(139,140,83,frame)+rect(52,130,105,20,frame,7)+
+    glint('M64 135H133')+line('M61 221L49 233M143 221L151 233','rock-dark',5)+
+    (tier===2?post(171,85,56,'rock')+post(202,85,56,'rock')+
+      path('M161 62H222L213 92H172Z','rock')+path('M168 61L180 47L194 55L208 43L217 61Z','iron')+
+      glint('M169 68H201')+rect(155,164,59,19,'rock-dark',9)+[165,184,203].map(x=>circle(x,173,4,'cream')).join('')+path('M163 160L170 143L183 153L197 141L207 161Z','iron'):'')+
+    group('cart',path('M76 177L135 177L127 207H85Z','clay')+path('M82 176L94 158L108 170L121 156L132 177Z','iron')+
+      group('wheel',circle(91,211,8,'rock-dark')+circle(122,211,8,'rock-dark'))));
+}
+
+function pump(tier){
+  if(tier===1)return foot(ellipse(127,215,55,12,'water')+rect(111,130,29,86,'science',12)+
+    path('M113 157H88Q76 157 76 170V184','none',`stroke="${paint('ink')}" stroke-width="18"`)+
+    path('M113 157H88Q76 157 76 170V184','none',`stroke="${paint('science')}" stroke-width="10"`)+
+    group('pump-arm',path('M125 133V100Q125 91 138 91H183','none',`stroke="${paint('ink')}" stroke-width="16"`)+
+      path('M125 133V100Q125 91 138 91H183','none',`stroke="${paint('iron')}" stroke-width="9"`)+circle(126,133,9,'sand'))+
+    glint('M118 172V197')+path('M76 190Q62 205 76 209Q90 205 76 190Z','water'));
+  return foot(path('M80 225L114 99H146L180 225H156L130 143L104 225Z','science')+
+    line('M103 183H156M111 156H146','deep-water',5)+post(193,101,123,'rock')+
+    group('pump-arm',path('M65 78Q118 65 177 83L205 74L215 112L195 121L181 101Q116 86 68 101Z','clay')+
+      circle(130,90,13,'sand')+glint('M80 83Q105 77 116 79'))+rect(56,199,46,25,'iron',10)+circle(78,211,7,'rock-dark'));
+}
+
+function sprout(x,y){return leaf(x,y,.6)+leaf(x+8,y,.5)+circle(x-5,y-10,6,'danger')+circle(x+6,y-8,6,'clay');}
+function farm(tier){
+  const rows=[185,211].map(y=>rect(40,y,176,15,'iron',7)+[62,105,148,191].map(x=>sprout(x,y)).join('')).join('');
+  if(tier===1)return foot(rect(151,120,54,58,'paper',9)+path('M140 123L176 87L216 122Z','clay')+door(170,141,20,34)+rows);
+  return foot(path('M39 222V125Q39 64 128 64Q217 64 217 125V222Z','science')+
+    path('M191 97Q209 121 209 211H199','none',`stroke="${paint('deep-water')}" stroke-width="9"`)+rows+
+    path('M42 127H213M128 67V220M84 73Q72 103 73 149M172 73Q184 104 184 149','none',`stroke="${paint('cream')}" stroke-width="7"`)+
+    glint('M51 122Q49 89 76 84')+rect(108,153,41,71,'snow',10)+line('M128 164V213','science',4));
+}
+
+function foundry(tier){
+  const y=tier===1?82:51;
+  return foot(rect(158,y,37,130,'iron',9)+rect(150,y-8,53,19,'clay',7)+anchor('smoke-anchor',177,y-8)+
+    (tier===2?rect(57,100,34,119,'rock',9)+rect(51,93,46,17,'rock-dark',7):'')+
+    rect(51,147,154,78,'clay',22)+path('M186 157V202Q186 215 173 215H72','none',`stroke="${paint('iron')}" stroke-width="10"`)+
+    line('M64 171H88M174 176H194M161 112H190M161 133H190','iron',4)+
+    path('M88 223V193Q88 164 126 164Q164 164 164 193V223Z','coal')+
+    group('glow',path('M101 220Q96 202 111 190L123 201Q138 175 142 190Q160 214 149 220Z',state==='idle'?'ascension':'coal')+
+      path('M117 220Q110 210 127 201Q142 216 134 220Z',lit()))+
+    rect(87,219,79,8,'rock-dark',4)+glint(`M165 ${y+20}V${y+43}`));
+}
+
+function lab(tier){
+  const y=tier===1?133:114;
+  return foot(rect(53,y,150,94,'paper',28)+path(`M190 ${y+18}V204Q190 217 171 217H78`,'none',`stroke="${paint('paper',-.18)}" stroke-width="10"`)+
+    group('dome',path(`M46 ${y}Q47 ${y-67} 128 ${y-67}Q207 ${y-67} 210 ${y}Z`,'science')+
+      path(`M128 ${y-66}Q163 ${y-42} 159 ${y}`,'none',`stroke="${paint('deep-water')}" stroke-width="8"`)+
+      glint(`M61 ${y-16}Q66 ${y-43} 94 ${y-49}`)+rect(42,y-1,172,15,'rock',7))+
+    line(`M171 ${y-48}L193 ${y-84}`,'rock-dark',6)+group('antenna-light',circle(195,y-87,10,state==='idle'?'danger':'coal'))+
+    (tier===2?path('M61 153Q26 146 39 117L75 139Z','cream')+line('M59 154V180','rock-dark',7)+circle(41,125,5,'crystal'):'')+
+    windowPane(73,174,30,28)+windowPane(153,174,30,28)+door(113,184,30,41));
+}
+
+function launchpad(){return foot(post(42,54,169,'rock')+post(85,54,169,'rock')+
+  line('M54 72L85 107L54 142L85 177L54 211M54 107H85M54 177H85','rock-dark',6)+
+  rect(35,46,68,20,'clay',8)+rect(91,95,60,16,'rock',7)+
+  rect(107,195,93,22,'rock-dark',10)+rect(95,211,117,14,'paper',7)+
+  [114,142,170,198].map(x=>rect(x,216,8,7,'ascension',3,'stroke="none"')).join('')+glint('M40 51H86'));}
+
+function rocket(tier,variant,big=false){
+  const fins=big?path('M91 123Q48 151 41 224Q60 222 86 203Z','crystal')+path('M165 123Q208 151 215 224Q196 222 170 203Z','crystal'):
+    path('M91 157Q62 171 59 231L92 212Z','clay')+path('M165 157Q194 171 197 231L164 212Z','clay');
+  return fins+path('M102 205H154L161 236Q128 238 95 236Z','rock-dark')+
+    path(`M88 201V${big?91:106}Q88 59 128 ${big?18:34}Q168 59 168 ${big?91:106}V201Q128 220 88 201Z`,'cream')+
+    path(`M128 ${big?18:34}Q151 40 161 ${big?67:80}Q128 95 95 ${big?67:80}Q105 44 128 ${big?18:34}Z`,big?'crystal':'clay')+
+    path('M157 104V192Q153 201 142 203','none',`stroke="${paint('paper')}" stroke-width="11"`)+
+    circle(128,121,24,'rock-dark')+circle(128,121,17,'science')+glint('M117 120Q117 111 127 111')+
+    (big?path('M128 159L144 180L128 210L112 180Z','crystal'):rect(115,178,26,24,'clay',9))+
+    glint('M99 147V174')+anchor('flame-anchor',128,240);
+}
+
+function coalPlant(){
+  const tower=(x,y)=>path(`M${x} 199Q${x+16} ${y+42} ${x+5} ${y}H${x+53}Q${x+41} ${y+42} ${x+58} 199Z`,'rock')+
+    ellipse(x+29,y,24,8,'rock-dark')+glint(`M${x+15} ${y+17}L${x+12} ${y+45}`);
+  return foot(tower(47,70)+tower(139,89)+anchor('smoke-anchor',76,62)+rect(45,183,166,43,'clay',16)+
+    rect(62,198,47,21,'coal',7)+[122,148,174].map(x=>windowPane(x,197,17,20)).join(''));
+}
+
+function rotor(cx,cy,r,token){
+  return [0,120,240].map(a=>`<g transform="rotate(${a} ${cx} ${cy})">${path(`M${cx-6} ${cy-6}Q${cx-23} ${cy-r+12} ${cx-10} ${cy-r}Q${cx+3} ${cy-r-7} ${cx+7} ${cy-r+14}L${cx+7} ${cy-8}Z`,token)}${glint(`M${cx-8} ${cy-r+16}V${cy-r+33}`)}</g>`).join('');
+}
+function wind(){return foot(path('M112 226L120 95H136L144 226Z','paper')+
+  group('blades',rotor(128,99,76,'snow'))+circle(128,99,15,'science')+circle(123,95,5,'cream','stroke="none"'));}
+function solar(){return foot(post(88,158,66,'rock-dark')+post(161,158,66,'rock-dark')+
+  path('M50 90Q51 83 61 83H198Q206 83 208 93L221 174Q221 184 210 184H47Q35 184 36 174Z','deep-water')+
+  path('M58 97H194L205 169H50Z','science')+
+  line('M88 97L84 169M122 97V169M157 97L163 169M57 121H198M53 145H201','deep-water',5)+
+  glint('M64 105L75 105M98 105H110M135 105H146'));
+}
+function airFilter(){return foot(rect(73,69,110,155,'paper',30)+rect(84,60,88,20,'leaf',9)+
+  circle(128,129,47,'rock-dark')+circle(128,129,39,'science')+group('fan',rotor(128,129,32,'cream'))+
+  circle(128,129,9,'sand')+leaf(126,211,.7)+line('M146 188H164M146 202H164','rock-dark',4)+glint('M83 179V199'));}
+
+function hydroFarm(){return foot(rect(52,61,152,164,'science',23)+
+  path('M189 78V201Q189 212 174 212','none',`stroke="${paint('deep-water')}" stroke-width="9"`)+
+  [114,162,211].map(y=>rect(64,y,128,9,'paper',4)+[88,126,164].map(x=>leaf(x,y-4,.6)+leaf(x+8,y-4,.5)+rect(x-12,y-12,30,10,'clay',4)).join('')).join('')+
+  group('glow',[80,129,178].map(y=>rect(70,y,116,6,state==='idle'?'energy':'coal',3,'stroke="none"')).join(''))+
+  rect(47,53,162,17,'leaf',8)+glint('M59 78V102'));}
+
+function storage(tier){
+  const y=tier===1?125:93;
+  return foot((tier===2?rect(164,45,38,169,'rock',14)+ellipse(183,45,19,9,'paper'):'')+
+    rect(48,y,156,102,'clay',16)+roof(y-20,'iron')+
+    rect(92,y+30,72,96-(y===125?24:0),'sand',10)+
+    line(`M128 ${y+35}V222M100 ${y+38}L156 216M156 ${y+38}L100 216`,'iron',5)+
+    crate(45,190)+crate(172,190)+(tier===2?crate(180,161,27):'')+glint(`M57 ${y+28}V${y+48}`));
+}
+
+function market(){return foot(post(49,117,109)+post(196,117,109)+
+  group('flag',line('M179 91V40','rock-dark',5)+path('M181 43Q205 32 220 48L208 62L219 76Q201 65 181 77Z','crystal'))+
+  path('M43 87H208L225 139H29Z','cream')+
+  [49,105,161].map(x=>path(`M${x} 88H${x+24}L${x+27} 137H${x-7}Z`,'clay','stroke="none"')).join('')+
+  path('M30 137H225V145Q210 162 195 145Q180 162 164 145Q148 162 132 145Q115 162 99 145Q82 162 65 145Q47 161 30 145Z','cream')+
+  [74,117,160].map(x=>sprout(x,192)).join('')+rect(37,195,180,30,'sand',9)+line('M61 208H100M154 208H195','iron',3));}
+
+function watchtower(){return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
+  line('M101 171L157 208M153 171L99 208','sand',6)+rect(64,95,128,51,'paper',12)+
+  [83,117,151].map(x=>rect(x,110,22,25,'coal',7)).join('')+roof(76,'leaf')+
+  group('banner',path('M142 145H177V188L160 201L142 188Z','danger')+circle(160,163,7,'sand'))+glint('M79 102H113'));}
+
+function ruin(){return foot(path('M39 225L48 190L78 177L100 195L129 171L164 184L176 167L208 186L221 225Z','rock-dark')+
+  path('M64 198V126Q65 118 75 119L103 123V155L117 165L111 205Z','paper')+
+  path('M154 213L151 152L170 142L182 161L194 156L201 207Z','clay')+
+  path('M81 225L97 198L123 202L132 225Z','rock')+path('M140 224L158 202L179 210L185 225Z','paper')+
+  line('M79 134L87 153L78 174M172 163L165 182L181 190','rock-dark',4)+leaf(55,219,.5));}
+
+function escapePod(tier,variant){
+  const open=variant==='open';
+  return foot(path('M55 219L46 204L59 190M192 202L210 190L220 222Z','rock-dark')+
+    `<g transform="rotate(-12 128 181)">${rect(65,103,126,120,'paper',45)}${path('M76 116Q128 77 180 116L183 137H73Z','clay')}`+
+    (open?rect(91,139,74,68,'coal',24)+crate(107,170,39)+path('M175 134Q221 125 224 164Q217 190 183 199Z','science')+glint('M191 143Q206 140 212 151'):
+      rect(91,139,74,68,'rock',24)+circle(128,166,19,'science')+glint('M119 164Q120 156 128 156'))+
+    `${line('M82 208H96M163 208H176','rock-dark',5)}</g>`);
+}
+
+const star=(x,y,r,token='energy')=>path(`M${x} ${y-r}Q${x+round(r*.2)} ${y-round(r*.2)} ${x+r} ${y}Q${x+round(r*.2)} ${y+round(r*.2)} ${x} ${y+r}Q${x-round(r*.2)} ${y+round(r*.2)} ${x-r} ${y}Q${x-round(r*.2)} ${y-round(r*.2)} ${x} ${y-r}Z`,token);
+function atomic(){return foot(rect(38,191,180,34,'rock-dark',14)+
+  path('M48 194V142Q48 64 128 64Q208 64 208 142V194Z','paper')+
+  path('M185 103Q201 126 196 181','none',`stroke="${paint('paper',-.18)}" stroke-width="13"`)+
+  group('glow',rect(61,160,134,20,state==='idle'?'uranium':'coal',10)+circle(128,115,22,state==='idle'?'uranium':'coal'))+
+  circle(128,115,11,'rock-dark')+glint('M64 131Q66 95 98 84')+post(122,178,46,'rock-dark'));}
+function monument(){return foot(rect(62,205,132,21,'paper',9)+
+  path('M92 205L101 103L128 79L155 103L164 205Z','rock')+
+  path('M128 80L155 103L164 205H128Z','rock-dark')+
+  path('M128 111L142 140L128 173L114 140Z','crystal')+
+  group('star',star(128,40,25,'energy')+glint('M123 34L127 27'))+
+  glint('M109 112L104 183')+line('M93 216H163','clay',4));}
+
+const buildings = [
+  {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
+  {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
+  {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
+  {id:'farm',tiers:2,phase:'P0',draw:farm},
+  {id:'foundry',tiers:2,phase:'P0',parts:['glow','smoke-anchor'],draw:foundry},
+  {id:'lab',tiers:2,phase:'P0',parts:['dome','antenna-light'],draw:lab},
+  {id:'launchpad',tiers:1,phase:'P0',draw:launchpad},
+  {id:'rocket-small',tiers:1,phase:'P0',parts:['flame-anchor'],draw:rocket},
+  {id:'power-coal',tiers:1,phase:'P1',parts:['smoke-anchor'],draw:coalPlant},
+  {id:'power-wind',tiers:1,phase:'P1',parts:['blades'],draw:wind},
+  {id:'power-solar',tiers:1,phase:'P1',draw:solar},
+  {id:'air-filter',tiers:1,phase:'P1',parts:['fan'],draw:airFilter},
+  {id:'hydro-farm',tiers:1,phase:'P1',parts:['glow'],draw:hydroFarm},
+  {id:'storage',tiers:2,phase:'P1',draw:storage},
+  {id:'market',tiers:1,phase:'P1',parts:['flag'],draw:market},
+  {id:'rocket-big',tiers:1,phase:'P1',parts:['flame-anchor'],draw:(t,v)=>rocket(t,v,true)},
+  {id:'watchtower',tiers:1,phase:'P1',parts:['banner'],draw:watchtower},
+  {id:'ruin',tiers:1,phase:'P1',draw:ruin},
+  {id:'escape-pod',tiers:1,phase:'P1',variants:['closed','open'],draw:escapePod},
+  {id:'power-atomic',tiers:1,phase:'P2',parts:['glow'],draw:atomic},
+  {id:'monument',tiers:1,phase:'P2',parts:['star'],draw:monument},
+];
+
+function scaffolding(){
+  return group('scaffolding',post(38,78,159)+post(206,78,159)+rect(30,113,196,12,'sand',5)+rect(30,186,196,12,'sand',5)+
+    line('M46 181L207 127M47 202L199 230','iron',5)+post(176,154,83,'sand')+post(196,154,83,'sand')+
+    [166,186,206,226].map(y=>line(`M180 ${y}H200`,'iron',4)).join(''));
+}
+
+const assets=[];
+for(const def of buildings){
+  for(let tier=1;tier<=def.tiers;tier++){
+    for(const variant of def.variants??['']){
+      for(const mode of ['idle','construction','off']){
+        state=mode;
+        const tiered=def.tiers>1||def.multi;
+        const id=`building.${def.id}${tiered?`.t${tier}`:''}${variant?`.${variant}`:''}${mode==='idle'?'':`.${mode}`}`;
+        const stem=`${def.id}${tiered?`-t${tier}`:''}${variant?`-${variant}`:''}${mode==='idle'?'':`-${mode}`}`;
+        const body=def.draw(tier,variant);
+        const content=mode==='construction'?`<g opacity="0.4">${body}</g>${scaffolding()}`:body;
+        write(`art/src/buildings/${stem}.svg`,svg(content,256));
+        assets.push({id,category:'buildings',src:`art/src/buildings/${stem}.svg`,out:`public/assets/sprites/buildings/${stem}.png`,viewBox:[256,256],anchor:[.5,.9375],frames:1,parts:[...(def.parts??[]),...(mode==='construction'?['scaffolding']:[])],tags:[def.id,...(tiered?[`tier${tier}`]:[]),...(variant?[variant]:[]),mode],phase:def.phase});
+      }
+    }
+  }
+}
+// A single-tier lookup resolves to the closed pod; explicit variant ids remain available.
+for(const asset of assets.filter(a=>a.id.startsWith('building.escape-pod.closed'))){
+  assets.push({...asset,id:asset.id.replace('.closed',''),tags:[...asset.tags,'default-alias']});
+}
+// FX use a 128-unit design grid. Transform the 3-unit outline with the artwork.
+state='idle';
+const puff=(token)=>path('M30 95C10 94 10 66 27 63C20 39 47 29 60 44C75 23 103 39 98 61C122 61 120 94 100 95Z',token)+
+  glint('M34 62Q32 48 46 47');
+function smoke(f){
+  const scales=[.5,.7,.9,1],ys=[24,12,0,-15],opacities=[.9,.8,.5,.2];
+  return `<g opacity="${opacities[f-1]}" transform="translate(64 ${64+ys[f-1]}) scale(${scales[f-1]}) translate(-64 -64)">${puff('rock')}</g>`;
+}
+function dust(f){
+  const spread=[0,9,17,22][f-1],opacity=[.9,.8,.5,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    `<g transform="translate(${round(8-spread*.3)} 12) scale(0.7)">${puff('sand')}</g>`+
+    `<g transform="translate(${round(37+spread*.3)} 17) scale(0.6)">${puff('paper')}</g>`+
+    [0,1,2].map(i=>circle(36+i*26+(i-1)*spread,42-f*4,4+(f===2?2:0),'sand')).join('')+'</g>';
+}
+function sparkle(f){
+  const r=[18,39,14][f-1];
+  return `<g opacity="${[.5,1,.3][f-1]}">${star(64,64,r,'energy')}${star(28,35,7,'cream')}${star(99,90,9,'cream')}${glint(`M60 ${69-r}L64 ${70-r}`)}</g>`;
+}
+function rays(radius,length,token='energy',count=8){
+  return Array.from({length:count},(_,i)=>{
+    const a=i*Math.PI*2/count;
+    return line(`M${round(64+Math.sin(a)*radius)} ${round(64+Math.cos(a)*radius)}L${round(64+Math.sin(a)*(radius+length))} ${round(64+Math.cos(a)*(radius+length))}`,token,4);
+  }).join('');
+}
+function resourcePop(f){
+  const radius=[15,31,44][f-1];
+  return `<g opacity="${[.9,.6,.2][f-1]}">${circle(64,64,radius,'cream',`fill-opacity="0.3" stroke="${C('energy')}" stroke-width="5"`)}${rays(radius+5,7)}</g>`;
+}
+function rocketFlame(f){
+  const tip=[112,122,116][f-1],bend=[-5,6,-2][f-1];
+  return path(`M43 8Q64 18 85 8Q101 48 77 80Q78 96 ${64+bend} ${tip}Q48 105 49 87Q26 57 43 8Z`,'ascension')+
+    path(`M53 13Q64 18 75 13Q83 52 64 ${tip-22}Q44 51 53 13Z`,'energy')+
+    path('M60 15H69Q77 41 64 57Q53 39 60 15Z','cream','stroke="none"');
+}
+function explosion(f){
+  const size=[.4,.8,1,.9,.7][f-1],opacity=[1,1,.9,.5,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    `<g transform="translate(64 64) scale(${size}) translate(-64 -64)">${puff(f<3?'ascension':'paper')}${star(64,65,f<3?23:12,'energy')}</g>`+
+    [[25-f*2,34-f*2],[95+f*2,32],[35,96+f*2],[98,95]].map(([x,y],i)=>star(x,y,round((i%2?6:9)*size),i%2?'clay':'energy')).join('')+'</g>';
+}
+function ascension(f){
+  const y=[94,75,52,27][f-1],rx=[24,33,43,52][f-1],opacity=[.6,1,.7,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    ellipse(64,y,rx,11,'cream',`fill-opacity="0.2" stroke="${C('ascension')}" stroke-width="6"`)+
+    ellipse(64,y-4,rx-3,9,'cream',`fill-opacity="0.1" stroke="${C('energy')}" stroke-width="3"`)+
+    [35,64,93].map((x,i)=>line(`M${x} ${y+18}V${Math.min(118,y+33+i*5)}`,'energy',3)+star(x,y-21-(i%2)*9,6,'cream')).join('')+'</g>';
+}
+function heart(f){
+  const size=[.7,1,.8][f-1],dy=[10,0,-12][f-1];
+  return `<g opacity="${[.7,1,.4][f-1]}" transform="translate(64 ${64+dy}) scale(${size}) translate(-64 -64)">`+
+    path('M64 99C49 89 22 69 25 48C28 28 52 27 64 44C76 27 100 28 103 48C106 69 79 89 64 99Z','danger')+
+    glint('M36 49Q39 38 48 41')+'</g>';
+}
+function anger(f){
+  const dy=[8,0,-10][f-1],opacity=[.7,1,.4][f-1];
+  return `<g opacity="${opacity}">`+
+    [0,1].map(i=>`<g transform="translate(${i?72:0} ${dy}) scale(0.4)">${puff('snow')}</g>`).join('')+
+    [34,92].map((x,i)=>line(`M${x} 92Q${x+(i?-10:10)} 80 ${x} 68Q${x+(i?10:-10)} 57 ${x} 51`,'rock',5)).join('')+
+    path('M53 48V62H40M75 48V62H88M53 87V74H40M75 87V74H88','none',`stroke="${C('danger')}" stroke-width="6"`)+'</g>';
+}
+const effects=[
+  {id:'smoke',size:64,frames:4,fps:6,draw:smoke},
+  {id:'dust',size:128,frames:4,fps:10,draw:dust},
+  {id:'sparkle',size:64,frames:3,fps:8,draw:sparkle},
+  {id:'resource-pop',size:64,frames:3,fps:10,draw:resourcePop},
+  {id:'rocket-flame',size:128,frames:3,fps:12,anchor:[.5,0],loop:true,draw:rocketFlame},
+  {id:'explosion',size:256,frames:5,fps:12,draw:explosion},
+  {id:'ascension',size:512,frames:4,fps:6,draw:ascension},
+  {id:'heart',size:64,frames:3,fps:6,draw:heart},
+  {id:'anger',size:64,frames:3,fps:6,draw:anger},
+];
+for(const effect of effects){
+  const stem=`fx-${effect.id}`;
+  for(let f=1;f<=effect.frames;f++){
+    write(`art/src/fx/${stem}-f${f}.svg`,svg(`<g transform="scale(${effect.size/128})">${effect.draw(f)}</g>`,effect.size,effect.size,3));
+  }
+  assets.push({id:`fx.${effect.id}`,category:'fx',src:`art/src/fx/${stem}-f{f}.svg`,out:`public/assets/sprites/fx/${stem}-f{f}.png`,viewBox:[effect.size,effect.size],anchor:effect.anchor??[.5,.5],frames:effect.frames,fps:effect.fps,parts:[],tags:[effect.id,'animation',effect.loop?'loop':'once'],phase:'P1'});
+}
+write('art/manifest/buildings.json',JSON.stringify({assets},null,2)+'\n');
+console.log(`Buildings and FX: ${assets.length} assets generated.`);

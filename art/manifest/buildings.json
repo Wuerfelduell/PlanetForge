@@ -1,0 +1,2415 @@
+{
+  "assets": [
+    {
+      "id": "building.housing.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1.svg",
+      "out": "public/assets/sprites/buildings/housing-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2.svg",
+      "out": "public/assets/sprites/buildings/housing-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3.svg",
+      "out": "public/assets/sprites/buildings/housing-t3.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t3-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t3-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1.svg",
+      "out": "public/assets/sprites/buildings/mine-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/mine-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel",
+        "scaffolding"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1-off.svg",
+      "out": "public/assets/sprites/buildings/mine-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2.svg",
+      "out": "public/assets/sprites/buildings/mine-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/mine-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel",
+        "scaffolding"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2-off.svg",
+      "out": "public/assets/sprites/buildings/mine-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1.svg",
+      "out": "public/assets/sprites/buildings/pump-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/pump-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm",
+        "scaffolding"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1-off.svg",
+      "out": "public/assets/sprites/buildings/pump-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2.svg",
+      "out": "public/assets/sprites/buildings/pump-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/pump-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm",
+        "scaffolding"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2-off.svg",
+      "out": "public/assets/sprites/buildings/pump-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1.svg",
+      "out": "public/assets/sprites/buildings/farm-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/farm-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "farm",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1-off.svg",
+      "out": "public/assets/sprites/buildings/farm-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t2.svg",
+      "out": "public/assets/sprites/buildings/farm-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/farm-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "farm",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t2-off.svg",
+      "out": "public/assets/sprites/buildings/farm-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t1.svg",
+      "out": "public/assets/sprites/buildings/foundry-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "foundry",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/foundry-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "foundry",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t1-off.svg",
+      "out": "public/assets/sprites/buildings/foundry-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "foundry",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t2.svg",
+      "out": "public/assets/sprites/buildings/foundry-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "foundry",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/foundry-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "foundry",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.foundry.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/foundry-t2-off.svg",
+      "out": "public/assets/sprites/buildings/foundry-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "foundry",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t1.svg",
+      "out": "public/assets/sprites/buildings/lab-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/lab-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light",
+        "scaffolding"
+      ],
+      "tags": [
+        "lab",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t1-off.svg",
+      "out": "public/assets/sprites/buildings/lab-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2.svg",
+      "out": "public/assets/sprites/buildings/lab-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/lab-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light",
+        "scaffolding"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2-off.svg",
+      "out": "public/assets/sprites/buildings/lab-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad.svg",
+      "out": "public/assets/sprites/buildings/launchpad.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "launchpad",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad-construction.svg",
+      "out": "public/assets/sprites/buildings/launchpad-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "launchpad",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad.off",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad-off.svg",
+      "out": "public/assets/sprites/buildings/launchpad-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "launchpad",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small.svg",
+      "out": "public/assets/sprites/buildings/rocket-small.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-small",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small-construction.svg",
+      "out": "public/assets/sprites/buildings/rocket-small-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "rocket-small",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small.off",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small-off.svg",
+      "out": "public/assets/sprites/buildings/rocket-small-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-small",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.power-coal",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal.svg",
+      "out": "public/assets/sprites/buildings/power-coal.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor"
+      ],
+      "tags": [
+        "power-coal",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-coal.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal-construction.svg",
+      "out": "public/assets/sprites/buildings/power-coal-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-coal",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-coal.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal-off.svg",
+      "out": "public/assets/sprites/buildings/power-coal-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor"
+      ],
+      "tags": [
+        "power-coal",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind.svg",
+      "out": "public/assets/sprites/buildings/power-wind.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades"
+      ],
+      "tags": [
+        "power-wind",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind-construction.svg",
+      "out": "public/assets/sprites/buildings/power-wind-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-wind",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind-off.svg",
+      "out": "public/assets/sprites/buildings/power-wind-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades"
+      ],
+      "tags": [
+        "power-wind",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar.svg",
+      "out": "public/assets/sprites/buildings/power-solar.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "power-solar",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar-construction.svg",
+      "out": "public/assets/sprites/buildings/power-solar-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "power-solar",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar-off.svg",
+      "out": "public/assets/sprites/buildings/power-solar-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "power-solar",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter.svg",
+      "out": "public/assets/sprites/buildings/air-filter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan"
+      ],
+      "tags": [
+        "air-filter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter-construction.svg",
+      "out": "public/assets/sprites/buildings/air-filter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan",
+        "scaffolding"
+      ],
+      "tags": [
+        "air-filter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter-off.svg",
+      "out": "public/assets/sprites/buildings/air-filter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan"
+      ],
+      "tags": [
+        "air-filter",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "hydro-farm",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm-construction.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "hydro-farm",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm.off",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm-off.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "hydro-farm",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1.svg",
+      "out": "public/assets/sprites/buildings/storage-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/storage-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "storage",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1-off.svg",
+      "out": "public/assets/sprites/buildings/storage-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2.svg",
+      "out": "public/assets/sprites/buildings/storage-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/storage-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "storage",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2-off.svg",
+      "out": "public/assets/sprites/buildings/storage-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market",
+      "category": "buildings",
+      "src": "art/src/buildings/market.svg",
+      "out": "public/assets/sprites/buildings/market.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag"
+      ],
+      "tags": [
+        "market",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/market-construction.svg",
+      "out": "public/assets/sprites/buildings/market-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "scaffolding"
+      ],
+      "tags": [
+        "market",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market.off",
+      "category": "buildings",
+      "src": "art/src/buildings/market-off.svg",
+      "out": "public/assets/sprites/buildings/market-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag"
+      ],
+      "tags": [
+        "market",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big.svg",
+      "out": "public/assets/sprites/buildings/rocket-big.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-big",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big-construction.svg",
+      "out": "public/assets/sprites/buildings/rocket-big-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "rocket-big",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big.off",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big-off.svg",
+      "out": "public/assets/sprites/buildings/rocket-big-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-big",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower.svg",
+      "out": "public/assets/sprites/buildings/watchtower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-construction.svg",
+      "out": "public/assets/sprites/buildings/watchtower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner",
+        "scaffolding"
+      ],
+      "tags": [
+        "watchtower",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-off.svg",
+      "out": "public/assets/sprites/buildings/watchtower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin.svg",
+      "out": "public/assets/sprites/buildings/ruin.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ruin",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin-construction.svg",
+      "out": "public/assets/sprites/buildings/ruin-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "ruin",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin.off",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin-off.svg",
+      "out": "public/assets/sprites/buildings/ruin-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ruin",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "open",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "open",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "open",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-atomic",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic.svg",
+      "out": "public/assets/sprites/buildings/power-atomic.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "power-atomic",
+        "idle"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.power-atomic.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic-construction.svg",
+      "out": "public/assets/sprites/buildings/power-atomic-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-atomic",
+        "construction"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.power-atomic.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic-off.svg",
+      "out": "public/assets/sprites/buildings/power-atomic-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "power-atomic",
+        "off"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument",
+      "category": "buildings",
+      "src": "art/src/buildings/monument.svg",
+      "out": "public/assets/sprites/buildings/monument.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star"
+      ],
+      "tags": [
+        "monument",
+        "idle"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/monument-construction.svg",
+      "out": "public/assets/sprites/buildings/monument-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star",
+        "scaffolding"
+      ],
+      "tags": [
+        "monument",
+        "construction"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument.off",
+      "category": "buildings",
+      "src": "art/src/buildings/monument-off.svg",
+      "out": "public/assets/sprites/buildings/monument-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star"
+      ],
+      "tags": [
+        "monument",
+        "off"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.escape-pod",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "idle",
+        "default-alias"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "construction",
+        "default-alias"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "off",
+        "default-alias"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.smoke",
+      "category": "fx",
+      "src": "art/src/fx/fx-smoke-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-smoke-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "smoke",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.dust",
+      "category": "fx",
+      "src": "art/src/fx/fx-dust-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-dust-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "dust",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.sparkle",
+      "category": "fx",
+      "src": "art/src/fx/fx-sparkle-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-sparkle-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 8,
+      "parts": [],
+      "tags": [
+        "sparkle",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.resource-pop",
+      "category": "fx",
+      "src": "art/src/fx/fx-resource-pop-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-resource-pop-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "resource-pop",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.rocket-flame",
+      "category": "fx",
+      "src": "art/src/fx/fx-rocket-flame-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-rocket-flame-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 3,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "rocket-flame",
+        "animation",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.explosion",
+      "category": "fx",
+      "src": "art/src/fx/fx-explosion-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-explosion-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 5,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "explosion",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.ascension",
+      "category": "fx",
+      "src": "art/src/fx/fx-ascension-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-ascension-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "ascension",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.heart",
+      "category": "fx",
+      "src": "art/src/fx/fx-heart-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-heart-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "heart",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.anger",
+      "category": "fx",
+      "src": "art/src/fx/fx-anger-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-anger-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "anger",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
