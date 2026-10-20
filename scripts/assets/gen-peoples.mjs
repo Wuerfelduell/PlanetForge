@@ -15,6 +15,8 @@ const defs=[
  {id:'quillfolk',animal:'hedgehog',color:'savanna',fur:'sand',gear:'basket',ears:'small',tail:'quills',body:'round',biome:'savanna',phase:'P0'},
  {id:'axolings',animal:'axolotl',color:'crystal',fur:'crystal',gear:'healer',ears:'gills',tail:'fin',body:'pear',biome:'swamp',phase:'P1'},
  {id:'shellguards',animal:'armadillo',color:'rock',fur:'rock',gear:'miner',ears:'small',tail:'shell',body:'round',biome:'mountains',phase:'P1'},
+ {id:'dunehoppers',animal:'jerboa',color:'sand',fur:'sand',gear:'runner',ears:'tall',tail:'long',body:'hopper',biome:'desert',phase:'P1'},
+ {id:'starowls',animal:'owl',color:'science',fur:'rock-dark',gear:'goggles',ears:'tufts',tail:'taper',body:'round',biome:'mountains',phase:'P1'},
 ];
 function emit(id,category,name,size,anchor,frames,fps,parts,tags,phase,draw,extra={}){
  const suffix=frames>1?'-f{f}':'';

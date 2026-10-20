@@ -573,6 +573,292 @@
       "phase": "P1"
     },
     {
+      "id": "people.dunehoppers.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "jerboa",
+        "desert",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-emblem.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "dunehoppers",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "owl",
+        "mountains",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-emblem.svg",
+      "out": "public/assets/sprites/peoples/starowls-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "starowls",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.citizen-ring",
       "category": "peoples",
       "src": "art/src/peoples/citizen-ring.svg",
