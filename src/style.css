@@ -169,3 +169,9 @@ ul.owned small { color: var(--muted); }
 .shield .seg { padding: 8px 0; font-size: 18px; }
 .shield .seg.ok { opacity: 0.9; }
 .shield .seg.hurt { outline: 2px solid var(--bad, #ff6b6b); }
+
+/* New-game settings */
+.choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.choices .build { flex: 1; min-width: 90px; }
+.choices .build.on { outline: 2px solid var(--accent, #ffd166); }
+.primary { background: var(--accent, #ffd166); color: #1a1d2e; font-weight: 700; margin-top: 14px; }
