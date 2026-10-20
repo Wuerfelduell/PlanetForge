@@ -146,6 +146,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.burrowbeavers.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.burrowbeavers.emblem",
       "category": "peoples",
       "src": "art/src/peoples/burrowbeavers-emblem.svg",
@@ -310,6 +335,31 @@
         "quillfolk",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.quillfolk.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },
@@ -482,6 +532,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.axolings.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/axolings-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.axolings.emblem",
       "category": "peoples",
       "src": "art/src/peoples/axolings-emblem.svg",
@@ -646,6 +721,31 @@
         "shellguards",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/shellguards-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },
@@ -818,6 +918,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.dunehoppers.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.dunehoppers.emblem",
       "category": "peoples",
       "src": "art/src/peoples/dunehoppers-emblem.svg",
@@ -982,6 +1107,31 @@
         "starowls",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },
@@ -1154,6 +1304,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.tideotters.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.tideotters.emblem",
       "category": "peoples",
       "src": "art/src/peoples/tideotters-emblem.svg",
@@ -1318,6 +1493,31 @@
         "hornbeetles",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },
@@ -1490,6 +1690,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.frostseals.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.frostseals.emblem",
       "category": "peoples",
       "src": "art/src/peoples/frostseals-emblem.svg",
@@ -1654,6 +1879,31 @@
         "swapcoons",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },
@@ -1826,6 +2076,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.glowsnails.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.glowsnails.emblem",
       "category": "peoples",
       "src": "art/src/peoples/glowsnails-emblem.svg",
@@ -1990,6 +2265,31 @@
         "echobats",
         "portrait",
         "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "portrait",
+        "angry"
       ],
       "phase": "P1"
     },

@@ -136,7 +136,7 @@ function emblem(p){
 for(const p of defs){
  emit(`people.${p.id}.portrait`,'peoples',`${p.id}-portrait`,512,[.5,.5],1,0,['head','clothing'],[p.id,p.animal,p.biome,'portrait'],p.phase,()=>portrait(p,'neutral'));
  for(const [state,frames,fps] of [['idle',2,2],['walk',4,8],['work',2,3]])emit(`people.${p.id}.citizen.${state}`,'peoples',`${p.id}-citizen-${state}`,128,[.5,.9375],frames,fps,['head','body','tail','feet','arm','clothing',...(state==='work'?['tool']:[])],[p.id,'citizen',state,'facing-right'],p.phase,f=>rig(p,{state,frame:f}));
- for(const expression of ['happy'])emit(`people.${p.id}.portrait.${expression}`,'peoples',`${p.id}-portrait-${expression}`,512,[.5,.5],1,0,['head','clothing'],[p.id,'portrait',expression],'P1',()=>portrait(p,expression));
+ for(const expression of ['happy','angry'])emit(`people.${p.id}.portrait.${expression}`,'peoples',`${p.id}-portrait-${expression}`,512,[.5,.5],1,0,['head','clothing'],[p.id,'portrait',expression],'P1',()=>portrait(p,expression));
  emit(`people.${p.id}.emblem`,'peoples',`${p.id}-emblem`,256,[.5,.5],1,0,['symbol'],[p.id,'emblem'],p.phase,()=>emblem(p));
 }
 emit('people.citizen-ring','peoples','citizen-ring',128,[.5,.9375],1,0,[],['coop','engine-tinted'],'P0',()=>ellipse(64,120,30,5,'none',`stroke="${C('tint-white')}" stroke-width="3"`));
