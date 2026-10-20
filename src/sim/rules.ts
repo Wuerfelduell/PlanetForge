@@ -1,18 +1,43 @@
 import { BIOMES, BUILDINGS, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
-import type { GameState, PlanetState, SegmentState, TeamState } from "./state";
+import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
 
 export const TICK_MS = 1000 / RULES.ticksPerSecond;
-export const TICKS_PER_CYCLE = RULES.secondsPerCycle * RULES.ticksPerSecond;
+
+export function ticksPerCycle(state: GameState): number {
+  return Math.round(state.settings.cycleSeconds * RULES.ticksPerSecond);
+}
+
+export function cycleOf(state: GameState): number {
+  return Math.floor(state.tick / ticksPerCycle(state));
+}
 
 /** Deep copy. The state is plain JSON by contract, so a JSON round trip is exact and works everywhere. */
 export function cloneState(state: GameState): GameState {
   return JSON.parse(JSON.stringify(state)) as GameState;
 }
 
+export function playerById(state: GameState, id: string): PlayerState | undefined {
+  return state.players.find((p) => p.id === id);
+}
+
 export function planetById(state: GameState, id: string): PlanetState | undefined {
   return state.planets.find((p) => p.id === id);
+}
+
+export function economyOf(state: GameState, planet: PlanetState): EconomyState | undefined {
+  return planet.economyId === null ? undefined : state.economies[planet.economyId];
+}
+
+export function economyOfPlayer(state: GameState, playerId: string): EconomyState | undefined {
+  const player = playerById(state, playerId);
+  return player ? state.economies[player.economyId] : undefined;
+}
+
+export function homePlanet(state: GameState, playerId: string): PlanetState | undefined {
+  const player = playerById(state, playerId);
+  return player ? planetById(state, player.homePlanetId) : undefined;
 }
 
 export function segmentAt(planet: PlanetState, index: number): SegmentState | undefined {
@@ -24,49 +49,34 @@ export function neighbors(planet: PlanetState, index: number): SegmentState[] {
   return [segmentAt(planet, index - 1)!, segmentAt(planet, index + 1)!];
 }
 
-export function teamById(state: GameState, id: string | null): TeamState | undefined {
-  return id === null ? undefined : state.teams.find((t) => t.id === id);
+/** Units on a planet, optionally only those of one owner. Ordered by creation. */
+export function unitsOn(state: GameState, planetId: string, owner?: string): UnitState[] {
+  return Object.values(state.units).filter((u) => u.planetId === planetId && (owner === undefined || u.owner === owner));
 }
 
-export function teamOfPlayer(state: GameState, playerId: string): TeamState | undefined {
-  return teamById(state, state.players.find((p) => p.id === playerId)?.teamId ?? null);
+export function population(state: GameState, planet: PlanetState, owner?: string): number {
+  return unitsOn(state, planet.id, owner).length;
 }
 
-export function homePlanet(state: GameState, playerId: string): PlanetState | undefined {
-  const player = state.players.find((p) => p.id === playerId);
-  return player ? planetById(state, player.homePlanetId) : undefined;
+export function workersOn(state: GameState, planet: PlanetState, segment: number, owner?: string): UnitState[] {
+  return unitsOn(state, planet.id, owner).filter((u) => u.segment === segment);
 }
 
-export function housing(planet: PlanetState): number {
-  if (!planet.teamId) return 0;
+export function workerCount(state: GameState, planet: PlanetState, segment: number, owner?: string): number {
+  return workersOn(state, planet, segment, owner).length;
+}
+
+export function idleUnits(state: GameState, planet: PlanetState, owner?: string): UnitState[] {
+  return unitsOn(state, planet.id, owner).filter((u) => u.segment === null);
+}
+
+export function housing(state: GameState, planet: PlanetState): number {
+  if (planet.economyId === null) return 0;
   // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
-  const peoples = Object.keys(planet.citizens).length;
+  const peoples = new Set(unitsOn(state, planet.id).map((u) => u.owner)).size;
   let total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation;
   for (const s of planet.segments) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
   return total;
-}
-
-export function population(planet: PlanetState): number {
-  return sum(Object.values(planet.citizens));
-}
-
-export function workerCount(segment: SegmentState, playerId?: string): number {
-  return playerId === undefined ? sum(Object.values(segment.workers)) : (segment.workers[playerId] ?? 0);
-}
-
-/** Assigned inhabitants on the planet, of one player or of everyone. */
-export function assignedWorkers(planet: PlanetState, playerId?: string): number {
-  return sum(planet.segments.map((s) => workerCount(s, playerId)));
-}
-
-/** Inhabitants without a job, of one player or of everyone. */
-export function idleWorkers(planet: PlanetState, playerId?: string): number {
-  const citizens = playerId === undefined ? population(planet) : (planet.citizens[playerId] ?? 0);
-  return citizens - assignedWorkers(planet, playerId);
-}
-
-function sum(values: number[]): number {
-  return values.reduce((a, b) => a + b, 0);
 }
 
 export function workerCapacity(segment: SegmentState): number {
@@ -82,27 +92,28 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
   return 1 + count * adj.bonus;
 }
 
-export function canAfford(planet: PlanetState, building: BuildingId): boolean {
+export function canAfford(economy: EconomyState, building: BuildingId): boolean {
   const cost = BUILDINGS[building].cost;
-  return RESOURCE_IDS.every((r) => planet.resources[r] >= (cost[r] ?? 0));
+  return RESOURCE_IDS.every((r) => economy.resources[r] >= (cost[r] ?? 0));
 }
 
-/** Why a building cannot go on a segment right now, or null if it can. Pays from the planet's own stockpile. */
+/** Why a building cannot go on a segment right now, or null if it can. Pays from the planet's economy. */
 export function buildBlocker(state: GameState, planet: PlanetState, segment: SegmentState, building: BuildingId): string | null {
   const def = BUILDINGS[building];
+  const economy = economyOf(state, planet);
+  if (!economy) return "Unbewohnter Planet";
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
-  if ((teamById(state, planet.teamId)?.ascension.level ?? 0) < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
-  if (!canAfford(planet, building)) return "Zu wenig Ressourcen";
+  if (!canAfford(economy, building)) return "Zu wenig Ressourcen";
   return null;
 }
 
-/** Production per second of one segment at its current staffing, before starvation. */
-export function segmentOutput(planet: PlanetState, segment: SegmentState): Partial<Record<ResourceId, number>> {
+/** Production per second of one segment with `workers` working on it, before starvation. */
+export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
-  const workers = workerCount(segment);
   if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment);
   const def = segment.building ? BUILDINGS[segment.building] : null;
@@ -121,8 +132,4 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState): Parti
 
 export function nextLevelThreshold(level: number): number | null {
   return RULES.ascensionThresholds[level] ?? null;
-}
-
-export function cycleOf(state: GameState): number {
-  return Math.floor(state.tick / TICKS_PER_CYCLE);
 }

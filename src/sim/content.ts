@@ -266,8 +266,10 @@ export const SYSTEM = {
 /** Simulation constants. */
 export const RULES = {
   ticksPerSecond: 10,
-  /** One planet rotation; drives food upkeep and ascension. */
-  secondsPerCycle: 30,
+  /** Default for settings.cycleSeconds: one planet rotation; drives food upkeep and ascension. */
+  defaultCycleSeconds: 30,
+  /** Entries kept in GameState.log. */
+  logLength: 200,
   startRevealRadius: 2,
   buildRevealRadius: 2,
   startPopulation: 3,
