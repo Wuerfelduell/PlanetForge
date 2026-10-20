@@ -45,7 +45,7 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
   return out;
 }
 
-/** Total science until the last level (versus: the win level) and how many discoveries that buys. */
+/** Total science until the last level (versus: level 8, when fights usually decide) and how many discoveries that buys. */
 export function sciencePerGame(mode: ModeId = "coop", players = 1): { science: number; discoveries: number } {
   const last = mode === "versus" ? 8 : ASCENSION.maxLevel;
   const timeline = levelTimeline(mode, players).slice(0, last);

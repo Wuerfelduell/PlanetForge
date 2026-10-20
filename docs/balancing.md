@@ -2,7 +2,7 @@
 
 Alle Zahlen stehen in `src/data/balance/` als reine TypeScript-Module (kein DOM, läuft auch in der Supabase Edge Function). Der Einstieg ist `BALANCE` aus `src/data/balance/index.ts`. Wer Werte ändert, lässt danach `npm test` laufen: `balance.test.ts` prüft Verweise, Freischaltreihenfolge und das Pacing.
 
-Die Zahlen sind ein **erster Wurf aus Rechnung, nicht aus Playtests**. Sie sind so gewählt, dass die Kette in sich stimmt, der gemeinsame Modus auf lange Partien (Stufe 10 nach etwa 3 Stunden) und der Gegeneinander-Modus auf kurze Runden (Sieg nach etwa 30 Minuten) ausgelegt ist. Nach den ersten Testrunden werden sie sich verschieben, und genau dafür sind sie an einer Stelle gesammelt.
+Die Zahlen sind ein **erster Wurf aus Rechnung, nicht aus Playtests**. Sie sind so gewählt, dass die Kette in sich stimmt, der gemeinsame Modus auf lange Partien (Stufe 10 nach etwa 3 Stunden) und der Gegeneinander-Modus auf kurze Runden (meist nach 35 bis 50 Minuten entschieden) ausgelegt ist. Nach den ersten Testrunden werden sie sich verschieben, und genau dafür sind sie an einer Stelle gesammelt.
 
 ## Dateien
 
@@ -61,9 +61,10 @@ Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progress
 
 | | Gemeinsam | Gegeneinander |
 |---|---|---|
-| Startplanet | ein gemeinsamer | jeder seinen eigenen |
+| Startplanet | ein gemeinsamer, jeder Spieler führt sein eigenes Volk | jeder seinen eigenen |
 | Ressourcen, Aufstieg, Entdeckungen | geteilt | getrennt |
-| Ziel | lange Partie, danach endlos | Stufe 8 zuerst, sonst höchste Stufe nach 35 Minuten |
+| Ende | kein Ende, kein Zyklus-Limit; der Host speichert die Lobby | wenn nur noch ein Volk übrig ist (die anderen ausgelöscht) |
+| Abwesende Spieler | ihre Einwohner bleiben ihre, niemand übernimmt sie | – |
 | Geburt (Sekunden) | 30 + 6 × Einwohner | 12 + 3 × Einwohner |
 | Entdeckungskosten | 30 × 1,35ⁿ | halb so viel |
 
@@ -83,12 +84,14 @@ Der Test erlaubt ±20 % pro Stufe.
 
 **Gegeneinander** skaliert nicht mit der Spielerzahl, jeder spielt seine eigene Wirtschaft. Pro Spieler kommt ein freier Planet dazu, um den man sich streiten kann. Handel zwischen Spielern läuft über den Markt und verliert 20 %.
 
+**Angriffe (gegeneinander, `VERSUS_COMBAT`).** Ab Stufe 6 (etwa Minute 19, dann gibt es auch die kleine Rakete) darf man angreifen. Angreifer landen per Rakete auf dem gegnerischen Planeten. Pro Runde würfeln ein Angreifer und ein Verteidiger je 1W6, wer niedriger würfelt, verliert einen Einwohner, bei Gleichstand beide. Verteidiger bekommen +1 Heimvorteil plus Wachtürme und Boni, höchstens 6 verteidigen gleichzeitig. Gewinnen die Angreifer, wird pro Überlebendem ein Gebäude zur Ruine, und sie nehmen 25 % der Vorräte mit. Danach ist der Planet 4 Umläufe geschützt. Ein Volk ohne Einwohner auf allen Planeten ist ausgelöscht, und wer als Letzter übrig ist, gewinnt. Weil jede kleine Rakete nur 3 Einwohner trägt und Nachwuchs mit der Größe langsamer wird, lohnt sich ein Angriff erst mit mehreren Raketen. Eine Partie sollte so meist zwischen Minute 35 und 50 entschieden sein.
+
 ## Wissen und Entdeckungen
 
 - Labor 1: 2 Arbeiter × 0,1 = 6 Wissen pro Umlauf. Labor 2: 3 × 0,15 = 13,5.
 - Jede neue Stufe gibt 15 × Stufe Wissen und bietet 3 neue Entdeckungen an.
 - Die n-te gekaufte Entdeckung kostet 30 × 1,35ⁿ: 30, 41, 55, 74, 100, 135, 182, 245, 331, 447, 603, 814 …
-- Im gemeinsamen Modus kommen bis Stufe 10 etwa 5300 Wissen zusammen, das reicht für **13 der 24 Entdeckungen**. Gegeneinander sind es bis zum Sieg etwa 10. Jede Partie sieht also anders aus.
+- Im gemeinsamen Modus kommen bis Stufe 10 etwa 5300 Wissen zusammen, das reicht für **13 der 24 Entdeckungen**. Gegeneinander sind es bis Stufe 8 etwa 10. Jede Partie sieht also anders aus.
 
 Entdeckungen sind Abkürzungen und Seitenwege, nie Pflicht. Ihre Wirkung ist als generischer Modifikator beschrieben (`{ stat, mul | add, scope }`), damit die Simulation nur einen Mechanismus braucht. Völker-Fähigkeiten nutzen dasselbe Format. Ein `battleRoll` mit `scope.building` gilt pro Gebäude dieser Art.
 

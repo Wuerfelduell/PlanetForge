@@ -7,7 +7,7 @@
 import { BUILDINGS, BUILDING_IDS, RECIPES, RECIPE_IDS } from "./buildings";
 import { DISCOVERIES, DISCOVERY_IDS, DISCOVERY_RULES } from "./discoveries";
 import { PEOPLES, PEOPLE_BASE, PEOPLE_IDS } from "./peoples";
-import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MODES, MODE_IDS, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE, type ModeId } from "./progression";
+import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MODES, MODE_IDS, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE, VERSUS_COMBAT, type ModeId } from "./progression";
 import { BIOMES, BIOME_IDS, PLANET_TYPES, RESOURCES, RESOURCE_IDS } from "./resources";
 
 export * from "./buildings";
@@ -37,6 +37,7 @@ export const BALANCE = {
   space: SPACE,
   diplomacy: DIPLOMACY,
   modes: MODES,
+  versusCombat: VERSUS_COMBAT,
   coop: COOP,
   pacing: PACING,
 } as const;

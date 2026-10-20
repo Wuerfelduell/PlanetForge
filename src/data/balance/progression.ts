@@ -188,10 +188,11 @@ export const DIPLOMACY = {
 
 /**
  * Game modes (decided by Seb, 2026-10-20). Solo is "coop" with one player.
- * - coop: one shared start planet, shared resources, shared ascension and discoveries. Long
- *   games (level 10 after ~3 h), endless afterwards.
- * - versus: everyone on their own planet with own resources and ascension. Short and snappy:
- *   first to winLevel wins, otherwise the highest ascension at the time limit.
+ * - coop: one shared start planet, shared resources, shared ascension and discoveries; every
+ *   player leads their own people there. Long games (level 10 after ~3 h), no cycle limit.
+ *   Citizens of an absent player stay theirs (never handed to others), the host saves the lobby.
+ * - versus: everyone on their own planet with own resources and ascension. Snappy; the game
+ *   ends when only one people is left (the others eradicated by attacks, see VERSUS_COMBAT).
  * Per-player arrays: index = player count − 1.
  */
 export const MODE_IDS = ["coop", "versus"] as const;
@@ -214,9 +215,10 @@ export const MODES = {
     monsterStrengthMul: [1, 1.3, 1.6, 1.9],
     extraAiFactions: [0, 0, 1, 1],
     extraPlanets: [0, 1, 2, 3],
-    winLevel: null,
-    timeLimitMinutes: null,
-    endless: true,
+    victory: "none",
+    cycleLimit: null,
+    /** Workers of a player who is offline keep working where they were, nobody else can move them. */
+    releaseAbsentWorkers: false,
   },
   versus: {
     name: "Gegeneinander",
@@ -234,10 +236,35 @@ export const MODES = {
     extraAiFactions: [0, 0, 0, 0],
     /** One home planet per player plus a few free ones to race for. */
     extraPlanets: [0, 1, 2, 3],
-    winLevel: 8,
-    timeLimitMinutes: 35,
-    endless: false,
+    /** Last people standing wins. */
+    victory: "eradication",
+    cycleLimit: null,
+    releaseAbsentWorkers: false,
   },
+} as const;
+
+/**
+ * Player-versus-player attacks (versus mode). An attack lands citizens by rocket on an enemy
+ * planet. Each round attackers and defenders roll 1d6 each plus bonuses; the lower roll loses
+ * a citizen (ties: both). Defenders are the planet's citizens, up to maxDefenders at a time.
+ * The attack ends when one side has nobody left. Winning attackers burn one building per
+ * surviving attacker (it becomes a ruin) and loot. A people with no citizens left on any
+ * planet is eradicated.
+ */
+export const VERSUS_COMBAT = {
+  /** No attacks before this level (rockets come at 6 anyway); gives everyone a calm start. */
+  attackMinLevel: 6,
+  /** After being attacked, a planet cannot be attacked again for this many cycles. */
+  protectionCycles: 4,
+  die: 6,
+  attackerBonus: 0,
+  /** Defenders get +1 on their home ground on top of watchtowers and discoveries. */
+  defenderHomeBonus: 1,
+  maxDefenders: 6,
+  /** Share of the planet's stored resources the winners carry home (if they have a rocket left). */
+  lootShare: 0.25,
+  /** Peoples' battleRoll and battleLosses modifiers apply to these fights too. */
+  usesPeopleModifiers: true,
 } as const;
 
 export const COOP = {
@@ -259,6 +286,7 @@ export const PACING = {
     discoveriesPerGame: { min: 12, max: 18 },
   },
   versus: {
+    /** Attacks open at level 6 (~19 min); a game should usually be decided by minute 35–50. */
     targetMinute: [2, 4, 7, 10, 14, 19, 25, 30, 35, 40],
     discoveriesPerGame: { min: 7, max: 12 },
   },

@@ -134,11 +134,12 @@ describe("pacing", () => {
     });
   }
 
-  it("coop is long, versus is short", () => {
+  it("coop is long, versus is short and opens attacks early", () => {
     const coop = levelTimeline("coop").at(-1)!.minute;
-    const versusWin = levelTimeline("versus")[BALANCE.modes.versus.winLevel - 1]!.minute;
+    const attacksOpen = levelTimeline("versus")[BALANCE.versusCombat.attackMinLevel - 1]!.minute;
     expect(coop).toBeGreaterThan(150);
-    expect(versusWin).toBeLessThan(BALANCE.modes.versus.timeLimitMinutes);
+    expect(attacksOpen).toBeLessThan(25);
+    expect(BALANCE.versusCombat.attackMinLevel).toBeGreaterThanOrEqual(BALANCE.space.rockets["rocket-small"].unlockLevel);
   });
 
   it("more coop players are a bit faster than solo, never slower and never trivial", () => {
