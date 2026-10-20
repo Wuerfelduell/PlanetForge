@@ -45,7 +45,9 @@ function mine(tier){
     path('M65 221V165Q65 128 105 128Q144 128 144 165V221Z','coal')+
     post(58,140,83,frame)+post(139,140,83,frame)+rect(52,130,105,20,frame,7)+
     glint('M64 135H133')+line('M61 221L49 233M143 221L151 233','rock-dark',5)+
-    (tier===2?rect(155,164,59,19,'rock-dark',9)+[165,184,203].map(x=>circle(x,173,4,'cream')).join('')+path('M163 160L170 143L183 153L197 141L207 161Z','iron'):'')+
+    (tier===2?post(171,85,56,'rock')+post(202,85,56,'rock')+
+      path('M161 62H222L213 92H172Z','rock')+path('M168 61L180 47L194 55L208 43L217 61Z','iron')+
+      glint('M169 68H201')+rect(155,164,59,19,'rock-dark',9)+[165,184,203].map(x=>circle(x,173,4,'cream')).join('')+path('M163 160L170 143L183 153L197 141L207 161Z','iron'):'')+
     group('cart',path('M76 177L135 177L127 207H85Z','clay')+path('M82 176L94 158L108 170L121 156L132 177Z','iron')+
       group('wheel',circle(91,211,8,'rock-dark')+circle(122,211,8,'rock-dark'))));
 }
