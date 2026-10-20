@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 15, core: 0, logo: false, extras: 0, discoveries: 0, brand: false};
+const RELEASE = {resources: 20, core: 0, logo: false, extras: 0, discoveries: 0, brand: false};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;

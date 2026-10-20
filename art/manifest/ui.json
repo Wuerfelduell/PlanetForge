@@ -644,6 +644,221 @@
         "mini"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "resource.plastic",
+      "category": "resources",
+      "src": "art/src/resources/plastic.svg",
+      "out": "public/assets/sprites/resources/plastic.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "plastic"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.plastic.mini",
+      "category": "resources",
+      "src": "art/src/resources/plastic-mini.svg",
+      "out": "public/assets/sprites/resources/plastic-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "plastic",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.electronics",
+      "category": "resources",
+      "src": "art/src/resources/electronics.svg",
+      "out": "public/assets/sprites/resources/electronics.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "electronics"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.electronics.mini",
+      "category": "resources",
+      "src": "art/src/resources/electronics-mini.svg",
+      "out": "public/assets/sprites/resources/electronics-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "electronics",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.computer",
+      "category": "resources",
+      "src": "art/src/resources/computer.svg",
+      "out": "public/assets/sprites/resources/computer.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "computer"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.computer.mini",
+      "category": "resources",
+      "src": "art/src/resources/computer-mini.svg",
+      "out": "public/assets/sprites/resources/computer-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "computer",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.energy",
+      "category": "resources",
+      "src": "art/src/resources/energy.svg",
+      "out": "public/assets/sprites/resources/energy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "energy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.energy.mini",
+      "category": "resources",
+      "src": "art/src/resources/energy-mini.svg",
+      "out": "public/assets/sprites/resources/energy-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "energy",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.science",
+      "category": "resources",
+      "src": "art/src/resources/science.svg",
+      "out": "public/assets/sprites/resources/science.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "science"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.science.mini",
+      "category": "resources",
+      "src": "art/src/resources/science-mini.svg",
+      "out": "public/assets/sprites/resources/science-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "science",
+        "mini"
+      ],
+      "phase": "P0"
     }
   ]
 }
