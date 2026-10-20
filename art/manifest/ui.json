@@ -429,6 +429,221 @@
         "mini"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "resource.uranium",
+      "category": "resources",
+      "src": "art/src/resources/uranium.svg",
+      "out": "public/assets/sprites/resources/uranium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "uranium"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.uranium.mini",
+      "category": "resources",
+      "src": "art/src/resources/uranium-mini.svg",
+      "out": "public/assets/sprites/resources/uranium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "uranium",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.aetherite",
+      "category": "resources",
+      "src": "art/src/resources/aetherite.svg",
+      "out": "public/assets/sprites/resources/aetherite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "aetherite"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.aetherite.mini",
+      "category": "resources",
+      "src": "art/src/resources/aetherite-mini.svg",
+      "out": "public/assets/sprites/resources/aetherite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "aetherite",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.glass",
+      "category": "resources",
+      "src": "art/src/resources/glass.svg",
+      "out": "public/assets/sprites/resources/glass.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "glass"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.glass.mini",
+      "category": "resources",
+      "src": "art/src/resources/glass-mini.svg",
+      "out": "public/assets/sprites/resources/glass-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "glass",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.concrete",
+      "category": "resources",
+      "src": "art/src/resources/concrete.svg",
+      "out": "public/assets/sprites/resources/concrete.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "concrete"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.concrete.mini",
+      "category": "resources",
+      "src": "art/src/resources/concrete-mini.svg",
+      "out": "public/assets/sprites/resources/concrete-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "concrete",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.steel",
+      "category": "resources",
+      "src": "art/src/resources/steel.svg",
+      "out": "public/assets/sprites/resources/steel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "steel"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.steel.mini",
+      "category": "resources",
+      "src": "art/src/resources/steel-mini.svg",
+      "out": "public/assets/sprites/resources/steel-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "steel",
+        "mini"
+      ],
+      "phase": "P0"
     }
   ]
 }
