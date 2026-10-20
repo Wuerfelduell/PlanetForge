@@ -17,7 +17,7 @@ export interface GameSession {
   update(elapsedMs: number): GameEvent[];
 }
 
-export const LOCAL_PLAYER = { id: "local", name: "Ich" };
+export const LOCAL_PLAYER = { id: "p1", name: "Ich" };
 
 /**
  * Single player: this browser is the authority. It runs its own game clock (sim time), which

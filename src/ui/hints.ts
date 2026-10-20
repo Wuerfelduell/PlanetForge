@@ -1,23 +1,27 @@
-import { assignedWorkers, BUILDINGS, housing, idleWorkers, population, teamById, type GameState, type PlanetState } from "../sim";
+import { BUILDINGS, economyOf, housing, idleUnits, population, RULES, unitsOn, type GameState, type PlanetState } from "../sim";
 
 /**
  * Contextual next-step hint. The original's biggest weakness is that it explains nothing;
  * this tells the player the one useful thing to do next.
  */
 export function currentHint(state: GameState, planet: PlanetState, playerId: string): string {
+  const economy = economyOf(state, planet);
+  if (!economy) return "Auf diesem Planeten lebt noch niemand.";
   const buildings = planet.segments.filter((s) => s.building);
-  if (assignedWorkers(planet, playerId) === 0) return "Dreh den Planeten, wähl ein freies Feld wie Wald und tipp auf ＋, damit Einwohner sammeln.";
-  if (planet.starving) return "Hunger! Setz Einwohner auf Savanne oder Meer, oder bau eine Farm.";
+  const idle = idleUnits(state, planet, playerId).length;
+  if (unitsOn(state, planet.id, playerId).every((u) => u.segment === null)) return "Dreh den Planeten, wähl ein freies Feld wie Wald und tipp auf ＋, damit deine Leute sammeln.";
+  if (economy.starving) return "Hunger! Setz Einwohner auf Savanne oder Meer, oder bau eine Farm.";
   if (!buildings.some((s) => s.building === "housing")) {
-    return planet.resources.wood >= (BUILDINGS.housing.cost.wood ?? 0)
+    return economy.resources.wood >= (BUILDINGS.housing.cost.wood ?? 0)
       ? "Genug Holz: bau eine Hütte am Rand, das deckt neue Felder auf."
       : "Sammle 15 Holz für eine Hütte.";
   }
-  if (planet.resources.food < 10 && population(planet) < housing(planet)) return "Für Nachwuchs braucht es 10 Nahrung. Sammle Nahrung auf Savanne, Wald oder Meer.";
-  if (idleWorkers(planet, playerId) > 0) return `${idleWorkers(planet, playerId)} Einwohner haben nichts zu tun. Gib ihnen Arbeit.`;
-  if (population(planet) >= housing(planet)) return "Alle Häuser sind voll. Eine weitere Hütte bringt mehr Einwohner.";
-  const level = teamById(state, planet.teamId)?.ascension.level ?? 0;
-  if (level === 0) return "Jeder Planetenumlauf bringt Aufstiegspunkte je Einwohner. Stufe 1 schaltet Mine und Pumpe frei.";
-  if (level === 1) return "Mit Minen förderst du auch Eisen. Stufe 2 schaltet das Labor frei.";
+  if (economy.resources.food < RULES.birthFoodCost && population(state, planet) < housing(state, planet)) {
+    return `Für Nachwuchs braucht es ${RULES.birthFoodCost} Nahrung. Sammle Nahrung auf Savanne, Wald oder Meer.`;
+  }
+  if (idle > 0) return `${idle} deiner Einwohner haben nichts zu tun. Gib ihnen Arbeit.`;
+  if (population(state, planet) >= housing(state, planet)) return "Alle Häuser sind voll. Eine weitere Hütte bringt mehr Einwohner.";
+  if (economy.ascension.level === 0) return "Jeder Planetenumlauf bringt Aufstiegspunkte je Einwohner. Stufe 1 schaltet Mine und Pumpe frei.";
+  if (economy.ascension.level === 1) return "Mit Minen förderst du auch Eisen. Stufe 2 schaltet das Labor frei.";
   return "Bau ein Labor und sammle Wissen. Weitere Systeme folgen.";
 }
