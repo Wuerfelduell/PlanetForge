@@ -1,10 +1,50 @@
-import { Application, Container, Graphics, Text } from "pixi.js";
-import { BIOMES, BUILDINGS, type GameState } from "../sim";
+import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
+import { BIOMES, BUILDINGS, workerCount, type GameState, type PlanetState } from "../sim";
+import { artTexture, buildingArt, hasArt } from "./art";
 
 const TOP = -Math.PI / 2;
 const TAP_SLOP_PX = 8;
 const HIDDEN_COLOR = 0x2b3150;
 const CORE_COLOR = 0x5a3b2e;
+/** Ground band of the art: planet body radius 400, surface at 460 (art/BRIEF.md). */
+const ART_SURFACE = 460;
+const ART_BODY = 400;
+/** Buildings are drawn for a 200 px footprint per segment (art/BRIEF.md). */
+const ART_FOOTPRINT = 200;
+const PROP_SIZE = 128;
+
+/** Reuses sprites between redraws; one pool per layer keeps the draw order fixed. */
+class SpritePool {
+  readonly container = new Container();
+  private readonly sprites: Sprite[] = [];
+  private used = 0;
+
+  begin(): void {
+    this.used = 0;
+  }
+
+  take(texture: Texture): Sprite {
+    let sprite = this.sprites[this.used];
+    if (!sprite) {
+      sprite = new Sprite();
+      this.container.addChild(sprite);
+      this.sprites.push(sprite);
+    }
+    this.used++;
+    sprite.texture = texture;
+    sprite.anchor.set(texture.defaultAnchor?.x ?? 0.5, texture.defaultAnchor?.y ?? 0.5);
+    sprite.visible = true;
+    sprite.alpha = 1;
+    sprite.position.set(0, 0);
+    sprite.rotation = 0;
+    return sprite;
+  }
+
+  end(): void {
+    for (let i = this.used; i < this.sprites.length; i++) this.sprites[i]!.visible = false;
+  }
+}
+
 /** Player colors by PlayerState.color; the first one stays white for single player. */
 const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab];
 
@@ -24,6 +64,8 @@ export class PlanetView {
   private readonly ground = new Graphics();
   private readonly marker = new Graphics();
   private sprites: SegmentSprites[] = [];
+  /** Art layers, bottom to top; empty while the placeholder drawing is used. */
+  private readonly layers = { body: new SpritePool(), ground: new SpritePool(), props: new SpritePool(), buildings: new SpritePool(), citizens: new SpritePool(), overlays: new SpritePool() };
   private segmentCount = 0;
 
   private cx = 0;
@@ -42,7 +84,8 @@ export class PlanetView {
     private readonly onSelect: (index: number) => void,
   ) {
     this.stage.addChild(this.stars, this.wheel, this.marker);
-    this.wheel.addChild(this.ground);
+    const l = this.layers;
+    this.wheel.addChild(l.body.container, this.ground, l.ground.container, l.props.container, l.buildings.container, l.citizens.container, l.overlays.container);
     this.bindInput(app.canvas);
   }
 
@@ -76,6 +119,11 @@ export class PlanetView {
 
   private planet(state: GameState) {
     return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
+  }
+
+  /** Redraws on the next frame, e.g. after the art finished loading. */
+  invalidate(): void {
+    this.dirty = true;
   }
 
   get selectedIndex(): number {
@@ -125,6 +173,104 @@ export class PlanetView {
   }
 
   private draw(state: GameState): void {
+    const planet = this.planet(state);
+    const art = hasArt() && planet.segments.length === this.segmentCount && artTexture(`biome.forest.wedge.${this.segmentCount}`);
+    for (const pool of Object.values(this.layers)) pool.begin();
+    if (art) this.drawArt(state, planet);
+    else this.drawPlaceholder(state);
+    for (const pool of Object.values(this.layers)) pool.end();
+    this.drawMarker();
+  }
+
+  /** Original art: planet body, ground wedges, props, buildings and working inhabitants. */
+  private drawArt(state: GameState, planet: PlanetState): void {
+    const n = this.segmentCount;
+    const step = (Math.PI * 2) / n;
+    const R = this.radius;
+    const k = R / ART_SURFACE;
+    const segWidth = step * ART_SURFACE;
+    const l = this.layers;
+    const g = this.ground;
+    g.clear();
+    for (const sp of this.sprites) {
+      sp.icon.visible = false;
+      sp.mystery.visible = false;
+    }
+
+    g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
+    const body = artTexture(`planet.planet-${planet.type}`);
+    if (body) l.body.take(body).scale.set(k);
+    else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
+
+    const wedge = (id: string, i: number) => {
+      const texture = artTexture(`${id}.${n}`);
+      if (!texture) return;
+      const sprite = (id.startsWith("overlay") ? l.overlays : l.ground).take(texture);
+      sprite.scale.set(k);
+      sprite.rotation = i * step + Math.PI / 2;
+    };
+    const multiplayer = state.players.length > 1;
+
+    planet.segments.forEach((s, i) => {
+      const mid = i * step;
+      const surface = { x: Math.cos(mid) * R, y: Math.sin(mid) * R };
+      if (!s.revealed) {
+        g.poly(sector(ART_BODY * k, R, mid - step / 2, mid + step / 2)).fill(HIDDEN_COLOR);
+        wedge("overlay.fog", i);
+        return;
+      }
+      wedge(`biome.${s.biome}.wedge`, i);
+      if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
+
+      if (s.building) {
+        const empty = BUILDINGS[s.building].workers > 0 && workerCount(state, planet, i) === 0;
+        const texture = buildingArt(s.building, empty ? "off" : undefined);
+        if (texture) {
+          const sprite = l.buildings.take(texture);
+          sprite.position.set(surface.x, surface.y);
+          sprite.rotation = mid + Math.PI / 2;
+          sprite.scale.set((k * segWidth) / ART_FOOTPRINT);
+        }
+      } else {
+        const props = PROPS[s.biome] ?? [];
+        const texture = props.length ? artTexture(`biome.${s.biome}.prop.${props[(i * 7) % props.length]}`) : undefined;
+        if (texture) {
+          const sprite = l.props.take(texture);
+          sprite.position.set(surface.x, surface.y);
+          sprite.rotation = mid + Math.PI / 2;
+          sprite.scale.set((k * segWidth * 0.7) / PROP_SIZE);
+        }
+      }
+
+      // Working inhabitants stand in front, each in their people's look.
+      const workers = Object.values(state.units).filter((u) => u.planetId === planet.id && u.segment === i);
+      workers.forEach((u, w) => {
+        const frame = 1 + ((Math.floor(state.tick / 5) + w) % 2);
+        const texture = artTexture(`people.${u.people}.citizen.work.f${frame}`) ?? artTexture(`people.${u.people}.citizen.idle.f1`);
+        const a = mid - step / 2 + (step * (w + 1)) / (workers.length + 1);
+        const x = Math.cos(a) * R;
+        const y = Math.sin(a) * R;
+        if (texture) {
+          const sprite = l.citizens.take(texture);
+          sprite.position.set(x, y);
+          sprite.rotation = a + Math.PI / 2;
+          sprite.scale.set((k * segWidth * 0.5) / PROP_SIZE);
+        }
+        if (multiplayer) {
+          const owner = state.players.find((p) => p.id === u.owner);
+          g.circle(Math.cos(a) * R * 0.97, Math.sin(a) * R * 0.97, Math.max(2.5, R * 0.018)).fill(PLAYER_COLORS[(owner?.color ?? 0) % PLAYER_COLORS.length]!);
+        }
+      });
+    });
+
+    if (artTexture(`overlay.selected.${n}`)) wedge("overlay.selected", this.selected);
+    else {
+      const sa0 = this.selected * step - step / 2;
+      g.poly(sector(ART_BODY * k, R, sa0, sa0 + step)).stroke({ width: 3, color: 0xffffff });
+    }
+  }
+
+  private drawPlaceholder(state: GameState): void {
     const n = this.segmentCount;
     const step = (Math.PI * 2) / n;
     const R = this.radius;
@@ -176,8 +322,11 @@ export class PlanetView {
 
     const sa0 = this.selected * step - step / 2;
     g.poly(sector(rInner, R, sa0, sa0 + step)).stroke({ width: 3, color: 0xffffff });
+  }
 
-    // Fixed pointer above the wheel marking the "top" slot.
+  /** Fixed pointer above the wheel marking the "top" slot. */
+  private drawMarker(): void {
+    const R = this.radius;
     const m = this.marker;
     m.clear();
     const tipY = this.cy - R - R * 0.2;
@@ -270,6 +419,18 @@ function indexAtTop(rotation: number, n: number): number {
   const step = (Math.PI * 2) / n;
   return mod(Math.round((TOP - rotation) / step), n);
 }
+
+/** Decoration per biome on empty segments (ids from the asset manifest). */
+const PROPS: Partial<Record<string, string[]>> = {
+  forest: ["tree-a", "tree-b", "tree-c"],
+  savanna: ["acacia", "bush-a", "bush-b"],
+  mountains: ["peak-a", "peak-b", "peak-c"],
+  ocean: ["wave-a", "buoy", "wave-b"],
+  desert: ["cactus-a", "dune", "cactus-b"],
+  swamp: ["reed-a", "mushroom", "reed-b"],
+  tundra: ["pine-snow-a", "ice-rock", "pine-snow-b"],
+  crystal: ["crystal-a", "crystal-b", "crystal-c"],
+};
 
 function sector(r0: number, r1: number, a0: number, a1: number): number[] {
   const pts: number[] = [];
