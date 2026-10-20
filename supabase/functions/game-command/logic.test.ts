@@ -16,6 +16,15 @@ describe("game-command logic", () => {
     expect(r.state.seed).toBe(GAME);
   });
 
+  it("creates the game with the options the host picked", () => {
+    const input = { state: null, clockAt: null, members: [alice], playerId: "p1", request: { gameId: GAME, kind: "sync" as const }, now: 1_000 };
+    const picked = step({ ...input, options: { goal: "endless", invaders: "strong", maxPlayers: 2 } });
+    expect(picked.ok && picked.state.settings).toMatchObject({ goal: "endless", invaders: "strong", maxPlayers: 2 });
+    expect(picked.ok && picked.state.sun.novaTick).toBeNull();
+    const defaults = step(input);
+    expect(defaults.ok && defaults.state.settings).toMatchObject({ goal: "supernova", invaders: "normal", maxPlayers: 4 });
+  });
+
   it("runs the clock by the wall-clock gap, but pauses gaps longer than a minute", () => {
     const state = createGame("s", [{ id: "p1", name: "A" }]);
     expect(nextSimTime(state, 10_000, 15_000)).toBe(5_000);
