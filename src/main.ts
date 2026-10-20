@@ -40,11 +40,11 @@ async function boot(): Promise<void> {
     setSpeed(speed) {
       session.speed = speed;
     },
-    newGame() {
+    newGame(options) {
       clearSave();
       const speed = session.speed;
       leaveOnline();
-      session = LocalSession.newGame();
+      session = LocalSession.newGame(undefined, options);
       session.speed = speed;
       showHome();
       view.select(0);
