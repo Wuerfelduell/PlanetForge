@@ -3309,6 +3309,85 @@
         "overlay-on-ui.discovery-badge"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "brand.app-icon-foreground",
+      "category": "brand",
+      "src": "art/src/brand/app-icon-foreground.svg",
+      "out": "public/assets/sprites/brand/app-icon-foreground.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon-foreground"
+      ],
+      "phase": "P1",
+      "safeZone": {
+        "center": [
+          512,
+          512
+        ],
+        "radius": 340
+      }
+    },
+    {
+      "id": "brand.app-icon-background",
+      "category": "brand",
+      "src": "art/src/brand/app-icon-background.svg",
+      "out": "public/assets/sprites/brand/app-icon-background.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon-background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "brand.app-icon",
+      "category": "brand",
+      "src": "art/src/brand/app-icon.svg",
+      "out": "public/assets/sprites/brand/app-icon.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "brand.splash",
+      "category": "brand",
+      "src": "art/src/brand/splash.svg",
+      "out": "public/assets/sprites/brand/splash.png",
+      "viewBox": [
+        1080,
+        1920
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "splash"
+      ],
+      "phase": "P1"
     }
   ]
 }

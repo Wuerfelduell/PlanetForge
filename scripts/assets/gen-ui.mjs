@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 23, core: 52, logo: true, extras: 27, discoveries: 24, brand: false};
+const RELEASE = {resources: 23, core: 52, logo: true, extras: 27, discoveries: 24, brand: true};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;
@@ -23,7 +23,7 @@ const head = (x,y,s,color='clay') => group(circ(39,38,13,color)+circ(87,38,13,co
 function emit(id,category,body,w=128,h=w,phase='P0',extra={}) {
   const filename=id.slice(id.indexOf('.')+1).replaceAll('.','-');
   const src=`art/src/${category}/${filename}.svg`;
-  write(src,svg(body,w,h,extra.stroke??6*w/256));
+  write(src,svg(body,w,h,round(extra.stroke??6*w/256)));
   const {stroke,...meta}=extra;
   assets.push({id,category,src,out:`public/assets/sprites/${category}/${filename}.png`,viewBox:[w,h],anchor:[.5,.5],frames:1,parts:[],tags:[category,filename],phase,...meta});
 }
@@ -209,7 +209,7 @@ for(const [name,color] of [['panel-dark','space'],['panel-tooltip','cream'],['ca
 addExtra('ui.tooltip-pointer','ui',p('M10 12 H54 L35 48 Q32 53 29 48Z','paper')+p('M10 12 H54 L34 42 Q32 45 30 42Z','cream'),64,64,'P1',{anchor:[.5,0]});
 addExtra('ui.progress-bg','ui',rect(2,2,124,28,14,'paper')+rect(7,7,114,18,9,'rock-dark'),128,32,'P1',{anchor:null,sliceInsets:[14,12,14,12]});
 addExtra('ui.progress-fill','ui',rect(2,3,124,26,13,'grass')+shadow('M3 18 H125 Q125 29 113 29 H15 Q3 29 3 18Z','grass')+shine('M15 9 H111'),128,32,'P1',{anchor:null,sliceInsets:[14,12,14,12],parts:[],tags:['ui','progress','engine-clipped']});
-addExtra('ui.ring-progress','ui',`<g id="track">${circ(64,64,49,'paper')}${circ(64,64,36,'space')}</g><g id="progress-anchor"/>`,128,128,'P1',{parts:['track','progress-anchor'],progress:{center:[64,64],radius:42.5,startAngle:-90,clockwise:true,strokeWidth:10}});
+addExtra('ui.ring-progress','ui',`<g id="track">${p('M64 15 A49 49 0 1 1 63.9 15Z M64 28 A36 36 0 1 0 64.1 28Z','paper','fill-rule="evenodd"')}</g><g id="progress-anchor"/>`,128,128,'P1',{parts:['track','progress-anchor'],progress:{center:[64,64],radius:42.5,startAngle:-90,clockwise:true,strokeWidth:10}});
 for(const id of ['move','launch','trade','peace','alliance','war','ultimatum','ping','chat','invite','sound-on','sound-off','help'])addExtra(`ui.icon-${id}`,'ui',action(id),128,128,'P1');
 addExtra('ui.avatar-frame','ui',p('M64 12 A52 52 0 1 1 63.9 12Z M64 24 A40 40 0 1 0 64.1 24Z','tint-white','fill-rule="evenodd"'),128,128,'P1',{tintable:true});
 addExtra('ui.crown-host','ui',p('M9 20 L22 29 L32 11 L42 29 L55 20 L49 49 H15Z','energy')+rect(15,45,34,9,3,'ascension')+circ(9,18,4,'cream')+circ(32,10,4,'cream')+circ(55,18,4,'cream'),64,64,'P1');
@@ -255,6 +255,38 @@ function discovery(id){
   }
 }
 for(const id of discoveryIds.slice(0,RELEASE.discoveries))emit(`discovery.${id}`,'discoveries',group(discovery(id),'translate(13 13) scale(0.8)','stroke-width="3.8"'),128,128,'P1',{tags:['discoveries',id,'overlay-on-ui.discovery-badge']});
+
+// App foreground is deliberately contained in Android's r=340 safe circle.
+function beaver(){
+  return ellipse(98,95,18,27,'iron','transform="rotate(-30 98 95)"')+detail('M87 80 L107 100 M85 90 L102 109 M99 79 L86 101')+
+    ellipse(61,88,27,28,'clay')+rect(38,84,47,27,10,'science')+
+    ellipse(40,112,14,7,'iron')+ellipse(79,112,14,7,'iron')+
+    circ(35,40,12,'iron')+circ(86,40,12,'iron')+
+    p('M30 51 Q28 26 60 26 Q95 26 96 55 V67 Q94 86 62 86 Q31 86 30 67Z','clay')+
+    ellipse(62,69,22,14,'sand')+rect(52,74,20,14,3,'cream')+line('M62 76 V86')+
+    circ(45,54,4,'ink')+circ(80,54,4,'ink')+ellipse(62,65,8,5,'ink')+
+    p('M30 34 Q31 12 61 12 Q91 12 93 34Z','energy')+rect(24,31,75,10,5,'ascension')+
+    p('M60 14 V29',null,'stroke-width="5"')+shine('M40 23 Q46 18 52 18');
+}
+function appScene(){
+  return circ(128,153,51,'water')+shadow('M168 122 Q185 160 155 186 Q126 211 91 185 Q118 218 154 197 Q193 174 168 122Z','water')+
+    p('M78 143 Q83 114 110 104 Q140 94 163 116 L169 129 L154 128 L144 140 L128 132 L113 139 L95 131Z','grass')+
+    p('M93 159 Q109 147 119 157 L126 174 L114 184 L98 174Z','leaf')+
+    p('M146 171 L166 158 L176 169 L165 183 L152 190Z','grass')+
+    group(house(),'translate(73 55) scale(0.5)','stroke-width="6"')+
+    group(beaver(),'translate(134 61) scale(0.5)','stroke-width="6"')+
+    star(66,99,5,'energy')+star(186,117,5,'cream')+shine('M87 147 L91 139');
+}
+function spaceBackground(w,h){
+  return `<defs><linearGradient id="space-bg" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="${C('space')}"/><stop offset="1" stop-color="${C('space-deep')}"/></linearGradient></defs><path d="M0 0 H${w} V${h} H0Z" fill="url(#space-bg)" stroke="none"/>`;
+}
+if(RELEASE.brand){
+  const scene=group(appScene(),'scale(4)','stroke-width="6"');
+  emit('brand.app-icon-foreground','brand',scene,1024,1024,'P1',{anchor:null,safeZone:{center:[512,512],radius:340}});
+  emit('brand.app-icon-background','brand',spaceBackground(1024,1024),1024,1024,'P1',{anchor:null});
+  emit('brand.app-icon','brand',spaceBackground(1024,1024)+scene,1024,1024,'P1',{anchor:null});
+  emit('brand.splash','brand',spaceBackground(1080,1920)+group(logoMark(),'translate(284 624) scale(4)','stroke-width="3"'),1080,1920,'P1',{anchor:null});
+}
 
 write('art/manifest/ui.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`UI art: ${assets.length} ids generated.`);
