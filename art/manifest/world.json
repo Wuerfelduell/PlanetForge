@@ -1,0 +1,2709 @@
+{
+  "assets": [
+    {
+      "id": "biome.forest.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-a",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-a.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-b",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-b.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-c",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-c.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-a",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-a.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-b",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-b.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-c",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-c.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-a",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-a.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-b",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-b.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.buoy",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-buoy.svg",
+      "out": "public/assets/sprites/biomes/ocean-buoy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-a",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-a.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-b",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-b.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.acacia",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-acacia.svg",
+      "out": "public/assets/sprites/biomes/savanna-acacia.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune.svg",
+      "out": "public/assets/sprites/biomes/desert-dune.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-a",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-a.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-b",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-b.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.ice-rock",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-ice-rock.svg",
+      "out": "public/assets/sprites/biomes/tundra-ice-rock.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-a",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-a.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-b",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-b.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-c",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-c.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.planet-temperate",
+      "category": "planets",
+      "src": "art/src/planets/planet-temperate.svg",
+      "out": "public/assets/sprites/planets/planet-temperate.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.atmosphere-temperate",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-temperate.svg",
+      "out": "public/assets/sprites/planets/atmosphere-temperate.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.planet-arid",
+      "category": "planets",
+      "src": "art/src/planets/planet-arid.svg",
+      "out": "public/assets/sprites/planets/planet-arid.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-arid",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-arid.svg",
+      "out": "public/assets/sprites/planets/atmosphere-arid.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ice",
+      "category": "planets",
+      "src": "art/src/planets/planet-ice.svg",
+      "out": "public/assets/sprites/planets/planet-ice.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-ice",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-ice.svg",
+      "out": "public/assets/sprites/planets/atmosphere-ice.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-lava",
+      "category": "planets",
+      "src": "art/src/planets/planet-lava.svg",
+      "out": "public/assets/sprites/planets/planet-lava.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-lava",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-lava.svg",
+      "out": "public/assets/sprites/planets/atmosphere-lava.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-toxic",
+      "category": "planets",
+      "src": "art/src/planets/planet-toxic.svg",
+      "out": "public/assets/sprites/planets/planet-toxic.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-toxic",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-toxic.svg",
+      "out": "public/assets/sprites/planets/atmosphere-toxic.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ocean",
+      "category": "planets",
+      "src": "art/src/planets/planet-ocean.svg",
+      "out": "public/assets/sprites/planets/planet-ocean.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-ocean",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-ocean.svg",
+      "out": "public/assets/sprites/planets/atmosphere-ocean.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-yellow",
+      "category": "space",
+      "src": "art/src/space/sun-yellow.svg",
+      "out": "public/assets/sprites/space/sun-yellow.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "space.starfield-tile",
+      "category": "space",
+      "src": "art/src/space/starfield-tile.svg",
+      "out": "public/assets/sprites/space/starfield-tile.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "far-stars",
+        "near-stars"
+      ],
+      "tags": [
+        "tileable"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.mini-temperate",
+      "category": "planets",
+      "src": "art/src/planets/mini-temperate.svg",
+      "out": "public/assets/sprites/planets/mini-temperate.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-arid",
+      "category": "planets",
+      "src": "art/src/planets/mini-arid.svg",
+      "out": "public/assets/sprites/planets/mini-arid.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-ice",
+      "category": "planets",
+      "src": "art/src/planets/mini-ice.svg",
+      "out": "public/assets/sprites/planets/mini-ice.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-lava",
+      "category": "planets",
+      "src": "art/src/planets/mini-lava.svg",
+      "out": "public/assets/sprites/planets/mini-lava.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-toxic",
+      "category": "planets",
+      "src": "art/src/planets/mini-toxic.svg",
+      "out": "public/assets/sprites/planets/mini-toxic.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-ocean",
+      "category": "planets",
+      "src": "art/src/planets/mini-ocean.svg",
+      "out": "public/assets/sprites/planets/mini-ocean.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-owned-ring",
+      "category": "planets",
+      "src": "art/src/planets/mini-owned-ring.svg",
+      "out": "public/assets/sprites/planets/mini-owned-ring.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ring"
+      ],
+      "tags": [
+        "star-map",
+        "tintable"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-red",
+      "category": "space",
+      "src": "art/src/space/sun-red.svg",
+      "out": "public/assets/sprites/space/sun-red.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-blue",
+      "category": "space",
+      "src": "art/src/space/sun-blue.svg",
+      "out": "public/assets/sprites/space/sun-blue.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-white",
+      "category": "space",
+      "src": "art/src/space/sun-white.svg",
+      "out": "public/assets/sprites/space/sun-white.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-corona",
+      "category": "space",
+      "src": "art/src/space/sun-corona.svg",
+      "out": "public/assets/sprites/space/sun-corona.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "corona"
+      ],
+      "tags": [
+        "rotatable"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-a",
+      "category": "space",
+      "src": "art/src/space/asteroid-a.svg",
+      "out": "public/assets/sprites/space/asteroid-a.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-b",
+      "category": "space",
+      "src": "art/src/space/asteroid-b.svg",
+      "out": "public/assets/sprites/space/asteroid-b.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-c",
+      "category": "space",
+      "src": "art/src/space/asteroid-c.svg",
+      "out": "public/assets/sprites/space/asteroid-c.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-d",
+      "category": "space",
+      "src": "art/src/space/asteroid-d.svg",
+      "out": "public/assets/sprites/space/asteroid-d.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-rich",
+      "category": "space",
+      "src": "art/src/space/asteroid-rich.svg",
+      "out": "public/assets/sprites/space/asteroid-rich.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.nebula-a",
+      "category": "space",
+      "src": "art/src/space/nebula-a.svg",
+      "out": "public/assets/sprites/space/nebula-a.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "nebula"
+      ],
+      "tags": [
+        "background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.nebula-b",
+      "category": "space",
+      "src": "art/src/space/nebula-b.svg",
+      "out": "public/assets/sprites/space/nebula-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "nebula"
+      ],
+      "tags": [
+        "background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.bg-space",
+      "category": "space",
+      "src": "art/src/space/bg-space.svg",
+      "out": "public/assets/sprites/space/bg-space.png",
+      "viewBox": [
+        1024,
+        2048
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "background"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.orbit-dash",
+      "category": "space",
+      "src": "art/src/space/orbit-dash.svg",
+      "out": "public/assets/sprites/space/orbit-dash.png",
+      "viewBox": [
+        64,
+        8
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "dash"
+      ],
+      "tags": [
+        "star-map",
+        "tileable"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sight-radius-edge",
+      "category": "space",
+      "src": "art/src/space/sight-radius-edge.svg",
+      "out": "public/assets/sprites/space/sight-radius-edge.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "edge"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.travel-path-dot",
+      "category": "space",
+      "src": "art/src/space/travel-path-dot.svg",
+      "out": "public/assets/sprites/space/travel-path-dot.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "dot"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.waypoint",
+      "category": "space",
+      "src": "art/src/space/waypoint.svg",
+      "out": "public/assets/sprites/space/waypoint.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "waypoint"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
