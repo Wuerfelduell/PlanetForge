@@ -5,6 +5,7 @@ import { ensureSignedIn, supabase } from "./supabase";
 
 /** How often the lead client tells the server someone is online, so the live game clock keeps running. */
 const HEARTBEAT_MS = 20_000;
+const CATCH_UP_MS = 6_000;
 
 type ServerReply =
   | { ok: true; version: number; state: GameState; events: GameEvent[] }
@@ -34,6 +35,7 @@ export class NetworkSession implements GameSession {
   private version: number;
   private pendingEvents: GameEvent[] = [];
   private heartbeat: ReturnType<typeof setInterval> | undefined;
+  private catchUp: ReturnType<typeof setTimeout> | undefined;
 
   private constructor(
     private readonly sb: SupabaseClient,
@@ -79,6 +81,9 @@ export class NetworkSession implements GameSession {
     await channel.track({ at: Date.now() });
 
     session.heartbeat = setInterval(() => session.beat(), HEARTBEAT_MS);
+    // A Realtime room that was idle takes a few seconds to start delivering, and changes made
+    // between the first sync and subscribing are missed too, so catch up once after joining.
+    session.catchUp = setTimeout(() => session.resync(), CATCH_UP_MS);
     return session;
   }
 
@@ -105,6 +110,7 @@ export class NetworkSession implements GameSession {
 
   async close(): Promise<void> {
     clearInterval(this.heartbeat);
+    clearTimeout(this.catchUp);
     await this.sb.removeChannel(this.channel);
   }
 
@@ -119,6 +125,10 @@ export class NetworkSession implements GameSession {
   /** Only the online player with the lowest id sends heartbeats, one per game is enough. */
   private beat(): void {
     if (this.online.length && this.online[0] !== this.playerId) return;
+    this.resync();
+  }
+
+  private resync(): void {
     void invoke(this.sb, { gameId: this.gameId, kind: "sync" }).then((reply) => {
       if (reply.ok) this.accept(reply.version, reply.state);
     });
