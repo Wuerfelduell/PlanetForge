@@ -2633,6 +2633,154 @@
         "icon-sound-on"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.icon-sound-off",
+      "category": "ui",
+      "src": "art/src/ui/icon-sound-off.svg",
+      "out": "public/assets/sprites/ui/icon-sound-off.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-sound-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-help",
+      "category": "ui",
+      "src": "art/src/ui/icon-help.svg",
+      "out": "public/assets/sprites/ui/icon-help.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-help"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.avatar-frame",
+      "category": "ui",
+      "src": "art/src/ui/avatar-frame.svg",
+      "out": "public/assets/sprites/ui/avatar-frame.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "avatar-frame"
+      ],
+      "phase": "P1",
+      "tintable": true
+    },
+    {
+      "id": "ui.crown-host",
+      "category": "ui",
+      "src": "art/src/ui/crown-host.svg",
+      "out": "public/assets/sprites/ui/crown-host.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "crown-host"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge.svg",
+      "out": "public/assets/sprites/ui/discovery-badge.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge-locked",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge-locked.svg",
+      "out": "public/assets/sprites/ui/discovery-badge-locked.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge-locked"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge-available",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge-available.svg",
+      "out": "public/assets/sprites/ui/discovery-badge-available.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge-available"
+      ],
+      "phase": "P1"
     }
   ]
 }
