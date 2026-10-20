@@ -47,6 +47,7 @@ async function boot(): Promise<void> {
     ui.render(session.state);
   });
   const showHome = () => {
+    ui.playerId = session.playerId;
     ui.setPlanet(home().id);
     view.planetId = home().id;
   };

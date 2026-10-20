@@ -1,4 +1,4 @@
-import type { BiomeId, BuildingId, PlanetTypeId, ResourceId } from "./content";
+import type { BiomeId, BuildingId, PeopleId, PlanetTypeId, ResourceId } from "./content";
 
 /**
  * The complete game state. Plain JSON data only (no classes, Maps, Sets or functions), so it
@@ -11,7 +11,7 @@ import type { BiomeId, BuildingId, PlanetTypeId, ResourceId } from "./content";
 export type GameMode = "coop" | "versus";
 
 export interface GameState {
-  version: 4;
+  version: 5;
   mode: GameMode;
   maxPlayers: number;
   seed: string;
@@ -36,11 +36,14 @@ export interface TeamState {
 export interface PlayerInit {
   id: string;
   name: string;
+  /** People (animal faction) the player plays; picked automatically if left out. */
+  people?: PeopleId;
 }
 
 export interface PlayerState extends PlayerInit {
   /** Index into a shared player color palette (the renderer picks the actual color). */
   color: number;
+  people: PeopleId;
   teamId: string;
   homePlanetId: string;
 }
@@ -57,7 +60,8 @@ export interface PlanetState {
   teamId: string | null;
   /** Stockpile, population and food are local to each planet. */
   resources: Record<ResourceId, number>;
-  population: number;
+  /** Inhabitants per playerId. In coop every player brings an own people to the shared planet. */
+  citizens: Record<string, number>;
   /** Seconds of progress toward the next birth. */
   birthProgress: number;
   starving: boolean;
@@ -72,7 +76,8 @@ export interface SegmentState {
   building: BuildingId | null;
   /** playerId of whoever built the building, null without building. */
   builtBy: string | null;
-  workers: number;
+  /** Assigned inhabitants per playerId; only their owner moves them. */
+  workers: Record<string, number>;
   /** Which deposit hand-gatherers collect when there is no building. */
   gather: ResourceId | null;
 }
@@ -94,7 +99,7 @@ export type Command =
 
 /** Things that happened, for UI feedback (toasts, sounds). Not part of the state. */
 export type GameEvent =
-  | { type: "born"; planetId: string; population: number }
+  | { type: "born"; planetId: string; playerId: string; population: number }
   | { type: "cycle"; cycle: number }
   | { type: "levelUp"; teamId: string; level: number }
   | { type: "depleted"; planetId: string; segment: number; resource: ResourceId }

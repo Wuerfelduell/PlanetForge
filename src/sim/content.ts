@@ -198,6 +198,25 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
+/** Playable peoples (ids from the asset list). Bonuses and abilities come with the balancing data. */
+export const PEOPLE_IDS = ["burrowbeavers", "quillfolk", "axolings", "shellguards", "dunehoppers", "starowls", "tideotters", "hornbeetles", "frostseals", "swapcoons", "glowsnails", "echobats"] as const;
+export type PeopleId = (typeof PEOPLE_IDS)[number];
+
+export const PEOPLES: Record<PeopleId, { name: string; icon: string }> = {
+  burrowbeavers: { name: "Dammbiber", icon: "🦫" },
+  quillfolk: { name: "Stachelvolk", icon: "🦔" },
+  axolings: { name: "Axolinge", icon: "🦎" },
+  shellguards: { name: "Panzerlinge", icon: "🛡️" },
+  dunehoppers: { name: "Dünenhüpfer", icon: "🐭" },
+  starowls: { name: "Sterneulen", icon: "🦉" },
+  tideotters: { name: "Gezeitenotter", icon: "🦦" },
+  hornbeetles: { name: "Hornkäfer", icon: "🪲" },
+  frostseals: { name: "Frostrobben", icon: "🦭" },
+  swapcoons: { name: "Tauschbären", icon: "🦝" },
+  glowsnails: { name: "Glimmschnecken", icon: "🐌" },
+  echobats: { name: "Echoflatterer", icon: "🦇" },
+};
+
 export const PLANET_TYPE_IDS = ["temperate", "arid", "ice", "ocean", "lava", "toxic"] as const;
 export type PlanetTypeId = (typeof PLANET_TYPE_IDS)[number];
 
