@@ -1,7 +1,7 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
 import { BIOMES, BUILDINGS, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
 import { sfx } from "../audio/sfx";
-import { artAnimation, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
+import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
 
 const TOP = -Math.PI / 2;
@@ -57,6 +57,7 @@ const MOTIONS: Record<string, Motion> = {
   "building.mine.t1": { kind: "slide", dist: 14, speed: 1.3 },
   "building.mine.t2": { kind: "slide", dist: 14, speed: 1.3 },
   "building.market": { kind: "rock", amp: 0.06, speed: 3 },
+  "building.battery": { kind: "rock", amp: 0.25, speed: 1.5 },
 };
 
 /** Chimney tops (256 canvas) that puff smoke while the building is staffed. */
@@ -104,6 +105,7 @@ export class PlanetView {
   private rockets: { sprite: Container; age: number; angle: number }[] = [];
   /** Invader fleet over the planet (placeholder until its art lands) and its hit points. */
   private readonly invader = new Text({ text: "🛸", style: { fontSize: 40 } });
+  private readonly invaderShip = new Sprite();
   private readonly invaderBar = new Graphics();
   /** Art layers, bottom to top; empty while the placeholder drawing is used. */
   private readonly layers = { body: new SpritePool(), ground: new SpritePool(), props: new SpritePool(), buildings: new SpritePool(), parts: new SpritePool(), fronts: new SpritePool(), citizens: new SpritePool(), overlays: new SpritePool() };
@@ -134,7 +136,8 @@ export class PlanetView {
     private readonly onSelect: (index: number) => void,
   ) {
     this.invader.anchor.set(0.5);
-    this.stage.addChild(this.stars, this.wheel, this.marker, this.invader, this.invaderBar);
+    this.invaderShip.anchor.set(0.5);
+    this.stage.addChild(this.stars, this.wheel, this.marker, this.invader, this.invaderShip, this.invaderBar);
     const l = this.layers;
     this.wheel.addChild(l.body.container, this.ground, l.ground.container, l.props.container, l.buildings.container, l.parts.container, l.fronts.container, l.citizens.container, this.effects.container, l.overlays.container, this.fx);
     this.bindInput(app.canvas);
@@ -430,16 +433,26 @@ export class PlanetView {
     const bar = this.invaderBar;
     bar.clear();
     const shown = !!inv && inv.target === planet.id && (inv.sieging || inv.spotted);
-    this.invader.visible = shown;
+    this.invader.visible = false;
+    this.invaderShip.visible = false;
     if (!inv || !shown) return;
     const R = this.radius;
     const near = inv.sieging;
     const bob = Math.sin(state.tick / 6) * R * 0.02;
     const x = this.cx + R * (near ? 0.75 : 1.05);
     const y = this.cy - R * (near ? 1.05 : 1.3) + bob;
-    setFontSize(this.invader, Math.max(20, R * (near ? 0.32 : 0.18)));
-    this.invader.position.set(x, y);
-    this.invader.alpha = near ? 1 : 0.6;
+    const size = Math.max(20, R * (near ? 0.32 : 0.18));
+    // Mothership art once it exists (asset list for Codex), the emoji until then.
+    const idle = artFrames("invader.mothership.idle");
+    const texture = inv.hp < inv.maxHp / 2 ? (artTexture("invader.mothership.damaged") ?? idle[0]) : idle[Math.floor(state.tick / 5) % Math.max(1, idle.length)];
+    const ship = texture ? this.invaderShip : this.invader;
+    if (texture) {
+      this.invaderShip.texture = texture;
+      this.invaderShip.scale.set((size * 1.6) / texture.width);
+    } else setFontSize(this.invader, size);
+    ship.visible = true;
+    ship.position.set(x, y);
+    ship.alpha = near ? 1 : 0.6;
     if (!near) return;
     const w = R * 0.5;
     const h = Math.max(4, R * 0.035);
