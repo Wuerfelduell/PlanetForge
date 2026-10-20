@@ -1,0 +1,219 @@
+{
+  "assets": [
+    {
+      "id": "resource.food",
+      "category": "resources",
+      "src": "art/src/resources/food.svg",
+      "out": "public/assets/sprites/resources/food.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "food"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.food.mini",
+      "category": "resources",
+      "src": "art/src/resources/food-mini.svg",
+      "out": "public/assets/sprites/resources/food-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "food",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.wood",
+      "category": "resources",
+      "src": "art/src/resources/wood.svg",
+      "out": "public/assets/sprites/resources/wood.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "wood"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.wood.mini",
+      "category": "resources",
+      "src": "art/src/resources/wood-mini.svg",
+      "out": "public/assets/sprites/resources/wood-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "wood",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.stone",
+      "category": "resources",
+      "src": "art/src/resources/stone.svg",
+      "out": "public/assets/sprites/resources/stone.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "stone"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.stone.mini",
+      "category": "resources",
+      "src": "art/src/resources/stone-mini.svg",
+      "out": "public/assets/sprites/resources/stone-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "stone",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.sand",
+      "category": "resources",
+      "src": "art/src/resources/sand.svg",
+      "out": "public/assets/sprites/resources/sand.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "sand"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.sand.mini",
+      "category": "resources",
+      "src": "art/src/resources/sand-mini.svg",
+      "out": "public/assets/sprites/resources/sand-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "sand",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.clay",
+      "category": "resources",
+      "src": "art/src/resources/clay.svg",
+      "out": "public/assets/sprites/resources/clay.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "clay"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.clay.mini",
+      "category": "resources",
+      "src": "art/src/resources/clay-mini.svg",
+      "out": "public/assets/sprites/resources/clay-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "clay",
+        "mini"
+      ],
+      "phase": "P0"
+    }
+  ]
+}
