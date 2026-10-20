@@ -251,6 +251,43 @@ function mini(type) {
   return `<defs><clipPath id="disc">${circle(128, 128, 102, C('tint-white'))}</clipPath></defs>${group('mini', circle(128, 128, 102, C(base)) + `<g clip-path="url(#disc)">${details}${path('M 177 38 A 102 102 0 0 1 68 211 Q 204 197 177 38 Z', C('ink'), 'stroke="none" opacity="0.2"')}</g>` + path('M 47 98 Q 57 62 87 49', 'none', `stroke="${C('cream')}" stroke-width="7" opacity="0.6"`) + circle(128, 128, 102, 'none'))}`;
 }
 
+function corona() {
+  let b = '';
+  for (let i = 0; i < 16; i++) {
+    const length = i % 3 === 0 ? 84 : 126;
+    b += `<g transform="rotate(${round(i * 22.5)} 512 512)">${path(`M 480 259 Q 465 217 500 ${length + 25} Q 512 ${length} 524 ${length + 25} Q 559 217 544 259 Q 512 278 480 259 Z`, C('energy'), 'stroke="none" opacity="0.3"')}</g>`;
+  }
+  return `<defs><filter id="corona-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter></defs>${group('corona', `<g filter="url(#corona-soft)">${b}</g>` + circle(512, 512, 273, 'none', `stroke="${C('energy')}" stroke-width="16" opacity="0.3"`))}`;
+}
+function asteroid(variant) {
+  const outlines = [
+    'M 39 77 Q 59 34 105 36 L 159 43 Q 191 43 207 84 L 219 138 Q 221 175 183 199 L 126 218 Q 86 223 59 189 L 35 142 Q 20 110 39 77 Z',
+    'M 26 112 Q 39 79 78 77 L 103 40 Q 127 23 154 55 L 170 83 Q 216 91 224 127 Q 229 167 194 178 L 160 175 Q 142 215 103 212 Q 77 210 72 181 L 39 169 Q 19 152 26 112 Z',
+    'M 66 45 Q 91 23 136 40 L 182 53 Q 210 66 207 104 L 199 156 Q 192 197 155 215 Q 114 232 87 204 L 58 172 Q 38 151 44 113 Z',
+    'M 32 131 Q 31 101 59 83 L 107 56 Q 133 44 163 71 L 206 109 Q 237 142 209 165 L 171 190 Q 135 210 101 187 L 56 172 Q 32 161 32 131 Z',
+  ];
+  const d = outlines[variant % 4];
+  let b = path(d, C('rock'));
+  b += `<g clip-path="url(#rock-shape)">${path('M 174 39 Q 197 134 111 209 L 129 236 L 224 213 L 240 69 Z', C('rock-dark'), 'stroke="none"')}</g>`;
+  for (const [x, y, rx, ry] of [[87, 101, 19, 14], [149, 145, 27, 20], [94, 165, 10, 8]]) {
+    const dx = variant % 2 ? 7 : 0;
+    b += ellipse(x + dx, y, rx, ry, C('rock-dark'), 'stroke-width="3"') + path(`M ${x + dx - rx + 3} ${y + 5} Q ${x + dx} ${y + ry + 6} ${x + dx + rx - 2} ${y + 4}`, 'none', `stroke="${C('rock', .18)}" stroke-width="4"`);
+  }
+  b += path('M 69 68 Q 87 53 108 55', 'none', `stroke="${C('rock', .18)}" stroke-width="8"`);
+  if (variant === 4) b += path('M 62 141 L 93 122 L 117 134 L 146 108 L 171 114 L 190 85 M 117 134 L 127 170', 'none', `stroke="${C('crystal')}" stroke-width="10"`) + path('M 86 125 L 110 136 L 138 112', 'none', `stroke="${C('crystal', .18)}" stroke-width="3"`) + `<g transform="translate(81 109) scale(0.8)">${crystal(64, 72, 48, 26)}</g>`;
+  return `<defs><clipPath id="rock-shape">${path(d, C('tint-white'))}</clipPath></defs>${group('asteroid', b)}`;
+}
+function nebula(variant) {
+  const primary = variant ? 'science' : 'crystal', secondary = variant ? 'water' : 'oil-sheen';
+  const defs = [primary, secondary].map((token, i) => `<radialGradient id="cloud-${i}"><stop stop-color="${C(token)}" stop-opacity="0.3"/><stop offset="0.5" stop-color="${C(token)}" stop-opacity="0.1"/><stop offset="1" stop-color="${C(token)}" stop-opacity="0"/></radialGradient>`).join('');
+  let b = '';
+  for (const [i, x, y, rx, ry, rotation] of [[0, 393, 427, 340, 220, -24], [1, 619, 558, 322, 262, 28], [0, 548, 371, 240, 222, 0]]) b += ellipse(x, y, rx, ry, `url(#cloud-${i})`, `stroke="none" transform="rotate(${variant ? -rotation : rotation} ${x} ${y})"`);
+  return `<defs>${defs}</defs>${group('nebula', b)}`;
+}
+function spaceBackground() {
+  return `<defs><linearGradient id="space-bg" x2="0" y2="1"><stop stop-color="${C('space-deep')}"/><stop offset="1" stop-color="${C('space')}"/></linearGradient></defs>${group('background', '<path d="M 0 0 H 1024 V 2048 H 0 Z" fill="url(#space-bg)" stroke="none"/>')}`;
+}
+
 // Each biome exports one reusable north-facing sector per planet size.
 for (const biome of biomes) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
@@ -272,5 +309,9 @@ add('space.starfield-tile', 'space', 'starfield-tile', starfield(), 512, 512, 'P
 for (const type of Object.keys(worlds)) add(`planet.mini-${type}`, 'planets', `mini-${type}`, mini(type), 256, 256, 'P1', [.5, .5], ['mini'], ['star-map']);
 add('planet.mini-owned-ring', 'planets', 'mini-owned-ring', group('ring', circle(128, 128, 114, 'none', `stroke="${C('tint-white')}" stroke-width="7"`) + circle(128, 14, 5, C('tint-white'), 'stroke="none"')), 256, 256, 'P1', [.5, .5], ['ring'], ['star-map', 'tintable']);
 for (const color of ['red', 'blue', 'white']) add(`space.sun-${color}`, 'space', `sun-${color}`, sun(color), 1024, 1024, 'P1', [.5, .5], ['glow', 'rays', 'core']);
+add('space.sun-corona', 'space', 'sun-corona', corona(), 1024, 1024, 'P1', [.5, .5], ['corona'], ['rotatable']);
+['a', 'b', 'c', 'd', 'rich'].forEach((name, i) => add(`space.asteroid-${name}`, 'space', `asteroid-${name}`, asteroid(i), 256, 256, 'P1', [.5, .5], ['asteroid'], ['star-map']));
+for (let i = 0; i < 2; i++) add(`space.nebula-${i ? 'b' : 'a'}`, 'space', `nebula-${i ? 'b' : 'a'}`, nebula(i), 1024, 1024, 'P1', [.5, .5], ['nebula'], ['background']);
+add('space.bg-space', 'space', 'bg-space', spaceBackground(), 1024, 2048, 'P1', [.5, .5], ['background']);
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`World: ${assets.length} SVG masters generated.`);

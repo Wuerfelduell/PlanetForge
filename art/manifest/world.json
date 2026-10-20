@@ -2419,6 +2419,202 @@
       ],
       "tags": [],
       "phase": "P1"
+    },
+    {
+      "id": "space.sun-corona",
+      "category": "space",
+      "src": "art/src/space/sun-corona.svg",
+      "out": "public/assets/sprites/space/sun-corona.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "corona"
+      ],
+      "tags": [
+        "rotatable"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-a",
+      "category": "space",
+      "src": "art/src/space/asteroid-a.svg",
+      "out": "public/assets/sprites/space/asteroid-a.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-b",
+      "category": "space",
+      "src": "art/src/space/asteroid-b.svg",
+      "out": "public/assets/sprites/space/asteroid-b.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-c",
+      "category": "space",
+      "src": "art/src/space/asteroid-c.svg",
+      "out": "public/assets/sprites/space/asteroid-c.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-d",
+      "category": "space",
+      "src": "art/src/space/asteroid-d.svg",
+      "out": "public/assets/sprites/space/asteroid-d.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.asteroid-rich",
+      "category": "space",
+      "src": "art/src/space/asteroid-rich.svg",
+      "out": "public/assets/sprites/space/asteroid-rich.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroid"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.nebula-a",
+      "category": "space",
+      "src": "art/src/space/nebula-a.svg",
+      "out": "public/assets/sprites/space/nebula-a.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "nebula"
+      ],
+      "tags": [
+        "background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.nebula-b",
+      "category": "space",
+      "src": "art/src/space/nebula-b.svg",
+      "out": "public/assets/sprites/space/nebula-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "nebula"
+      ],
+      "tags": [
+        "background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.bg-space",
+      "category": "space",
+      "src": "art/src/space/bg-space.svg",
+      "out": "public/assets/sprites/space/bg-space.png",
+      "viewBox": [
+        1024,
+        2048
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "background"
+      ],
+      "tags": [],
+      "phase": "P1"
     }
   ]
 }
