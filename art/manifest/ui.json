@@ -3221,6 +3221,94 @@
         "overlay-on-ui.discovery-badge"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "discovery.survival-kits",
+      "category": "discoveries",
+      "src": "art/src/discoveries/survival-kits.svg",
+      "out": "public/assets/sprites/discoveries/survival-kits.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "survival-kits",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.storage-tech",
+      "category": "discoveries",
+      "src": "art/src/discoveries/storage-tech.svg",
+      "out": "public/assets/sprites/discoveries/storage-tech.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "storage-tech",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.energy-grid",
+      "category": "discoveries",
+      "src": "art/src/discoveries/energy-grid.svg",
+      "out": "public/assets/sprites/discoveries/energy-grid.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "energy-grid",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.swift-feet",
+      "category": "discoveries",
+      "src": "art/src/discoveries/swift-feet.svg",
+      "out": "public/assets/sprites/discoveries/swift-feet.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "swift-feet",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
     }
   ]
 }
