@@ -14,7 +14,7 @@ npm run build:functions   # writes supabase/functions/game-command/dist/index.js
 supabase functions deploy game-command   # or upload dist/index.js as entrypoint index.js
 ```
 
-Redeploy whenever `src/sim` changes, otherwise server and client simulate different rules.
+Redeploy whenever `src/sim` changes, otherwise server and client simulate different rules. The workflow `.github/workflows/deploy-functions.yml` does this on every push to main that touches the rules, once the repository secret `SUPABASE_ACCESS_TOKEN` is set.
 
 ## Clock (live mode)
 
