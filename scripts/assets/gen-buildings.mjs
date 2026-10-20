@@ -253,18 +253,43 @@ function smoke(f){
 function dust(f){
   const spread=[0,9,17,22][f-1],opacity=[.9,.8,.5,.2][f-1];
   return `<g opacity="${opacity}">`+
-    `<g transform="translate(${-spread} 12) scale(0.7)">${puff('sand')}</g>`+
-    `<g transform="translate(${37+spread} 17) scale(0.6)">${puff('paper')}</g>`+
+    `<g transform="translate(${round(8-spread*.3)} 12) scale(0.7)">${puff('sand')}</g>`+
+    `<g transform="translate(${round(37+spread*.3)} 17) scale(0.6)">${puff('paper')}</g>`+
     [0,1,2].map(i=>circle(36+i*26+(i-1)*spread,42-f*4,4+(f===2?2:0),'sand')).join('')+'</g>';
 }
 function sparkle(f){
   const r=[18,39,14][f-1];
   return `<g opacity="${[.5,1,.3][f-1]}">${star(64,64,r,'energy')}${star(28,35,7,'cream')}${star(99,90,9,'cream')}${glint(`M60 ${69-r}L64 ${70-r}`)}</g>`;
 }
+function rays(radius,length,token='energy',count=8){
+  return Array.from({length:count},(_,i)=>{
+    const a=i*Math.PI*2/count;
+    return line(`M${round(64+Math.sin(a)*radius)} ${round(64+Math.cos(a)*radius)}L${round(64+Math.sin(a)*(radius+length))} ${round(64+Math.cos(a)*(radius+length))}`,token,4);
+  }).join('');
+}
+function resourcePop(f){
+  const radius=[15,31,44][f-1];
+  return `<g opacity="${[.9,.6,.2][f-1]}">${circle(64,64,radius,'cream',`fill-opacity="0.3" stroke="${C('energy')}" stroke-width="5"`)}${rays(radius+5,7)}</g>`;
+}
+function rocketFlame(f){
+  const tip=[112,122,116][f-1],bend=[-5,6,-2][f-1];
+  return path(`M43 8Q64 18 85 8Q101 48 77 80Q78 96 ${64+bend} ${tip}Q48 105 49 87Q26 57 43 8Z`,'ascension')+
+    path(`M53 13Q64 18 75 13Q83 52 64 ${tip-22}Q44 51 53 13Z`,'energy')+
+    path('M60 15H69Q77 41 64 57Q53 39 60 15Z','cream','stroke="none"');
+}
+function explosion(f){
+  const size=[.4,.8,1,.9,.7][f-1],opacity=[1,1,.9,.5,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    `<g transform="translate(64 64) scale(${size}) translate(-64 -64)">${puff(f<3?'ascension':'paper')}${star(64,65,f<3?23:12,'energy')}</g>`+
+    [[25-f*2,34-f*2],[95+f*2,32],[35,96+f*2],[98,95]].map(([x,y],i)=>star(x,y,round((i%2?6:9)*size),i%2?'clay':'energy')).join('')+'</g>';
+}
 const effects=[
   {id:'smoke',size:64,frames:4,fps:6,draw:smoke},
   {id:'dust',size:128,frames:4,fps:10,draw:dust},
   {id:'sparkle',size:64,frames:3,fps:8,draw:sparkle},
+  {id:'resource-pop',size:64,frames:3,fps:10,draw:resourcePop},
+  {id:'rocket-flame',size:128,frames:3,fps:12,anchor:[.5,0],loop:true,draw:rocketFlame},
+  {id:'explosion',size:256,frames:5,fps:12,draw:explosion},
 ];
 for(const effect of effects){
   const stem=`fx-${effect.id}`;

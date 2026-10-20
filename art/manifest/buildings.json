@@ -2272,6 +2272,75 @@
         "once"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "fx.resource-pop",
+      "category": "fx",
+      "src": "art/src/fx/fx-resource-pop-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-resource-pop-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "resource-pop",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.rocket-flame",
+      "category": "fx",
+      "src": "art/src/fx/fx-rocket-flame-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-rocket-flame-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 3,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "rocket-flame",
+        "animation",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.explosion",
+      "category": "fx",
+      "src": "art/src/fx/fx-explosion-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-explosion-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 5,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "explosion",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
     }
   ]
 }
