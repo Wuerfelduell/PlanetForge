@@ -7,13 +7,16 @@
     "dev": "vite --host",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview --host",
-    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.sim.json --noEmit",
-    "test": "vitest run"
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.sim.json --noEmit && tsc -p tsconfig.functions.json --noEmit",
+    "test": "vitest run",
+    "build:functions": "esbuild supabase/functions/game-command/index.ts --bundle --format=esm --platform=neutral --target=es2022 --external:jsr:* --outfile=supabase/functions/game-command/dist/index.js"
   },
   "dependencies": {
-    "pixi.js": "^8.22.0"
+    "pixi.js": "^8.22.0",
+    "@supabase/supabase-js": "^2.45.4"
   },
   "devDependencies": {
+    "esbuild": "^0.25.10",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vitest": "^5.0.5"
