@@ -859,6 +859,292 @@
       "phase": "P1"
     },
     {
+      "id": "people.tideotters.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "otter",
+        "ocean",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-emblem.svg",
+      "out": "public/assets/sprites/peoples/tideotters-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "tideotters",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "beetle",
+        "savanna",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-emblem.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "hornbeetles",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.citizen-ring",
       "category": "peoples",
       "src": "art/src/peoples/citizen-ring.svg",
