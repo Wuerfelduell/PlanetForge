@@ -1,13 +1,14 @@
 import { RESOURCE_IDS, RULES } from "./content";
 import { Rng } from "./rng";
+import { modified } from "./discoveries";
 import { activePlayers, countsFor, flightPlan, peopleOf, planetById, planetDefense, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
 import type { Flight, GameEvent, GameState, PlanetState, PlayerState, UnitState } from "./state";
 import type { RocketId } from "./content";
 
 /** Pays for a rocket (already validated by launchBlocker) and puts `count` idle units of the player into it. */
 export function launch(state: GameState, player: PlayerState, from: PlanetState, to: PlanetState, rocket: RocketId, count: number, events: GameEvent[]): void {
-  const plan = flightPlan(from, to, rocket, count);
   const economy = state.economies[player.economyId]!;
+  const plan = flightPlan(from, to, rocket, count, economy);
   for (const r of RESOURCE_IDS) economy.resources[r] -= plan.cost[r] ?? 0;
   const units = unitsOn(state, from.id, player.id)
     .filter((u) => u.segment === null)
@@ -79,12 +80,13 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   const loserPeople = state.players.filter((p) => p.economyId === planet.economyId).reduce((sum, p) => sum + peopleOf(state, p.id), 0);
 
   const rng = new Rng(state.rng);
-  const bonus = planetDefense(planet);
+  const bonus = planetDefense(state, planet);
+  const attackBonus = modified(state.economies[attacker.economyId], "battleRoll", 0);
   let attackers = flight.units.length;
   let attackerLosses = 0;
   let defenderLosses = 0;
   while (attackers > 0 && defenderLosses < defenders.length) {
-    const a = rng.int(1, RULES.battleDie);
+    const a = rng.int(1, RULES.battleDie) + attackBonus;
     const d = rng.int(1, RULES.battleDie) + bonus;
     if (a > d) defenderLosses++;
     else {
@@ -94,6 +96,13 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   }
   state.rng = rng.seed;
   state.lastCombatTick = state.tick;
+  // Medicine: the side that holds the field loses one fewer.
+  if (attackers > 0 && attackerLosses > 0 && modified(state.economies[attacker.economyId], "battleLosses", 0) < 0) {
+    attackers++;
+    attackerLosses--;
+  } else if (attackers === 0 && defenderLosses > 0 && modified(loserEconomy, "battleLosses", 0) < 0) {
+    defenderLosses--;
+  }
 
   for (const u of defenders.slice(0, defenderLosses)) delete state.units[u.id];
   const won = attackers > 0;

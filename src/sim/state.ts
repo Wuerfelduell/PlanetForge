@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 8;
+  version: 9;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -101,6 +101,12 @@ export interface EconomyState {
   /** Points from every planet of the economy add up; levels unlock buildings for all its players. */
   ascension: { level: number; points: number };
   starving: boolean;
+  /** Discoveries owned, in the order they were made. */
+  discoveries: string[];
+  /** Discoveries earned by level-ups and not chosen yet. */
+  picks: number;
+  /** Open choice: up to three options, one vote per member (coop: true majority decides). */
+  offer: { options: string[]; votes: Record<string, string> } | null;
 }
 
 export interface UnitState {
@@ -172,6 +178,8 @@ export type Command =
   | { type: "dequeue"; planetId: string; index: number }
   /** Sends `count` idle units of the sender from a planet with a launch pad. combat: versus attack. */
   | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
+  /** Votes for one option of the economy's open discovery offer (alone: picks it). */
+  | { type: "voteDiscovery"; discovery: string }
   /** versus: gives up; the player's units vanish and their planets become free ruins. */
   | { type: "surrender" }
   /** versus: agree to (or withdraw from) a draw; it happens once every remaining player agrees. */
@@ -205,6 +213,8 @@ export type GameEvent =
   | { type: "surrendered"; playerId: string }
   | { type: "drawOffer"; playerId: string; offer: boolean }
   | { type: "drawSuggested" }
+  | { type: "discovered"; economyId: string; discovery: string }
+  | { type: "discoveryVote"; playerId: string; discovery: string }
   | { type: "gameOver"; result: GameResult };
 
 export type LogEntry = { tick: number; event: GameEvent };
