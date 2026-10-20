@@ -1651,6 +1651,418 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big.svg",
+      "out": "public/assets/sprites/buildings/rocket-big.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-big",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big-construction.svg",
+      "out": "public/assets/sprites/buildings/rocket-big-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "rocket-big",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.rocket-big.off",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-big-off.svg",
+      "out": "public/assets/sprites/buildings/rocket-big-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-big",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower.svg",
+      "out": "public/assets/sprites/buildings/watchtower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-construction.svg",
+      "out": "public/assets/sprites/buildings/watchtower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner",
+        "scaffolding"
+      ],
+      "tags": [
+        "watchtower",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-off.svg",
+      "out": "public/assets/sprites/buildings/watchtower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin.svg",
+      "out": "public/assets/sprites/buildings/ruin.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ruin",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin-construction.svg",
+      "out": "public/assets/sprites/buildings/ruin-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "ruin",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruin.off",
+      "category": "buildings",
+      "src": "art/src/buildings/ruin-off.svg",
+      "out": "public/assets/sprites/buildings/ruin-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ruin",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.closed.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "open",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "open",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.open.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-open-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-open-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "open",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "idle",
+        "default-alias"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-construction.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "construction",
+        "default-alias"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.escape-pod.off",
+      "category": "buildings",
+      "src": "art/src/buildings/escape-pod-closed-off.svg",
+      "out": "public/assets/sprites/buildings/escape-pod-closed-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "escape-pod",
+        "closed",
+        "off",
+        "default-alias"
+      ],
+      "phase": "P1"
     }
   ]
 }

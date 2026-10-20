@@ -158,6 +158,26 @@ function market(){return foot(post(49,117,109)+post(196,117,109)+
   path('M30 137H225V145Q210 162 195 145Q180 162 164 145Q148 162 132 145Q115 162 99 145Q82 162 65 145Q47 161 30 145Z','cream')+
   [74,117,160].map(x=>sprout(x,192)).join('')+rect(37,195,180,30,'sand',9)+line('M61 208H100M154 208H195','iron',3));}
 
+function watchtower(){return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
+  line('M101 171L157 208M153 171L99 208','sand',6)+rect(64,95,128,51,'paper',12)+
+  [83,117,151].map(x=>rect(x,110,22,25,'coal',7)).join('')+roof(76,'leaf')+
+  group('banner',path('M142 145H177V188L160 201L142 188Z','danger')+circle(160,163,7,'sand'))+glint('M79 102H113'));}
+
+function ruin(){return foot(path('M39 225L48 190L78 177L100 195L129 171L164 184L176 167L208 186L221 225Z','rock-dark')+
+  path('M64 198V126Q65 118 75 119L103 123V155L117 165L111 205Z','paper')+
+  path('M154 213L151 152L170 142L182 161L194 156L201 207Z','clay')+
+  path('M81 225L97 198L123 202L132 225Z','rock')+path('M140 224L158 202L179 210L185 225Z','paper')+
+  line('M79 134L87 153L78 174M172 163L165 182L181 190','rock-dark',4)+leaf(55,219,.5));}
+
+function escapePod(tier,variant){
+  const open=variant==='open';
+  return foot(path('M55 219L46 204L59 190M192 202L210 190L220 222Z','rock-dark')+
+    `<g transform="rotate(-12 128 181)">${rect(65,103,126,120,'paper',45)}${path('M76 116Q128 77 180 116L183 137H73Z','clay')}`+
+    (open?rect(91,139,74,68,'coal',24)+crate(107,170,39)+path('M175 134Q221 125 224 164Q217 190 183 199Z','science')+glint('M191 143Q206 140 212 151'):
+      rect(91,139,74,68,'rock',24)+circle(128,166,19,'science')+glint('M119 164Q120 156 128 156'))+
+    `${line('M82 208H96M163 208H176','rock-dark',5)}</g>`);
+}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
@@ -174,6 +194,10 @@ const buildings = [
   {id:'hydro-farm',tiers:1,phase:'P1',parts:['glow'],draw:hydroFarm},
   {id:'storage',tiers:2,phase:'P1',draw:storage},
   {id:'market',tiers:1,phase:'P1',parts:['flag'],draw:market},
+  {id:'rocket-big',tiers:1,phase:'P1',parts:['flame-anchor'],draw:(t,v)=>rocket(t,v,true)},
+  {id:'watchtower',tiers:1,phase:'P1',parts:['banner'],draw:watchtower},
+  {id:'ruin',tiers:1,phase:'P1',draw:ruin},
+  {id:'escape-pod',tiers:1,phase:'P1',variants:['closed','open'],draw:escapePod},
 ];
 
 function scaffolding(){
@@ -198,6 +222,10 @@ for(const def of buildings){
       }
     }
   }
+}
+// A single-tier lookup resolves to the closed pod; explicit variant ids remain available.
+for(const asset of assets.filter(a=>a.id.startsWith('building.escape-pod.closed'))){
+  assets.push({...asset,id:asset.id.replace('.closed',''),tags:[...asset.tags,'default-alias']});
 }
 write('art/manifest/buildings.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Buildings: ${assets.length} assets generated.`);
