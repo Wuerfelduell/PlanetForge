@@ -164,3 +164,39 @@ img.bi { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
 .target .build.on { outline: 2px solid var(--accent, #ffd166); }
 ul.owned { list-style: none; padding: 0; margin: 4px 0; display: flex; flex-direction: column; gap: 4px; }
 ul.owned small { color: var(--muted); }
+
+/* Music button: sits on the right edge just above the panel. */
+#music-control {
+  position: fixed;
+  right: 12px;
+  bottom: calc(42vh + 10px);
+  bottom: calc(42dvh + 10px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+#music-control .music-toggle {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 17px;
+  cursor: pointer;
+  order: 2;
+}
+#music-control .music-toggle.off { opacity: 0.6; }
+#music-control .music-pop {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+#music-control .music-pop[hidden] { display: none; }
+#music-control .music-volume { width: 140px; accent-color: var(--accent); }

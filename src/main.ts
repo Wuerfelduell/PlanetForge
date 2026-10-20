@@ -7,6 +7,8 @@ import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
+import { music } from "./audio/music";
+import { mountMusicControl, unlockMusicOnFirstGesture } from "./audio/musicControl";
 import "./style.css";
 
 async function boot(): Promise<void> {
@@ -20,6 +22,9 @@ async function boot(): Promise<void> {
     autoDensity: true,
   });
   host.appendChild(app.canvas);
+
+  mountMusicControl(music);
+  unlockMusicOnFirstGesture(music);
 
   const saved = loadGame();
   let session: GameSession = saved ? new LocalSession(saved) : LocalSession.newGame();
@@ -122,6 +127,7 @@ async function boot(): Promise<void> {
   app.ticker.add((ticker) => {
     const events = session.update(ticker.deltaMS);
     if (events.length) ui.showEvents(events);
+    if (events.some((e) => e.type === "battle" && (e.attacker === session.playerId || e.defender === session.playerId))) music.alert();
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
