@@ -184,6 +184,16 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   joined: "coop.join",
   removed: "coop.leave",
   queueDropped: "ui.error",
+  discovered: "discovery.unlock",
+  invasionSpotted: "war.declare",
+  invasionArrived: "monster.roar",
+  siege: "battle.dice",
+  invasionDefeated: "ascension.levelup",
+  invasionLeft: "alert.warning",
+  sunWarning: "alert.warning",
+  shieldBuilt: "build.complete",
+  shieldComplete: "ascension.levelup",
+  eliminated: "coop.leave",
 };
 
 function playEventSounds(events: GameEvent[]): void {

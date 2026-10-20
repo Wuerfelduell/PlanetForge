@@ -4,6 +4,7 @@ import { createUnit } from "./units";
 import { grantPick, modified, resolveOffer } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
+import { goalsCycle } from "./invaders";
 import type { GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -160,4 +161,5 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
   }
 
   cycleChecks(state, events);
+  goalsCycle(state, events);
 }

@@ -1,0 +1,165 @@
+import { describe, expect, it } from "vitest";
+import {
+  advanceWithEvents,
+  applyCommand,
+  BLOCKADED,
+  createGame,
+  economyOfPlayer,
+  homePlanet,
+  INVADERS,
+  launchBlocker,
+  novaTickNow,
+  SUPERNOVA,
+  TICK_MS,
+  ticksPerCycle,
+  type GameEvent,
+  type GameState,
+} from "./index";
+
+const P1 = { id: "p1", name: "Seb" };
+
+const clone = (g: GameState) => JSON.parse(JSON.stringify(g)) as GameState;
+
+/** Runs whole cycles, collecting the events. */
+function run(g: GameState, cycles: number, events: GameEvent[] = []): GameState {
+  for (let i = 0; i < cycles; i++) {
+    const r = advanceWithEvents(g, g.simTime + ticksPerCycle(g) * TICK_MS);
+    events.push(...r.events);
+    g = r.state;
+  }
+  return g;
+}
+
+/** A coop game far enough along for invaders and the shield, with plenty in stock. */
+function lateGame(options: { invaders?: "off" | "normal" | "strong"; goal?: "endless" | "supernova" } = {}): GameState {
+  const g = clone(createGame("goals", [P1], { now: 0, ...options }));
+  const economy = economyOfPlayer(g, P1.id)!;
+  economy.ascension.level = INVADERS.minLevel;
+  for (const r of Object.keys(economy.resources) as (keyof typeof economy.resources)[]) economy.resources[r] = 5000;
+  return g;
+}
+
+/** Runs until the next wave starts its siege. */
+function untilSiege(g: GameState, events: GameEvent[]): GameState {
+  for (let i = 0; i < 60 && !g.invasion?.sieging; i++) g = run(g, 1, events);
+  expect(g.invasion?.sieging).toBe(true);
+  return g;
+}
+
+describe("invaders", () => {
+  it("come once the team reaches their level, with a warning before they arrive", () => {
+    const events: GameEvent[] = [];
+    let g = lateGame();
+    g.economies.e0!.ascension.level = INVADERS.minLevel - 1;
+    g = run(g, INVADERS.firstWaveCycles[1] + 2);
+    expect(g.invasion).toBeNull();
+    expect(g.nextWaveTick).toBeNull();
+
+    g = clone(g);
+    g.economies.e0!.ascension.level = INVADERS.minLevel;
+    g = untilSiege(g, events);
+    const spotted = events.findIndex((e) => e.type === "invasionSpotted");
+    const arrived = events.findIndex((e) => e.type === "invasionArrived");
+    expect(spotted).toBeGreaterThanOrEqual(0);
+    expect(arrived).toBeGreaterThan(spotted);
+    expect(g.invasion!.target).toBe(homePlanet(g, P1.id)!.id);
+  });
+
+  it("besieged planets cannot launch rockets", () => {
+    const g = untilSiege(lateGame(), []);
+    const home = homePlanet(g, P1.id)!;
+    home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
+    const free = g.planets.find((p) => p.economyId === null)!;
+    expect(launchBlocker(g, P1.id, home, free, "colony", 1)).toBe(BLOCKADED);
+  });
+
+  it("without defenders they wreck, kill and plunder, but never wipe the team out", () => {
+    const events: GameEvent[] = [];
+    let g = untilSiege(lateGame(), events);
+    g = clone(g);
+    // Everyone at work: nobody fights back.
+    const home = homePlanet(g, P1.id)!;
+    const fields = home.segments.filter((s) => s.revealed);
+    Object.values(g.units).forEach((u, i) => (u.segment = fields[i % fields.length]!.index));
+    const before = g.economies.e0!.resources.wood;
+    g = run(g, INVADERS.siegeCycles + 1, events);
+    expect(events).toContainEqual(expect.objectContaining({ type: "invasionLeft", plundered: true }));
+    expect(g.invasion).toBeNull();
+    expect(g.nextWaveTick).not.toBeNull();
+    expect(g.economies.e0!.resources.wood).toBeLessThan(before);
+    expect(Object.keys(g.units).length).toBeGreaterThanOrEqual(INVADERS.minSurvivors);
+  });
+
+  it("batteries shoot the mothership down and the team earns a reward", () => {
+    const events: GameEvent[] = [];
+    let g = clone(untilSiege(lateGame(), events));
+    const home = homePlanet(g, P1.id)!;
+    const units = Object.values(g.units);
+    // Two batteries manned with all hands are more than enough for the first wave.
+    const spots = home.segments.filter((s) => s.revealed && !s.building).slice(0, 2);
+    for (const s of spots) s.building = "battery";
+    units.forEach((u, i) => (u.segment = spots[i % 2]!.index));
+    g.invasion!.hp = 2;
+    const science = g.economies.e0!.resources.science;
+    g = run(g, 1, events);
+    expect(events).toContainEqual(expect.objectContaining({ type: "invasionDefeated", wave: 1 }));
+    expect(g.invasion).toBeNull();
+    expect(g.economies.e0!.resources.science).toBeGreaterThanOrEqual(science + INVADERS.reward.science);
+  });
+
+  it("stay away when switched off and in versus", () => {
+    expect(run(lateGame({ invaders: "off" }), 40).invasion).toBeNull();
+    const v = clone(createGame("vs", [P1, { id: "p2", name: "Mo" }], { now: 0, mode: "versus" }));
+    for (const e of Object.values(v.economies)) e.ascension.level = 9;
+    const after = run(v, 40);
+    expect(after.invasion).toBeNull();
+    expect(after.sun.novaTick).toBeNull();
+  });
+});
+
+describe("supernova", () => {
+  it("ends a coop game when the shield is missing", () => {
+    const events: GameEvent[] = [];
+    let g = lateGame({ invaders: "off" });
+    g.sun.novaTick = 3 * ticksPerCycle(g);
+    g = run(g, 4, events);
+    expect(g.result).toEqual({ supernova: true });
+    expect(events).toContainEqual({ type: "gameOver", result: { supernova: true } });
+  });
+
+  it("a shield flight builds a segment, delays the nova and brings the crew home", () => {
+    const events: GameEvent[] = [];
+    let g = lateGame({ invaders: "off" });
+    const home = homePlanet(g, P1.id)!;
+    home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
+    const nova = novaTickNow(g)!;
+    const people = Object.keys(g.units).length;
+    const r = applyCommand(g, P1.id, { type: "shieldFlight", planetId: home.id, segment: 3, repair: false }, g.simTime);
+    if (!r.ok) throw new Error(r.error);
+    g = r.state;
+    expect(Object.keys(g.units).length).toBe(people - SUPERNOVA.crew);
+    expect(applyCommand(g, P1.id, { type: "shieldFlight", planetId: home.id, segment: 3, repair: false }, g.simTime)).toEqual({ ok: false, error: "Dorthin ist schon eine Mannschaft unterwegs" });
+
+    for (let i = 0; i < 20 && !g.sun.shield[3]!.built; i++) g = run(g, 1, events);
+    expect(g.sun.shield[3]).toEqual({ built: true, hp: 100 });
+    expect(novaTickNow(g)).toBe(nova + SUPERNOVA.delayPerSegmentCycles * ticksPerCycle(g));
+    for (let i = 0; i < 20 && g.flights.length; i++) g = run(g, 1, events);
+    expect(events).toContainEqual(expect.objectContaining({ type: "landed", planetId: home.id, count: SUPERNOVA.crew }));
+    expect(events).toContainEqual(expect.objectContaining({ type: "shieldBuilt", segment: 3, repaired: false }));
+  });
+
+  it("a complete working shell saves the sun", () => {
+    const events: GameEvent[] = [];
+    let g = lateGame({ invaders: "off" });
+    const home = homePlanet(g, P1.id)!;
+    home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
+    g.sun.shield = g.sun.shield.map((_, i) => (i === 0 ? { built: false, hp: 0 } : { built: true, hp: 100 }));
+    const r = applyCommand(g, P1.id, { type: "shieldFlight", planetId: home.id, segment: 0, repair: false }, g.simTime);
+    if (!r.ok) throw new Error(r.error);
+    g = r.state;
+    for (let i = 0; i < 20 && !g.sun.saved; i++) g = run(g, 1, events);
+    expect(g.sun.saved).toBe(true);
+    expect(novaTickNow(g)).toBeNull();
+    expect(events).toContainEqual({ type: "shieldComplete" });
+  });
+});

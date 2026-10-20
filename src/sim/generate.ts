@@ -6,6 +6,7 @@ import {
   RARE_RESOURCES,
   RESOURCE_IDS,
   RULES,
+  SUPERNOVA,
   SYSTEM,
   type BiomeId,
   type PeopleId,
@@ -27,6 +28,9 @@ export interface GameOptions {
   maxPlayers?: number;
   cycleSeconds?: number;
   difficulty?: Difficulty;
+  /** coop only (design 13.4); versus has neither. Defaults: supernova, normal. */
+  goal?: "endless" | "supernova";
+  invaders?: "off" | "normal" | "strong";
 }
 
 /**
@@ -41,18 +45,30 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   if (players.length > maxPlayers) throw new Error(`At most ${maxPlayers} players`);
 
   const rng = new Rng(seedFromString(seed));
-  const sun = { type: rng.pick(SYSTEM.sunTypes) };
+  const sunType = rng.pick(SYSTEM.sunTypes);
+  const cycleSeconds = options.cycleSeconds ?? RULES.defaultCycleSeconds;
+  const goal = mode === "coop" ? (options.goal ?? "supernova") : "endless";
+  // Own stream so the world itself stays the same as before the supernova existed.
+  const novaCycle = new Rng(seedFromString(`${seed}:sun`)).int(...SUPERNOVA.cycles);
+  const sun = {
+    type: sunType,
+    novaTick: goal === "supernova" ? novaCycle * Math.round(cycleSeconds * RULES.ticksPerSecond) : null,
+    shield: Array.from({ length: SUPERNOVA.segments }, () => ({ built: false, hp: 0 })),
+    saved: false,
+  };
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 9,
+    version: 10,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
     tick: 0,
     settings: {
       mode,
-      cycleSeconds: options.cycleSeconds ?? RULES.defaultCycleSeconds,
+      cycleSeconds,
+      goal,
+      invaders: mode === "coop" ? (options.invaders ?? "normal") : "off",
       difficulty: options.difficulty ?? "normal",
       maxPlayers,
     },
@@ -61,6 +77,9 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     players: [],
     economies: mode === "coop" ? { e0: newEconomy("e0") } : {},
     sun,
+    invasion: null,
+    nextWaveTick: null,
+    wave: 0,
     planets,
     units: {},
     nextUnitId: 0,

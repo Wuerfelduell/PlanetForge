@@ -78,7 +78,7 @@ describe("world generation", () => {
     expect(g.players.map((p) => p.id)).toEqual(["p1", "p2"]);
     expect(g.hostId).toBe(P1.id);
     expect(g.simTime).toBe(5000);
-    expect(g.settings).toEqual({ mode: "coop", cycleSeconds: 60, difficulty: "normal", maxPlayers: SYSTEM.maxPlayers });
+    expect(g.settings).toEqual({ mode: "coop", cycleSeconds: 60, difficulty: "normal", maxPlayers: SYSTEM.maxPlayers, goal: "supernova", invaders: "normal" });
     expect(ticksPerCycle(g)).toBe(600);
   });
 
