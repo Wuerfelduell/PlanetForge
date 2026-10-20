@@ -1100,6 +1100,281 @@
         "off"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "building.power-coal",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal.svg",
+      "out": "public/assets/sprites/buildings/power-coal.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor"
+      ],
+      "tags": [
+        "power-coal",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-coal.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal-construction.svg",
+      "out": "public/assets/sprites/buildings/power-coal-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-coal",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-coal.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-coal-off.svg",
+      "out": "public/assets/sprites/buildings/power-coal-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke-anchor"
+      ],
+      "tags": [
+        "power-coal",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind.svg",
+      "out": "public/assets/sprites/buildings/power-wind.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades"
+      ],
+      "tags": [
+        "power-wind",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind-construction.svg",
+      "out": "public/assets/sprites/buildings/power-wind-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-wind",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-wind.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-wind-off.svg",
+      "out": "public/assets/sprites/buildings/power-wind-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blades"
+      ],
+      "tags": [
+        "power-wind",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar.svg",
+      "out": "public/assets/sprites/buildings/power-solar.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "power-solar",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar-construction.svg",
+      "out": "public/assets/sprites/buildings/power-solar-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "power-solar",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-solar.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-solar-off.svg",
+      "out": "public/assets/sprites/buildings/power-solar-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "power-solar",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter.svg",
+      "out": "public/assets/sprites/buildings/air-filter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan"
+      ],
+      "tags": [
+        "air-filter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter-construction.svg",
+      "out": "public/assets/sprites/buildings/air-filter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan",
+        "scaffolding"
+      ],
+      "tags": [
+        "air-filter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.air-filter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/air-filter-off.svg",
+      "out": "public/assets/sprites/buildings/air-filter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "fan"
+      ],
+      "tags": [
+        "air-filter",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }

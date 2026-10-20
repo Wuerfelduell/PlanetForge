@@ -114,6 +114,28 @@ function rocket(tier,variant,big=false){
     glint('M99 147V174')+anchor('flame-anchor',128,240);
 }
 
+function coalPlant(){
+  const tower=(x,y)=>path(`M${x} 199Q${x+16} ${y+42} ${x+5} ${y}H${x+53}Q${x+41} ${y+42} ${x+58} 199Z`,'rock')+
+    ellipse(x+29,y,24,8,'rock-dark')+glint(`M${x+15} ${y+17}L${x+12} ${y+45}`);
+  return foot(tower(47,70)+tower(139,89)+anchor('smoke-anchor',76,62)+rect(45,183,166,43,'clay',16)+
+    rect(62,198,47,21,'coal',7)+[122,148,174].map(x=>windowPane(x,197,17,20)).join(''));
+}
+
+function rotor(cx,cy,r,token){
+  return [0,120,240].map(a=>`<g transform="rotate(${a} ${cx} ${cy})">${path(`M${cx-6} ${cy-6}Q${cx-23} ${cy-r+12} ${cx-10} ${cy-r}Q${cx+3} ${cy-r-7} ${cx+7} ${cy-r+14}L${cx+7} ${cy-8}Z`,token)}${glint(`M${cx-8} ${cy-r+16}V${cy-r+33}`)}</g>`).join('');
+}
+function wind(){return foot(path('M112 226L120 95H136L144 226Z','paper')+
+  group('blades',rotor(128,99,76,'snow'))+circle(128,99,15,'science')+circle(123,95,5,'cream','stroke="none"'));}
+function solar(){return foot(post(88,158,66,'rock-dark')+post(161,158,66,'rock-dark')+
+  path('M50 90Q51 83 61 83H198Q206 83 208 93L221 174Q221 184 210 184H47Q35 184 36 174Z','deep-water')+
+  path('M58 97H194L205 169H50Z','science')+
+  line('M88 97L84 169M122 97V169M157 97L163 169M57 121H198M53 145H201','deep-water',5)+
+  glint('M64 105L75 105M98 105H110M135 105H146'));
+}
+function airFilter(){return foot(rect(73,69,110,155,'paper',30)+rect(84,60,88,20,'leaf',9)+
+  circle(128,129,47,'rock-dark')+circle(128,129,39,'science')+group('fan',rotor(128,129,32,'cream'))+
+  circle(128,129,9,'sand')+leaf(126,211,.7)+line('M146 188H164M146 202H164','rock-dark',4)+glint('M83 179V199'));}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
@@ -123,6 +145,10 @@ const buildings = [
   {id:'lab',tiers:2,phase:'P0',parts:['dome','antenna-light'],draw:lab},
   {id:'launchpad',tiers:1,phase:'P0',draw:launchpad},
   {id:'rocket-small',tiers:1,phase:'P0',parts:['flame-anchor'],draw:rocket},
+  {id:'power-coal',tiers:1,phase:'P1',parts:['smoke-anchor'],draw:coalPlant},
+  {id:'power-wind',tiers:1,phase:'P1',parts:['blades'],draw:wind},
+  {id:'power-solar',tiers:1,phase:'P1',draw:solar},
+  {id:'air-filter',tiers:1,phase:'P1',parts:['fan'],draw:airFilter},
 ];
 
 function scaffolding(){
