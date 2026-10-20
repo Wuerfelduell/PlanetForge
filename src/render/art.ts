@@ -9,7 +9,7 @@ interface AtlasIndex {
 }
 
 /** Atlas categories the planet view needs. */
-const CATEGORIES = ["biomes", "buildings", "peoples", "planets"];
+const CATEGORIES = ["biomes", "buildings", "peoples", "planets", "resources", "fx"];
 
 const textures = new Map<string, Texture>();
 let ready = false;
@@ -58,6 +58,24 @@ export function artTexture(id: string): Texture | undefined {
 export function buildingArt(building: string, state?: "off" | "construction"): Texture | undefined {
   const suffix = state ? `.${state}` : "";
   return textures.get(`building.${building}.t1${suffix}`) ?? textures.get(`building.${building}${suffix}`);
+}
+
+/** Split sprites of a building with a moving part (scripts/assets/gen-parts.mjs), if it has one. */
+export function buildingAnim(building: string): { key: string; back: Texture; part: Texture; front: Texture } | undefined {
+  for (const key of [`building.${building}.t1`, `building.${building}`]) {
+    const back = textures.get(`${key}.anim.back`);
+    const part = textures.get(`${key}.anim.part`);
+    const front = textures.get(`${key}.anim.front`);
+    if (back && part && front) return { key, back, part, front };
+  }
+  return undefined;
+}
+
+/** Frames of an animated asset (`<id>.f1`, `<id>.f2`, …); empty if not loaded. */
+export function artFrames(id: string): Texture[] {
+  const frames: Texture[] = [];
+  for (let f = 1; textures.has(`${id}.f${f}`); f++) frames.push(textures.get(`${id}.f${f}`)!);
+  return frames;
 }
 
 /** Single PNG of a resource icon for HTML (generated next to the atlases). */

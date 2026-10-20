@@ -1,10 +1,11 @@
 import { Application } from "pixi.js";
-import { homePlanet } from "./sim";
+import { homePlanet, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { OnlineMenu } from "./net/menu";
 import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
+import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
 import "./style.css";
@@ -121,7 +122,11 @@ async function boot(): Promise<void> {
   let uiTimer = 0;
   app.ticker.add((ticker) => {
     const events = session.update(ticker.deltaMS);
-    if (events.length) ui.showEvents(events);
+    if (events.length) {
+      ui.showEvents(events);
+      view.onEvents(events);
+      playEventSounds(events);
+    }
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
@@ -138,3 +143,27 @@ async function boot(): Promise<void> {
 }
 
 boot();
+
+// Browsers only allow audio after a user gesture; the first tap anywhere unlocks it.
+window.addEventListener("pointerdown", () => sfx.unlock(), { once: true, capture: true });
+
+/** Sounds for events that are not tied to a spot on the planet (those play in PlanetView). */
+const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
+  born: "citizen.born",
+  levelUp: "ascension.levelup",
+  depleted: "alert.warning",
+  starving: "alert.hungry",
+  launched: "rocket.launch",
+  landed: "rocket.land",
+  battle: "battle.dice",
+  joined: "coop.join",
+  removed: "coop.leave",
+  queueDropped: "ui.error",
+};
+
+function playEventSounds(events: GameEvent[]): void {
+  for (const e of events) {
+    const id = EVENT_SOUNDS[e.type];
+    if (id) sfx.play(id);
+  }
+}
