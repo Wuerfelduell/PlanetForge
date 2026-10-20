@@ -2516,6 +2516,42 @@
         "five",
         "six"
       ]
+    },
+    {
+      "id": "character.guide-mascot",
+      "category": "characters",
+      "src": "art/src/characters/guide-mascot-f{f}.svg",
+      "out": "public/assets/sprites/characters/guide-mascot-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 2,
+      "parts": [
+        "antenna",
+        "thruster",
+        "arms",
+        "shell",
+        "eyes",
+        "mouth"
+      ],
+      "tags": [
+        "tutorial",
+        "robot",
+        "drone"
+      ],
+      "phase": "P1",
+      "frameNames": [
+        "neutral",
+        "point",
+        "happy",
+        "worried"
+      ]
     }
   ]
 }
