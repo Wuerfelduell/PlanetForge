@@ -1,0 +1,12 @@
+{
+  "ink":"#2B2340", "space-deep":"#141029", "space":"#241B4A",
+  "cream":"#FFF4DE", "paper":"#F3E3C3", "grass":"#7BC96F", "leaf":"#3E9B5B",
+  "moss":"#5E8C4A", "water":"#4FB3E8", "deep-water":"#2B6CB0", "sand":"#F2D07A",
+  "savanna":"#E3B55B", "clay":"#D9825B", "rock":"#9AA0B5", "rock-dark":"#6B7089",
+  "snow":"#EAF6FF", "iron":"#B86B4B", "coal":"#3D3A4A", "oil":"#2E2440",
+  "oil-sheen":"#6B4FA0", "toxic":"#A8D84A", "uranium":"#8CF25A",
+  "crystal":"#C77DFF", "energy":"#FFD23F", "science":"#5BC0EB",
+  "ascension":"#FF9F1C", "danger":"#EF476F", "ok":"#06D6A0",
+  "player-1":"#FF6B6B", "player-2":"#4D96FF", "player-3":"#FFD93D", "player-4":"#6BCB77",
+  "tint-white":"#FFFFFF"
+}
