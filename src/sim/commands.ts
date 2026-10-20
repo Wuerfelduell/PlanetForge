@@ -1,6 +1,7 @@
 import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
 import { placeBuilding } from "./build";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
@@ -80,6 +81,15 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       checkResult(state, events);
       return null;
     }
+    case "voteDiscovery": {
+      const economy = state.economies[player.economyId]!;
+      if (!economy.offer) return "Gerade gibt es keine Entdeckung zur Wahl";
+      if (!economy.offer.options.includes(cmd.discovery)) return "Diese Entdeckung steht nicht zur Wahl";
+      economy.offer.votes[playerId] = cmd.discovery;
+      events.push({ type: "discoveryVote", playerId, discovery: cmd.discovery });
+      resolveOffer(state, economy, false, events);
+      return null;
+    }
     case "pause":
     case "resume": {
       if (!state.lobby.open) return "Das Spiel ist geschlossen";
@@ -152,7 +162,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (segment.builtBy && segment.builtBy !== playerId && playerById(state, segment.builtBy)) return "Das hat ein Mitspieler gebaut";
       const economy = state.economies[planet.economyId!]!;
       const def = BUILDINGS[segment.building];
-      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((def.cost[r] ?? 0) * RULES.demolishRefund);
+      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((def.cost[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
       for (const u of workersOn(state, planet, segment.index)) u.segment = null;
       segment.building = null;
       segment.builtBy = null;

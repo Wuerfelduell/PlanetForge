@@ -45,7 +45,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 8,
+    version: 9,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -136,6 +136,9 @@ function newEconomy(id: string): EconomyState {
     resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
     ascension: { level: 0, points: 0 },
     starving: false,
+    discoveries: [],
+    picks: 0,
+    offer: null,
   };
 }
 

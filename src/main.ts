@@ -2,6 +2,7 @@ import { Application } from "pixi.js";
 import { homePlanet, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
+import { ChatPanel } from "./net/chat";
 import { OnlineMenu } from "./net/menu";
 import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
@@ -31,13 +32,7 @@ async function boot(): Promise<void> {
       if (!result.ok) ui.toast(result.error, "warn");
       ui.render(session.state);
     },
-    showPlanet(planetId) {
-      const planet = session.state.planets.find((p) => p.id === planetId);
-      if (!planet) return;
-      ui.setPlanet(planet.id);
-      view.setPlanet(planet.id, planet.segments.length);
-      ui.render(session.state);
-    },
+    showPlanet,
     setSpeed(speed) {
       session.speed = speed;
     },
@@ -53,6 +48,26 @@ async function boot(): Promise<void> {
     },
   });
 
+  // What the player is looking at, for chat pins.
+  const focus = { planetId: "", segment: 0 };
+  function showPlanet(planetId: string): void {
+    const planet = session.state.planets.find((p) => p.id === planetId);
+    if (!planet) return;
+    focus.planetId = planet.id;
+    ui.setPlanet(planet.id);
+    view.setPlanet(planet.id, planet.segments.length);
+    ui.render(session.state);
+  }
+  const chat = new ChatPanel({
+    state: () => session.state,
+    focus: () => ({ ...focus }),
+    jump(planetId, segment) {
+      showPlanet(planetId);
+      view.select(segment);
+    },
+    toast: (message) => ui.toast(message),
+  });
+
   // Cloud games (coop and solo saves): the server is the authority, nothing is saved locally.
   const online = new OnlineMenu({
     play(next) {
@@ -61,6 +76,7 @@ async function boot(): Promise<void> {
       next.onRemoved = () => {
         ui.toast("Du wurdest aus dem Spiel entfernt", "warn");
         online.setCurrent(null);
+        chat.attach(null);
         const local = loadGame();
         session = local ? new LocalSession(local) : LocalSession.newGame();
         showHome();
@@ -68,6 +84,7 @@ async function boot(): Promise<void> {
         ui.render(session.state);
       };
       session = next;
+      chat.attach(next);
       showHome();
       view.select(0);
       ui.render(session.state);
@@ -76,6 +93,7 @@ async function boot(): Promise<void> {
   const leaveOnline = () => {
     if (session instanceof NetworkSession) void session.close();
     online.setCurrent(null);
+    chat.attach(null);
   };
   const saveLocal = () => {
     if (session instanceof LocalSession) saveGame(session.state);
@@ -89,11 +107,13 @@ async function boot(): Promise<void> {
     return start.economyId === economyId ? start : (state.planets.find((p) => p.economyId === economyId) ?? start);
   };
   const view = new PlanetView(app, (index) => {
+    focus.segment = index;
     ui.setSelected(index);
     ui.render(session.state);
   });
   const showHome = () => {
     ui.playerId = session.playerId;
+    focus.planetId = home().id;
     ui.setPlanet(home().id);
     view.setPlanet(home().id, home().segments.length);
   };
