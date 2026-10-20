@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "./supabase";
 
 /** Every game a player is in (own or joined) takes one of these slots. */
@@ -71,9 +72,12 @@ export async function removeSave(gameId: string): Promise<void> {
   if (error) fail(error.message);
 }
 
+/** Inside the app the page runs on localhost, so invites point to the published web version. */
+const PUBLIC_URL = "https://wuerfelduell.github.io/PlanetForge/";
+
 /** Link that opens the game and pre-fills the join code. */
 export function inviteLink(code: string): string {
-  const url = new URL(window.location.href);
+  const url = new URL(Capacitor.isNativePlatform() ? PUBLIC_URL : window.location.href);
   url.search = "";
   url.hash = "";
   url.searchParams.set("join", code);
