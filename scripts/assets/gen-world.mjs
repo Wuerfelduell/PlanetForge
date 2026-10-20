@@ -20,14 +20,14 @@ function sector(inner, outer, start, end) {
 }
 const arc = (r, start, end) => `M ${point(r, start)} A ${r} ${r} 0 0 1 ${point(r, end)}`;
 
-// An opaque half-open sector plus 2px of outward feathering. Adjacent copies
-// cover the feather with an opaque core: identical biomes never lose opacity.
+// One pixel of opaque overlap covers rasterizer antialiasing at radial joins;
+// the second overlap pixel feathers outward. Identical biomes stay fully opaque.
 // Six flat-alpha strips soften mixed-biome joins without terrain gradients.
 function edgeMask(segments) {
   const half = Math.PI / segments;
-  let strips = path(sector(398, 462, -half, half), C('tint-white'), 'stroke="none"');
+  let strips = path(sector(398, 462, -half - 1 / 400, half + 1 / 400), C('tint-white'), 'stroke="none"');
   for (let i = 0; i < 6; i++) {
-    const a = half + (i / 3) / 400, b = half + ((i + 1) / 3) / 400;
+    const a = half + (1 + i / 6) / 400, b = half + (1 + (i + 1) / 6) / 400;
     for (const side of [-1, 1]) strips += path(sector(398, 462, side < 0 ? -b : a, side < 0 ? -a : b), C('tint-white'), `stroke="none" opacity="${round((6 - i) / 7)}"`);
   }
   return `<mask id="edge" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">${strips}</mask>`;
