@@ -287,6 +287,294 @@
         "segments-32"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
     }
   ]
 }

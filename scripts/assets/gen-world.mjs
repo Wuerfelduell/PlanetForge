@@ -54,8 +54,8 @@ export function wedge(biome, segments) {
   return `<defs>${edgeMask(segments)}</defs>${group('ground', body, 'mask="url(#edge)"')}`;
 }
 
-// Batch one: three complete biomes (twelve master wedges).
-for (const biome of biomes.slice(0, 3)) for (const n of sizes) {
+// Each biome exports one reusable north-facing sector per planet size.
+for (const biome of biomes.slice(0, 6)) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
 }
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
