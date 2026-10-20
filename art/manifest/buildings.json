@@ -1,0 +1,308 @@
+{
+  "assets": [
+    {
+      "id": "building.housing.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1.svg",
+      "out": "public/assets/sprites/buildings/housing-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t1-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2.svg",
+      "out": "public/assets/sprites/buildings/housing-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t2-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3.svg",
+      "out": "public/assets/sprites/buildings/housing-t3.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t3-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t3.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t3-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t3-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier3",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1.svg",
+      "out": "public/assets/sprites/buildings/mine-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/mine-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel",
+        "scaffolding"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t1-off.svg",
+      "out": "public/assets/sprites/buildings/mine-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    }
+  ]
+}
