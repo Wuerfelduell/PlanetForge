@@ -1879,6 +1879,217 @@
         "icon-speed-3"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "ui.badge-no-energy",
+      "category": "ui",
+      "src": "art/src/ui/badge-no-energy.svg",
+      "out": "public/assets/sprites/ui/badge-no-energy.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-no-energy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-no-workers",
+      "category": "ui",
+      "src": "art/src/ui/badge-no-workers.svg",
+      "out": "public/assets/sprites/ui/badge-no-workers.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-no-workers"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-storage-full",
+      "category": "ui",
+      "src": "art/src/ui/badge-storage-full.svg",
+      "out": "public/assets/sprites/ui/badge-storage-full.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-storage-full"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-depleted",
+      "category": "ui",
+      "src": "art/src/ui/badge-depleted.svg",
+      "out": "public/assets/sprites/ui/badge-depleted.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-polluted",
+      "category": "ui",
+      "src": "art/src/ui/badge-polluted.svg",
+      "out": "public/assets/sprites/ui/badge-polluted.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-polluted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-hungry",
+      "category": "ui",
+      "src": "art/src/ui/badge-hungry.svg",
+      "out": "public/assets/sprites/ui/badge-hungry.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-hungry"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-producing",
+      "category": "ui",
+      "src": "art/src/ui/badge-producing.svg",
+      "out": "public/assets/sprites/ui/badge-producing.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-producing"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-upgrade-ready",
+      "category": "ui",
+      "src": "art/src/ui/badge-upgrade-ready.svg",
+      "out": "public/assets/sprites/ui/badge-upgrade-ready.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-upgrade-ready"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-attack",
+      "category": "ui",
+      "src": "art/src/ui/badge-attack.svg",
+      "out": "public/assets/sprites/ui/badge-attack.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-attack"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.cursor-player",
+      "category": "ui",
+      "src": "art/src/ui/cursor-player.svg",
+      "out": "public/assets/sprites/ui/cursor-player.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.25,
+        0.875
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "cursor-player"
+      ],
+      "phase": "P0",
+      "tintable": true
     }
   ]
 }
