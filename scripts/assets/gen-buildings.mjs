@@ -50,9 +50,34 @@ function mine(tier){
       group('wheel',circle(91,211,8,'rock-dark')+circle(122,211,8,'rock-dark'))));
 }
 
+function pump(tier){
+  if(tier===1)return foot(ellipse(127,215,55,12,'water')+rect(111,130,29,86,'science',12)+
+    path('M113 157H88Q76 157 76 170V184','none',`stroke="${paint('ink')}" stroke-width="18"`)+
+    path('M113 157H88Q76 157 76 170V184','none',`stroke="${paint('science')}" stroke-width="10"`)+
+    group('pump-arm',path('M125 133V100Q125 91 138 91H183','none',`stroke="${paint('ink')}" stroke-width="16"`)+
+      path('M125 133V100Q125 91 138 91H183','none',`stroke="${paint('iron')}" stroke-width="9"`)+circle(126,133,9,'sand'))+
+    glint('M118 172V197')+path('M76 190Q62 205 76 209Q90 205 76 190Z','water'));
+  return foot(path('M80 225L114 99H146L180 225H156L130 143L104 225Z','science')+
+    line('M103 183H156M111 156H146','deep-water',5)+post(193,101,123,'rock')+
+    group('pump-arm',path('M65 78Q118 65 177 83L205 74L215 112L195 121L181 101Q116 86 68 101Z','clay')+
+      circle(130,90,13,'sand')+glint('M80 83Q105 77 116 79'))+rect(56,199,46,25,'iron',10)+circle(78,211,7,'rock-dark'));
+}
+
+function sprout(x,y){return leaf(x,y,.6)+leaf(x+8,y,.5)+circle(x-5,y-10,6,'danger')+circle(x+6,y-8,6,'clay');}
+function farm(tier){
+  const rows=[185,211].map(y=>rect(40,y,176,15,'iron',7)+[62,105,148,191].map(x=>sprout(x,y)).join('')).join('');
+  if(tier===1)return foot(rect(151,120,54,58,'paper',9)+path('M140 123L176 87L216 122Z','clay')+door(170,141,20,34)+rows);
+  return foot(path('M39 222V125Q39 64 128 64Q217 64 217 125V222Z','science')+
+    path('M191 97Q209 121 209 211H199','none',`stroke="${paint('deep-water')}" stroke-width="9"`)+rows+
+    path('M42 127H213M128 67V220M84 73Q72 103 73 149M172 73Q184 104 184 149','none',`stroke="${paint('cream')}" stroke-width="7"`)+
+    glint('M51 122Q49 89 76 84')+rect(108,153,41,71,'snow',10)+line('M128 164V213','science',4));
+}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
-  {id:'mine',tiers:1,multi:true,phase:'P0',parts:['cart','wheel'],draw:mine},
+  {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
+  {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
+  {id:'farm',tiers:1,multi:true,phase:'P0',draw:farm},
 ];
 
 function scaffolding(){

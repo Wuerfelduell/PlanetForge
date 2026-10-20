@@ -303,6 +303,296 @@
         "off"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2.svg",
+      "out": "public/assets/sprites/buildings/mine-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/mine-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel",
+        "scaffolding"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.mine.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/mine-t2-off.svg",
+      "out": "public/assets/sprites/buildings/mine-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "wheel"
+      ],
+      "tags": [
+        "mine",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1.svg",
+      "out": "public/assets/sprites/buildings/pump-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/pump-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm",
+        "scaffolding"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t1-off.svg",
+      "out": "public/assets/sprites/buildings/pump-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2.svg",
+      "out": "public/assets/sprites/buildings/pump-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/pump-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm",
+        "scaffolding"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.pump.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pump-t2-off.svg",
+      "out": "public/assets/sprites/buildings/pump-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "pump-arm"
+      ],
+      "tags": [
+        "pump",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1.svg",
+      "out": "public/assets/sprites/buildings/farm-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/farm-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "farm",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.farm.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t1-off.svg",
+      "out": "public/assets/sprites/buildings/farm-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "farm",
+        "tier1",
+        "off"
+      ],
+      "phase": "P0"
     }
   ]
 }
