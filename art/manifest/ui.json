@@ -2781,6 +2781,226 @@
         "discovery-badge-available"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "discovery.diplomacy",
+      "category": "discoveries",
+      "src": "art/src/discoveries/diplomacy.svg",
+      "out": "public/assets/sprites/discoveries/diplomacy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "diplomacy",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.ecology",
+      "category": "discoveries",
+      "src": "art/src/discoveries/ecology.svg",
+      "out": "public/assets/sprites/discoveries/ecology.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "ecology",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.space-mining",
+      "category": "discoveries",
+      "src": "art/src/discoveries/space-mining.svg",
+      "out": "public/assets/sprites/discoveries/space-mining.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "space-mining",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.pure-science",
+      "category": "discoveries",
+      "src": "art/src/discoveries/pure-science.svg",
+      "out": "public/assets/sprites/discoveries/pure-science.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "pure-science",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.deep-drilling",
+      "category": "discoveries",
+      "src": "art/src/discoveries/deep-drilling.svg",
+      "out": "public/assets/sprites/discoveries/deep-drilling.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "deep-drilling",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.efficient-housing",
+      "category": "discoveries",
+      "src": "art/src/discoveries/efficient-housing.svg",
+      "out": "public/assets/sprites/discoveries/efficient-housing.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "efficient-housing",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.green-thumb",
+      "category": "discoveries",
+      "src": "art/src/discoveries/green-thumb.svg",
+      "out": "public/assets/sprites/discoveries/green-thumb.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "green-thumb",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.rocketry",
+      "category": "discoveries",
+      "src": "art/src/discoveries/rocketry.svg",
+      "out": "public/assets/sprites/discoveries/rocketry.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "rocketry",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.long-range-sight",
+      "category": "discoveries",
+      "src": "art/src/discoveries/long-range-sight.svg",
+      "out": "public/assets/sprites/discoveries/long-range-sight.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "long-range-sight",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.trade-routes",
+      "category": "discoveries",
+      "src": "art/src/discoveries/trade-routes.svg",
+      "out": "public/assets/sprites/discoveries/trade-routes.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "trade-routes",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
     }
   ]
 }
