@@ -2,6 +2,7 @@ import { BUILDINGS, RULES, type ResourceId } from "./content";
 import { buildBlocker, cloneState, housing, NOT_AFFORDABLE, nextLevelThreshold, planetById, segmentOutput, TICK_MS, ticksPerCycle } from "./rules";
 import { createUnit } from "./units";
 import { placeBuilding } from "./build";
+import { cycleChecks, landFlights } from "./space";
 import type { GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -46,6 +47,8 @@ export function appendLog(state: GameState, events: GameEvent[]): void {
 
 /** Exactly one fixed tick. Deterministic: same state in, same state out. */
 function stepInPlace(state: GameState, events: GameEvent[]): void {
+  landFlights(state, events);
+
   // Workers per planet and segment, counted once per tick.
   const workers = new Map<string, number>();
   const residents = new Map<string, number>();
@@ -151,4 +154,6 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
       events.push({ type: "levelUp", economyId: economy.id, level: a.level });
     }
   }
+
+  cycleChecks(state, events);
 }

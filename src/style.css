@@ -145,3 +145,10 @@ button:not(:disabled):active { transform: scale(0.96); }
 @media (min-width: 700px) {
   #panel { left: 50%; right: auto; width: 520px; transform: translateX(-50%); }
 }
+
+.targets { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.target { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.target > span small { color: var(--muted); display: block; }
+.target .build { min-width: 128px; }
+.target .build .cost .short { color: var(--bad); }
+button.chip { font: inherit; cursor: pointer; }

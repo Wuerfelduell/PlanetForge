@@ -1,6 +1,7 @@
 import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
 import { placeBuilding } from "./build";
-import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { checkEliminations, checkResult, launch, surrender } from "./space";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
 
@@ -42,7 +43,41 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       for (const queue of Object.values(state.queues)) {
         for (let i = queue.length - 1; i >= 0; i--) if (queue[i]!.playerId === cmd.playerId) queue.splice(i, 1);
       }
+      state.flights = state.flights.filter((f) => f.owner !== cmd.playerId);
+      for (const u of Object.values(state.units)) {
+        if (u.originalOwner !== cmd.playerId) continue;
+        delete u.originalOwner;
+        delete u.capturedTick;
+      }
+      // versus: their planets become free ruins (in coop the team keeps the shared planet).
+      for (const planet of state.planets) {
+        if (planet.economyId && !state.players.some((p) => p.economyId === planet.economyId)) {
+          planet.economyId = null;
+          delete state.queues[planet.id];
+        }
+      }
       events.push({ type: "removed", playerId: cmd.playerId, by: playerId });
+      checkEliminations(state, events);
+      return null;
+    }
+  }
+
+  // Everything below changes the game itself.
+  if (state.result) return "Das Spiel ist vorbei";
+  if (player.eliminated) return "Du bist ausgeschieden";
+
+  switch (cmd.type) {
+    case "surrender":
+    case "offerDraw": {
+      if (state.settings.mode !== "versus") return "Nur im Gegeneinander-Modus";
+      if (cmd.type === "surrender") {
+        surrender(state, player, events);
+        return null;
+      }
+      if (state.players.length < 2) return "Allein gibt es kein Unentschieden";
+      player.offersDraw = cmd.offer;
+      events.push({ type: "drawOffer", playerId, offer: cmd.offer });
+      checkResult(state, events);
       return null;
     }
     case "pause":
@@ -79,6 +114,14 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     const queue = state.queues[planet.id] ?? [];
     if (!queue[cmd.index]) return "Diesen Auftrag gibt es nicht";
     queue.splice(cmd.index, 1);
+    return null;
+  }
+  if (cmd.type === "launch") {
+    const to = planetById(state, cmd.to);
+    if (!to) return "Unbekanntes Ziel";
+    const blocker = launchBlocker(state, playerId, planet, to, cmd.rocket, cmd.count);
+    if (blocker) return blocker;
+    launch(state, player, planet, to, cmd.rocket, cmd.count, events);
     return null;
   }
   const segment = checkSegment(player, planet, cmd.segment);

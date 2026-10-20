@@ -1,4 +1,4 @@
-import type { BiomeId, BuildingId, PeopleId, PlanetTypeId, ResourceId } from "./content";
+import type { BiomeId, BuildingId, PeopleId, PlanetTypeId, ResourceId, RocketId } from "./content";
 
 /**
  * coop: everyone shares one start planet and one economy (stockpile + ascension); long-term play.
@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 7;
+  version: 8;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -35,8 +35,17 @@ export interface GameState {
   /** Every inhabitant is a unit with an owner; the owner alone moves it. */
   units: Record<string, UnitState>;
   nextUnitId: number;
+  /** Rockets on their way; their passengers live inside the flight, not in `units`. */
+  flights: Flight[];
+  nextFlightId: number;
   /** Per planet up to RULES.queueLength build orders that run as soon as the economy can pay. */
   queues: Record<string, QueuedBuild[]>;
+  /** versus: last tick with a battle, for the draw offer after RULES.drawOfferCycles quiet cycles. */
+  lastCombatTick: number;
+  /** versus: the game offered a draw already (once per game). */
+  drawSuggested: boolean;
+  /** Set once the game is decided (versus); no game commands are accepted afterwards. */
+  result: GameResult | null;
   /** Recent events for the "since your last visit" view, newest last, at most RULES.logLength. */
   log: LogEntry[];
 }
@@ -65,6 +74,25 @@ export interface PlayerState {
   economyId: string;
   homePlanetId: string;
   joinedTick: number;
+  /** versus: has no inhabitants left (captives count for their original owner) or surrendered. */
+  eliminated: boolean;
+  surrendered: boolean;
+  /** versus: agrees to end the game as a draw. */
+  offersDraw: boolean;
+}
+
+export type GameResult = { winner: string } | { draw: true };
+
+export interface Flight {
+  id: string;
+  owner: string;
+  rocket: RocketId;
+  from: string;
+  to: string;
+  /** Passengers; back in GameState.units once they land. */
+  units: UnitState[];
+  launchTick: number;
+  arrivalTick: number;
 }
 
 export interface EconomyState {
@@ -84,6 +112,9 @@ export interface UnitState {
   /** null = idle. */
   segment: number | null;
   role: "worker";
+  /** versus: captured from this player; still counts as theirs until assimilated. */
+  originalOwner?: string;
+  capturedTick?: number;
 }
 
 export interface QueuedBuild {
@@ -139,6 +170,12 @@ export type Command =
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
+  /** Sends `count` idle units of the sender from a planet with a launch pad. combat: versus attack. */
+  | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
+  /** versus: gives up; the player's units vanish and their planets become free ruins. */
+  | { type: "surrender" }
+  /** versus: agree to (or withdraw from) a draw; it happens once every remaining player agrees. */
+  | { type: "offerDraw"; offer: boolean }
   /** Host only: removes a player; their units vanish (Seb: no gifting to teammates). */
   | { type: "kickPlayer"; playerId: string }
   | { type: "openLobby" }
@@ -159,7 +196,16 @@ export type GameEvent =
   | { type: "joined"; playerId: string }
   | { type: "removed"; playerId: string; by: string }
   | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }
-  | { type: "lobby"; open: boolean; paused: boolean; playerId: string };
+  | { type: "lobby"; open: boolean; paused: boolean; playerId: string }
+  | { type: "launched"; flightId: string; playerId: string; from: string; to: string; rocket: RocketId; count: number; arrivalTick: number }
+  | { type: "landed"; flightId: string; playerId: string; planetId: string; count: number; colonized: boolean }
+  | { type: "battle"; planetId: string; attacker: string; defender: string; attackerLosses: number; defenderLosses: number; won: boolean; captured: number }
+  | { type: "assimilated"; playerId: string; count: number }
+  | { type: "eliminated"; playerId: string }
+  | { type: "surrendered"; playerId: string }
+  | { type: "drawOffer"; playerId: string; offer: boolean }
+  | { type: "drawSuggested" }
+  | { type: "gameOver"; result: GameResult };
 
 export type LogEntry = { tick: number; event: GameEvent };
 

@@ -23,7 +23,8 @@ export class PlanetView {
   private readonly wheel = new Container();
   private readonly ground = new Graphics();
   private readonly marker = new Graphics();
-  private readonly sprites: SegmentSprites[] = [];
+  private sprites: SegmentSprites[] = [];
+  private segmentCount = 0;
 
   private cx = 0;
   private cy = 0;
@@ -38,25 +39,40 @@ export class PlanetView {
 
   constructor(
     app: Application,
-    private readonly segmentCount: number,
     private readonly onSelect: (index: number) => void,
   ) {
     this.stage.addChild(this.stars, this.wheel, this.marker);
     this.wheel.addChild(this.ground);
-    for (let i = 0; i < segmentCount; i++) {
-      const icon = new Text({ text: "", style: { fontSize: 28 } });
-      icon.anchor.set(0.5, 0.9);
-      const mystery = new Text({ text: "?", style: { fontSize: 20, fill: 0x8890b8, fontWeight: "700" } });
-      mystery.anchor.set(0.5);
-      this.wheel.addChild(icon, mystery);
-      this.sprites.push({ icon, mystery });
-    }
-    this.rotation = this.targetRotation = rotationFor(0, segmentCount);
     this.bindInput(app.canvas);
   }
 
   /** Planet shown on the wheel. */
   planetId = "";
+
+  /** Shows another planet (planets differ in size), starting at segment 0. */
+  setPlanet(planetId: string, segmentCount: number): void {
+    this.planetId = planetId;
+    if (segmentCount !== this.segmentCount) {
+      for (const sp of this.sprites) {
+        sp.icon.destroy();
+        sp.mystery.destroy();
+      }
+      this.sprites = [];
+      for (let i = 0; i < segmentCount; i++) {
+        const icon = new Text({ text: "", style: { fontSize: 28 } });
+        icon.anchor.set(0.5, 0.9);
+        const mystery = new Text({ text: "?", style: { fontSize: 20, fill: 0x8890b8, fontWeight: "700" } });
+        mystery.anchor.set(0.5);
+        this.wheel.addChild(icon, mystery);
+        this.sprites.push({ icon, mystery });
+      }
+      this.segmentCount = segmentCount;
+    }
+    this.selected = 0;
+    this.rotation = this.targetRotation = rotationFor(0, segmentCount);
+    this.dirty = true;
+    this.onSelect(0);
+  }
 
   private planet(state: GameState) {
     return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
