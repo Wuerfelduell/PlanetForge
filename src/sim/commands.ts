@@ -1,5 +1,6 @@
-import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
+import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
 import { placeBuilding } from "./build";
+import { shieldBlocker, shieldFlightPlan } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
@@ -124,6 +125,20 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     const queue = state.queues[planet.id] ?? [];
     if (!queue[cmd.index]) return "Diesen Auftrag gibt es nicht";
     queue.splice(cmd.index, 1);
+    return null;
+  }
+  if (cmd.type === "shieldFlight") {
+    const blocker = shieldBlocker(state, playerId, planet, cmd.segment, cmd.repair);
+    if (blocker) return blocker;
+    const economy = state.economies[player.economyId]!;
+    const plan = shieldFlightPlan(planet, cmd.repair, economy);
+    for (const r of RESOURCE_IDS) economy.resources[r] -= plan.cost[r] ?? 0;
+    const crew = idleUnits(state, planet, playerId).slice(0, SUPERNOVA.crew);
+    for (const u of crew) delete state.units[u.id];
+    const id = `f${state.nextFlightId++}`;
+    const arrivalTick = state.tick + plan.seconds * RULES.ticksPerSecond;
+    state.flights.push({ id, owner: playerId, rocket: "colony", from: planet.id, to: "sun", units: crew, launchTick: state.tick, arrivalTick, shield: { segment: cmd.segment, repair: cmd.repair } });
+    events.push({ type: "launched", flightId: id, playerId, from: planet.id, to: "sun", rocket: "colony", count: crew.length, arrivalTick });
     return null;
   }
   if (cmd.type === "launch") {

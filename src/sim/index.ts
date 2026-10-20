@@ -15,6 +15,7 @@ export * from "./state";
 export * from "./rules";
 export { addPlayer, createGame, type GameOptions } from "./generate";
 export { applyCommand } from "./commands";
+export { novaTickNow } from "./invaders";
 export { discoveryCost, discoveryDescription, discoveryName, modified, OFFERABLE, type DiscoveryId } from "./discoveries";
 export { advance, advanceWithEvents } from "./step";
 export { nextRandom, Rng, seedFromString } from "./rng";
