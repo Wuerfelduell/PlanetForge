@@ -889,6 +889,217 @@
         "off"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2.svg",
+      "out": "public/assets/sprites/buildings/lab-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/lab-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light",
+        "scaffolding"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.lab.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/lab-t2-off.svg",
+      "out": "public/assets/sprites/buildings/lab-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "antenna-light"
+      ],
+      "tags": [
+        "lab",
+        "tier2",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad.svg",
+      "out": "public/assets/sprites/buildings/launchpad.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "launchpad",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad-construction.svg",
+      "out": "public/assets/sprites/buildings/launchpad-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "launchpad",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.launchpad.off",
+      "category": "buildings",
+      "src": "art/src/buildings/launchpad-off.svg",
+      "out": "public/assets/sprites/buildings/launchpad-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "launchpad",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small.svg",
+      "out": "public/assets/sprites/buildings/rocket-small.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-small",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small-construction.svg",
+      "out": "public/assets/sprites/buildings/rocket-small-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "rocket-small",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.rocket-small.off",
+      "category": "buildings",
+      "src": "art/src/buildings/rocket-small-off.svg",
+      "out": "public/assets/sprites/buildings/rocket-small-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flame-anchor"
+      ],
+      "tags": [
+        "rocket-small",
+        "off"
+      ],
+      "phase": "P0"
     }
   ]
 }

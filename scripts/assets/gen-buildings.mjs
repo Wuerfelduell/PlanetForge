@@ -96,13 +96,33 @@ function lab(tier){
     windowPane(73,174,30,28)+windowPane(153,174,30,28)+door(113,184,30,41));
 }
 
+function launchpad(){return foot(post(42,54,169,'rock')+post(85,54,169,'rock')+
+  line('M54 72L85 107L54 142L85 177L54 211M54 107H85M54 177H85','rock-dark',6)+
+  rect(35,46,68,20,'clay',8)+rect(91,95,60,16,'rock',7)+
+  rect(107,195,93,22,'rock-dark',10)+rect(95,211,117,14,'paper',7)+
+  [114,142,170,198].map(x=>rect(x,216,8,7,'ascension',3,'stroke="none"')).join('')+glint('M40 51H86'));}
+
+function rocket(tier,variant,big=false){
+  const fins=big?path('M91 123Q48 151 41 224Q60 222 86 203Z','crystal')+path('M165 123Q208 151 215 224Q196 222 170 203Z','crystal'):
+    path('M91 157Q62 171 59 231L92 212Z','clay')+path('M165 157Q194 171 197 231L164 212Z','clay');
+  return fins+path('M102 205H154L161 236Q128 240 95 236Z','rock-dark')+
+    path(`M88 201V${big?91:106}Q88 59 128 ${big?18:34}Q168 59 168 ${big?91:106}V201Q128 220 88 201Z`,'cream')+
+    path(`M128 ${big?18:34}Q151 40 161 ${big?67:80}Q128 95 95 ${big?67:80}Q105 44 128 ${big?18:34}Z`,big?'crystal':'clay')+
+    path('M157 104V192Q153 201 142 203','none',`stroke="${paint('paper')}" stroke-width="11"`)+
+    circle(128,121,24,'rock-dark')+circle(128,121,17,'science')+glint('M117 120Q117 111 127 111')+
+    (big?path('M128 159L144 180L128 210L112 180Z','crystal'):rect(115,178,26,24,'clay',9))+
+    glint('M99 147V174')+anchor('flame-anchor',128,240);
+}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
   {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
   {id:'farm',tiers:2,phase:'P0',draw:farm},
   {id:'foundry',tiers:2,phase:'P0',parts:['glow','smoke-anchor'],draw:foundry},
-  {id:'lab',tiers:1,multi:true,phase:'P0',parts:['dome','antenna-light'],draw:lab},
+  {id:'lab',tiers:2,phase:'P0',parts:['dome','antenna-light'],draw:lab},
+  {id:'launchpad',tiers:1,phase:'P0',draw:launchpad},
+  {id:'rocket-small',tiers:1,phase:'P0',parts:['flame-anchor'],draw:rocket},
 ];
 
 function scaffolding(){
