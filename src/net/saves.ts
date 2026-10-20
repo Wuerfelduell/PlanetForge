@@ -50,8 +50,14 @@ export function firstFreeSlot(saves: SaveSlot[]): number | null {
   return null;
 }
 
-export async function createSave(slot: number, name: string, displayName: string): Promise<string> {
-  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName });
+/** Coop options the host picks for a new game (design 13.4); the server keeps them with the save. */
+export interface SaveOptions {
+  goal: "endless" | "supernova";
+  invaders: "off" | "normal" | "strong";
+}
+
+export async function createSave(slot: number, name: string, displayName: string, options: SaveOptions): Promise<string> {
+  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName, p_max_players: 4, p_options: options });
   if (error) fail(error.message);
   return data.id;
 }

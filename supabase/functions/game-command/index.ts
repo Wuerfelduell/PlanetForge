@@ -19,6 +19,9 @@ interface LoadedGame {
   version: number;
   state: Parameters<typeof step>[0]["state"];
   clock_at: string | null;
+  /** Missing until the options migration ran. */
+  max_players?: number;
+  options?: { goal?: "endless" | "supernova"; invaders?: "off" | "normal" | "strong" };
   members: { user_id: string; player_id: string; display_name: string }[];
 }
 
@@ -48,6 +51,7 @@ Deno.serve(async (req) => {
       playerId: me.player_id,
       request,
       now,
+      options: { ...game.options, maxPlayers: game.max_players },
     });
     if (!result.ok) return json({ ok: false, error: result.error, version: game.version, state: game.state });
 

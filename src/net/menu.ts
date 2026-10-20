@@ -1,5 +1,5 @@
 import { NetworkSession } from "./netSession";
-import { createSave, firstFreeSlot, inviteLink, joinSave, leaveGame, listSaves, removeSave, SLOT_COUNT, type SaveSlot } from "./saves";
+import { createSave, firstFreeSlot, inviteLink, joinSave, leaveGame, listSaves, removeSave, SLOT_COUNT, type SaveOptions, type SaveSlot } from "./saves";
 import { ensureSignedIn } from "./supabase";
 import "./menu.css";
 
@@ -75,6 +75,15 @@ export class OnlineMenu {
     nameRow.append(nameInput);
     sheet.append(nameRow);
 
+    const options = readOptions();
+    const optionRow = el("div", "field");
+    optionRow.append(el("span", "", "Neue Spiele"));
+    optionRow.append(
+      select("Spielziel", options.goal, { supernova: "Supernova abwehren", endless: "Endlos" }, (v) => writeOptions({ ...options, goal: (options.goal = v) })),
+      select("Invasoren", options.invaders, { normal: "Invasoren normal", strong: "Invasoren stark", off: "Keine Invasoren" }, (v) => writeOptions({ ...options, invaders: (options.invaders = v) })),
+    );
+    sheet.append(optionRow);
+
     const list = el("div", "slots");
     for (let s = 1; s <= SLOT_COUNT; s++) {
       const save = saves.find((g) => g.slot === s);
@@ -84,7 +93,7 @@ export class OnlineMenu {
         row.append(el("span", "slot-name muted", "Frei"));
         const create = button("Neues Spiel", () =>
           this.run(async () => {
-            const id = await createSave(s, `Welt ${s}`, name(nameInput));
+            const id = await createSave(s, `Welt ${s}`, name(nameInput), options);
             await this.play(id);
           }),
         );
@@ -226,6 +235,33 @@ function name(input: HTMLInputElement): string {
   const value = input.value.trim().slice(0, 24) || "Spieler";
   writeName(value);
   return value;
+}
+
+function select<T extends string>(label: string, value: T, choices: Record<T, string>, onChange: (value: T) => void): HTMLSelectElement {
+  const node = document.createElement("select");
+  node.setAttribute("aria-label", label);
+  for (const [key, text] of Object.entries(choices) as [T, string][]) node.append(new Option(text, key, false, key === value));
+  node.addEventListener("change", () => onChange(node.value as T));
+  return node;
+}
+
+const OPTIONS_KEY = "planetforge.newGameOptions";
+
+function readOptions(): SaveOptions {
+  const fallback: SaveOptions = { goal: "supernova", invaders: "normal" };
+  try {
+    return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
+  } catch {
+    return fallback;
+  }
+}
+
+function writeOptions(options: SaveOptions): void {
+  try {
+    localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+  } catch {
+    // ignore: only a convenience, like the name
+  }
 }
 
 function readName(): string {

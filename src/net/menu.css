@@ -84,3 +84,12 @@
 #online-menu .slot-name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 #online-menu .slot-name small { color: var(--muted); }
 #online-menu .flash { color: var(--good); word-break: break-all; }
+#online-menu select {
+  border: 1px solid var(--surface-2);
+  border-radius: 10px;
+  padding: 6px 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
