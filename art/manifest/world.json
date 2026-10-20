@@ -1895,6 +1895,94 @@
         "segments-32"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "planet.planet-temperate",
+      "category": "planets",
+      "src": "art/src/planets/planet-temperate.svg",
+      "out": "public/assets/sprites/planets/planet-temperate.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.atmosphere-temperate",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-temperate.svg",
+      "out": "public/assets/sprites/planets/atmosphere-temperate.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "space.sun-yellow",
+      "category": "space",
+      "src": "art/src/space/sun-yellow.svg",
+      "out": "public/assets/sprites/space/sun-yellow.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "space.starfield-tile",
+      "category": "space",
+      "src": "art/src/space/starfield-tile.svg",
+      "out": "public/assets/sprites/space/starfield-tile.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "far-stars",
+        "near-stars"
+      ],
+      "tags": [
+        "tileable"
+      ],
+      "phase": "P0"
     }
   ]
 }

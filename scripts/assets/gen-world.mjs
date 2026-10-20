@@ -190,6 +190,55 @@ function overlay(kind, segments) {
   return `<defs>${edgeMask(segments)}</defs>${group('overlay', b, 'mask="url(#edge)"')}`;
 }
 
+const worlds = {
+  temperate: ['clay', 'grass', 'water'], arid: ['sand', 'clay', 'ascension'], ice: ['snow', 'water', 'science'],
+  lava: ['coal', 'clay', 'ascension'], toxic: ['moss', 'oil', 'toxic'], ocean: ['deep-water', 'water', 'science'],
+};
+function planet(type) {
+  const [base, crust] = worlds[type];
+  const gradient = `<radialGradient id="body-light" cx="32%" cy="28%" r="74%"><stop stop-color="${C(base, .18)}"/><stop offset="0.6" stop-color="${C(base)}"/><stop offset="1" stop-color="${C(base, -.18)}"/></radialGradient>`;
+  let b = circle(512, 512, 400, 'url(#body-light)');
+  b += circle(512, 512, 364, 'none', `stroke="${C(crust)}" stroke-width="25" opacity="0.2"`);
+  b += path('M 240 512 A 272 272 0 0 1 682 301 M 731 668 A 272 272 0 0 1 348 729', 'none', `stroke="${C(base, -.18)}" stroke-width="18" opacity="0.2"`);
+  b += ellipse(440, 436, 166, 146, C(base, .18), 'stroke="none" opacity="0.1"');
+  // Crust accents stay at the perimeter so UI remains legible over the core.
+  if (type === 'temperate') b += path('M 232 345 Q 247 276 316 244 M 696 779 Q 755 751 783 707', 'none', `stroke="${C('iron')}" stroke-width="15" opacity="0.2"`);
+  if (type === 'arid') b += path('M 267 338 Q 348 286 410 315 M 665 737 Q 742 710 760 650', 'none', `stroke="${C('clay')}" stroke-width="16" opacity="0.2"`);
+  if (type === 'ice') b += path('M 311 225 L 333 285 L 299 334 M 333 285 L 386 299 M 746 686 L 708 723 L 718 787', 'none', `stroke="${C('water')}" stroke-width="12" opacity="0.2"`);
+  if (type === 'lava') b += path('M 246 300 L 288 332 L 270 392 L 319 424 M 288 332 L 347 322 M 802 615 L 743 639 L 720 703 L 675 739', 'none', `stroke="${C('ascension')}" stroke-width="12" opacity="0.5"`);
+  if (type === 'toxic') b += ellipse(304, 310, 55, 30, C('toxic'), 'stroke="none" opacity="0.3"') + ellipse(733, 700, 40, 23, C('toxic'), 'stroke="none" opacity="0.3"');
+  if (type === 'ocean') b += path('M 244 336 Q 285 314 333 336 Q 371 354 401 330 M 654 730 Q 706 753 753 724', 'none', `stroke="${C('water')}" stroke-width="16" opacity="0.3"`);
+  return `<defs>${gradient}</defs>${group('body', b)}`;
+}
+function atmosphere(type) {
+  // 1088px keeps the full r=520 halo on-canvas, centered on the same .5 anchor.
+  const c = C(worlds[type][2]);
+  return `<defs><radialGradient id="air" gradientUnits="userSpaceOnUse" cx="544" cy="544" r="520"><stop offset="88.5%" stop-color="${c}" stop-opacity="0"/><stop offset="91.5%" stop-color="${c}" stop-opacity="0.3"/><stop offset="96%" stop-color="${c}" stop-opacity="0.1"/><stop offset="100%" stop-color="${c}" stop-opacity="0"/></radialGradient></defs>${group('atmosphere', circle(544, 544, 520, 'url(#air)', 'stroke="none"'))}`;
+}
+function sun(type) {
+  const token = { yellow: 'energy', red: 'clay', blue: 'science', white: 'snow' }[type];
+  const defs = `<radialGradient id="sun-glow"><stop offset="0.3" stop-color="${C(token)}" stop-opacity="0.5"/><stop offset="1" stop-color="${C(token)}" stop-opacity="0"/></radialGradient><radialGradient id="sun-core" cx="32%" cy="28%" r="75%"><stop stop-color="${C(token, .18)}"/><stop offset="0.6" stop-color="${C(token)}"/><stop offset="1" stop-color="${C(token, -.18)}"/></radialGradient><filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>`;
+  let rays = '';
+  for (let i = 0; i < 12; i++) rays += `<g transform="rotate(${i * 30} 512 512)">${path('M 491 235 Q 477 208 499 165 Q 512 140 525 165 Q 548 210 532 235 Z', C(token), 'stroke="none" opacity="0.4"')}</g>`;
+  return `<defs>${defs}</defs>${group('glow', circle(512, 512, 496, 'url(#sun-glow)', 'stroke="none"') + circle(512, 512, 264, C(token), 'stroke="none" opacity="0.4" filter="url(#soft)"'))}${group('rays', rays)}${group('core', circle(512, 512, 240, 'url(#sun-core)') + path('M 342 424 Q 366 352 434 337', 'none', `stroke="${C('cream')}" stroke-width="20" opacity="0.7"`) + ellipse(392, 382, 15, 10, C('cream'), 'stroke="none" opacity="0.4"'))}`;
+}
+function starfield() {
+  let b = '';
+  for (let layer = 0; layer < 2; layer++) {
+    let dots = '';
+    const n = layer ? 24 : 76;
+    for (let i = 0; i < n; i++) {
+      const x = (i * 137 + layer * 21) % 512, y = (i * 83 + i * i * 11 + layer * 127) % 512;
+      const r = layer ? 2 : 1, color = C(['cream', 'science', 'crystal'][i % 3]);
+      for (const dx of [-512, 0, 512]) for (const dy of [-512, 0, 512]) {
+        if (x + dx + r >= 0 && x + dx - r <= 512 && y + dy + r >= 0 && y + dy - r <= 512) dots += circle(x + dx, y + dy, r, color, `stroke="none" opacity="${layer ? '0.8' : '0.4'}"`);
+      }
+    }
+    b += group(layer ? 'near-stars' : 'far-stars', dots);
+  }
+  return b;
+}
+
 // Each biome exports one reusable north-facing sector per planet size.
 for (const biome of biomes) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
@@ -200,5 +249,9 @@ for (const [biome, names] of Object.entries(propNames)) names.forEach((name, i) 
 for (const kind of ['fog', 'depleted', 'polluted', 'selected', 'hover', 'player-ping']) for (const n of sizes) {
   add(`overlay.${kind}.${n}`, 'biomes', `overlay-${kind}-${n}`, overlay(kind, n), 1024, 1024, 'P0', [.5, .5], ['overlay'], ['overlay', kind, `segments-${n}`]);
 }
+add('planet.planet-temperate', 'planets', 'planet-temperate', planet('temperate'), 1024, 1024, 'P0', [.5, .5], ['body']);
+add('planet.atmosphere-temperate', 'planets', 'atmosphere-temperate', atmosphere('temperate'), 1088, 1088, 'P0', [.5, .5], ['atmosphere'], ['halo', 'radius-460-520']);
+add('space.sun-yellow', 'space', 'sun-yellow', sun('yellow'), 1024, 1024, 'P0', [.5, .5], ['glow', 'rays', 'core']);
+add('space.starfield-tile', 'space', 'starfield-tile', starfield(), 512, 512, 'P0', [.5, .5], ['far-stars', 'near-stars'], ['tileable']);
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`World: ${assets.length} SVG masters generated.`);
