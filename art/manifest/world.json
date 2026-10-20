@@ -1607,6 +1607,294 @@
         "segments-32"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-32"
+      ],
+      "phase": "P0"
     }
   ]
 }

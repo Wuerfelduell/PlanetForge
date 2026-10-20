@@ -197,7 +197,7 @@ for (const biome of biomes) for (const n of sizes) {
 for (const [biome, names] of Object.entries(propNames)) names.forEach((name, i) => {
   add(`biome.${biome}.prop.${name}`, 'biomes', `${biome}-${name}`, prop(biome, i), 128, 128, 'P0', [.5, .9375], ['prop'], [biome, 'prop']);
 });
-for (const kind of ['fog', 'depleted', 'polluted']) for (const n of sizes) {
+for (const kind of ['fog', 'depleted', 'polluted', 'selected', 'hover', 'player-ping']) for (const n of sizes) {
   add(`overlay.${kind}.${n}`, 'biomes', `overlay-${kind}-${n}`, overlay(kind, n), 1024, 1024, 'P0', [.5, .5], ['overlay'], ['overlay', kind, `segments-${n}`]);
 }
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
