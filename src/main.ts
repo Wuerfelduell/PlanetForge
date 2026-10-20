@@ -30,6 +30,10 @@ async function boot(): Promise<void> {
     send(cmd) {
       const result = session.send(cmd);
       if (!result.ok) ui.toast(result.error, "warn");
+      else if (result.events?.length) {
+        ui.showEvents(result.events);
+        view.play(result.events, session.state);
+      }
       ui.render(session.state);
     },
     showPlanet,
@@ -144,6 +148,7 @@ async function boot(): Promise<void> {
     const events = session.update(ticker.deltaMS);
     if (events.length) {
       ui.showEvents(events);
+      view.play(events, session.state);
       view.onEvents(events);
       playEventSounds(events);
     }
