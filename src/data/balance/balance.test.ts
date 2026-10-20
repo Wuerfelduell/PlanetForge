@@ -159,6 +159,16 @@ describe("pacing", () => {
     expect(jobsPerCitizen()).toBeGreaterThanOrEqual(pacing.jobsPerCitizen);
   });
 
+  it("system size follows the coop design (coop 4 + 2n planets, 1 + n AI; versus 1 + 2n planets, n AI)", () => {
+    for (let n = 1; n <= 4; n++) {
+      expect(BALANCE.modes.coop.planets[n - 1]).toBe(4 + 2 * n);
+      expect(BALANCE.modes.coop.aiFactions[n - 1]).toBe(1 + n);
+      expect(BALANCE.modes.versus.planets[n - 1]).toBe(1 + 2 * n);
+      expect(BALANCE.modes.versus.aiFactions[n - 1]).toBe(n);
+      expect(BALANCE.modes.coop.playerThresholdMul[n - 1]).toBeCloseTo(0.7 + 0.3 * n);
+    }
+  });
+
   it("formulas", () => {
     expect(ascensionThreshold(1)).toBe(25);
     expect(ascensionThreshold(11)).toBeNull();

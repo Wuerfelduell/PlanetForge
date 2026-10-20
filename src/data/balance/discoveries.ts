@@ -97,7 +97,7 @@ export const DISCOVERIES = {
   },
   fortification: {
     name: "Befestigung",
-    description: "Wachtürme geben +2 extra, +1 auf jeden Kampfwurf.",
+    description: "Wachtürme geben +2 extra, +1 auf jeden Kampfwurf (Schilde gegen Angriffe anderer Spieler).",
     minLevel: 3,
     modifiers: [
       { stat: "battleRoll", add: 2, scope: { building: "watchtower" } },
@@ -124,8 +124,10 @@ export const DISCOVERIES = {
   },
   rocketry: {
     name: "Raketentechnik",
-    description: "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr.",
-    minLevel: 5,
+    description:
+      "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr. Gegeneinander: Kampfrakete schon ab Stufe 2, +1 auf Angriffswürfe.",
+    minLevel: 2,
+    unlocks: { actions: ["rocket-combat-early"] },
     modifiers: [
       { stat: "rocketFuel", mul: 0.75 },
       { stat: "rocketCapacity", add: 1 },
