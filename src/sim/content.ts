@@ -232,7 +232,10 @@ export const SYSTEM = {
   /** Start planets are always generated for this many players, so others can join later. */
   maxPlayers: 4,
   freePlanets: { min: 2, max: 4 },
+  /** versus: one start planet per player. */
   startPlanetSegments: 24,
+  /** coop: one shared start planet. Bigger, because the game is about workers, not space. */
+  coopStartPlanetSegments: 32,
   freePlanetSegments: [16, 24, 32],
   /** Rare deposits per start planet / per free planet. */
   rarePerStartPlanet: 2,
@@ -249,6 +252,8 @@ export const RULES = {
   startRevealRadius: 2,
   buildRevealRadius: 2,
   startPopulation: 3,
+  /** coop: each player who joins brings this many inhabitants to the shared planet. */
+  coopJoinPopulation: 2,
   baseHousing: 3,
   /** Inhabitants that can gather by hand on a segment without a building. */
   handWorkersPerSegment: 2,

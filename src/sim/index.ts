@@ -6,7 +6,9 @@
  *   createGame(seed, players, { now }) -> GameState
  *   advance(state, now)                -> GameState
  *   applyCommand(state, playerId, cmd, now) -> { ok, state, events } | { ok: false, error }
- *   addPlayer(state, player)           -> { ok, state } | { ok: false, error }   (join a running game)
+ *   addPlayer(state, playerId, name, now) -> { ok, state } | { ok: false, error }   (join a running game)
+ *
+ * `now` is game time in ms (the server pauses it while nobody is online), not wall-clock time.
  */
 export * from "./content";
 export * from "./state";

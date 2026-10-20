@@ -25,8 +25,9 @@ npm run build      # Typecheck + Produktions-Build nach dist/
 
 ## Stand (Prototyp)
 
-- Sternsystem per Seed: Sonne, ein Startplanet pro möglichem Spieler (bis 4) und 2 bis 4 freie Planeten mit Typen (gemäßigt, trocken, Eis, Ozean, Lava, giftig), die die Biome bestimmen. Startbereich garantiert Holz, Nahrung und Stein.
-- Seltene Rohstoffe (Kohle, Öl, Uran, Ätherit) werden so auf die Startplaneten verteilt, dass sich Spieler ergänzen. Lager, Einwohner und Nahrung gehören jeweils zum Planeten; nur der Besitzer darf dort bauen. Mitspieler steigen mit `addPlayer` auf einem freien Startplaneten ein.
+- Zwei Modi: **Koop** (Standard, auf Langzeit angelegt): alle teilen einen großen Startplaneten (32 Felder), sein Lager und den Aufstieg; jeder Mitspieler bringt 2 Einwohner mit. **Gegeneinander** (kurzweilig): jeder hat einen eigenen Startplaneten, ein eigenes Lager und einen eigenen Aufstieg und darf nur auf seinem Planeten bauen.
+- Sternsystem per Seed: Sonne, Startplanet(en) und 2 bis 4 freie Planeten mit Typen (gemäßigt, trocken, Eis, Ozean, Lava, giftig), die die Biome bestimmen. Startbereich garantiert Holz, Nahrung und Stein. Seltene Rohstoffe (Kohle, Öl, Uran, Ätherit) liegen im Koop alle auf dem gemeinsamen Planeten; im Gegeneinander-Modus sind sie so verteilt, dass sich die Startplaneten ergänzen.
+- Mitspieler steigen mit `addPlayer(state, playerId, name, now)` in ein laufendes Spiel ein.
 - Bisher zeigt das Spiel nur den eigenen Planeten; eine Sternkarte folgt.
 - Einwohner von Hand sammeln lassen, Bodenschätze erschöpfen sich und wachsen nach, wenn man sie in Ruhe lässt.
 - Gebäude: Hütte, Farm, Mine, Pumpe, Labor; Nachbarschafts-Boni; Bauen deckt Felder auf; Abreißen gibt 50 % zurück.

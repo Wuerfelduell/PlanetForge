@@ -1,5 +1,5 @@
 import { BIOMES, BUILDINGS, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
-import type { GameState, PlanetState, SegmentState } from "./state";
+import type { GameState, PlanetState, SegmentState, TeamState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
 
@@ -24,13 +24,21 @@ export function neighbors(planet: PlanetState, index: number): SegmentState[] {
   return [segmentAt(planet, index - 1)!, segmentAt(planet, index + 1)!];
 }
 
+export function teamById(state: GameState, id: string | null): TeamState | undefined {
+  return id === null ? undefined : state.teams.find((t) => t.id === id);
+}
+
+export function teamOfPlayer(state: GameState, playerId: string): TeamState | undefined {
+  return teamById(state, state.players.find((p) => p.id === playerId)?.teamId ?? null);
+}
+
 export function homePlanet(state: GameState, playerId: string): PlanetState | undefined {
   const player = state.players.find((p) => p.id === playerId);
   return player ? planetById(state, player.homePlanetId) : undefined;
 }
 
 export function housing(planet: PlanetState): number {
-  if (!planet.ownerId) return 0;
+  if (!planet.teamId) return 0;
   let total = RULES.baseHousing;
   for (const s of planet.segments) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
   return total;
@@ -68,7 +76,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
-  if (state.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  if ((teamById(state, planet.teamId)?.ascension.level ?? 0) < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
   if (!canAfford(planet, building)) return "Zu wenig Ressourcen";
   return null;

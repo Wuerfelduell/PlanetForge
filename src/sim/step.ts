@@ -1,5 +1,5 @@
 import { BUILDINGS, RULES, type ResourceId } from "./content";
-import { cloneState, housing, nextLevelThreshold, segmentOutput, TICK_MS, TICKS_PER_CYCLE } from "./rules";
+import { cloneState, housing, nextLevelThreshold, teamById, segmentOutput, TICK_MS, TICKS_PER_CYCLE } from "./rules";
 import type { GameEvent, GameState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -88,11 +88,15 @@ function endCycle(state: GameState, events: GameEvent[]): void {
       if (!planet.starving) events.push({ type: "starving", planetId: planet.id });
       planet.starving = true;
     }
-    state.ascension.points += planet.population;
+    const team = teamById(state, planet.teamId);
+    if (team) team.ascension.points += planet.population;
   }
 
-  for (let t = nextLevelThreshold(state.ascension.level); t !== null && state.ascension.points >= t; t = nextLevelThreshold(state.ascension.level)) {
-    state.ascension.level += 1;
-    events.push({ type: "levelUp", level: state.ascension.level });
+  for (const team of state.teams) {
+    const a = team.ascension;
+    for (let t = nextLevelThreshold(a.level); t !== null && a.points >= t; t = nextLevelThreshold(a.level)) {
+      a.level += 1;
+      events.push({ type: "levelUp", teamId: team.id, level: a.level });
+    }
   }
 }

@@ -8,6 +8,7 @@ import {
   homePlanet,
   housing,
   RARE_RESOURCES,
+  SYSTEM,
   idleWorkers,
   RULES,
   TICK_MS,
@@ -20,6 +21,8 @@ import {
 const P1 = { id: "p1", name: "Seb" };
 const newGame = (seed: number | string) => createGame(String(seed), [P1], { now: 1000 });
 const home = (g: GameState) => homePlanet(g, P1.id)!;
+const team = (g: GameState) => g.teams[0]!;
+const MO = { id: "p2", name: "Mo" };
 
 /** Runs `ticks` ticks and returns the new state plus events. */
 function run(g: GameState, ticks: number): { state: GameState; events: GameEvent[] } {
@@ -64,42 +67,68 @@ describe("world generation", () => {
     expect(g.simTime).toBe(5000);
   });
 
-  it("builds a system with one start planet per possible player plus free planets", () => {
+  it("coop: one big shared start planet with every rare resource, plus free planets", () => {
     for (let seed = 0; seed < 50; seed++) {
       const g = newGame(seed);
       const starts = g.planets.filter((p) => p.startSlot !== null);
-      expect(starts).toHaveLength(4);
-      expect(g.planets.length).toBeGreaterThanOrEqual(6);
+      expect(starts).toEqual([home(g)]);
+      expect(home(g).segments).toHaveLength(SYSTEM.coopStartPlanetSegments);
+      expect(g.planets.length).toBeGreaterThanOrEqual(1 + SYSTEM.freePlanets.min);
       expect(new Set(g.planets.map((p) => p.name)).size).toBe(g.planets.length);
-      // Only the joined player's planet is inhabited and partly revealed.
-      expect(g.planets.filter((p) => p.ownerId)).toEqual([home(g)]);
+      const deposits = new Set(home(g).segments.flatMap((s) => s.deposits.map((d) => d.resource)));
+      for (const r of Object.keys(RARE_RESOURCES)) expect(deposits.has(r as never)).toBe(true);
       expect(g.planets.filter((p) => p !== home(g)).every((p) => p.segments.every((s) => !s.revealed) && p.population === 0)).toBe(true);
     }
   });
 
-  it("splits rare resources so start planets complement each other", () => {
+  it("coop: joining players share planet, stockpile and ascension and bring inhabitants", () => {
+    const g = newGame(5);
+    const joined = addPlayer(g, MO.id, MO.name, g.simTime + 5000);
+    expect(joined.ok).toBe(true);
+    if (!joined.ok) return;
+    expect(homePlanet(joined.state, MO.id)).toBe(home(joined.state));
+    expect(home(joined.state).population).toBe(RULES.startPopulation + RULES.coopJoinPopulation);
+    expect(joined.state.teams).toHaveLength(1);
+    expect(joined.state.simTime).toBe(g.simTime + 5000);
+    expect(addPlayer(joined.state, MO.id, MO.name, joined.state.simTime).ok).toBe(false);
+    // Both may act on the shared planet.
+    const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
+    expect(applyCommand(joined.state, MO.id, { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, joined.state.simTime).ok).toBe(true);
+  });
+
+  it("versus: one start planet and team per player, rare resources split so players complement each other", () => {
     const rare = Object.keys(RARE_RESOURCES);
     for (let seed = 0; seed < 100; seed++) {
-      const g = createGame(String(seed), [P1, { id: "p2", name: "Mo" }]);
+      const g = createGame(String(seed), [P1, MO], { mode: "versus" });
+      expect(g.planets.filter((p) => p.startSlot !== null)).toHaveLength(SYSTEM.maxPlayers);
+      expect(g.teams).toHaveLength(2);
       const rareOn = (planetId: string) =>
         new Set(g.planets.find((p) => p.id === planetId)!.segments.flatMap((s) => s.deposits.map((d) => d.resource)).filter((r) => rare.includes(r)));
       const [a, b] = g.players.map((p) => rareOn(p.homePlanetId));
-      // Two players together have everything, and neither has what the other has.
       expect(new Set([...a!, ...b!]).size).toBe(rare.length);
       expect([...a!].some((r) => b!.has(r))).toBe(false);
     }
   });
 
-  it("lets players join later on a free start planet", () => {
-    const g = newGame(5);
-    const joined = addPlayer(g, { id: "p2", name: "Mo" });
+  it("versus: late joiners get a free start planet; owners only act on their own", () => {
+    const g = createGame("5", [P1], { mode: "versus" });
+    const joined = addPlayer(g, MO.id, MO.name, g.simTime);
     expect(joined.ok).toBe(true);
     if (!joined.ok) return;
-    const mo = homePlanet(joined.state, "p2")!;
+    const mo = homePlanet(joined.state, MO.id)!;
     expect(mo.id).not.toBe(home(g).id);
     expect(mo.population).toBe(RULES.startPopulation);
-    expect(addPlayer(joined.state, { id: "p2", name: "Mo" }).ok).toBe(false);
-    expect(g.players).toHaveLength(1);
+    const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
+    const result = applyCommand(joined.state, MO.id, { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, g.simTime);
+    expect(result).toEqual({ ok: false, error: "Dieser Planet gehört dir nicht" });
+  });
+
+  it("refuses players beyond maxPlayers", () => {
+    let g = createGame("5", [P1], { maxPlayers: 2 });
+    const r = addPlayer(g, MO.id, MO.name, 0);
+    if (!r.ok) throw new Error(r.error);
+    g = r.state;
+    expect(addPlayer(g, "p3", "Ki", 0)).toEqual({ ok: false, error: "Das Spiel ist voll" });
   });
 });
 
@@ -122,13 +151,6 @@ describe("commands", () => {
     attempt(g, { type: "assign", segment: hidden.index, delta: 1 });
     advance(g, g.simTime + 60_000);
     expect(JSON.stringify(g)).toBe(before);
-  });
-
-  it("only lets owners act on their planet", () => {
-    const g = createGame("1", [P1, { id: "p2", name: "Mo" }]);
-    const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
-    const result = applyCommand(g, "p2", { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, g.simTime);
-    expect(result).toEqual({ ok: false, error: "Dieser Planet gehört dir nicht" });
   });
 
   it("rejects unknown players, planets, segments and unaffordable buildings", () => {
@@ -164,7 +186,7 @@ describe("commands", () => {
     home(g).resources.stone = 100;
     const mountains = home(g).segments.find((s) => s.revealed && s.biome === "mountains")!;
     expect(attempt(g, { type: "build", segment: mountains.index, building: "mine" }).ok).toBe(false);
-    g.ascension.level = 1;
+    team(g).ascension.level = 1;
     expect(attempt(g, { type: "build", segment: mountains.index, building: "mine" }).ok).toBe(true);
   });
 
@@ -217,16 +239,16 @@ describe("simulation", () => {
     const { state, events } = run(g, TICKS_PER_CYCLE);
     expect(home(state).starving).toBe(true);
     expect(events).toContainEqual({ type: "starving", planetId: home(g).id });
-    expect(state.ascension.points).toBe(RULES.startPopulation);
+    expect(team(state).ascension.points).toBe(RULES.startPopulation);
   });
 
   it("levels up at the thresholds", () => {
     const g = newGame(3);
     home(g).resources.food = 1000;
-    g.ascension.points = RULES.ascensionThresholds[0] - 1;
+    team(g).ascension.points = RULES.ascensionThresholds[0] - 1;
     const { state, events } = run(g, TICKS_PER_CYCLE);
-    expect(state.ascension.level).toBe(1);
-    expect(events).toContainEqual({ type: "levelUp", level: 1 });
+    expect(team(state).ascension.level).toBe(1);
+    expect(events).toContainEqual({ type: "levelUp", teamId: team(g).id, level: 1 });
   });
 
   it("gives the same result whether advanced in one step or many", () => {

@@ -11,6 +11,7 @@ import {
   RESOURCE_IDS,
   RESOURCES,
   segmentOutput,
+  teamById,
   TICKS_PER_CYCLE,
   workerCapacity,
   type Command,
@@ -136,10 +137,11 @@ export class Ui {
     const chips = shown
       .map((r) => `<span class="chip${r === "food" && planet.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(planet.resources[r])}</span>`)
       .join("");
-    const lvl = state.ascension.level;
+    const ascension = teamById(state, planet.teamId)?.ascension ?? { level: 0, points: 0 };
+    const lvl = ascension.level;
     const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
     const next = nextLevelThreshold(lvl);
-    const progress = next === null ? 1 : (state.ascension.points - prev) / (next - prev);
+    const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
     const cycleProgress = (state.tick % TICKS_PER_CYCLE) / TICKS_PER_CYCLE;
     const speeds = [0, 1, 3]
       .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
@@ -149,7 +151,7 @@ export class Ui {
       <div class="row status">
         <span class="chip" title="Planet">🪐 ${planet.name}</span>
         <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${planet.population}/${housing(planet)} <small>(${idleWorkers(planet)} frei)</small></span>
-        <span class="level" title="Aufstieg: ${state.ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
+        <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>`;
   }
@@ -197,7 +199,7 @@ export class Ui {
         .map((b) => {
           const bd = BUILDINGS[b];
           const blocker = buildBlocker(state, planet, s, b);
-          const locked = state.ascension.level < bd.unlockLevel;
+          const locked = (teamById(state, planet.teamId)?.ascension.level ?? 0) < bd.unlockLevel;
           const cost = Object.entries(bd.cost)
             .map(([r, v]) => `<span class="${planet.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
             .join(" ");

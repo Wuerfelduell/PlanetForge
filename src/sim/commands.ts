@@ -17,10 +17,11 @@ export function applyCommand(state: GameState, playerId: string, cmd: Command, n
 
 /** Validates and applies a command in place. Returns an error message, or null on success (then the state changed). */
 function executeCommand(state: GameState, playerId: string, cmd: Command, events: GameEvent[]): string | null {
-  if (!state.players.some((p) => p.id === playerId)) return "Unbekannter Spieler";
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player) return "Unbekannter Spieler";
   const planet = planetById(state, cmd.planetId);
   if (!planet) return "Unbekannter Planet";
-  if (planet.ownerId !== playerId) return "Dieser Planet gehört dir nicht";
+  if (planet.teamId !== player.teamId) return "Dieser Planet gehört dir nicht";
   const segment = Number.isInteger(cmd.segment) ? segmentAt(planet, cmd.segment) : undefined;
   if (!segment || segment.index !== cmd.segment) return "Unbekanntes Feld";
   if (!segment.revealed) return "Feld noch unerforscht";

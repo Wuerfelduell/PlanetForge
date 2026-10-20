@@ -4,8 +4,16 @@ import type { BiomeId, BuildingId, PlanetTypeId, ResourceId } from "./content";
  * The complete game state. Plain JSON data only (no classes, Maps, Sets or functions), so it
  * can be saved, stored in a database row, sent over the network or diffed as is.
  */
+/**
+ * coop: everyone shares one start planet, its stockpile and the ascension (long-term play).
+ * versus: every player has an own start planet, stockpile and ascension (short matches).
+ */
+export type GameMode = "coop" | "versus";
+
 export interface GameState {
-  version: 3;
+  version: 4;
+  mode: GameMode;
+  maxPlayers: number;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -13,10 +21,16 @@ export interface GameState {
   simTime: number;
   tick: number;
   players: PlayerState[];
-  /** Team-wide: points from every inhabited planet add up, levels unlock buildings for everyone. */
-  ascension: { level: number; points: number };
+  /** coop: one team for everybody. versus: one team per player. */
+  teams: TeamState[];
   sun: { type: string };
   planets: PlanetState[];
+}
+
+export interface TeamState {
+  id: string;
+  /** Points from every planet of the team add up; levels unlock buildings for the whole team. */
+  ascension: { level: number; points: number };
 }
 
 export interface PlayerInit {
@@ -27,6 +41,7 @@ export interface PlayerInit {
 export interface PlayerState extends PlayerInit {
   /** Index into a shared player color palette (the renderer picks the actual color). */
   color: number;
+  teamId: string;
   homePlanetId: string;
 }
 
@@ -38,9 +53,9 @@ export interface PlanetState {
   orbit: { radius: number; angle: number };
   /** Start slot (0 … maxPlayers-1) if this is a start planet, else null. */
   startSlot: number | null;
-  /** playerId who controls the planet, null while nobody lives here. */
-  ownerId: string | null;
-  /** Stockpile, population and food are local to each planet (design/koop-design.md, 4). */
+  /** Team that controls the planet, null while nobody lives here. Every team member may act on it. */
+  teamId: string | null;
+  /** Stockpile, population and food are local to each planet. */
   resources: Record<ResourceId, number>;
   population: number;
   /** Seconds of progress toward the next birth. */
@@ -81,7 +96,7 @@ export type Command =
 export type GameEvent =
   | { type: "born"; planetId: string; population: number }
   | { type: "cycle"; cycle: number }
-  | { type: "levelUp"; level: number }
+  | { type: "levelUp"; teamId: string; level: number }
   | { type: "depleted"; planetId: string; segment: number; resource: ResourceId }
   | { type: "starving"; planetId: string }
   | { type: "revealed"; planetId: string; segments: number[] }
