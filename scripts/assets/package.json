@@ -5,7 +5,8 @@
     "assets:build": "node build.mjs",
     "assets:check": "node check.mjs",
     "assets:preview": "node serve.mjs",
-    "assets:test": "node --test test.mjs"
+    "assets:test": "node --test test.mjs",
+    "assets:android": "node android.mjs"
   },
   "devDependencies": {"sharp": "^0.34.3", "playwright": "^1.55.0"}
 }
