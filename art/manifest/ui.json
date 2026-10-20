@@ -1237,6 +1237,228 @@
         48,
         48
       ]
+    },
+    {
+      "id": "ui.button-ok",
+      "category": "ui",
+      "src": "art/src/ui/button-ok.svg",
+      "out": "public/assets/sprites/ui/button-ok.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-ok-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-ok-pressed.svg",
+      "out": "public/assets/sprites/ui/button-ok-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-ok-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-ok-disabled.svg",
+      "out": "public/assets/sprites/ui/button-ok-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-round",
+      "category": "ui",
+      "src": "art/src/ui/button-round.svg",
+      "out": "public/assets/sprites/ui/button-round.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.button-round-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-round-pressed.svg",
+      "out": "public/assets/sprites/ui/button-round-pressed.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round-pressed"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.button-round-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-round-disabled.svg",
+      "out": "public/assets/sprites/ui/button-round-disabled.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round-disabled"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-planet",
+      "category": "ui",
+      "src": "art/src/ui/tab-planet.svg",
+      "out": "public/assets/sprites/ui/tab-planet.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-planet"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-starmap",
+      "category": "ui",
+      "src": "art/src/ui/tab-starmap.svg",
+      "out": "public/assets/sprites/ui/tab-starmap.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-starmap"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-build",
+      "category": "ui",
+      "src": "art/src/ui/tab-build.svg",
+      "out": "public/assets/sprites/ui/tab-build.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-build"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-people",
+      "category": "ui",
+      "src": "art/src/ui/tab-people.svg",
+      "out": "public/assets/sprites/ui/tab-people.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-people"
+      ],
+      "phase": "P0"
     }
   ]
 }

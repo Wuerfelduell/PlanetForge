@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 23, core: 10, logo: false, extras: 0, discoveries: 0, brand: false};
+const RELEASE = {resources: 23, core: 20, logo: false, extras: 0, discoveries: 0, brand: false};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;
@@ -92,7 +92,7 @@ function action(id) {
     case 'build': return hammer();
     case 'demolish': return p('M34 17 H94 V42',null,'stroke-width="7"')+circ(80,81,30,'rock-dark')+shine('M61 72 Q64 63 72 61')+detail('M94 18 L70 45 L94 43');
     case 'upgrade': return p('M64 16 L109 57 H83 V81 H45 V57 H19Z','ascension')+p('M29 105 L64 83 L99 105 L99 116 L64 97 L29 116Z','energy');
-    case 'assign': case 'unassign': return group(paw('paper'),'translate(-2 -2) scale(0.85)')+circ(93,93,24,id==='assign'?'ok':'danger')+p('M80 93 H106'+(id==='assign'?' M93 80 V106':''),null,`stroke="${C('cream')}" stroke-width="7"`);
+    case 'assign': case 'unassign': return group(paw('paper'),'translate(-2 -2) scale(0.8)')+circ(93,93,24,id==='assign'?'ok':'danger')+p('M80 93 H106'+(id==='assign'?' M93 80 V106':''),null,`stroke="${C('cream')}" stroke-width="7"`);
     case 'info': return p('M16 31 Q42 21 64 34 Q88 21 112 31 V101 Q89 92 64 105 Q41 92 16 101Z','cream')+line('M64 34 V105')+group(star(64,64,25,'science'),'translate(13 -14) scale(0.8)')+detail('M26 46 L48 46 M26 58 L48 58 M26 70 L43 70');
     case 'close': return p('M31 19 L64 52 L97 19 L109 31 L76 64 L109 97 L97 109 L64 76 L31 109 L19 97 L52 64 L19 31Z','cream');
     case 'back': return arrow('left');
@@ -107,14 +107,14 @@ function action(id) {
     }
     case 'move': return p('M64 14 L84 36 H73 V55 H92 V44 L114 64 L92 84 V73 H73 V92 H84 L64 114 L44 92 H55 V73 H36 V84 L14 64 L36 44 V55 H55 V36 H44Z','cream');
     case 'launch': return rocket();
-    case 'trade': return group(crate(),'translate(29 32) scale(0.55)')+p('M18 41 H91 V28 L112 49 L91 69 V55 H18Z','science')+p('M110 88 H37 V75 L16 96 L37 116 V102 H110Z','clay');
+    case 'trade': return group(crate(),'translate(29 32) scale(0.6)')+p('M18 41 H91 V28 L112 49 L91 69 V55 H18Z','science')+p('M110 88 H37 V75 L16 96 L37 116 V102 H110Z','clay');
     case 'peace': return p('M64 113 V49',null,'stroke-width="5"')+p('M62 88 Q21 95 22 60 Q56 57 62 88Z','leaf')+p('M66 69 Q102 75 108 39 Q74 38 66 69Z','leaf')+p('M64 49 Q38 26 64 13 Q90 26 64 49Z','grass');
-    case 'alliance': return group(shield(),'translate(2 7) scale(0.65)')+group(shield(),'translate(43 7) scale(0.65)')+group(link(),'translate(28 49) scale(0.55)');
+    case 'alliance': return group(shield(),'translate(2 7) scale(0.6)')+group(shield(),'translate(43 7) scale(0.6)')+group(link(),'translate(28 49) scale(0.6)');
     case 'war': return p('M23 17 L49 25 L92 88 L81 99 L34 41Z','rock')+p('M105 17 L79 25 L36 88 L47 99 L94 41Z','snow')+p('M24 83 L50 106 M77 105 L104 83',null,'stroke-width="10"')+p('M21 111 L34 96 M107 111 L94 96',null,'stroke-width="9"');
     case 'ultimatum': return p('M64 15 L114 103 Q117 110 108 110 H20 Q11 110 15 103Z','ascension')+group(bolt('ink'),'translate(38 36) scale(0.4)');
     case 'ping': return p('M64 115 Q26 78 26 51 A38 38 0 0 1 102 51 Q102 78 64 115Z','cream')+circ(64,51,15,'science');
     case 'chat': return speech()+[40,64,88].map(x=>circ(x,59,6,'rock-dark')).join('');
-    case 'invite': return group(link(),'translate(-3 -8) scale(0.85)')+group(paw(),'translate(45 53) scale(0.6)');
+    case 'invite': return group(link(),'translate(-3 -8) scale(0.8)')+group(paw(),'translate(45 53) scale(0.6)');
     case 'sound-on': case 'sound-off': return p('M17 47 H35 L66 24 Q72 19 72 28 V101 Q72 109 66 103 L35 81 H17Z','paper')+(id==='sound-on'?p('M86 43 Q107 64 86 85 M98 29 Q128 64 98 99',null,'stroke-width="7"'):p('M88 50 L111 78 M111 50 L88 78',null,'stroke-width="8"'));
     case 'help': return circ(64,64,45,'cream')+p('M28 35 L44 48 M84 80 L101 95 M35 101 L49 84 M80 44 L94 27',null,`stroke="${C('clay')}" stroke-width="20"`)+circ(64,64,23,'science');
     default: throw new Error(`Unknown action ${id}`);
@@ -136,7 +136,7 @@ function tab(id) {
   switch(id){
     case 'planet':return planet();
     case 'starmap':return p('M25 28 L92 34 L63 70 L101 99 M63 70 L27 103',null)+star(25,28,15,'energy')+circ(92,34,13,'water')+circ(63,70,9,'crystal')+circ(101,99,11,'clay')+circ(27,103,7,'snow');
-    case 'build':return group(house(),'translate(-2 17) scale(0.85)')+group(hammer(),'translate(46 -3) scale(0.65)');
+    case 'build':return group(house(),'translate(-2 17) scale(0.8)')+group(hammer(),'translate(46 -3) scale(0.6)');
     case 'people':return resource('population');
     case 'diplomacy':return paws();
     case 'discoveries':return group(resource('science'),'translate(0 7) scale(0.9)')+star(94,30,18,'crystal');
@@ -149,7 +149,7 @@ const badgeIds=['no-energy','no-workers','storage-full','depleted','polluted','h
 function badge(id) {
   const fill=['producing','upgrade-ready'].includes(id)?'grass':id==='attack'?'danger':'paper';
   const symbol=id==='no-energy'?bolt():id==='no-workers'?paw():id==='storage-full'?crate():id==='depleted'?p('M21 36 L50 27 L65 44 L52 66 L72 80 L60 107 L25 101Z','rock')+p('M84 28 L107 37 L108 96 L83 107 L92 78 L72 63Z','rock'):id==='polluted'?resource('pollution'):id==='hungry'?resource('food'):id==='producing'?gear():id==='upgrade-ready'?action('upgrade'):action('war');
-  return circ(32,32,28,fill)+group(symbol,'translate(10 10) scale(0.34)','stroke-width="5"')+(['no-energy','no-workers','hungry'].includes(id)?p('M14 50 L50 14',null,`stroke="${C('danger')}" stroke-width="5"`):'')+(id==='storage-full'?p('M12 11 H52',null,'stroke-width="4"'):'');
+  return circ(32,32,28,fill)+group(symbol,'translate(13 13) scale(0.3)','stroke-width="5"')+(['no-energy','no-workers','hungry'].includes(id)?p('M14 50 L50 14',null,`stroke="${C('danger')}" stroke-width="5"`):'')+(id==='storage-full'?p('M12 11 H52',null,'stroke-width="4"'):'');
 }
 
 const core=[];
