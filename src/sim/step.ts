@@ -1,6 +1,7 @@
 import { BUILDINGS, RULES, type ResourceId } from "./content";
-import { cloneState, housing, nextLevelThreshold, segmentOutput, TICK_MS, ticksPerCycle } from "./rules";
+import { buildBlocker, cloneState, housing, NOT_AFFORDABLE, nextLevelThreshold, planetById, segmentOutput, TICK_MS, ticksPerCycle } from "./rules";
 import { createUnit } from "./units";
+import { placeBuilding } from "./build";
 import type { GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -86,8 +87,26 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     if (economy) birth(state, planet, residents.get(planet.id) ?? 0, events);
   }
 
+  runQueues(state, events);
+
   state.tick += 1;
   if (state.tick % ticksPerCycle(state) === 0) endCycle(state, residents, events);
+}
+
+/** Starts the first queued build of each planet once it is affordable; drops orders that can no longer fit. */
+function runQueues(state: GameState, events: GameEvent[]): void {
+  for (const [planetId, queue] of Object.entries(state.queues)) {
+    const planet = planetById(state, planetId);
+    while (planet && queue.length > 0) {
+      const order = queue[0]!;
+      const segment = planet.segments[order.segment]!;
+      const blocker = buildBlocker(state, planet, segment, order.building);
+      if (blocker === NOT_AFFORDABLE) break;
+      queue.shift();
+      if (blocker) events.push({ type: "queueDropped", planetId, segment: order.segment, building: order.building, reason: blocker });
+      else placeBuilding(state, planet, segment, order.building, order.playerId, events);
+    }
+  }
 }
 
 function birth(state: GameState, planet: PlanetState, residents: number, events: GameEvent[]): void {

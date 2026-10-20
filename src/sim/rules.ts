@@ -97,6 +97,8 @@ export function canAfford(economy: EconomyState, building: BuildingId): boolean 
   return RESOURCE_IDS.every((r) => economy.resources[r] >= (cost[r] ?? 0));
 }
 
+export const NOT_AFFORDABLE = "Zu wenig Ressourcen";
+
 /** Why a building cannot go on a segment right now, or null if it can. Pays from the planet's economy. */
 export function buildBlocker(state: GameState, planet: PlanetState, segment: SegmentState, building: BuildingId): string | null {
   const def = BUILDINGS[building];
@@ -107,7 +109,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
-  if (!canAfford(economy, building)) return "Zu wenig Ressourcen";
+  if (!canAfford(economy, building)) return NOT_AFFORDABLE;
   return null;
 }
 
@@ -132,4 +134,9 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
 
 export function nextLevelThreshold(level: number): number | null {
   return RULES.ascensionThresholds[level] ?? null;
+}
+
+export function ringDistance(a: number, b: number, n: number): number {
+  const d = Math.abs(a - b) % n;
+  return Math.min(d, n - d);
 }

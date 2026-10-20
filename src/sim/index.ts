@@ -13,7 +13,7 @@
 export * from "./content";
 export * from "./state";
 export * from "./rules";
-export { addPlayer, createGame, ringDistance, type GameOptions } from "./generate";
+export { addPlayer, createGame, type GameOptions } from "./generate";
 export { applyCommand } from "./commands";
 export { advance, advanceWithEvents } from "./step";
 export { nextRandom, Rng, seedFromString } from "./rng";
