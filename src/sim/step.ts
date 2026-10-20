@@ -1,6 +1,7 @@
 import { BUILDINGS, RULES, type ResourceId } from "./content";
 import { buildBlocker, cloneState, housing, NOT_AFFORDABLE, nextLevelThreshold, planetById, segmentOutput, TICK_MS, ticksPerCycle } from "./rules";
 import { createUnit } from "./units";
+import { grantPick, modified, resolveOffer } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
 import type { GameEvent, GameState, PlanetState } from "./state";
@@ -63,7 +64,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
 
     for (const segment of planet.segments) {
       const producer = !!(segment.building && BUILDINGS[segment.building].produces);
-      const output = economy ? segmentOutput(planet, segment, workers.get(`${planet.id}:${segment.index}`) ?? 0) : {};
+      const output = economy ? segmentOutput(planet, segment, workers.get(`${planet.id}:${segment.index}`) ?? 0, economy) : {};
       const drawn = new Set<ResourceId>();
       for (const [resource, perSecond] of Object.entries(output) as [ResourceId, number][]) {
         let amount = perSecond * DT * rateFactor;
@@ -83,7 +84,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       for (const d of segment.deposits) {
         // Exhausted deposits stay exhausted; untouched ones regrow.
         if (d.infinite || drawn.has(d.resource) || d.amount <= 0 || d.amount >= d.max) continue;
-        d.amount = Math.min(d.max, d.amount + d.max * RULES.regenPerSecond * DT);
+        d.amount = Math.min(d.max, d.amount + d.max * modified(economy, "regenRate", RULES.regenPerSecond) * DT);
       }
     }
 
@@ -116,7 +117,7 @@ function birth(state: GameState, planet: PlanetState, residents: number, events:
   const economy = state.economies[planet.economyId!]!;
   if (residents === 0 || residents >= housing(state, planet) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
   planet.birthProgress += DT;
-  if (planet.birthProgress < RULES.secondsPerBirth - 1e-9) return;
+  if (planet.birthProgress < modified(economy, "birthTime", RULES.secondsPerBirth) - 1e-9) return;
 
   // The smallest people on the planet grows first (join order breaks ties), so nobody falls behind.
   const counts = new Map<string, number>();
@@ -148,11 +149,14 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
     }
 
     const a = economy.ascension;
-    a.points += people;
+    a.points += modified(economy, "ascensionPerCycle", people);
     for (let t = nextLevelThreshold(a.level); t !== null && a.points >= t; t = nextLevelThreshold(a.level)) {
       a.level += 1;
       events.push({ type: "levelUp", economyId: economy.id, level: a.level });
+      grantPick(state, economy);
     }
+    // The voting window closes with the cycle: most votes win, a tie decides nothing.
+    resolveOffer(state, economy, true, events);
   }
 
   cycleChecks(state, events);

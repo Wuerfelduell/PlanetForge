@@ -1,5 +1,6 @@
 import { BUILDINGS, RESOURCE_IDS, RULES, type BuildingId } from "./content";
 import { ringDistance, workersOn } from "./rules";
+import { modified } from "./discoveries";
 import type { GameEvent, GameState, PlanetState, SegmentState } from "./state";
 
 /** Pays for and places a building (already validated by buildBlocker), then reveals the area around it. */
@@ -14,7 +15,7 @@ export function placeBuilding(state: GameState, planet: PlanetState, segment: Se
   events.push({ type: "built", planetId: planet.id, segment: segment.index, building, playerId });
   const revealed: number[] = [];
   for (const s of planet.segments) {
-    if (!s.revealed && ringDistance(s.index, segment.index, planet.segments.length) <= RULES.buildRevealRadius) {
+    if (!s.revealed && ringDistance(s.index, segment.index, planet.segments.length) <= modified(economy, "revealRadius", RULES.buildRevealRadius)) {
       s.revealed = true;
       revealed.push(s.index);
     }

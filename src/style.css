@@ -159,3 +159,8 @@ img.bi { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
 
 /* The hidden attribute must win over display rules of overlays (e.g. the online menu). */
 [hidden] { display: none !important; }
+
+.chip.glow { box-shadow: 0 0 0 2px var(--accent, #ffd166); }
+.target .build.on { outline: 2px solid var(--accent, #ffd166); }
+ul.owned { list-style: none; padding: 0; margin: 4px 0; display: flex; flex-direction: column; gap: 4px; }
+ul.owned small { color: var(--muted); }

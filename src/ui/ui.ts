@@ -6,7 +6,11 @@ import {
   BUILDINGS,
   cycleOf,
   housing,
+  discoveryCost,
+  discoveryDescription,
+  discoveryName,
   flightPlan,
+  rocketCapacity,
   idleUnits,
   launchBlocker,
   NOT_AFFORDABLE,
@@ -63,6 +67,11 @@ export class Ui {
 
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
+  private showDiscoveries = false;
+
+  private dicon(id: string): string {
+    return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="">` : "📜";
+  }
 
   private res(resource: ResourceId): string {
     return this.art ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
@@ -152,6 +161,12 @@ export class Ui {
         case "drawSuggested":
           this.toast("🤝 Lange kein Kampf mehr. Ihr könnt euch auf Unentschieden einigen.");
           break;
+        case "discovered":
+          if (this.state?.players.find((p) => p.id === this.playerId)?.economyId === e.economyId) this.toast(`🔬 Entdeckt: ${discoveryName(e.discovery)}`, "good");
+          break;
+        case "discoveryVote":
+          if (e.playerId !== this.playerId) this.toast(`🗳️ ${this.playerName(e.playerId)} stimmt für ${discoveryName(e.discovery)}`);
+          break;
         case "gameOver":
           this.toast("draw" in e.result ? "🤝 Unentschieden" : e.result.winner === this.playerId ? "🏆 Du hast gewonnen!" : `🏁 ${this.playerName(e.result.winner)} hat gewonnen`, "good");
           break;
@@ -212,6 +227,13 @@ export class Ui {
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
         break;
       }
+      case "discoveries":
+        this.showDiscoveries = !this.showDiscoveries;
+        this.lastPanel = "";
+        break;
+      case "vote":
+        this.actions.send({ type: "voteDiscovery", discovery: value! });
+        break;
       case "openLobby":
         this.actions.send({ type: "openLobby" });
         break;
@@ -271,6 +293,11 @@ export class Ui {
   /** Own rockets and attacks on own planets, with time to arrival. */
   private renderFlights(state: GameState): string {
     const chips: string[] = [];
+    const economy = state.economies[state.players.find((p) => p.id === this.playerId)?.economyId ?? ""];
+    if (economy?.offer || economy?.discoveries.length) {
+      const label = economy.offer ? `🔬 Entdeckung wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length} Entdeckungen`;
+      chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries">${label}</button>`);
+    }
     // The server closes the lobby after 10 idle minutes; only the host can open it again.
     if (!state.lobby.open) {
       chips.push(
@@ -323,8 +350,8 @@ export class Ui {
         const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
         const buttons = rockets
           .map((rocket) => {
-            const count = Math.max(1, Math.min(ROCKETS[rocket].capacity, idle));
-            const plan = flightPlan(planet, to, rocket, count);
+            const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
+            const plan = flightPlan(planet, to, rocket, count, economyOf(state, planet));
             const blocker = launchBlocker(state, this.playerId, planet, to, rocket, count);
             const economy = economyOf(state, planet)!;
             const cost = Object.entries(plan.cost)
@@ -340,7 +367,37 @@ export class Ui {
     return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>`;
   }
 
+  /** Discovery choice (coop: everyone votes, most votes win, a tie decides nothing) and what the team owns. */
+  private renderDiscoveries(state: GameState): string {
+    const me = state.players.find((p) => p.id === this.playerId);
+    const economy = me ? state.economies[me.economyId] : undefined;
+    if (!economy) return "";
+    const members = state.players.filter((p) => p.economyId === economy.id && !p.eliminated);
+    const cost = discoveryCost(state, economy);
+    let html = `<h2>🔬 Entdeckungen <button class="speed" data-action="discoveries" title="Zurück">✕</button></h2>`;
+    if (economy.offer) {
+      const offer = economy.offer;
+      const enough = economy.resources.science >= cost;
+      html += `<p class="muted">Kostet ${this.res("science")} ${cost} Wissen (${Math.floor(economy.resources.science)} da).${members.length > 1 ? " Alle stimmen ab; die meisten Stimmen gewinnen am Ende des Umlaufs, bei Gleichstand passiert nichts." : ""}</p>`;
+      html += `<div class="targets">${offer.options
+        .map((id) => {
+          const voters = members.filter((p) => offer.votes[p.id] === id).map((p) => p.name);
+          const mine = offer.votes[this.playerId] === id;
+          return `<div class="target"><span>${this.dicon(id)} <b>${discoveryName(id)}</b><small>${discoveryDescription(id)}${voters.length && members.length > 1 ? ` · 🗳️ ${voters.join(", ")}` : ""}</small></span><button class="build${mine ? " on" : ""}" data-action="vote" data-value="${id}">${members.length > 1 ? (mine ? "✓ Deine Stimme" : "Dafür stimmen") : mine ? "✓ Vorgemerkt" : enough ? "Erforschen" : "Vormerken"}</button></div>`;
+        })
+        .join("")}</div>`;
+      if (!enough) html += `<p class="muted">Labore erzeugen Wissen. Die Wahl gilt, sobald genug da ist.</p>`;
+    } else {
+      html += `<p class="muted">Die nächste Wahl kommt mit der nächsten Aufstiegsstufe.</p>`;
+    }
+    if (economy.discoveries.length) {
+      html += `<p class="muted">Schon entdeckt:</p><ul class="owned">${economy.discoveries.map((id) => `<li>${this.dicon(id)} <b>${discoveryName(id)}</b> <small>${discoveryDescription(id)}</small></li>`).join("")}</ul>`;
+    }
+    return html;
+  }
+
   private renderPanel(state: GameState, planet: PlanetState): string {
+    if (this.showDiscoveries) return this.renderDiscoveries(state);
     const economy = economyOf(state, planet);
     if (!economy) return "";
     const s = planet.segments[this.selected]!;
@@ -352,7 +409,7 @@ export class Ui {
     const def = s.building ? BUILDINGS[s.building] : null;
     const title = def ? `${this.bicon(s.building!)} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
 
-    const output = segmentOutput(planet, s, workerCount(state, planet, s.index));
+    const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
       .map((d) => {
         const amount = d.infinite ? "∞" : `${Math.floor(d.amount)}/${d.max}`;

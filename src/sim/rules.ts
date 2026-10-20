@@ -1,4 +1,5 @@
 import { BIOMES, BUILDINGS, RESOURCE_IDS, ROCKETS, RULES, type BuildingId, type ResourceId, type RocketId } from "./content";
+import { hasUnlock, modified } from "./discoveries";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
@@ -75,7 +76,11 @@ export function housing(state: GameState, planet: PlanetState): number {
   // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
   const peoples = new Set(unitsOn(state, planet.id).map((u) => u.owner)).size;
   let total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation;
-  for (const s of planet.segments) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
+  const economy = economyOf(state, planet);
+  for (const s of planet.segments) {
+    const h = s.building ? BUILDINGS[s.building].housing : undefined;
+    if (h) total += modified(economy, "housing", h, { building: s.building! });
+  }
   return total;
 }
 
@@ -112,21 +117,23 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   return null;
 }
 
-/** Production per second of one segment with `workers` working on it, before starvation. */
-export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number): Partial<Record<ResourceId, number>> {
+/** Production per second of one segment with `workers` working on it, before starvation. `economy` adds discovery bonuses. */
+export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment);
   const def = segment.building ? BUILDINGS[segment.building] : null;
+  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource });
   if (def?.produces) {
-    out[def.produces.resource] = def.produces.perWorker * workers * mult;
+    const r = def.produces.resource;
+    out[r] = def.produces.perWorker * workers * mult * bonus(r);
   } else if (def?.extracts) {
     const available = segment.deposits.filter((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
     // Workers split evenly over everything the building can reach.
-    for (const d of available) out[d.resource] = (def.extracts.perWorker * workers * mult) / available.length;
+    for (const d of available) out[d.resource] = ((def.extracts.perWorker * workers * mult) / available.length) * bonus(d.resource);
   } else if (!def) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
-    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = RULES.handRatePerWorker * workers;
+    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
   }
   return out;
 }
@@ -156,11 +163,11 @@ export interface FlightPlan {
   seconds: number;
 }
 
-export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId, passengers: number): FlightPlan {
+export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId, passengers: number, economy?: EconomyState): FlightPlan {
   const def = ROCKETS[rocket];
   const distance = planetDistance(from, to);
   const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
-  const fuel = Math.ceil(distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers));
+  const fuel = Math.ceil(modified(economy, "rocketFuel", distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
   cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
   return { distance, cost, seconds: Math.max(1, Math.round(distance * def.secondsPerDistance)) };
 }
@@ -185,13 +192,15 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (from.id === to.id) return "Ziel ist der Startplanet";
   if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
   const economy = state.economies[player.economyId]!;
-  if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  const unlockLevel = rocketUnlockLevel(economy, rocket);
+  if (economy.ascension.level < unlockLevel) return `Ab Aufstiegsstufe ${unlockLevel}`;
   if (def.versusOnly && state.settings.mode !== "versus") return "Angriffe gibt es nur im Gegeneinander-Modus";
   if (rocket === "combat" && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
   if (!Number.isInteger(count) || count < 1) return "Mindestens ein Einwohner muss mitfliegen";
-  if (count > def.capacity) return `Höchstens ${def.capacity} Einwohner pro Rakete`;
+  const capacity = rocketCapacity(economy, rocket);
+  if (count > capacity) return `Höchstens ${capacity} Einwohner pro Rakete`;
   if (idleUnits(state, from, playerId).length < count) return "Nicht genug freie Einwohner";
-  const plan = flightPlan(from, to, rocket, count);
+  const plan = flightPlan(from, to, rocket, count, economy);
   if (plan.distance > def.maxRange) return "Zu weit weg";
   if (!canPay(economy, plan.cost)) return NOT_AFFORDABLE;
   return null;
@@ -214,9 +223,21 @@ export function activePlayers(state: GameState): PlayerState[] {
   return state.players.filter((p) => !p.eliminated);
 }
 
+export function rocketCapacity(economy: EconomyState | undefined, rocket: RocketId): number {
+  return modified(economy, "rocketCapacity", ROCKETS[rocket].capacity);
+}
+
+export function rocketUnlockLevel(economy: EconomyState | undefined, rocket: RocketId): number {
+  // Rocketry: combat rockets one level earlier.
+  return rocket === "combat" && hasUnlock(economy, "rocket-combat-early") ? ROCKETS.combat.unlockLevel - 1 : ROCKETS[rocket].unlockLevel;
+}
+
 /** Bonus on the defenders' rolls on a planet. */
-export function planetDefense(planet: PlanetState): number {
+export function planetDefense(state: GameState, planet: PlanetState): number {
   let towers = 0;
   for (const s of planet.segments) if (s.building) towers += BUILDINGS[s.building].defense ?? 0;
-  return RULES.homeAdvantage + Math.min(RULES.maxTowerBonus, towers);
+  const economy = economyOf(state, planet);
+  const general = modified(economy, "battleRoll", 0);
+  const towerExtra = towers > 0 ? modified(economy, "battleRoll", 0, { building: "watchtower" }) - general : 0;
+  return RULES.homeAdvantage + Math.min(RULES.maxTowerBonus, towers) + general + towerExtra;
 }
