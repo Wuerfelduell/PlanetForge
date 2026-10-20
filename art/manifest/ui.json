@@ -1,0 +1,3393 @@
+{
+  "assets": [
+    {
+      "id": "resource.food",
+      "category": "resources",
+      "src": "art/src/resources/food.svg",
+      "out": "public/assets/sprites/resources/food.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "food"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.food.mini",
+      "category": "resources",
+      "src": "art/src/resources/food-mini.svg",
+      "out": "public/assets/sprites/resources/food-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "food",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.wood",
+      "category": "resources",
+      "src": "art/src/resources/wood.svg",
+      "out": "public/assets/sprites/resources/wood.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "wood"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.wood.mini",
+      "category": "resources",
+      "src": "art/src/resources/wood-mini.svg",
+      "out": "public/assets/sprites/resources/wood-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "wood",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.stone",
+      "category": "resources",
+      "src": "art/src/resources/stone.svg",
+      "out": "public/assets/sprites/resources/stone.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "stone"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.stone.mini",
+      "category": "resources",
+      "src": "art/src/resources/stone-mini.svg",
+      "out": "public/assets/sprites/resources/stone-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "stone",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.sand",
+      "category": "resources",
+      "src": "art/src/resources/sand.svg",
+      "out": "public/assets/sprites/resources/sand.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "sand"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.sand.mini",
+      "category": "resources",
+      "src": "art/src/resources/sand-mini.svg",
+      "out": "public/assets/sprites/resources/sand-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "sand",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.clay",
+      "category": "resources",
+      "src": "art/src/resources/clay.svg",
+      "out": "public/assets/sprites/resources/clay.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "clay"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.clay.mini",
+      "category": "resources",
+      "src": "art/src/resources/clay-mini.svg",
+      "out": "public/assets/sprites/resources/clay-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "clay",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.iron",
+      "category": "resources",
+      "src": "art/src/resources/iron.svg",
+      "out": "public/assets/sprites/resources/iron.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "iron"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.iron.mini",
+      "category": "resources",
+      "src": "art/src/resources/iron-mini.svg",
+      "out": "public/assets/sprites/resources/iron-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "iron",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.coal",
+      "category": "resources",
+      "src": "art/src/resources/coal.svg",
+      "out": "public/assets/sprites/resources/coal.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "coal"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.coal.mini",
+      "category": "resources",
+      "src": "art/src/resources/coal-mini.svg",
+      "out": "public/assets/sprites/resources/coal-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "coal",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.water",
+      "category": "resources",
+      "src": "art/src/resources/water.svg",
+      "out": "public/assets/sprites/resources/water.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "water"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.water.mini",
+      "category": "resources",
+      "src": "art/src/resources/water-mini.svg",
+      "out": "public/assets/sprites/resources/water-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "water",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.oil",
+      "category": "resources",
+      "src": "art/src/resources/oil.svg",
+      "out": "public/assets/sprites/resources/oil.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "oil"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.oil.mini",
+      "category": "resources",
+      "src": "art/src/resources/oil-mini.svg",
+      "out": "public/assets/sprites/resources/oil-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "oil",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.biogas",
+      "category": "resources",
+      "src": "art/src/resources/biogas.svg",
+      "out": "public/assets/sprites/resources/biogas.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "biogas"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.biogas.mini",
+      "category": "resources",
+      "src": "art/src/resources/biogas-mini.svg",
+      "out": "public/assets/sprites/resources/biogas-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "biogas",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.uranium",
+      "category": "resources",
+      "src": "art/src/resources/uranium.svg",
+      "out": "public/assets/sprites/resources/uranium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "uranium"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.uranium.mini",
+      "category": "resources",
+      "src": "art/src/resources/uranium-mini.svg",
+      "out": "public/assets/sprites/resources/uranium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "uranium",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.aetherite",
+      "category": "resources",
+      "src": "art/src/resources/aetherite.svg",
+      "out": "public/assets/sprites/resources/aetherite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "aetherite"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.aetherite.mini",
+      "category": "resources",
+      "src": "art/src/resources/aetherite-mini.svg",
+      "out": "public/assets/sprites/resources/aetherite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "aetherite",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.glass",
+      "category": "resources",
+      "src": "art/src/resources/glass.svg",
+      "out": "public/assets/sprites/resources/glass.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "glass"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.glass.mini",
+      "category": "resources",
+      "src": "art/src/resources/glass-mini.svg",
+      "out": "public/assets/sprites/resources/glass-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "glass",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.concrete",
+      "category": "resources",
+      "src": "art/src/resources/concrete.svg",
+      "out": "public/assets/sprites/resources/concrete.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "concrete"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.concrete.mini",
+      "category": "resources",
+      "src": "art/src/resources/concrete-mini.svg",
+      "out": "public/assets/sprites/resources/concrete-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "concrete",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.steel",
+      "category": "resources",
+      "src": "art/src/resources/steel.svg",
+      "out": "public/assets/sprites/resources/steel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "steel"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.steel.mini",
+      "category": "resources",
+      "src": "art/src/resources/steel-mini.svg",
+      "out": "public/assets/sprites/resources/steel-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "steel",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.plastic",
+      "category": "resources",
+      "src": "art/src/resources/plastic.svg",
+      "out": "public/assets/sprites/resources/plastic.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "plastic"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.plastic.mini",
+      "category": "resources",
+      "src": "art/src/resources/plastic-mini.svg",
+      "out": "public/assets/sprites/resources/plastic-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "plastic",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.electronics",
+      "category": "resources",
+      "src": "art/src/resources/electronics.svg",
+      "out": "public/assets/sprites/resources/electronics.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "electronics"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.electronics.mini",
+      "category": "resources",
+      "src": "art/src/resources/electronics-mini.svg",
+      "out": "public/assets/sprites/resources/electronics-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "electronics",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.computer",
+      "category": "resources",
+      "src": "art/src/resources/computer.svg",
+      "out": "public/assets/sprites/resources/computer.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "computer"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.computer.mini",
+      "category": "resources",
+      "src": "art/src/resources/computer-mini.svg",
+      "out": "public/assets/sprites/resources/computer-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "computer",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.energy",
+      "category": "resources",
+      "src": "art/src/resources/energy.svg",
+      "out": "public/assets/sprites/resources/energy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "energy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.energy.mini",
+      "category": "resources",
+      "src": "art/src/resources/energy-mini.svg",
+      "out": "public/assets/sprites/resources/energy-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "energy",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.science",
+      "category": "resources",
+      "src": "art/src/resources/science.svg",
+      "out": "public/assets/sprites/resources/science.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "science"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.science.mini",
+      "category": "resources",
+      "src": "art/src/resources/science-mini.svg",
+      "out": "public/assets/sprites/resources/science-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "science",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.ascension",
+      "category": "resources",
+      "src": "art/src/resources/ascension.svg",
+      "out": "public/assets/sprites/resources/ascension.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "ascension"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.ascension.mini",
+      "category": "resources",
+      "src": "art/src/resources/ascension-mini.svg",
+      "out": "public/assets/sprites/resources/ascension-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "ascension",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.pollution",
+      "category": "resources",
+      "src": "art/src/resources/pollution.svg",
+      "out": "public/assets/sprites/resources/pollution.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "pollution"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.pollution.mini",
+      "category": "resources",
+      "src": "art/src/resources/pollution-mini.svg",
+      "out": "public/assets/sprites/resources/pollution-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "pollution",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.population",
+      "category": "resources",
+      "src": "art/src/resources/population.svg",
+      "out": "public/assets/sprites/resources/population.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "population"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.population.mini",
+      "category": "resources",
+      "src": "art/src/resources/population-mini.svg",
+      "out": "public/assets/sprites/resources/population-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "population",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.panel",
+      "category": "ui",
+      "src": "art/src/ui/panel.svg",
+      "out": "public/assets/sprites/ui/panel.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary",
+      "category": "ui",
+      "src": "art/src/ui/button-primary.svg",
+      "out": "public/assets/sprites/ui/button-primary.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-primary-pressed.svg",
+      "out": "public/assets/sprites/ui/button-primary-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-primary-disabled.svg",
+      "out": "public/assets/sprites/ui/button-primary-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary.svg",
+      "out": "public/assets/sprites/ui/button-secondary.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary-pressed.svg",
+      "out": "public/assets/sprites/ui/button-secondary-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary-disabled.svg",
+      "out": "public/assets/sprites/ui/button-secondary-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger",
+      "category": "ui",
+      "src": "art/src/ui/button-danger.svg",
+      "out": "public/assets/sprites/ui/button-danger.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-danger-pressed.svg",
+      "out": "public/assets/sprites/ui/button-danger-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-danger-disabled.svg",
+      "out": "public/assets/sprites/ui/button-danger-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-ok",
+      "category": "ui",
+      "src": "art/src/ui/button-ok.svg",
+      "out": "public/assets/sprites/ui/button-ok.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-ok-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-ok-pressed.svg",
+      "out": "public/assets/sprites/ui/button-ok-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-ok-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-ok-disabled.svg",
+      "out": "public/assets/sprites/ui/button-ok-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-round",
+      "category": "ui",
+      "src": "art/src/ui/button-round.svg",
+      "out": "public/assets/sprites/ui/button-round.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.button-round-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-round-pressed.svg",
+      "out": "public/assets/sprites/ui/button-round-pressed.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round-pressed"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.button-round-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-round-disabled.svg",
+      "out": "public/assets/sprites/ui/button-round-disabled.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button-round-disabled"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-planet",
+      "category": "ui",
+      "src": "art/src/ui/tab-planet.svg",
+      "out": "public/assets/sprites/ui/tab-planet.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-planet"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-starmap",
+      "category": "ui",
+      "src": "art/src/ui/tab-starmap.svg",
+      "out": "public/assets/sprites/ui/tab-starmap.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-starmap"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-build",
+      "category": "ui",
+      "src": "art/src/ui/tab-build.svg",
+      "out": "public/assets/sprites/ui/tab-build.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-build"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-people",
+      "category": "ui",
+      "src": "art/src/ui/tab-people.svg",
+      "out": "public/assets/sprites/ui/tab-people.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-people"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-diplomacy",
+      "category": "ui",
+      "src": "art/src/ui/tab-diplomacy.svg",
+      "out": "public/assets/sprites/ui/tab-diplomacy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-diplomacy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-discoveries",
+      "category": "ui",
+      "src": "art/src/ui/tab-discoveries.svg",
+      "out": "public/assets/sprites/ui/tab-discoveries.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-discoveries"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-coop",
+      "category": "ui",
+      "src": "art/src/ui/tab-coop.svg",
+      "out": "public/assets/sprites/ui/tab-coop.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-coop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-settings",
+      "category": "ui",
+      "src": "art/src/ui/tab-settings.svg",
+      "out": "public/assets/sprites/ui/tab-settings.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-settings"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-build",
+      "category": "ui",
+      "src": "art/src/ui/icon-build.svg",
+      "out": "public/assets/sprites/ui/icon-build.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-build"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-demolish",
+      "category": "ui",
+      "src": "art/src/ui/icon-demolish.svg",
+      "out": "public/assets/sprites/ui/icon-demolish.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-demolish"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-upgrade",
+      "category": "ui",
+      "src": "art/src/ui/icon-upgrade.svg",
+      "out": "public/assets/sprites/ui/icon-upgrade.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-upgrade"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-assign",
+      "category": "ui",
+      "src": "art/src/ui/icon-assign.svg",
+      "out": "public/assets/sprites/ui/icon-assign.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-assign"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-unassign",
+      "category": "ui",
+      "src": "art/src/ui/icon-unassign.svg",
+      "out": "public/assets/sprites/ui/icon-unassign.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-unassign"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-info",
+      "category": "ui",
+      "src": "art/src/ui/icon-info.svg",
+      "out": "public/assets/sprites/ui/icon-info.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-info"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-close",
+      "category": "ui",
+      "src": "art/src/ui/icon-close.svg",
+      "out": "public/assets/sprites/ui/icon-close.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-close"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-back",
+      "category": "ui",
+      "src": "art/src/ui/icon-back.svg",
+      "out": "public/assets/sprites/ui/icon-back.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-back"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-confirm",
+      "category": "ui",
+      "src": "art/src/ui/icon-confirm.svg",
+      "out": "public/assets/sprites/ui/icon-confirm.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-confirm"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-cancel",
+      "category": "ui",
+      "src": "art/src/ui/icon-cancel.svg",
+      "out": "public/assets/sprites/ui/icon-cancel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-cancel"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-rotate-left",
+      "category": "ui",
+      "src": "art/src/ui/icon-rotate-left.svg",
+      "out": "public/assets/sprites/ui/icon-rotate-left.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rotate-left"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-rotate-right",
+      "category": "ui",
+      "src": "art/src/ui/icon-rotate-right.svg",
+      "out": "public/assets/sprites/ui/icon-rotate-right.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rotate-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-pause",
+      "category": "ui",
+      "src": "art/src/ui/icon-pause.svg",
+      "out": "public/assets/sprites/ui/icon-pause.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-pause"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-1",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-1.svg",
+      "out": "public/assets/sprites/ui/icon-speed-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-2",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-2.svg",
+      "out": "public/assets/sprites/ui/icon-speed-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-3",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-3.svg",
+      "out": "public/assets/sprites/ui/icon-speed-3.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-3"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-no-energy",
+      "category": "ui",
+      "src": "art/src/ui/badge-no-energy.svg",
+      "out": "public/assets/sprites/ui/badge-no-energy.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-no-energy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-no-workers",
+      "category": "ui",
+      "src": "art/src/ui/badge-no-workers.svg",
+      "out": "public/assets/sprites/ui/badge-no-workers.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-no-workers"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-storage-full",
+      "category": "ui",
+      "src": "art/src/ui/badge-storage-full.svg",
+      "out": "public/assets/sprites/ui/badge-storage-full.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-storage-full"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-depleted",
+      "category": "ui",
+      "src": "art/src/ui/badge-depleted.svg",
+      "out": "public/assets/sprites/ui/badge-depleted.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-polluted",
+      "category": "ui",
+      "src": "art/src/ui/badge-polluted.svg",
+      "out": "public/assets/sprites/ui/badge-polluted.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-polluted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-hungry",
+      "category": "ui",
+      "src": "art/src/ui/badge-hungry.svg",
+      "out": "public/assets/sprites/ui/badge-hungry.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-hungry"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-producing",
+      "category": "ui",
+      "src": "art/src/ui/badge-producing.svg",
+      "out": "public/assets/sprites/ui/badge-producing.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-producing"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-upgrade-ready",
+      "category": "ui",
+      "src": "art/src/ui/badge-upgrade-ready.svg",
+      "out": "public/assets/sprites/ui/badge-upgrade-ready.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-upgrade-ready"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-attack",
+      "category": "ui",
+      "src": "art/src/ui/badge-attack.svg",
+      "out": "public/assets/sprites/ui/badge-attack.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-attack"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.cursor-player",
+      "category": "ui",
+      "src": "art/src/ui/cursor-player.svg",
+      "out": "public/assets/sprites/ui/cursor-player.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.25,
+        0.875
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "cursor-player"
+      ],
+      "phase": "P0",
+      "tintable": true
+    },
+    {
+      "id": "ui.ping-marker",
+      "category": "ui",
+      "src": "art/src/ui/ping-marker-f{f}.svg",
+      "out": "public/assets/sprites/ui/ping-marker-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 6,
+      "parts": [
+        "pin",
+        "pulse"
+      ],
+      "tags": [
+        "ui",
+        "coop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.segment-selector",
+      "category": "ui",
+      "src": "art/src/ui/segment-selector.svg",
+      "out": "public/assets/sprites/ui/segment-selector.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.6
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "segment-selector"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "brand.logo-mark",
+      "category": "brand",
+      "src": "art/src/brand/logo-mark.svg",
+      "out": "public/assets/sprites/brand/logo-mark.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "logo-mark"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "brand.logo",
+      "category": "brand",
+      "src": "art/src/brand/logo.svg",
+      "out": "public/assets/sprites/brand/logo.png",
+      "viewBox": [
+        1024,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "logo"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.panel-dark",
+      "category": "ui",
+      "src": "art/src/ui/panel-dark.svg",
+      "out": "public/assets/sprites/ui/panel-dark.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel-dark"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.panel-tooltip",
+      "category": "ui",
+      "src": "art/src/ui/panel-tooltip.svg",
+      "out": "public/assets/sprites/ui/panel-tooltip.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel-tooltip"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.card",
+      "category": "ui",
+      "src": "art/src/ui/card.svg",
+      "out": "public/assets/sprites/ui/card.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "card"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.bar-bg",
+      "category": "ui",
+      "src": "art/src/ui/bar-bg.svg",
+      "out": "public/assets/sprites/ui/bar-bg.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "bar-bg"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.toast",
+      "category": "ui",
+      "src": "art/src/ui/toast.svg",
+      "out": "public/assets/sprites/ui/toast.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "toast"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.tooltip-pointer",
+      "category": "ui",
+      "src": "art/src/ui/tooltip-pointer.svg",
+      "out": "public/assets/sprites/ui/tooltip-pointer.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tooltip-pointer"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.progress-bg",
+      "category": "ui",
+      "src": "art/src/ui/progress-bg.svg",
+      "out": "public/assets/sprites/ui/progress-bg.png",
+      "viewBox": [
+        128,
+        32
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "progress-bg"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        14,
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "id": "ui.progress-fill",
+      "category": "ui",
+      "src": "art/src/ui/progress-fill.svg",
+      "out": "public/assets/sprites/ui/progress-fill.png",
+      "viewBox": [
+        128,
+        32
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "progress",
+        "engine-clipped"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        14,
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "id": "ui.ring-progress",
+      "category": "ui",
+      "src": "art/src/ui/ring-progress.svg",
+      "out": "public/assets/sprites/ui/ring-progress.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "track",
+        "progress-anchor"
+      ],
+      "tags": [
+        "ui",
+        "ring-progress"
+      ],
+      "phase": "P1",
+      "progress": {
+        "center": [
+          64,
+          64
+        ],
+        "radius": 42.5,
+        "startAngle": -90,
+        "clockwise": true,
+        "strokeWidth": 10
+      }
+    },
+    {
+      "id": "ui.icon-move",
+      "category": "ui",
+      "src": "art/src/ui/icon-move.svg",
+      "out": "public/assets/sprites/ui/icon-move.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-move"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-launch",
+      "category": "ui",
+      "src": "art/src/ui/icon-launch.svg",
+      "out": "public/assets/sprites/ui/icon-launch.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-launch"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-trade",
+      "category": "ui",
+      "src": "art/src/ui/icon-trade.svg",
+      "out": "public/assets/sprites/ui/icon-trade.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-trade"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-peace",
+      "category": "ui",
+      "src": "art/src/ui/icon-peace.svg",
+      "out": "public/assets/sprites/ui/icon-peace.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-peace"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-alliance",
+      "category": "ui",
+      "src": "art/src/ui/icon-alliance.svg",
+      "out": "public/assets/sprites/ui/icon-alliance.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-alliance"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-war",
+      "category": "ui",
+      "src": "art/src/ui/icon-war.svg",
+      "out": "public/assets/sprites/ui/icon-war.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-war"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-ultimatum",
+      "category": "ui",
+      "src": "art/src/ui/icon-ultimatum.svg",
+      "out": "public/assets/sprites/ui/icon-ultimatum.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ultimatum"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-ping",
+      "category": "ui",
+      "src": "art/src/ui/icon-ping.svg",
+      "out": "public/assets/sprites/ui/icon-ping.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ping"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-chat",
+      "category": "ui",
+      "src": "art/src/ui/icon-chat.svg",
+      "out": "public/assets/sprites/ui/icon-chat.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-chat"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-invite",
+      "category": "ui",
+      "src": "art/src/ui/icon-invite.svg",
+      "out": "public/assets/sprites/ui/icon-invite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-invite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-sound-on",
+      "category": "ui",
+      "src": "art/src/ui/icon-sound-on.svg",
+      "out": "public/assets/sprites/ui/icon-sound-on.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-sound-on"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-sound-off",
+      "category": "ui",
+      "src": "art/src/ui/icon-sound-off.svg",
+      "out": "public/assets/sprites/ui/icon-sound-off.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-sound-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-help",
+      "category": "ui",
+      "src": "art/src/ui/icon-help.svg",
+      "out": "public/assets/sprites/ui/icon-help.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-help"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.avatar-frame",
+      "category": "ui",
+      "src": "art/src/ui/avatar-frame.svg",
+      "out": "public/assets/sprites/ui/avatar-frame.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "avatar-frame"
+      ],
+      "phase": "P1",
+      "tintable": true
+    },
+    {
+      "id": "ui.crown-host",
+      "category": "ui",
+      "src": "art/src/ui/crown-host.svg",
+      "out": "public/assets/sprites/ui/crown-host.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "crown-host"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge.svg",
+      "out": "public/assets/sprites/ui/discovery-badge.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge-locked",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge-locked.svg",
+      "out": "public/assets/sprites/ui/discovery-badge-locked.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge-locked"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.discovery-badge-available",
+      "category": "ui",
+      "src": "art/src/ui/discovery-badge-available.svg",
+      "out": "public/assets/sprites/ui/discovery-badge-available.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "discovery-badge-available"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.diplomacy",
+      "category": "discoveries",
+      "src": "art/src/discoveries/diplomacy.svg",
+      "out": "public/assets/sprites/discoveries/diplomacy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "diplomacy",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.ecology",
+      "category": "discoveries",
+      "src": "art/src/discoveries/ecology.svg",
+      "out": "public/assets/sprites/discoveries/ecology.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "ecology",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.space-mining",
+      "category": "discoveries",
+      "src": "art/src/discoveries/space-mining.svg",
+      "out": "public/assets/sprites/discoveries/space-mining.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "space-mining",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.pure-science",
+      "category": "discoveries",
+      "src": "art/src/discoveries/pure-science.svg",
+      "out": "public/assets/sprites/discoveries/pure-science.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "pure-science",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.deep-drilling",
+      "category": "discoveries",
+      "src": "art/src/discoveries/deep-drilling.svg",
+      "out": "public/assets/sprites/discoveries/deep-drilling.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "deep-drilling",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.efficient-housing",
+      "category": "discoveries",
+      "src": "art/src/discoveries/efficient-housing.svg",
+      "out": "public/assets/sprites/discoveries/efficient-housing.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "efficient-housing",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.green-thumb",
+      "category": "discoveries",
+      "src": "art/src/discoveries/green-thumb.svg",
+      "out": "public/assets/sprites/discoveries/green-thumb.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "green-thumb",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.rocketry",
+      "category": "discoveries",
+      "src": "art/src/discoveries/rocketry.svg",
+      "out": "public/assets/sprites/discoveries/rocketry.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "rocketry",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.long-range-sight",
+      "category": "discoveries",
+      "src": "art/src/discoveries/long-range-sight.svg",
+      "out": "public/assets/sprites/discoveries/long-range-sight.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "long-range-sight",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.trade-routes",
+      "category": "discoveries",
+      "src": "art/src/discoveries/trade-routes.svg",
+      "out": "public/assets/sprites/discoveries/trade-routes.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "trade-routes",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.recycling",
+      "category": "discoveries",
+      "src": "art/src/discoveries/recycling.svg",
+      "out": "public/assets/sprites/discoveries/recycling.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "recycling",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.fortification",
+      "category": "discoveries",
+      "src": "art/src/discoveries/fortification.svg",
+      "out": "public/assets/sprites/discoveries/fortification.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "fortification",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.crystal-lore",
+      "category": "discoveries",
+      "src": "art/src/discoveries/crystal-lore.svg",
+      "out": "public/assets/sprites/discoveries/crystal-lore.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "crystal-lore",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.atomic-power",
+      "category": "discoveries",
+      "src": "art/src/discoveries/atomic-power.svg",
+      "out": "public/assets/sprites/discoveries/atomic-power.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "atomic-power",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.automation",
+      "category": "discoveries",
+      "src": "art/src/discoveries/automation.svg",
+      "out": "public/assets/sprites/discoveries/automation.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "automation",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.cartography",
+      "category": "discoveries",
+      "src": "art/src/discoveries/cartography.svg",
+      "out": "public/assets/sprites/discoveries/cartography.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "cartography",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.medicine",
+      "category": "discoveries",
+      "src": "art/src/discoveries/medicine.svg",
+      "out": "public/assets/sprites/discoveries/medicine.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "medicine",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.festival",
+      "category": "discoveries",
+      "src": "art/src/discoveries/festival.svg",
+      "out": "public/assets/sprites/discoveries/festival.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "festival",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.weather-control",
+      "category": "discoveries",
+      "src": "art/src/discoveries/weather-control.svg",
+      "out": "public/assets/sprites/discoveries/weather-control.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "weather-control",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.terraforming",
+      "category": "discoveries",
+      "src": "art/src/discoveries/terraforming.svg",
+      "out": "public/assets/sprites/discoveries/terraforming.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "terraforming",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.survival-kits",
+      "category": "discoveries",
+      "src": "art/src/discoveries/survival-kits.svg",
+      "out": "public/assets/sprites/discoveries/survival-kits.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "survival-kits",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.storage-tech",
+      "category": "discoveries",
+      "src": "art/src/discoveries/storage-tech.svg",
+      "out": "public/assets/sprites/discoveries/storage-tech.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "storage-tech",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.energy-grid",
+      "category": "discoveries",
+      "src": "art/src/discoveries/energy-grid.svg",
+      "out": "public/assets/sprites/discoveries/energy-grid.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "energy-grid",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.swift-feet",
+      "category": "discoveries",
+      "src": "art/src/discoveries/swift-feet.svg",
+      "out": "public/assets/sprites/discoveries/swift-feet.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "swift-feet",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "brand.app-icon-foreground",
+      "category": "brand",
+      "src": "art/src/brand/app-icon-foreground.svg",
+      "out": "public/assets/sprites/brand/app-icon-foreground.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon-foreground"
+      ],
+      "phase": "P1",
+      "safeZone": {
+        "center": [
+          512,
+          512
+        ],
+        "radius": 340
+      }
+    },
+    {
+      "id": "brand.app-icon-background",
+      "category": "brand",
+      "src": "art/src/brand/app-icon-background.svg",
+      "out": "public/assets/sprites/brand/app-icon-background.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon-background"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "brand.app-icon",
+      "category": "brand",
+      "src": "art/src/brand/app-icon.svg",
+      "out": "public/assets/sprites/brand/app-icon.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "app-icon"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "brand.splash",
+      "category": "brand",
+      "src": "art/src/brand/splash.svg",
+      "out": "public/assets/sprites/brand/splash.png",
+      "viewBox": [
+        1080,
+        1920
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "splash"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
