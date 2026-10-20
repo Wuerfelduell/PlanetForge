@@ -1319,6 +1319,294 @@
         "prop"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-32"
+      ],
+      "phase": "P0"
     }
   ]
 }

@@ -156,6 +156,40 @@ const propNames = {
   savanna: ['bush-a', 'bush-b', 'acacia'], desert: ['cactus-a', 'cactus-b', 'dune'], tundra: ['pine-snow-a', 'pine-snow-b', 'ice-rock'], crystal: ['crystal-a', 'crystal-b', 'crystal-c'],
 };
 
+function overlay(kind, segments) {
+  const h = Math.PI / segments, a = h + 2 / 400;
+  const band = sector(398, 462, -a, a);
+  let b = '';
+  if (kind === 'fog') {
+    b += path(band, C('space'), 'stroke="none" opacity="0.9"');
+    for (let i = -1; i <= 1; i++) {
+      const angle = i * h * .58, x = round(512 + 434 * Math.sin(angle)), y = round(512 - 434 * Math.cos(angle));
+      b += `<g transform="translate(${x} ${y})" stroke="none">${ellipse(0, 0, 22, 10, C('ink'), 'opacity="0.7"')}${ellipse(-4, -5, 14, 9, C('space', .18), 'opacity="0.2"')}</g>`;
+      b += path(`M ${x - 11} ${y} Q ${x - 4} ${y - 11} ${x + 7} ${y - 4} Q ${x + 13} ${y + 3} ${x + 4} ${y + 5} Q ${x - 2} ${y + 6} ${x - 3} ${y + 2}`, 'none', `stroke="${C('rock')}" stroke-width="2" opacity="0.3"`);
+    }
+  }
+  if (kind === 'depleted') {
+    b += path(band, C('rock-dark'), 'stroke="none" opacity="0.6"');
+    b += path('M 500 59 L 507 75 L 500 87 L 515 101 L 510 113 M 507 75 L 522 77 L 530 69 M 500 87 L 483 90', 'none', `stroke="${C('ink')}" stroke-width="3" opacity="0.6"`);
+  }
+  if (kind === 'polluted') {
+    b += path(band, C('toxic'), 'stroke="none" opacity="0.2"');
+    for (const [x, y, r] of [[488, 86, 12], [520, 73, 16], [536, 97, 9]]) {
+      b += ellipse(x, y, r + 6, r * .7, C('toxic'), 'stroke="none" opacity="0.2"');
+      b += ellipse(x, y, r, r * .5, C('toxic'), 'stroke="none" opacity="0.4"');
+      b += circle(x - 3, y - 11, 3, C('toxic', .18), 'stroke="none" opacity="0.7"');
+    }
+  }
+  if (kind === 'selected' || kind === 'hover' || kind === 'player-ping') {
+    const ping = kind === 'player-ping', hover = kind === 'hover', color = C(ping ? 'tint-white' : 'cream');
+    b += path(band, color, `stroke="none" opacity="${hover ? '0.1' : '0.2'}"`);
+    // A complete rim gives feedback even when buildings cover the outer edge.
+    b += path(sector(402, 458, -h + .006, h - .006), 'none', `stroke="${color}" stroke-width="${hover ? 2 : 5}"`);
+    if (ping) b += path('M 501 78 L 512 87 L 523 78 M 503 92 L 512 100 L 521 92', 'none', `stroke="${color}" stroke-width="4"`);
+  }
+  return `<defs>${edgeMask(segments)}</defs>${group('overlay', b, 'mask="url(#edge)"')}`;
+}
+
 // Each biome exports one reusable north-facing sector per planet size.
 for (const biome of biomes) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
@@ -163,5 +197,8 @@ for (const biome of biomes) for (const n of sizes) {
 for (const [biome, names] of Object.entries(propNames)) names.forEach((name, i) => {
   add(`biome.${biome}.prop.${name}`, 'biomes', `${biome}-${name}`, prop(biome, i), 128, 128, 'P0', [.5, .9375], ['prop'], [biome, 'prop']);
 });
+for (const kind of ['fog', 'depleted', 'polluted']) for (const n of sizes) {
+  add(`overlay.${kind}.${n}`, 'biomes', `overlay-${kind}-${n}`, overlay(kind, n), 1024, 1024, 'P0', [.5, .5], ['overlay'], ['overlay', kind, `segments-${n}`]);
+}
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`World: ${assets.length} SVG masters generated.`);
