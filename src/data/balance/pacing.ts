@@ -20,7 +20,7 @@ export interface LevelEta {
  */
 export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
   const out: LevelEta[] = [];
-  const startPop = RULES.startPopulation * (mode === "coop" ? players : 1);
+  const startPop = RULES.startPopulation + (mode === "coop" ? (players - 1) * RULES.coopJoinPopulation : 0);
   const planets = [{ pop: startPop, progress: 0 }];
   let points = 0;
   let level = 0;

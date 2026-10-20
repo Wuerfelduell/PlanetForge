@@ -24,7 +24,7 @@ IDs folgen der Asset-Liste aus dem Codex-Prompt: Biome `forest`, `savanna`, `mou
 
 ## Grundgedanke
 
-**Arbeitermangel statt Platzmangel** (Sebs Entscheidung vom 20.10.2026). Der Heimatplanet hat 32 Felder, zu Beginn sind 7 sichtbar, und es gibt immer mehr Arbeitsplätze als Einwohner: Ein voll ausgebauter Planet bietet etwa 1,45 Jobs pro Einwohner (Test `jobsPerCitizen`). Höhere Gebäudestufen bringen vor allem mehr Arbeitsplätze. Die eigentliche Frage ist also nicht „wo baue ich“, sondern „wen setze ich wohin“.
+**Arbeitermangel statt Platzmangel** (Sebs Entscheidung vom 20.10.2026). Der gemeinsame Startplanet hat 32 Felder (gegeneinander hat jeder 24), zu Beginn sind 7 sichtbar, und es gibt immer mehr Arbeitsplätze als Einwohner: Ein voll ausgebauter Planet bietet etwa 1,45 Jobs pro Einwohner (Test `jobsPerCitizen`). Höhere Gebäudestufen bringen vor allem mehr Arbeitsplätze. Die eigentliche Frage ist also nicht „wo baue ich“, sondern „wen setze ich wohin“.
 
 **Nachwuchs wird mit der Größe langsamer.** Sekunden pro Geburt = Grundwert + Wert pro Einwohner × Einwohner auf dem Planeten (gemeinsam 30 + 6 × n, gegeneinander 12 + 3 × n). Bei 10 Einwohnern dauert eine Geburt im gemeinsamen Modus 90 Sekunden, bei 40 schon 4,5 Minuten. Deshalb ist jeder neue Planet mit eigenem Nachwuchs viel wert, und Entdeckungen wie Medizin oder Automatisierung sind echte Hebel. Eine Geburt kostet 15 Beeren.
 
@@ -53,7 +53,7 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | 8 | Computer, Monument |
 | 9 | Große Rakete, Atomkraftwerk (mit Kernkraft) |
 
-Der Test `homeAvailability` rechnet nach, dass jede Gebäudekosten auf dem Heimatplaneten bis zur Freischaltstufe herstellbar sind. Dafür hat der Heimatplanet immer mindestens ein Feld Wald, Savanne, Gebirge, Meer, Sumpf und Wüste (`RULES.homeGuaranteedBiomes`, muss der Generator einhalten). **Ätherit und Uran gibt es nur auf anderen Planeten.** Computer, Monument, große Rakete und Atomkraft ziehen den Spieler deshalb ab Stufe 7 bis 8 in den Weltraum. Ausnahme sind die Echoflatterer, die Ätherit von Anfang an abbauen können.
+Der Test `homeAvailability` rechnet nach, dass jede Gebäudekosten auf dem Heimatplaneten bis zur Freischaltstufe herstellbar sind. Dafür hat der Heimatplanet immer mindestens ein Feld Wald, Savanne, Gebirge, Meer, Sumpf und Wüste (`RULES.homeGuaranteedBiomes`, muss der Generator einhalten). **Ätherit und Uran liegen nicht in den Heimat-Biomen.** Sie kommen als seltene Vorkommen, die der Generator verteilt (`RARE_RESOURCES` in `src/sim/content.ts`), meist auf anderen Planeten, und werden erst mit Tiefbohrung bzw. Kristallkunde abbaubar. Computer, Monument, große Rakete und Atomkraft ziehen den Spieler deshalb ab Stufe 7 bis 8 in den Weltraum. Ausnahme sind die Echoflatterer, die Ätherit von Anfang an abbauen können.
 
 ## Spielmodi und Pacing
 
@@ -79,7 +79,7 @@ Aufstiegspunkte pro Umlauf sind wie im Prototyp die Einwohnerzahl, dazu kommt da
 
 Der Test erlaubt ±20 % pro Stufe.
 
-**Mehr Spieler im gemeinsamen Modus.** Ein Planet heißt eine Geburtenwarteschlange. Mehr Spieler bringen also nur ihre 3 Startbewohner mit, und ab Stufe 6 kann jeder eine eigene Kolonie mit eigenem Nachwuchs betreiben. Die Schwellen steigen dafür mäßig (× 1 / 1,15 / 1,3 / 1,45), ebenso Entdeckungskosten (× 1 / 1,1 / 1,2 / 1,3) und Monsterstärke (× 1 / 1,3 / 1,6 / 1,9). Stufe 10 kommt dann nach 180 / 152 / 141 / 136 Minuten bei 1 / 2 / 3 / 4 Spielern. Zusammen geht es also etwas schneller, bleibt aber eine lange Partie.
+**Mehr Spieler im gemeinsamen Modus.** Ein Planet heißt eine Geburtenwarteschlange. Jeder weitere Spieler bringt nur 2 Einwohner mit, und ab Stufe 6 kann jeder eine eigene Kolonie mit eigenem Nachwuchs betreiben. Die Schwellen steigen dafür mäßig (× 1 / 1,15 / 1,3 / 1,45), ebenso Entdeckungskosten (× 1 / 1,1 / 1,2 / 1,3) und Monsterstärke (× 1 / 1,3 / 1,6 / 1,9). Stufe 10 kommt dann nach 180 / 152 / 141 / 136 Minuten bei 1 / 2 / 3 / 4 Spielern. Zusammen geht es also etwas schneller, bleibt aber eine lange Partie.
 
 **Gegeneinander** skaliert nicht mit der Spielerzahl, jeder spielt seine eigene Wirtschaft. Pro Spieler kommt ein freier Planet dazu, um den man sich streiten kann. Handel zwischen Spielern läuft über den Markt und verliert 20 %.
 

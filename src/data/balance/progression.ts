@@ -6,14 +6,17 @@ export const RULES = {
   ticksPerSecond: 10,
   /** One planet rotation; drives food upkeep, ascension and events. */
   secondsPerCycle: 30,
-  /** Big home planet: space is not the bottleneck, workers are. */
+  /** coop: big shared start planet, space is not the bottleneck, workers are. */
   homeSegments: 32,
+  /** versus: every player's own start planet (matches SYSTEM in src/sim/content.ts). */
+  versusHomeSegments: 24,
   /** The home planet always has at least one segment of each, so every production chain works. */
   homeGuaranteedBiomes: ["forest", "savanna", "mountains", "ocean", "swamp", "desert"],
   startRevealRadius: 3,
   buildRevealRadius: 2,
-  /** Per player. */
   startPopulation: 3,
+  /** coop: every player who joins brings this many citizens to the shared planet. */
+  coopJoinPopulation: 2,
   baseHousing: 3,
   startResources: { food: 30, wood: 15 } as Cost<ResourceId>,
   /** Citizens that can gather by hand on a segment without a building. */
@@ -205,7 +208,7 @@ export const MODES = {
     /** Cumulative ascension points for level 1 … 10. */
     thresholds: [25, 100, 270, 600, 1150, 2050, 3300, 5200, 8300, 12900],
     discoveryCostMul: 1,
-    /** One planet, one birth queue: extra players add start citizens and run colonies in parallel. */
+    /** One planet, one birth queue: joiners bring citizens (RULES.coopJoinPopulation) and run colonies in parallel. */
     playerThresholdMul: [1, 1.15, 1.3, 1.45],
     playerDiscoveryCostMul: [1, 1.1, 1.2, 1.3],
     monsterStrengthMul: [1, 1.3, 1.6, 1.9],
