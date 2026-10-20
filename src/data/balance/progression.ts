@@ -289,9 +289,13 @@ export const MODES = {
     playerThresholdMul: [1, 1, 1, 1],
     playerDiscoveryCostMul: [1, 1, 1, 1],
     monsterStrengthMul: [1, 1, 1, 1],
-    /** Smaller system than coop: one start planet per player plus a few free ones. */
-    planets: [3, 4, 6, 7],
-    aiFactions: [1, 1, 2, 2],
+    /** Design doc 5.7: 1 + 2·n planets and n AI factions, smaller than coop so players meet fast. */
+    planets: [3, 5, 7, 9],
+    aiFactions: [1, 2, 3, 4],
+    /** Start planets are mirrored: same biomes, deposits, sun distance and distance to each other. */
+    mirroredStartPlanets: true,
+    /** No joining after the start; reconnecting is always possible. */
+    joinAfterStart: false,
     eventsMul: [1, 1, 1, 1],
     /** Last people standing wins, or all remaining players agree on a draw. */
     victory: "eradication",
@@ -303,7 +307,7 @@ export const MODES = {
 } as const;
 
 /**
- * Player-versus-player fights (versus mode, design doc 5.3). Flights are visible on the star map
+ * Player-versus-player fights (versus mode, design doc 5.2). Flights are visible on the star map
  * with their arrival time, so the defender can pull citizens off work.
  *
  * Attack: citizens fly in a combat rocket. On arrival they fight the defenders (idle citizens
@@ -319,6 +323,18 @@ export const MODES = {
 export const VERSUS_COMBAT = {
   sabotageMinLevel: 2,
   attackMinLevel: 3,
+  /** Unlocks the combat rocket before attackMinLevel (design doc: "ab Ascension 3 oder passender Discovery"). */
+  earlyAttackDiscovery: "rocketry",
+  /** Weapons: +1 on attack rolls. Shields: +1 on defense rolls. */
+  weaponsDiscovery: "rocketry",
+  shieldsDiscovery: "fortification",
+  /** The attacker may retreat if he brought fuel for the way back; otherwise his citizens stay. */
+  retreatAllowed: true,
+  /** Default defenders: all idle citizens; workers marked as defenders stop working. */
+  defaultDefenders: "idle",
+  /** Never attack citizens in flight, never use this rule against AI planets (AI war stays separate). */
+  attackFlights: false,
+  attackAiPlanets: false,
   die: 6,
   attackerBonus: 0,
   defenderHomeBonus: 1,
