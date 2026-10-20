@@ -1,0 +1,11 @@
+{
+  "name": "planetforge-art", "private": true, "type": "module",
+  "scripts": {
+    "assets:gen": "node generate.mjs",
+    "assets:build": "node build.mjs",
+    "assets:check": "node check.mjs",
+    "assets:preview": "node serve.mjs",
+    "assets:test": "node --test test.mjs"
+  },
+  "devDependencies": {"sharp": "^0.34.3", "playwright": "^1.55.0"}
+}
