@@ -25,7 +25,9 @@ npm run build      # Typecheck + Produktions-Build nach dist/
 
 ## Stand (Prototyp)
 
-- Planet mit 24 Feldern und 6 Biomen, prozedural per Seed, Start-Bereich garantiert Holz, Nahrung und Stein.
+- Sternsystem per Seed: Sonne, ein Startplanet pro möglichem Spieler (bis 4) und 2 bis 4 freie Planeten mit Typen (gemäßigt, trocken, Eis, Ozean, Lava, giftig), die die Biome bestimmen. Startbereich garantiert Holz, Nahrung und Stein.
+- Seltene Rohstoffe (Kohle, Öl, Uran, Ätherit) werden so auf die Startplaneten verteilt, dass sich Spieler ergänzen. Lager, Einwohner und Nahrung gehören jeweils zum Planeten; nur der Besitzer darf dort bauen. Mitspieler steigen mit `addPlayer` auf einem freien Startplaneten ein.
+- Bisher zeigt das Spiel nur den eigenen Planeten; eine Sternkarte folgt.
 - Einwohner von Hand sammeln lassen, Bodenschätze erschöpfen sich und wachsen nach, wenn man sie in Ruhe lässt.
 - Gebäude: Hütte, Farm, Mine, Pumpe, Labor; Nachbarschafts-Boni; Bauen deckt Felder auf; Abreißen gibt 50 % zurück.
 - Nahrungsverbrauch pro Planetenumlauf, Hunger halbiert die Arbeit, Nachwuchs braucht Wohnraum und Nahrung.

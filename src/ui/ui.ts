@@ -5,7 +5,6 @@ import {
   BUILDING_IDS,
   BUILDINGS,
   cycleOf,
-  HOME_PLANET_ID,
   housing,
   idleWorkers,
   nextLevelThreshold,
@@ -36,8 +35,8 @@ export class Ui {
   private lastHud = "";
   private lastPanel = "";
   private selected = 0;
-  /** Planet currently shown. Only the home planet exists so far. */
-  private planetId = HOME_PLANET_ID;
+  /** Planet currently shown (the player's home planet until there is a star map). */
+  private planetId = "";
   private speed = 1;
 
   constructor(private readonly actions: UiActions) {
@@ -48,14 +47,20 @@ export class Ui {
     }
   }
 
+  setPlanet(planetId: string): void {
+    this.planetId = planetId;
+  }
+
   setSelected(index: number): void {
     this.selected = index;
   }
 
   render(state: GameState): void {
-    const hud = this.renderHud(state);
+    const planet = state.planets.find((p) => p.id === this.planetId);
+    if (!planet) return;
+    const hud = this.renderHud(state, planet);
     if (hud !== this.lastHud) this.hud.innerHTML = this.lastHud = hud;
-    const panel = this.renderPanel(state);
+    const panel = this.renderPanel(state, planet);
     if (panel !== this.lastPanel) this.panel.innerHTML = this.lastPanel = panel;
   }
 
@@ -126,10 +131,10 @@ export class Ui {
     }
   }
 
-  private renderHud(state: GameState): string {
-    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || state.resources[r] >= 1);
+  private renderHud(state: GameState, planet: PlanetState): string {
+    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || planet.resources[r] >= 1);
     const chips = shown
-      .map((r) => `<span class="chip${r === "food" && state.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(state.resources[r])}</span>`)
+      .map((r) => `<span class="chip${r === "food" && planet.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(planet.resources[r])}</span>`)
       .join("");
     const lvl = state.ascension.level;
     const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
@@ -140,20 +145,18 @@ export class Ui {
       .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
       .join("");
     return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}</div>
+      <div class="row resources">${chips}<span class="spacer"></span>${speeds}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
       <div class="row status">
-        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${state.population}/${housing(state)} <small>(${idleWorkers(state)} frei)</small></span>
+        <span class="chip" title="Planet">🪐 ${planet.name}</span>
+        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${planet.population}/${housing(planet)} <small>(${idleWorkers(planet)} frei)</small></span>
         <span class="level" title="Aufstieg: ${state.ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-        <span class="spacer"></span>
-        <button class="speed" data-action="new" title="Neues Spiel">↻</button>
       </div>`;
   }
 
-  private renderPanel(state: GameState): string {
-    const planet = state.planets.find((p) => p.id === this.planetId) as PlanetState;
+  private renderPanel(state: GameState, planet: PlanetState): string {
     const s = planet.segments[this.selected]!;
-    const hint = `<p class="hint">💡 ${currentHint(state)}</p>`;
+    const hint = `<p class="hint">💡 ${currentHint(state, planet)}</p>`;
     if (!s.revealed) {
       return `<h2>❔ Unerforschtes Feld</h2><p class="muted">Bau ein Gebäude in der Nähe, um es aufzudecken.</p>${hint}`;
     }
@@ -181,7 +184,7 @@ export class Ui {
       ? `<div class="workers">
           <button class="round" data-action="assign" data-value="-1" ${s.workers > 0 ? "" : "disabled"}>－</button>
           <span>👤 ${s.workers}/${cap}</span>
-          <button class="round" data-action="assign" data-value="1" ${s.workers < cap && idleWorkers(state) > 0 ? "" : "disabled"}>＋</button>
+          <button class="round" data-action="assign" data-value="1" ${s.workers < cap && idleWorkers(planet) > 0 ? "" : "disabled"}>＋</button>
           <span class="rate">${rate}${mult > 1 ? ` <small>Nachbarbonus ×${mult.toFixed(2)}</small>` : ""}</span>
         </div>`
       : "";
@@ -193,10 +196,10 @@ export class Ui {
       actions = `<div class="builds">${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
         .map((b) => {
           const bd = BUILDINGS[b];
-          const blocker = buildBlocker(state, s, b);
+          const blocker = buildBlocker(state, planet, s, b);
           const locked = state.ascension.level < bd.unlockLevel;
           const cost = Object.entries(bd.cost)
-            .map(([r, v]) => `<span class="${state.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
+            .map(([r, v]) => `<span class="${planet.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
             .join(" ");
           return `<button class="build" data-action="build" data-value="${b}" ${blocker ? "disabled" : ""} title="${bd.description}">
               <span class="icon">${locked ? "🔒" : bd.icon}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}</span>

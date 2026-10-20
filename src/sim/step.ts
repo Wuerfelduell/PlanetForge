@@ -31,9 +31,8 @@ export function advanceInPlace(state: GameState, now: number): GameEvent[] {
 
 /** Exactly one fixed tick. Deterministic: same state in, same state out. */
 function stepInPlace(state: GameState, events: GameEvent[]): void {
-  const rateFactor = state.starving ? RULES.starvingRateFactor : 1;
-
   for (const planet of state.planets) {
+    const rateFactor = planet.starving ? RULES.starvingRateFactor : 1;
     for (const segment of planet.segments) {
       const output = segmentOutput(planet, segment);
       const drawn = new Set<ResourceId>();
@@ -51,7 +50,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
             events.push({ type: "depleted", planetId: planet.id, segment: segment.index, resource });
           }
         }
-        state.resources[resource] += amount;
+        planet.resources[resource] += amount;
       }
       for (const d of segment.deposits) {
         // Exhausted deposits stay exhausted; untouched ones regrow.
@@ -59,15 +58,15 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
         d.amount = Math.min(d.max, d.amount + d.max * RULES.regenPerSecond * DT);
       }
     }
-  }
 
-  if (state.population < housing(state) && !state.starving && state.resources.food >= RULES.birthFoodCost) {
-    state.birthProgress += DT;
-    if (state.birthProgress >= RULES.secondsPerBirth - 1e-9) {
-      state.birthProgress = 0;
-      state.population += 1;
-      state.resources.food -= RULES.birthFoodCost;
-      events.push({ type: "born", population: state.population });
+    if (planet.population < housing(planet) && !planet.starving && planet.resources.food >= RULES.birthFoodCost) {
+      planet.birthProgress += DT;
+      if (planet.birthProgress >= RULES.secondsPerBirth - 1e-9) {
+        planet.birthProgress = 0;
+        planet.population += 1;
+        planet.resources.food -= RULES.birthFoodCost;
+        events.push({ type: "born", planetId: planet.id, population: planet.population });
+      }
     }
   }
 
@@ -78,17 +77,20 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
 function endCycle(state: GameState, events: GameEvent[]): void {
   events.push({ type: "cycle", cycle: state.tick / TICKS_PER_CYCLE });
 
-  const upkeep = state.population * RULES.foodPerInhabitantPerCycle;
-  if (state.resources.food >= upkeep) {
-    state.resources.food -= upkeep;
-    state.starving = false;
-  } else {
-    state.resources.food = 0;
-    if (!state.starving) events.push({ type: "starving" });
-    state.starving = true;
+  for (const planet of state.planets) {
+    if (planet.population === 0) continue;
+    const upkeep = planet.population * RULES.foodPerInhabitantPerCycle;
+    if (planet.resources.food >= upkeep) {
+      planet.resources.food -= upkeep;
+      planet.starving = false;
+    } else {
+      planet.resources.food = 0;
+      if (!planet.starving) events.push({ type: "starving", planetId: planet.id });
+      planet.starving = true;
+    }
+    state.ascension.points += planet.population;
   }
 
-  state.ascension.points += state.population;
   for (let t = nextLevelThreshold(state.ascension.level); t !== null && state.ascension.points >= t; t = nextLevelThreshold(state.ascension.level)) {
     state.ascension.level += 1;
     events.push({ type: "levelUp", level: state.ascension.level });

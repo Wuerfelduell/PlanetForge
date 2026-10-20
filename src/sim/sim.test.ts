@@ -3,9 +3,11 @@ import {
   advance,
   advanceWithEvents,
   applyCommand,
+  addPlayer,
   createGame,
-  HOME_PLANET_ID,
+  homePlanet,
   housing,
+  RARE_RESOURCES,
   idleWorkers,
   RULES,
   TICK_MS,
@@ -17,7 +19,7 @@ import {
 
 const P1 = { id: "p1", name: "Seb" };
 const newGame = (seed: number | string) => createGame(String(seed), [P1], { now: 1000 });
-const home = (g: GameState) => g.planets[0]!;
+const home = (g: GameState) => homePlanet(g, P1.id)!;
 
 /** Runs `ticks` ticks and returns the new state plus events. */
 function run(g: GameState, ticks: number): { state: GameState; events: GameEvent[] } {
@@ -28,13 +30,13 @@ type LocalCommand = Command extends infer C ? (C extends Command ? Omit<C, "plan
 
 /** Applies a command at the current sim time and returns the new state (throws on rejection). */
 function exec(g: GameState, cmd: LocalCommand): GameState {
-  const result = applyCommand(g, P1.id, { ...cmd, planetId: HOME_PLANET_ID } as Command, g.simTime);
+  const result = applyCommand(g, P1.id, { ...cmd, planetId: home(g).id } as Command, g.simTime);
   if (!result.ok) throw new Error(result.error);
   return result.state;
 }
 
 function attempt(g: GameState, cmd: LocalCommand) {
-  return applyCommand(g, P1.id, { ...cmd, planetId: HOME_PLANET_ID } as Command, g.simTime);
+  return applyCommand(g, P1.id, { ...cmd, planetId: home(g).id } as Command, g.simTime);
 }
 
 describe("world generation", () => {
@@ -61,6 +63,44 @@ describe("world generation", () => {
     expect(g.players.map((p) => p.id)).toEqual(["p1", "p2"]);
     expect(g.simTime).toBe(5000);
   });
+
+  it("builds a system with one start planet per possible player plus free planets", () => {
+    for (let seed = 0; seed < 50; seed++) {
+      const g = newGame(seed);
+      const starts = g.planets.filter((p) => p.startSlot !== null);
+      expect(starts).toHaveLength(4);
+      expect(g.planets.length).toBeGreaterThanOrEqual(6);
+      expect(new Set(g.planets.map((p) => p.name)).size).toBe(g.planets.length);
+      // Only the joined player's planet is inhabited and partly revealed.
+      expect(g.planets.filter((p) => p.ownerId)).toEqual([home(g)]);
+      expect(g.planets.filter((p) => p !== home(g)).every((p) => p.segments.every((s) => !s.revealed) && p.population === 0)).toBe(true);
+    }
+  });
+
+  it("splits rare resources so start planets complement each other", () => {
+    const rare = Object.keys(RARE_RESOURCES);
+    for (let seed = 0; seed < 100; seed++) {
+      const g = createGame(String(seed), [P1, { id: "p2", name: "Mo" }]);
+      const rareOn = (planetId: string) =>
+        new Set(g.planets.find((p) => p.id === planetId)!.segments.flatMap((s) => s.deposits.map((d) => d.resource)).filter((r) => rare.includes(r)));
+      const [a, b] = g.players.map((p) => rareOn(p.homePlanetId));
+      // Two players together have everything, and neither has what the other has.
+      expect(new Set([...a!, ...b!]).size).toBe(rare.length);
+      expect([...a!].some((r) => b!.has(r))).toBe(false);
+    }
+  });
+
+  it("lets players join later on a free start planet", () => {
+    const g = newGame(5);
+    const joined = addPlayer(g, { id: "p2", name: "Mo" });
+    expect(joined.ok).toBe(true);
+    if (!joined.ok) return;
+    const mo = homePlanet(joined.state, "p2")!;
+    expect(mo.id).not.toBe(home(g).id);
+    expect(mo.population).toBe(RULES.startPopulation);
+    expect(addPlayer(joined.state, { id: "p2", name: "Mo" }).ok).toBe(false);
+    expect(g.players).toHaveLength(1);
+  });
 });
 
 describe("commands", () => {
@@ -68,7 +108,7 @@ describe("commands", () => {
     let g = newGame(1);
     const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
     g = exec(g, { type: "assign", segment: forest.index, delta: 2 });
-    expect(idleWorkers(g)).toBe(1);
+    expect(idleWorkers(home(g))).toBe(1);
     expect(attempt(g, { type: "assign", segment: forest.index, delta: 1 }).ok).toBe(false);
     expect(attempt(g, { type: "assign", segment: forest.index, delta: -3 }).ok).toBe(false);
   });
@@ -84,11 +124,18 @@ describe("commands", () => {
     expect(JSON.stringify(g)).toBe(before);
   });
 
+  it("only lets owners act on their planet", () => {
+    const g = createGame("1", [P1, { id: "p2", name: "Mo" }]);
+    const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
+    const result = applyCommand(g, "p2", { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, g.simTime);
+    expect(result).toEqual({ ok: false, error: "Dieser Planet gehört dir nicht" });
+  });
+
   it("rejects unknown players, planets, segments and unaffordable buildings", () => {
     const g = newGame(1);
     const savanna = home(g).segments.find((s) => s.revealed && s.biome === "savanna")!;
     const hidden = home(g).segments.find((s) => !s.revealed)!;
-    expect(applyCommand(g, "intruder", { type: "assign", planetId: HOME_PLANET_ID, segment: savanna.index, delta: 1 }, g.simTime)).toEqual({ ok: false, error: "Unbekannter Spieler" });
+    expect(applyCommand(g, "intruder", { type: "assign", planetId: home(g).id, segment: savanna.index, delta: 1 }, g.simTime)).toEqual({ ok: false, error: "Unbekannter Spieler" });
     expect(applyCommand(g, P1.id, { type: "assign", planetId: "mars", segment: savanna.index, delta: 1 }, g.simTime).ok).toBe(false);
     expect(attempt(g, { type: "assign", segment: 999, delta: 1 }).ok).toBe(false);
     expect(attempt(g, { type: "assign", segment: hidden.index, delta: 1 }).ok).toBe(false);
@@ -97,15 +144,15 @@ describe("commands", () => {
 
   it("building pays the cost, records the builder, adds housing and reveals neighbors", () => {
     let g = newGame(1);
-    g.resources.wood = 15;
+    home(g).resources.wood = 15;
     const edge = home(g).segments[RULES.startRevealRadius]!;
     if (edge.biome === "ocean") edge.biome = "savanna";
-    const result = applyCommand(g, P1.id, { type: "build", planetId: HOME_PLANET_ID, segment: edge.index, building: "housing" }, g.simTime);
+    const result = applyCommand(g, P1.id, { type: "build", planetId: home(g).id, segment: edge.index, building: "housing" }, g.simTime);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     g = result.state;
-    expect(g.resources.wood).toBe(0);
-    expect(housing(g)).toBe(RULES.baseHousing + 2);
+    expect(home(g).resources.wood).toBe(0);
+    expect(housing(home(g))).toBe(RULES.baseHousing + 2);
     expect(home(g).segments[edge.index]!.builtBy).toBe(P1.id);
     expect(home(g).segments[edge.index + RULES.buildRevealRadius]!.revealed).toBe(true);
     expect(result.events.map((e) => e.type)).toEqual(["built", "revealed"]);
@@ -113,8 +160,8 @@ describe("commands", () => {
 
   it("locks buildings behind ascension level", () => {
     const g = newGame(1);
-    g.resources.wood = 100;
-    g.resources.stone = 100;
+    home(g).resources.wood = 100;
+    home(g).resources.stone = 100;
     const mountains = home(g).segments.find((s) => s.revealed && s.biome === "mountains")!;
     expect(attempt(g, { type: "build", segment: mountains.index, building: "mine" }).ok).toBe(false);
     g.ascension.level = 1;
@@ -124,7 +171,7 @@ describe("commands", () => {
   it("advances to `now` before applying the command", () => {
     const g = newGame(1);
     const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
-    const result = applyCommand(g, P1.id, { type: "assign", planetId: HOME_PLANET_ID, segment: forest.index, delta: 1 }, g.simTime + 1000);
+    const result = applyCommand(g, P1.id, { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, g.simTime + 1000);
     expect(result.ok && result.state.tick).toBe(RULES.ticksPerSecond);
   });
 });
@@ -134,13 +181,13 @@ describe("simulation", () => {
     let g = newGame(7);
     const forestIndex = home(g).segments.find((s) => s.revealed && s.biome === "forest")!.index;
     g = exec(g, { type: "assign", segment: forestIndex, delta: 2 });
-    const startWood = g.resources.wood;
+    const startWood = home(g).resources.wood;
     g = run(g, RULES.ticksPerSecond * 10).state;
-    expect(g.resources.wood).toBeCloseTo(startWood + 2 * RULES.handRatePerWorker * 10, 5);
+    expect(home(g).resources.wood).toBeCloseTo(startWood + 2 * RULES.handRatePerWorker * 10, 5);
     home(g).segments[forestIndex]!.deposits.find((d) => d.resource === "wood")!.amount = 0.1;
     const { state, events } = run(g, 5);
     expect(home(state).segments[forestIndex]!.deposits.find((d) => d.resource === "wood")!.amount).toBe(0);
-    expect(events).toContainEqual({ type: "depleted", planetId: HOME_PLANET_ID, segment: forestIndex, resource: "wood" });
+    expect(events).toContainEqual({ type: "depleted", planetId: home(g).id, segment: forestIndex, resource: "wood" });
   });
 
   it("regrows untouched deposits but not exhausted ones", () => {
@@ -155,27 +202,27 @@ describe("simulation", () => {
 
   it("grows population when housing and food allow", () => {
     let g = newGame(3);
-    g.resources.food = 100;
-    g.resources.wood = 15;
+    home(g).resources.food = 100;
+    home(g).resources.wood = 15;
     const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
     g = exec(g, { type: "build", segment: land.index, building: "housing" });
     const { state, events } = run(g, RULES.ticksPerSecond * RULES.secondsPerBirth);
-    expect(state.population).toBe(RULES.startPopulation + 1);
+    expect(home(state).population).toBe(RULES.startPopulation + 1);
     expect(events.some((e) => e.type === "born")).toBe(true);
   });
 
   it("starves when food runs out and gains ascension per cycle", () => {
     const g = newGame(3);
-    g.resources.food = 0;
+    home(g).resources.food = 0;
     const { state, events } = run(g, TICKS_PER_CYCLE);
-    expect(state.starving).toBe(true);
-    expect(events).toContainEqual({ type: "starving" });
+    expect(home(state).starving).toBe(true);
+    expect(events).toContainEqual({ type: "starving", planetId: home(g).id });
     expect(state.ascension.points).toBe(RULES.startPopulation);
   });
 
   it("levels up at the thresholds", () => {
     const g = newGame(3);
-    g.resources.food = 1000;
+    home(g).resources.food = 1000;
     g.ascension.points = RULES.ascensionThresholds[0] - 1;
     const { state, events } = run(g, TICKS_PER_CYCLE);
     expect(state.ascension.level).toBe(1);

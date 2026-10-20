@@ -24,22 +24,24 @@ export function neighbors(planet: PlanetState, index: number): SegmentState[] {
   return [segmentAt(planet, index - 1)!, segmentAt(planet, index + 1)!];
 }
 
-export function allSegments(state: GameState): SegmentState[] {
-  return state.planets.flatMap((p) => p.segments);
+export function homePlanet(state: GameState, playerId: string): PlanetState | undefined {
+  const player = state.players.find((p) => p.id === playerId);
+  return player ? planetById(state, player.homePlanetId) : undefined;
 }
 
-export function housing(state: GameState): number {
+export function housing(planet: PlanetState): number {
+  if (!planet.ownerId) return 0;
   let total = RULES.baseHousing;
-  for (const s of allSegments(state)) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
+  for (const s of planet.segments) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
   return total;
 }
 
-export function assignedWorkers(state: GameState): number {
-  return allSegments(state).reduce((sum, s) => sum + s.workers, 0);
+export function assignedWorkers(planet: PlanetState): number {
+  return planet.segments.reduce((sum, s) => sum + s.workers, 0);
 }
 
-export function idleWorkers(state: GameState): number {
-  return state.population - assignedWorkers(state);
+export function idleWorkers(planet: PlanetState): number {
+  return planet.population - assignedWorkers(planet);
 }
 
 export function workerCapacity(segment: SegmentState): number {
@@ -55,20 +57,20 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
   return 1 + count * adj.bonus;
 }
 
-export function canAfford(state: GameState, building: BuildingId): boolean {
+export function canAfford(planet: PlanetState, building: BuildingId): boolean {
   const cost = BUILDINGS[building].cost;
-  return RESOURCE_IDS.every((r) => state.resources[r] >= (cost[r] ?? 0));
+  return RESOURCE_IDS.every((r) => planet.resources[r] >= (cost[r] ?? 0));
 }
 
-/** Why a building cannot go on a segment right now, or null if it can. */
-export function buildBlocker(state: GameState, segment: SegmentState, building: BuildingId): string | null {
+/** Why a building cannot go on a segment right now, or null if it can. Pays from the planet's own stockpile. */
+export function buildBlocker(state: GameState, planet: PlanetState, segment: SegmentState, building: BuildingId): string | null {
   const def = BUILDINGS[building];
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (state.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
-  if (!canAfford(state, building)) return "Zu wenig Ressourcen";
+  if (!canAfford(planet, building)) return "Zu wenig Ressourcen";
   return null;
 }
 
