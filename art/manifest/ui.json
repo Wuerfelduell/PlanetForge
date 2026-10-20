@@ -2136,6 +2136,48 @@
         "segment-selector"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "brand.logo-mark",
+      "category": "brand",
+      "src": "art/src/brand/logo-mark.svg",
+      "out": "public/assets/sprites/brand/logo-mark.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "logo-mark"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "brand.logo",
+      "category": "brand",
+      "src": "art/src/brand/logo.svg",
+      "out": "public/assets/sprites/brand/logo.png",
+      "viewBox": [
+        1024,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "brand",
+        "logo"
+      ],
+      "phase": "P0"
     }
   ]
 }

@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 23, core: 52, logo: false, extras: 0, discoveries: 0, brand: false};
+const RELEASE = {resources: 23, core: 52, logo: true, extras: 0, discoveries: 0, brand: false};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;
@@ -165,8 +165,42 @@ for(const id of coreActions)addCore(`ui.icon-${id}`,'ui',action(id));
 for(const id of badgeIds)addCore(`ui.badge-${id}`,'ui',badge(id),64);
 addCore('ui.cursor-player','ui',group(paw('tint-white'),'translate(-1 -1) scale(0.5)')+p('M16 33 L17 56 L26 48 L33 47Z','tint-white'),64,64,'P0',{tintable:true,anchor:[.25,.875]});
 core.push(()=>animated('ui.ping-marker',f=>`<g id="pulse" opacity="${[1,.7,.3][f-1]}">${ellipse(64,103,[16,30,46][f-1],[5,9,13][f-1],'tint-white')}</g><g id="pin">${group(action('ping'),`translate(20 ${[-5,1,-2][f-1]}) scale(0.7)`)}</g>`));
-addCore('ui.segment-selector','ui',p('M40 81 V41 Q40 25 56 25 H200 Q216 25 216 41 V81',null,`stroke="${C('cream')}" stroke-width="16"`)+p('M88 99 H168 L128 145Z','ascension'),256,256,'P0',{anchor:[.5,.6]});
+addCore('ui.segment-selector','ui',p('M40 81 V41 Q40 25 56 25 H200 Q216 25 216 41 V81',null,'stroke-width="22"')+p('M40 81 V41 Q40 25 56 25 H200 Q216 25 216 41 V81',null,`stroke="${C('cream')}" stroke-width="10"`)+p('M88 99 H168 L128 145Z','ascension'),256,256,'P0',{anchor:[.5,.6]});
 for(const generate of core.slice(0,RELEASE.core))generate();
+
+// Bespoke skeletons, not a font: the mixed-case wordmark is drawn twice for a
+// chunky ink contour and a warm inner stroke. Glyph advances are hand tuned.
+const letters={
+  P:['M6 86 V6 H28 Q52 6 52 29 Q52 51 28 51 H6',66],
+  l:['M12 5 V73 Q12 86 24 86',35],
+  a:['M43 49 Q34 34 17 44 Q3 52 7 72 Q10 88 27 86 Q43 84 43 67 V44 M43 67 V85',57],
+  n:['M7 85 V44 M7 58 Q12 40 27 42 Q45 42 45 61 V85',59],
+  e:['M7 64 H46 Q46 42 27 42 Q7 41 7 64 Q7 87 29 87 Q40 87 47 80',59],
+  t:['M19 20 V72 Q19 88 36 85 M6 43 H36',49],
+  F:['M7 86 V6 H49 M7 44 H41',61],
+  o:['M46 64 Q46 42 27 42 Q7 42 7 64 Q7 86 27 86 Q46 86 46 64Z',59],
+  r:['M7 85 V44 M7 59 Q14 40 33 43',46],
+  g:['M44 47 Q31 36 17 45 Q4 52 8 70 Q12 86 27 83 Q44 81 44 62 V43 V96 Q44 116 13 107',59]
+};
+function wordmark(){
+  let x=0,shapes='';
+  for(const [i,ch] of [...'PlanetForge'].entries()){
+    const [d,advance]=letters[ch];
+    shapes+=group(p(d,null,`stroke="${C('ink')}" stroke-width="27"`)+p(d,null,`stroke="${C(i<6?'cream':'ascension')}" stroke-width="15"`),`translate(${x} 0)`);x+=advance;
+  }
+  return shapes;
+}
+function logoMark(){
+  return circ(64,71,43,'water')+shadow('M97 42 Q111 86 75 106 Q54 116 37 103 Q73 125 102 96 Q122 67 97 42Z','water')+
+    p('M24 63 Q28 36 54 30 Q73 24 94 40 L88 52 L71 48 L55 57 L36 52Z','grass')+
+    p('M36 68 H88 Q94 68 92 73 L85 82 L70 83 V91 H83 V99 H42 V91 H54 V83 L42 81 L32 73 Q28 68 36 68Z','rock')+
+    group(hammer(),'translate(9 -3) scale(0.6)','stroke-width="5"')+star(100,22,13,'energy')+
+    shine('M34 60 Q37 48 45 43');
+}
+if(RELEASE.logo){
+  emit('brand.logo-mark','brand',group(logoMark(),'scale(4)','stroke-width="3"'),512);
+  emit('brand.logo','brand',group(logoMark(),'translate(6 70) scale(3)','stroke-width="4"')+group(wordmark(),'translate(405 204)'),1024,512);
+}
 
 write('art/manifest/ui.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`UI art: ${assets.length} ids generated.`);
