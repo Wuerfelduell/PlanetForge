@@ -1,0 +1,11 @@
+{
+  // Typecheck for the simulation alone, without DOM types: guarantees src/sim
+  // runs unchanged in Node, a Deno edge function or a worker.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src/sim"],
+  "exclude": ["src/sim/**/*.test.ts"]
+}
