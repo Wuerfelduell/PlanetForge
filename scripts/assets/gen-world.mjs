@@ -239,6 +239,18 @@ function starfield() {
   return b;
 }
 
+function mini(type) {
+  const base = { temperate: 'water', arid: 'sand', ice: 'snow', lava: 'coal', toxic: 'moss', ocean: 'deep-water' }[type];
+  let details = '';
+  if (type === 'temperate') details += path('M 43 80 Q 62 50 96 50 Q 119 63 102 82 L 111 107 Q 102 121 83 118 Q 70 140 50 126 Z M 150 137 Q 171 115 189 139 Q 199 155 184 173 L 167 201 Q 143 202 139 183 Z', C('grass'), 'stroke-width="4"');
+  if (type === 'arid') details += ellipse(81, 87, 22, 12, C('sand', -.18), 'stroke-width="4"') + ellipse(151, 158, 29, 17, C('sand', -.18), 'stroke-width="4"') + path('M 53 153 Q 79 127 109 141 M 133 75 Q 164 61 190 88', 'none', `stroke="${C('clay')}" stroke-width="7" opacity="0.6"`);
+  if (type === 'ice') details += path('M 38 88 Q 74 100 106 72 L 123 94 Q 156 77 173 98 L 211 82 L 222 115 Q 172 134 140 111 Q 88 137 35 112 Z', C('snow', -.18), 'stroke="none"') + path('M 76 175 L 95 146 L 122 152 L 143 129 M 95 146 L 89 128', 'none', `stroke="${C('science')}" stroke-width="5"`);
+  if (type === 'lava') details += path('M 73 35 L 91 76 L 73 108 L 103 137 L 91 178 L 122 220 M 103 137 L 143 125 L 169 151 L 215 140 M 143 125 L 162 78 L 198 61', 'none', `stroke="${C('ascension')}" stroke-width="12"`) + path('M 74 36 L 92 76 L 75 107 M 146 124 L 165 80', 'none', `stroke="${C('energy')}" stroke-width="4"`);
+  if (type === 'toxic') details += path('M 56 72 Q 86 51 105 72 Q 121 94 101 106 Q 79 112 74 137 Q 54 146 44 125 Q 36 99 56 72 Z M 155 143 Q 183 121 203 149 Q 211 170 190 184 Q 157 203 147 176 Z', C('toxic'), 'stroke-width="4"') + circle(152, 81, 9, C('toxic', .18), 'stroke-width="3"');
+  if (type === 'ocean') details += path('M 47 97 Q 62 85 80 98 Q 98 110 115 97 M 126 157 Q 142 144 161 157 Q 180 171 198 156 M 74 183 Q 92 173 111 184', 'none', `stroke="${C('water')}" stroke-width="7"`) + path('M 145 76 Q 155 56 171 68 L 184 82 Q 169 96 151 90 Z', C('sand'), 'stroke-width="4"');
+  return `<defs><clipPath id="disc">${circle(128, 128, 102, C('tint-white'))}</clipPath></defs>${group('mini', circle(128, 128, 102, C(base)) + `<g clip-path="url(#disc)">${details}${path('M 177 38 A 102 102 0 0 1 68 211 Q 204 197 177 38 Z', C('ink'), 'stroke="none" opacity="0.2"')}</g>` + path('M 47 98 Q 57 62 87 49', 'none', `stroke="${C('cream')}" stroke-width="7" opacity="0.6"`) + circle(128, 128, 102, 'none'))}`;
+}
+
 // Each biome exports one reusable north-facing sector per planet size.
 for (const biome of biomes) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
@@ -257,5 +269,8 @@ for (const type of Object.keys(worlds).filter(type => type !== 'temperate')) {
 }
 add('space.sun-yellow', 'space', 'sun-yellow', sun('yellow'), 1024, 1024, 'P0', [.5, .5], ['glow', 'rays', 'core']);
 add('space.starfield-tile', 'space', 'starfield-tile', starfield(), 512, 512, 'P0', [.5, .5], ['far-stars', 'near-stars'], ['tileable']);
+for (const type of Object.keys(worlds)) add(`planet.mini-${type}`, 'planets', `mini-${type}`, mini(type), 256, 256, 'P1', [.5, .5], ['mini'], ['star-map']);
+add('planet.mini-owned-ring', 'planets', 'mini-owned-ring', group('ring', circle(128, 128, 114, 'none', `stroke="${C('tint-white')}" stroke-width="7"`) + circle(128, 14, 5, C('tint-white'), 'stroke="none"')), 256, 256, 'P1', [.5, .5], ['ring'], ['star-map', 'tintable']);
+for (const color of ['red', 'blue', 'white']) add(`space.sun-${color}`, 'space', `sun-${color}`, sun(color), 1024, 1024, 'P1', [.5, .5], ['glow', 'rays', 'core']);
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`World: ${assets.length} SVG masters generated.`);

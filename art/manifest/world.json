@@ -2198,6 +2198,227 @@
         "tileable"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "planet.mini-temperate",
+      "category": "planets",
+      "src": "art/src/planets/mini-temperate.svg",
+      "out": "public/assets/sprites/planets/mini-temperate.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-arid",
+      "category": "planets",
+      "src": "art/src/planets/mini-arid.svg",
+      "out": "public/assets/sprites/planets/mini-arid.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-ice",
+      "category": "planets",
+      "src": "art/src/planets/mini-ice.svg",
+      "out": "public/assets/sprites/planets/mini-ice.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-lava",
+      "category": "planets",
+      "src": "art/src/planets/mini-lava.svg",
+      "out": "public/assets/sprites/planets/mini-lava.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-toxic",
+      "category": "planets",
+      "src": "art/src/planets/mini-toxic.svg",
+      "out": "public/assets/sprites/planets/mini-toxic.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-ocean",
+      "category": "planets",
+      "src": "art/src/planets/mini-ocean.svg",
+      "out": "public/assets/sprites/planets/mini-ocean.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "mini"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.mini-owned-ring",
+      "category": "planets",
+      "src": "art/src/planets/mini-owned-ring.svg",
+      "out": "public/assets/sprites/planets/mini-owned-ring.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ring"
+      ],
+      "tags": [
+        "star-map",
+        "tintable"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-red",
+      "category": "space",
+      "src": "art/src/space/sun-red.svg",
+      "out": "public/assets/sprites/space/sun-red.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-blue",
+      "category": "space",
+      "src": "art/src/space/sun-blue.svg",
+      "out": "public/assets/sprites/space/sun-blue.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-white",
+      "category": "space",
+      "src": "art/src/space/sun-white.svg",
+      "out": "public/assets/sprites/space/sun-white.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
     }
   ]
 }
