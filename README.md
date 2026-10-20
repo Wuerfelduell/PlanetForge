@@ -27,6 +27,8 @@ npm run build      # Typecheck + Produktions-Build nach dist/
 
 - Zwei Modi: **Koop** (Standard, auf Langzeit angelegt): alle teilen einen großen Startplaneten (32 Felder), sein Lager und den Aufstieg; jeder Mitspieler bringt 2 Einwohner mit. **Gegeneinander** (kurzweilig): jeder hat einen eigenen Startplaneten, ein eigenes Lager und einen eigenen Aufstieg und darf nur auf seinem Planeten bauen.
 - Sternsystem per Seed: Sonne, Startplanet(en) und 2 bis 4 freie Planeten mit Typen (gemäßigt, trocken, Eis, Ozean, Lava, giftig), die die Biome bestimmen. Startbereich garantiert Holz, Nahrung und Stein. Seltene Rohstoffe (Kohle, Öl, Uran, Ätherit) liegen im Koop alle auf dem gemeinsamen Planeten; im Gegeneinander-Modus sind sie so verteilt, dass sich die Startplaneten ergänzen.
+- Jeder Einwohner ist eine Einheit mit Besitzer und Volk; nur der Besitzer setzt sie ein. Lager und Aufstieg gehören zur Wirtschaft (Koop: eine gemeinsame, Gegeneinander: eine pro Spieler).
+- Lobby-Uhr: Das Spiel läuft nur, solange der Gastgeber die Lobby geöffnet hat und niemand pausiert; geschlossen wird nichts nachgerechnet. Ein Protokoll hält die letzten 200 Ereignisse fest.
 - Mitspieler steigen mit `addPlayer(state, playerId, name, now)` in ein laufendes Spiel ein.
 - Bisher zeigt das Spiel nur den eigenen Planeten; eine Sternkarte folgt.
 - Einwohner von Hand sammeln lassen, Bodenschätze erschöpfen sich und wachsen nach, wenn man sie in Ruhe lässt.

@@ -120,7 +120,12 @@ export class PlanetView {
     g.circle(0, 0, rInner).fill(CORE_COLOR);
     g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
 
-    this.planet(state).segments.forEach((s, i) => {
+    const planet = this.planet(state);
+    const workers = new Map<string, number>();
+    for (const u of Object.values(state.units)) {
+      if (u.planetId === planet.id && u.segment !== null) workers.set(`${u.owner}:${u.segment}`, (workers.get(`${u.owner}:${u.segment}`) ?? 0) + 1);
+    }
+    planet.segments.forEach((s, i) => {
       const a0 = i * step - step / 2;
       const a1 = a0 + step;
       const mid = i * step;
@@ -130,7 +135,7 @@ export class PlanetView {
       g.poly(sector(rInner, R, a0, a1)).stroke({ width: 1.5, color: 0x1a1d2e, alpha: 0.6 });
 
       // One dot per worker, tinted with the owner's player color.
-      const dots = state.players.flatMap((p) => Array<number>(s.workers[p.id] ?? 0).fill(PLAYER_COLORS[p.color % PLAYER_COLORS.length]!));
+      const dots = state.players.flatMap((p) => Array<number>(workers.get(`${p.id}:${i}`) ?? 0).fill(PLAYER_COLORS[p.color % PLAYER_COLORS.length]!));
       if (s.revealed) {
         dots.forEach((color, w) => {
           const a = a0 + (step * (w + 1)) / (dots.length + 1);

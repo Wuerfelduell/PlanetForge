@@ -13,22 +13,25 @@ import {
   type ResourceId,
 } from "./content";
 import { Rng, seedFromString } from "./rng";
-import { advanceInPlace } from "./step";
-import type { DepositState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
+import { appendLog, advanceInPlace } from "./step";
+import { createUnit } from "./units";
+import type { DepositState, Difficulty, EconomyState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
 
 export interface GameOptions {
-  /** Start timestamp (ms, caller's clock). Later advance()/applyCommand() calls use the same clock. */
+  /** Start game time (ms). Later advance()/applyCommand() calls use the same clock. */
   now?: number;
   /** Default coop. */
   mode?: GameMode;
   /** Player limit. In versus also the number of start planets, so others can join later via addPlayer(). */
   maxPlayers?: number;
+  cycleSeconds?: number;
+  difficulty?: Difficulty;
 }
 
 /**
  * Builds a whole star system from the seed: same seed, same system, on every client and on the
  * server. coop: one shared start planet. versus: one start planet per possible player, taken in
- * order; unused ones wait for later joiners.
+ * order; unused ones wait for later joiners. The first player is the host.
  */
 export function createGame(seed: string, players: PlayerInit[], options: GameOptions = {}): GameState {
   const mode = options.mode ?? "coop";
@@ -41,17 +44,26 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 5,
-    mode,
-    maxPlayers,
+    version: 6,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
     tick: 0,
+    settings: {
+      mode,
+      cycleSeconds: options.cycleSeconds ?? RULES.defaultCycleSeconds,
+      difficulty: options.difficulty ?? "normal",
+      maxPlayers,
+    },
+    lobby: { open: true, paused: false },
+    hostId: players[0]!.id,
     players: [],
-    teams: mode === "coop" ? [newTeam("t0")] : [],
+    economies: mode === "coop" ? { e0: newEconomy("e0") } : {},
     sun,
     planets,
+    units: {},
+    nextUnitId: 0,
+    log: [],
   };
   for (const p of players) {
     const result = addPlayer(state, p.id, p.name, state.simTime, p.people);
@@ -64,50 +76,59 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
 
 /**
  * Lets a player join a running game, after simulating up to `now`. coop: joins the shared planet
- * and brings inhabitants. versus: takes the next free start planet as a new team.
+ * and brings an own people. versus: takes the next free start planet with an own economy.
  * Never mutates the input.
  */
 export function addPlayer(state: GameState, playerId: string, name: string, now: number, people?: PeopleId): { ok: true; state: GameState } | { ok: false; error: string } {
   if (state.players.some((p) => p.id === playerId)) return { ok: false, error: "Spieler ist schon dabei" };
-  if (state.players.length >= state.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
+  if (state.players.length >= state.settings.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
   const next = JSON.parse(JSON.stringify(state)) as GameState;
-  advanceInPlace(next, now);
+  const events = advanceInPlace(next, now);
+  const coop = next.settings.mode === "coop";
 
   const planet = next.planets
-    .filter((p) => p.startSlot !== null && (next.mode === "coop" || p.teamId === null))
+    .filter((p) => p.startSlot !== null && (coop || p.economyId === null))
     .sort((a, b) => a.startSlot! - b.startSlot!)[0];
   if (!planet) return { ok: false, error: "Kein freier Startplanet mehr" };
 
-  let teamId: string;
-  if (next.mode === "coop") {
-    teamId = next.teams[0]!.id;
+  let economyId: string;
+  if (coop) {
+    economyId = "e0";
   } else {
-    teamId = `t${next.teams.length}`;
-    next.teams.push(newTeam(teamId));
+    economyId = `e${Object.keys(next.economies).length}`;
+    next.economies[economyId] = newEconomy(economyId);
   }
 
-  if (planet.teamId === null) {
-    planet.teamId = teamId;
-    planet.citizens[playerId] = RULES.startPopulation;
-    for (const r of RESOURCE_IDS) planet.resources[r] = RULES.startResources[r] ?? 0;
+  const takenPeoples = new Set(next.players.map((p) => p.people));
+  const chosen = people ?? PEOPLE_IDS.find((id) => !takenPeoples.has(id)) ?? PEOPLE_IDS[0];
+  let arriving: number = RULES.coopJoinPopulation;
+  if (planet.economyId === null) {
+    planet.economyId = economyId;
+    arriving = RULES.startPopulation;
+    const economy = next.economies[economyId]!;
+    for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
     for (const s of planet.segments) {
       if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
     }
-  } else {
-    planet.citizens[playerId] = RULES.coopJoinPopulation;
   }
+  for (let i = 0; i < arriving; i++) createUnit(next, playerId, chosen, planet.id);
 
   const usedColors = new Set(next.players.map((p) => p.color));
   let color = 0;
   while (usedColors.has(color)) color++;
-  const takenPeoples = new Set(next.players.map((p) => p.people));
-  const chosen = people ?? PEOPLE_IDS.find((id) => !takenPeoples.has(id))!;
-  next.players.push({ id: playerId, name, color, people: chosen, teamId, homePlanetId: planet.id });
+  next.players.push({ id: playerId, name, color, people: chosen, economyId, homePlanetId: planet.id, joinedTick: next.tick });
+  events.push({ type: "joined", playerId });
+  appendLog(next, events);
   return { ok: true, state: next };
 }
 
-function newTeam(id: string) {
-  return { id, ascension: { level: 0, points: 0 } };
+function newEconomy(id: string): EconomyState {
+  return {
+    id,
+    resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
+    ascension: { level: 0, points: 0 },
+    starving: false,
+  };
 }
 
 function generatePlanets(rng: Rng, startPlanets: number, startSize: number): PlanetState[] {
@@ -141,11 +162,8 @@ function generatePlanets(rng: Rng, startPlanets: number, startSize: number): Pla
       type,
       orbit: { radius: i + 1, angle: rng.next() * Math.PI * 2 },
       startSlot,
-      teamId: null,
-      resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
-      citizens: {},
+      economyId: null,
       birthProgress: 0,
-      starving: false,
       segments,
     };
   });
@@ -238,7 +256,6 @@ function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
     deposits,
     building: null,
     builtBy: null,
-    workers: {},
     gather: deposits.find((d) => d.byHand)?.resource ?? null,
   };
 }

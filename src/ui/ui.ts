@@ -6,15 +6,15 @@ import {
   BUILDINGS,
   cycleOf,
   housing,
-  idleWorkers,
+  idleUnits,
   population,
   workerCount,
+  economyOf,
   nextLevelThreshold,
   RESOURCE_IDS,
   RESOURCES,
   segmentOutput,
-  teamById,
-  TICKS_PER_CYCLE,
+  ticksPerCycle,
   workerCapacity,
   type Command,
   type GameState,
@@ -38,6 +38,7 @@ export class Ui {
   private lastHud = "";
   private lastPanel = "";
   private selected = 0;
+  private state: GameState | null = null;
   /** Planet currently shown (the player's home planet until there is a star map). */
   private planetId = "";
   private speed = 1;
@@ -62,6 +63,7 @@ export class Ui {
   }
 
   render(state: GameState): void {
+    this.state = state;
     const planet = state.planets.find((p) => p.id === this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
@@ -74,7 +76,7 @@ export class Ui {
     for (const e of events) {
       switch (e.type) {
         case "born":
-          this.toast(`👶 Neuer Einwohner (${e.population})`);
+          this.toast(`👶 Neuer Einwohner${e.playerId === this.playerId ? "" : ` bei ${this.state?.players.find((p) => p.id === e.playerId)?.name ?? "Mitspieler"}`}`);
           break;
         case "levelUp": {
           const unlocked = BUILDING_IDS.filter((b) => BUILDINGS[b].unlockLevel === e.level).map((b) => `${BUILDINGS[b].icon} ${BUILDINGS[b].name}`);
@@ -138,16 +140,18 @@ export class Ui {
   }
 
   private renderHud(state: GameState, planet: PlanetState): string {
-    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || planet.resources[r] >= 1);
+    const economy = economyOf(state, planet);
+    if (!economy) return "";
+    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
     const chips = shown
-      .map((r) => `<span class="chip${r === "food" && planet.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(planet.resources[r])}</span>`)
+      .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(economy.resources[r])}</span>`)
       .join("");
-    const ascension = teamById(state, planet.teamId)?.ascension ?? { level: 0, points: 0 };
+    const ascension = economy.ascension;
     const lvl = ascension.level;
     const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
     const next = nextLevelThreshold(lvl);
     const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
-    const cycleProgress = (state.tick % TICKS_PER_CYCLE) / TICKS_PER_CYCLE;
+    const cycleProgress = (state.tick % ticksPerCycle(state)) / ticksPerCycle(state);
     const speeds = [0, 1, 3]
       .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
       .join("");
@@ -155,13 +159,15 @@ export class Ui {
       <div class="row resources">${chips}<span class="spacer"></span>${speeds}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
       <div class="row status">
         <span class="chip" title="Planet">🪐 ${planet.name}</span>
-        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(planet)}/${housing(planet)} <small>(${idleWorkers(planet, this.playerId)} frei)</small></span>
+        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(state, planet)}/${housing(state, planet)} <small>(${idleUnits(state, planet, this.playerId).length} frei)</small></span>
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>`;
   }
 
   private renderPanel(state: GameState, planet: PlanetState): string {
+    const economy = economyOf(state, planet);
+    if (!economy) return "";
     const s = planet.segments[this.selected]!;
     const hint = `<p class="hint">💡 ${currentHint(state, planet, this.playerId)}</p>`;
     if (!s.revealed) {
@@ -171,7 +177,7 @@ export class Ui {
     const def = s.building ? BUILDINGS[s.building] : null;
     const title = def ? `${def.icon} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
 
-    const output = segmentOutput(planet, s);
+    const output = segmentOutput(planet, s, workerCount(state, planet, s.index));
     const deposits = s.deposits
       .map((d) => {
         const amount = d.infinite ? "∞" : `${Math.floor(d.amount)}/${d.max}`;
@@ -189,9 +195,9 @@ export class Ui {
     const mult = adjacencyMultiplier(planet, s);
     const workers = cap
       ? `<div class="workers">
-          <button class="round" data-action="assign" data-value="-1" ${workerCount(s, this.playerId) > 0 ? "" : "disabled"}>－</button>
-          <span>👤 ${workerCount(s)}/${cap}${workerCount(s) !== workerCount(s, this.playerId) ? ` <small>(${workerCount(s, this.playerId)} von dir)</small>` : ""}</span>
-          <button class="round" data-action="assign" data-value="1" ${workerCount(s) < cap && idleWorkers(planet, this.playerId) > 0 ? "" : "disabled"}>＋</button>
+          <button class="round" data-action="assign" data-value="-1" ${workerCount(state, planet, s.index, this.playerId) > 0 ? "" : "disabled"}>－</button>
+          <span>👤 ${workerCount(state, planet, s.index)}/${cap}${workerCount(state, planet, s.index) !== workerCount(state, planet, s.index, this.playerId) ? ` <small>(${workerCount(state, planet, s.index, this.playerId)} von dir)</small>` : ""}</span>
+          <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, planet, this.playerId).length > 0 ? "" : "disabled"}>＋</button>
           <span class="rate">${rate}${mult > 1 ? ` <small>Nachbarbonus ×${mult.toFixed(2)}</small>` : ""}</span>
         </div>`
       : "";
@@ -204,9 +210,9 @@ export class Ui {
         .map((b) => {
           const bd = BUILDINGS[b];
           const blocker = buildBlocker(state, planet, s, b);
-          const locked = (teamById(state, planet.teamId)?.ascension.level ?? 0) < bd.unlockLevel;
+          const locked = economy.ascension.level < bd.unlockLevel;
           const cost = Object.entries(bd.cost)
-            .map(([r, v]) => `<span class="${planet.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
+            .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
             .join(" ");
           return `<button class="build" data-action="build" data-value="${b}" ${blocker ? "disabled" : ""} title="${bd.description}">
               <span class="icon">${locked ? "🔒" : bd.icon}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}</span>
