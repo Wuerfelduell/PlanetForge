@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { ascensionThreshold, BALANCE, buildingSprite, discoveryCost, IDS, rocketFuel, type ResourceId } from "./index";
-import { homeAvailability, levelTimeline, sciencePerGame } from "./pacing";
+import { ascensionThreshold, BALANCE, buildingSprite, discoveryCost, IDS, rocketFuel, secondsPerBirth, type ResourceId } from "./index";
+import { homeAvailability, jobsPerCitizen, levelTimeline, sciencePerGame } from "./pacing";
 
 const { buildings, recipes, resources, biomes, peoples, discoveries, pacing } = BALANCE;
 const resourceIds = new Set<string>(IDS.resources);
@@ -116,42 +116,54 @@ describe("sanity", () => {
 });
 
 describe("pacing", () => {
-  it("single player levels land near the target minutes", () => {
-    const timeline = levelTimeline(1);
-    timeline.forEach(({ level, minute }) => {
-      const target = pacing.targetMinute[level - 1]!;
-      expect(minute, `level ${level}`).toBeGreaterThan(target * 0.8);
-      expect(minute, `level ${level}`).toBeLessThan(target * 1.2);
+  for (const mode of IDS.modes) {
+    it(`${mode}: levels land near the target minutes`, () => {
+      const timeline = levelTimeline(mode, 1);
+      expect(timeline).toHaveLength(10);
+      timeline.forEach(({ level, minute }) => {
+        const target = pacing[mode].targetMinute[level - 1]!;
+        expect(minute, `level ${level}`).toBeGreaterThan(target * 0.8);
+        expect(minute, `level ${level}`).toBeLessThan(target * 1.2);
+      });
     });
-    const end = timeline.at(-1)!.minute;
-    expect(end).toBeGreaterThan(60);
-    expect(end).toBeLessThan(100);
+
+    it(`${mode}: discoveries per game`, () => {
+      const { discoveries: n } = sciencePerGame(mode, 1);
+      expect(n).toBeGreaterThanOrEqual(pacing[mode].discoveriesPerGame.min);
+      expect(n).toBeLessThanOrEqual(pacing[mode].discoveriesPerGame.max);
+    });
+  }
+
+  it("coop is long, versus is short", () => {
+    const coop = levelTimeline("coop").at(-1)!.minute;
+    const versusWin = levelTimeline("versus")[BALANCE.modes.versus.winLevel - 1]!.minute;
+    expect(coop).toBeGreaterThan(150);
+    expect(versusWin).toBeLessThan(BALANCE.modes.versus.timeLimitMinutes);
   });
 
-  it("a full game buys about half of the discoveries", () => {
-    const { discoveries: n } = sciencePerGame(1);
-    expect(n).toBeGreaterThanOrEqual(pacing.discoveriesPerGame.min);
-    expect(n).toBeLessThanOrEqual(pacing.discoveriesPerGame.max);
-  });
-
-  it("coop is a bit faster than solo with every team size, never slower and never trivial", () => {
-    const solo = levelTimeline(1).at(-1)!.minute;
+  it("more coop players are a bit faster than solo, never slower and never trivial", () => {
+    const solo = levelTimeline("coop", 1).at(-1)!.minute;
     for (let players = 2; players <= 4; players++) {
-      const team = levelTimeline(players).at(-1)!.minute;
-      expect(team, `${players} players`).toBeLessThan(solo);
+      const team = levelTimeline("coop", players).at(-1)!.minute;
+      expect(team, `${players} players`).toBeLessThanOrEqual(solo);
       expect(team, `${players} players`).toBeGreaterThan(solo * 0.6);
-      const { discoveries: n } = sciencePerGame(players);
-      expect(n, `${players} players`).toBeGreaterThanOrEqual(pacing.discoveriesPerGame.min);
-      expect(n, `${players} players`).toBeLessThanOrEqual(18);
+      expect(sciencePerGame("coop", players).discoveries, `${players} players`).toBeGreaterThanOrEqual(pacing.coop.discoveriesPerGame.min);
     }
   });
 
+  it("citizens are the bottleneck, not land: a built-out planet has more jobs than citizens", () => {
+    expect(jobsPerCitizen()).toBeGreaterThanOrEqual(pacing.jobsPerCitizen);
+  });
+
   it("formulas", () => {
-    expect(ascensionThreshold(1)).toBe(15);
+    expect(ascensionThreshold(1)).toBe(25);
     expect(ascensionThreshold(11)).toBeNull();
-    expect(ascensionThreshold(10, 2)).toBe(Math.round(3600 * 1.7));
+    expect(ascensionThreshold(10, "coop", 2)).toBe(Math.round(12900 * 1.15));
+    expect(ascensionThreshold(10, "versus", 4)).toBe(1900);
     expect(discoveryCost(0)).toBe(30);
     expect(discoveryCost(1)).toBe(41);
+    expect(discoveryCost(0, "versus")).toBe(15);
+    expect(secondsPerBirth(10)).toBe(90);
     expect(rocketFuel("rocket-small", 4, 1)).toBe(14);
     expect(rocketFuel("rocket-small", 4, 3)).toBe(26);
   });

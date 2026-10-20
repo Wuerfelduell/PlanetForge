@@ -7,7 +7,7 @@
 import { BUILDINGS, BUILDING_IDS, RECIPES, RECIPE_IDS } from "./buildings";
 import { DISCOVERIES, DISCOVERY_IDS, DISCOVERY_RULES } from "./discoveries";
 import { PEOPLES, PEOPLE_BASE, PEOPLE_IDS } from "./peoples";
-import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE } from "./progression";
+import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MODES, MODE_IDS, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE, type ModeId } from "./progression";
 import { BIOMES, BIOME_IDS, PLANET_TYPES, RESOURCES, RESOURCE_IDS } from "./resources";
 
 export * from "./buildings";
@@ -36,6 +36,7 @@ export const BALANCE = {
   battle: BATTLE,
   space: SPACE,
   diplomacy: DIPLOMACY,
+  modes: MODES,
   coop: COOP,
   pacing: PACING,
 } as const;
@@ -48,21 +49,30 @@ export const IDS = {
   peoples: PEOPLE_IDS,
   discoveries: DISCOVERY_IDS,
   monsters: MONSTER_IDS,
+  modes: MODE_IDS,
 } as const;
 
-const coopIndex = (players: number) => Math.min(Math.max(Math.round(players), 1), COOP.maxPlayers) - 1;
+const playerIndex = (players: number) => Math.min(Math.max(Math.round(players), 1), COOP.maxPlayers) - 1;
 
-/** Cumulative ascension points for `level` (1–10) with the given team size, or null past max. */
-export function ascensionThreshold(level: number, players = 1): number | null {
-  const base = ASCENSION.thresholds[level - 1];
+/** Cumulative ascension points for `level` (1–10) in a mode and team size, or null past max. */
+export function ascensionThreshold(level: number, mode: ModeId = "coop", players = 1): number | null {
+  const m = MODES[mode];
+  const base = m.thresholds[level - 1];
   if (base === undefined) return null;
-  return Math.round(base * COOP.ascensionThresholdMul[coopIndex(players)]!);
+  return Math.round(base * m.playerThresholdMul[playerIndex(players)]!);
 }
 
 /** Science cost of the next discovery when `owned` were bought already (start discoveries don't count). */
-export function discoveryCost(owned: number, players = 1, costMul = 1): number {
+export function discoveryCost(owned: number, mode: ModeId = "coop", players = 1, costMul = 1): number {
   const { baseCost, growth } = DISCOVERY_RULES;
-  return Math.round(baseCost * growth ** owned * COOP.discoveryCostMul[coopIndex(players)]! * costMul);
+  const m = MODES[mode];
+  return Math.round(baseCost * growth ** owned * m.discoveryCostMul * m.playerDiscoveryCostMul[playerIndex(players)]! * costMul);
+}
+
+/** Seconds until the next birth on a planet with `citizens` citizens. */
+export function secondsPerBirth(citizens: number, mode: ModeId = "coop", birthTimeMul = 1): number {
+  const m = MODES[mode];
+  return (m.birthBase + m.birthPerCitizen * citizens) * birthTimeMul;
 }
 
 /** Fuel for one rocket flight. */
@@ -71,8 +81,8 @@ export function rocketFuel(rocket: keyof typeof SPACE.rockets, distance: number,
   return Math.ceil(distance * (r.fuelPerDistance + r.fuelPerPassenger * passengers) * fuelMul);
 }
 
-export function monsterStrength(monster: keyof typeof MONSTERS, players = 1): number {
-  return Math.round(MONSTERS[monster].strength * COOP.monsterStrengthMul[coopIndex(players)]!);
+export function monsterStrength(monster: keyof typeof MONSTERS, mode: ModeId = "coop", players = 1): number {
+  return Math.round(MONSTERS[monster].strength * MODES[mode].monsterStrengthMul[playerIndex(players)]!);
 }
 
 /** Sprite id in art/manifest.json for a building tier (single-tier buildings have no suffix). */

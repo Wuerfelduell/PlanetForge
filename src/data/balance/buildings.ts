@@ -12,6 +12,7 @@ type Def = BuildingDef<ResourceId, BiomeId>;
 /**
  * Tier 1 is built, higher tiers are upgrades in place (cost = upgrade cost, values replace the
  * tier below, they do not add up). Unlock levels give every ascension level something new.
+ * Higher tiers mostly add job slots: the game is about too few citizens, not too little land.
  */
 export const BUILDINGS = {
   housing: {
@@ -37,7 +38,7 @@ export const BUILDINGS = {
         cost: { wood: 20, glass: 10 },
         unlockLevel: 4,
         buildSeconds: 10,
-        workers: 3,
+        workers: 4,
         produces: { resource: "food", perWorker: 0.45 },
         upkeep: { water: 0.05 },
       },
@@ -62,7 +63,7 @@ export const BUILDINGS = {
         cost: { steel: 10, concrete: 10 },
         unlockLevel: 5,
         buildSeconds: 12,
-        workers: 4,
+        workers: 5,
         extracts: { resources: ["stone", "sand", "clay", "iron", "coal", "uranium", "aetherite"], perWorker: 0.5 },
         energy: -2,
         pollution: 0.02,
@@ -86,7 +87,7 @@ export const BUILDINGS = {
         cost: { steel: 10, stone: 15 },
         unlockLevel: 5,
         buildSeconds: 10,
-        workers: 2,
+        workers: 3,
         extracts: { resources: ["water", "biogas", "oil"], perWorker: 0.5, fromNeighbors: ["ocean"] },
         energy: -1,
         pollution: 0.02,
@@ -104,7 +105,7 @@ export const BUILDINGS = {
     ],
     tiers: [
       { cost: { stone: 20, wood: 15, clay: 10 }, unlockLevel: 2, buildSeconds: 10, workers: 2, produces: { resource: "science", perWorker: 0.1 } },
-      { cost: { glass: 15, steel: 10 }, unlockLevel: 5, buildSeconds: 15, workers: 3, produces: { resource: "science", perWorker: 0.15 }, energy: -1 },
+      { cost: { glass: 15, steel: 10 }, unlockLevel: 5, buildSeconds: 15, workers: 4, produces: { resource: "science", perWorker: 0.15 }, energy: -1 },
     ],
   },
   storage: {
@@ -125,7 +126,7 @@ export const BUILDINGS = {
     adjacency: [{ building: "mine", bonus: 0.1 }],
     tiers: [
       { cost: { stone: 25, clay: 15, wood: 10 }, unlockLevel: 3, buildSeconds: 12, workers: 2, crafts: { speed: 1 }, pollution: 0.03 },
-      { cost: { steel: 15, concrete: 15 }, unlockLevel: 6, buildSeconds: 15, workers: 3, crafts: { speed: 1.5 }, energy: -2, pollution: 0.04 },
+      { cost: { steel: 15, concrete: 15 }, unlockLevel: 6, buildSeconds: 15, workers: 4, crafts: { speed: 1.5 }, energy: -2, pollution: 0.04 },
     ],
   },
   market: {
@@ -178,7 +179,7 @@ export const BUILDINGS = {
         cost: { glass: 15, steel: 10, plastic: 5 },
         unlockLevel: 6,
         buildSeconds: 12,
-        workers: 3,
+        workers: 4,
         produces: { resource: "food", perWorker: 0.45 },
         upkeep: { water: 0.06 },
         energy: -2,

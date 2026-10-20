@@ -123,42 +123,42 @@ export const BIOMES = {
 } as const satisfies Record<BiomeId, BiomeDef<ResourceId>>;
 
 /**
- * Planet types for the star system. The home planet is always "temperate" with 24 segments,
+ * Planet types for the star system. The home planet is always "temperate" with 32 segments,
  * so every seed starts with forest, savanna and mountains in reach.
  */
 export const PLANET_TYPES = {
   temperate: {
     name: "Gemäßigt",
     art: "planet-temperate",
-    segments: 24,
+    segments: 32,
     biomeWeights: { forest: 4, savanna: 3, mountains: 3, ocean: 3, swamp: 2, desert: 1 },
     depositMul: 1,
   },
   arid: {
     name: "Trocken",
     art: "planet-arid",
-    segments: 16,
+    segments: 24,
     biomeWeights: { desert: 5, savanna: 3, mountains: 2, crystal: 1 },
     depositMul: 1.1,
   },
   ice: {
     name: "Eis",
     art: "planet-ice",
-    segments: 16,
+    segments: 24,
     biomeWeights: { tundra: 6, mountains: 2, ocean: 2, crystal: 1 },
     depositMul: 1.1,
   },
   lava: {
     name: "Lava",
     art: "planet-lava",
-    segments: 12,
+    segments: 16,
     biomeWeights: { mountains: 5, desert: 2, crystal: 3 },
     depositMul: 1.4,
   },
   toxic: {
     name: "Giftig",
     art: "planet-toxic",
-    segments: 16,
+    segments: 24,
     biomeWeights: { swamp: 6, crystal: 1, forest: 1 },
     depositMul: 1.2,
   },

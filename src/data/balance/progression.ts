@@ -6,11 +6,13 @@ export const RULES = {
   ticksPerSecond: 10,
   /** One planet rotation; drives food upkeep, ascension and events. */
   secondsPerCycle: 30,
-  homeSegments: 24,
+  /** Big home planet: space is not the bottleneck, workers are. */
+  homeSegments: 32,
   /** The home planet always has at least one segment of each, so every production chain works. */
   homeGuaranteedBiomes: ["forest", "savanna", "mountains", "ocean", "swamp", "desert"],
-  startRevealRadius: 2,
+  startRevealRadius: 3,
   buildRevealRadius: 2,
+  /** Per player. */
   startPopulation: 3,
   baseHousing: 3,
   startResources: { food: 30, wood: 15 } as Cost<ResourceId>,
@@ -22,8 +24,12 @@ export const RULES = {
   /** Production multiplier while starving. A second starving cycle in a row kills one citizen. */
   starvingRateFactor: 0.5,
   starvationDeathAfterCycles: 2,
-  birthFoodCost: 10,
-  secondsPerBirth: 12,
+  birthFoodCost: 15,
+  /**
+   * Seconds per birth on a planet = birthBase + birthPerCitizen × citizens on that planet
+   * (values per mode in MODES). Growth slows as the people grows, so citizens stay the scarce
+   * resource and every new planet (own births) is worth a lot.
+   */
   /** Fraction of max that regrows per second on a deposit nobody works on. Empty deposits stay empty. */
   regenPerSecond: 0.01,
   demolishRefund: 0.5,
@@ -34,8 +40,6 @@ export const RULES = {
 export const ASCENSION = {
   /** Points per cycle = population × pointsPerCitizen + building bonuses. */
   pointsPerCitizen: 1,
-  /** Cumulative points needed for level 1, 2, … 10 (single player). */
-  thresholds: [15, 50, 120, 250, 450, 750, 1200, 1800, 2600, 3600],
   maxLevel: 10,
 } as const;
 
@@ -180,38 +184,84 @@ export const DIPLOMACY = {
 } as const;
 
 /**
- * Coop: 1–4 players in one system. Ascension and science are a shared team pool (one level for
- * everyone), so costs grow with player count, but slower than linearly: playing together
- * should feel a bit faster, not slower. Each player brings their own citizens and start goods.
- * Index = player count − 1.
+ * Game modes (decided by Seb, 2026-10-20). Solo is "coop" with one player.
+ * - coop: one shared start planet, shared resources, shared ascension and discoveries. Long
+ *   games (level 10 after ~3 h), endless afterwards.
+ * - versus: everyone on their own planet with own resources and ascension. Short and snappy:
+ *   first to winLevel wins, otherwise the highest ascension at the time limit.
+ * Per-player arrays: index = player count − 1.
  */
+export const MODE_IDS = ["coop", "versus"] as const;
+export type ModeId = (typeof MODE_IDS)[number];
+
+export const MODES = {
+  coop: {
+    name: "Gemeinsam",
+    sharedResources: true,
+    sharedAscension: true,
+    sameStartPlanet: true,
+    birthBase: 30,
+    birthPerCitizen: 6,
+    /** Cumulative ascension points for level 1 … 10. */
+    thresholds: [25, 100, 270, 600, 1150, 2050, 3300, 5200, 8300, 12900],
+    discoveryCostMul: 1,
+    /** One planet, one birth queue: extra players add start citizens and run colonies in parallel. */
+    playerThresholdMul: [1, 1.15, 1.3, 1.45],
+    playerDiscoveryCostMul: [1, 1.1, 1.2, 1.3],
+    monsterStrengthMul: [1, 1.3, 1.6, 1.9],
+    extraAiFactions: [0, 0, 1, 1],
+    extraPlanets: [0, 1, 2, 3],
+    winLevel: null,
+    timeLimitMinutes: null,
+    endless: true,
+  },
+  versus: {
+    name: "Gegeneinander",
+    sharedResources: false,
+    sharedAscension: false,
+    sameStartPlanet: false,
+    birthBase: 12,
+    birthPerCitizen: 3,
+    thresholds: [20, 55, 130, 220, 370, 600, 910, 1210, 1550, 1900],
+    discoveryCostMul: 0.5,
+    /** Everyone plays their own economy, so nothing scales with player count. */
+    playerThresholdMul: [1, 1, 1, 1],
+    playerDiscoveryCostMul: [1, 1, 1, 1],
+    monsterStrengthMul: [1, 1, 1, 1],
+    extraAiFactions: [0, 0, 0, 0],
+    /** One home planet per player plus a few free ones to race for. */
+    extraPlanets: [0, 1, 2, 3],
+    winLevel: 8,
+    timeLimitMinutes: 35,
+    endless: false,
+  },
+} as const;
+
 export const COOP = {
   maxPlayers: 4,
-  ascensionThresholdMul: [1, 1.7, 2.4, 3.1],
-  discoveryCostMul: [1, 1.6, 2.2, 2.8],
-  monsterStrengthMul: [1, 1.5, 2, 2.5],
-  /** Extra AI factions and planets so the system does not feel crowded. */
-  extraAiFactions: [0, 0, 1, 1],
-  extraPlanets: [0, 1, 2, 3],
-  /** Every player starts with RULES.startResources and RULES.startPopulation of their own. */
-  perPlayerStart: true,
-  /** Discoveries apply to the whole team; peoples' abilities only to that player's citizens. */
+  /** coop mode: discoveries apply to the team; peoples' abilities only to that player's citizens. */
   discoveriesShared: true,
-  /** Gifts between players are free; nothing is lost in transfer. */
-  playerTradeLoss: 0,
+  /** versus mode: trading between players goes through markets and loses this share. */
+  versusTradeLoss: 0.2,
 } as const;
 
 /**
- * What the numbers above should produce for a normal single player game. pacing.ts checks the
- * thresholds against this; when a playtest disagrees, fix the data, then this table.
+ * What the numbers above should produce. pacing.ts checks the thresholds against this; when a
+ * playtest disagrees, fix the data, then this table.
  */
 export const PACING = {
-  /** Expected population when a level is reached (index = level − 1). */
-  expectedPopulation: [4, 6, 9, 12, 16, 20, 25, 30, 35, 40],
-  /** Target minute at which a level is reached, ±20 %. */
-  targetMinute: [2, 6, 10, 16, 24, 32, 42, 53, 65, 78],
-  /** Science per cycle from labs, expected at each level (index = level − 1). */
-  expectedLabSciencePerCycle: [0, 3, 6, 8, 12, 15, 20, 24, 28, 32],
-  /** Discoveries bought in a typical full game (of 24). */
-  discoveriesPerGame: { min: 9, max: 14 },
+  coop: {
+    /** Target minute at which a level is reached (index = level − 1), ±20 %. */
+    targetMinute: [3, 8, 15, 25, 38, 55, 75, 100, 135, 180],
+    discoveriesPerGame: { min: 12, max: 18 },
+  },
+  versus: {
+    targetMinute: [2, 4, 7, 10, 14, 19, 25, 30, 35, 40],
+    discoveriesPerGame: { min: 7, max: 12 },
+  },
+  /** Share of citizens working in labs, and science per lab worker per cycle (t1/t2 average). */
+  labWorkerShare: 0.1,
+  sciencePerLabWorkerPerCycle: 3.5,
+  /** A built-out home planet should offer at least this many jobs per citizen. */
+  jobsPerCitizen: 1.4,
 } as const;

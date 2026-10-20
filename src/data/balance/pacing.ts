@@ -4,51 +4,76 @@
  */
 import { BUILDINGS, RECIPES, type BuildingId } from "./buildings";
 import { DISCOVERY_IDS } from "./discoveries";
-import { ASCENSION, PACING, RULES } from "./progression";
+import { ASCENSION, PACING, RULES, type ModeId } from "./progression";
 import { BIOMES, RESOURCE_IDS, type BiomeId, type ResourceId } from "./resources";
-import { ascensionThreshold, discoveryCost, DISCOVERY_RULES } from "./index";
+import { ascensionThreshold, discoveryCost, DISCOVERY_RULES, secondsPerBirth } from "./index";
 
 export interface LevelEta {
   level: number;
-  cycle: number;
   minute: number;
+  population: number;
 }
 
-/** When each level is reached if population grows as PACING.expectedPopulation says. */
-export function levelTimeline(players = 1): LevelEta[] {
+/**
+ * Level timeline when births are the only limit (the player keeps food and housing ahead).
+ * In coop, from level 6 on every extra player is assumed to run a colony with its own births.
+ */
+export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
   const out: LevelEta[] = [];
+  const startPop = RULES.startPopulation * (mode === "coop" ? players : 1);
+  const planets = [{ pop: startPop, progress: 0 }];
   let points = 0;
-  let cycle = 0;
-  let popBefore: number = RULES.startPopulation * players;
-  for (let level = 1; level <= ASCENSION.maxLevel; level++) {
-    const popAt = PACING.expectedPopulation[level - 1]! * players;
-    const need = ascensionThreshold(level, players)! - points;
-    cycle += need / ((popBefore + popAt) / 2);
-    points = ascensionThreshold(level, players)!;
-    popBefore = popAt;
-    out.push({ level, cycle, minute: (cycle * RULES.secondsPerCycle) / 60 });
+  let level = 0;
+  const cycle = RULES.secondsPerCycle;
+  for (let t = 1; level < ASCENSION.maxLevel && t < 10 * 3600; t++) {
+    if (mode === "coop" && level >= 6 && planets.length < players) planets.push({ pop: 1, progress: 0 });
+    let pop = 0;
+    for (const p of planets) {
+      p.progress += 1;
+      if (p.progress >= secondsPerBirth(p.pop, mode)) {
+        p.pop += 1;
+        p.progress = 0;
+      }
+      pop += p.pop;
+    }
+    points += pop / cycle;
+    while (level < ASCENSION.maxLevel && points >= ascensionThreshold(level + 1, mode, players)!) {
+      level += 1;
+      out.push({ level, minute: t / 60, population: pop });
+    }
   }
   return out;
 }
 
-/** Total science until max level and how many discoveries that buys. */
-export function sciencePerGame(players = 1): { science: number; discoveries: number } {
-  const timeline = levelTimeline(players);
-  let science = 0;
-  let prevCycle = 0;
-  for (const { level, cycle } of timeline) {
-    // Labs running between the previous level and this one, at the previous level's rate.
-    const rate = level >= 2 ? PACING.expectedLabSciencePerCycle[level - 2]! * players : 0;
-    science += rate * (cycle - prevCycle) + DISCOVERY_RULES.sciencePerLevel * level;
-    prevCycle = cycle;
-  }
+/** Total science until the last level (versus: the win level) and how many discoveries that buys. */
+export function sciencePerGame(mode: ModeId = "coop", players = 1): { science: number; discoveries: number } {
+  const last = mode === "versus" ? 8 : ASCENSION.maxLevel;
+  const timeline = levelTimeline(mode, players).slice(0, last);
+  // Ascension points equal citizen-cycles, so lab output follows from them directly.
+  const citizenCycles = ascensionThreshold(last, mode, players)!;
+  let science = citizenCycles * PACING.labWorkerShare * PACING.sciencePerLabWorkerPerCycle;
+  for (const { level } of timeline) science += DISCOVERY_RULES.sciencePerLevel * level;
   let discoveries = 0;
   let left = science;
-  while (discoveries < DISCOVERY_IDS.length && left >= discoveryCost(discoveries, players)) {
-    left -= discoveryCost(discoveries, players);
+  while (discoveries < DISCOVERY_IDS.length && left >= discoveryCost(discoveries, mode, players)) {
+    left -= discoveryCost(discoveries, mode, players);
     discoveries++;
   }
   return { science: Math.round(science), discoveries };
+}
+
+/** Job slots on a built-out home planet versus the population at max level. */
+export function jobsPerCitizen(): number {
+  const maxPop = levelTimeline("coop", 1).at(-1)!.population;
+  const housingTop = BUILDINGS.housing.tiers.at(-1)!.housing;
+  const houses = Math.ceil((maxPop - RULES.baseHousing) / housingTop);
+  // Assume a quarter of the planet is ocean (2 hand-gatherer slots each), the rest is land.
+  const ocean = Math.floor(RULES.homeSegments / 4);
+  const land = RULES.homeSegments - ocean - houses;
+  const production: BuildingId[] = ["farm", "mine", "pump", "lab", "foundry", "hydro-farm"];
+  const slots: number[] = production.map((id) => BUILDINGS[id].tiers.at(-1)!.workers);
+  const avg = slots.reduce((a, b) => a + b, 0) / slots.length;
+  return (land * avg + ocean * RULES.handWorkersPerSegment) / maxPop;
 }
 
 /**
@@ -73,11 +98,10 @@ export function homeAvailability(): Record<ResourceId, number> {
       for (const id of Object.keys(BUILDINGS) as BuildingId[]) {
         const def = BUILDINGS[id];
         const biomes = def.biomes === "any-land" ? null : (def.biomes as readonly BiomeId[]);
-        const fromNeighbors = (t: { extracts?: { fromNeighbors?: readonly BiomeId[] } }) => t.extracts?.fromNeighbors ?? [];
         def.tiers.forEach((tier) => {
           const t = tier as { unlockLevel: number; extracts?: { resources: readonly ResourceId[]; fromNeighbors?: readonly BiomeId[] } };
           if (!t.extracts?.resources.includes(d.resource)) return;
-          const reachable = (biomes ? biomes.includes(b) : BIOMES[b].buildable) || fromNeighbors(t).includes(b);
+          const reachable = (biomes ? biomes.includes(b) : BIOMES[b].buildable) || (t.extracts.fromNeighbors ?? []).includes(b);
           if (reachable) lower(d.resource, t.unlockLevel);
         });
       }
