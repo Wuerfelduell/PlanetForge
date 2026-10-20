@@ -105,7 +105,7 @@ function launchpad(){return foot(post(42,54,169,'rock')+post(85,54,169,'rock')+
 function rocket(tier,variant,big=false){
   const fins=big?path('M91 123Q48 151 41 224Q60 222 86 203Z','crystal')+path('M165 123Q208 151 215 224Q196 222 170 203Z','crystal'):
     path('M91 157Q62 171 59 231L92 212Z','clay')+path('M165 157Q194 171 197 231L164 212Z','clay');
-  return fins+path('M102 205H154L161 236Q128 240 95 236Z','rock-dark')+
+  return fins+path('M102 205H154L161 236Q128 238 95 236Z','rock-dark')+
     path(`M88 201V${big?91:106}Q88 59 128 ${big?18:34}Q168 59 168 ${big?91:106}V201Q128 220 88 201Z`,'cream')+
     path(`M128 ${big?18:34}Q151 40 161 ${big?67:80}Q128 95 95 ${big?67:80}Q105 44 128 ${big?18:34}Z`,big?'crystal':'clay')+
     path('M157 104V192Q153 201 142 203','none',`stroke="${paint('paper')}" stroke-width="11"`)+
@@ -178,6 +178,19 @@ function escapePod(tier,variant){
     `${line('M82 208H96M163 208H176','rock-dark',5)}</g>`);
 }
 
+const star=(x,y,r,token='energy')=>path(`M${x} ${y-r}Q${x+round(r*.2)} ${y-round(r*.2)} ${x+r} ${y}Q${x+round(r*.2)} ${y+round(r*.2)} ${x} ${y+r}Q${x-round(r*.2)} ${y+round(r*.2)} ${x-r} ${y}Q${x-round(r*.2)} ${y-round(r*.2)} ${x} ${y-r}Z`,token);
+function atomic(){return foot(rect(38,191,180,34,'rock-dark',14)+
+  path('M48 194V142Q48 64 128 64Q208 64 208 142V194Z','paper')+
+  path('M185 103Q201 126 196 181','none',`stroke="${paint('paper',-.18)}" stroke-width="13"`)+
+  group('glow',rect(61,160,134,20,state==='idle'?'uranium':'coal',10)+circle(128,115,22,state==='idle'?'uranium':'coal'))+
+  circle(128,115,11,'rock-dark')+glint('M64 131Q66 95 98 84')+post(122,178,46,'rock-dark'));}
+function monument(){return foot(rect(62,205,132,21,'paper',9)+
+  path('M92 205L101 103L128 79L155 103L164 205Z','rock')+
+  path('M128 80L155 103L164 205H128Z','rock-dark')+
+  path('M128 111L142 140L128 173L114 140Z','crystal')+
+  group('star',star(128,40,25,'energy')+glint('M123 34L127 27'))+
+  glint('M109 112L104 183')+line('M93 216H163','clay',4));}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
@@ -198,6 +211,8 @@ const buildings = [
   {id:'watchtower',tiers:1,phase:'P1',parts:['banner'],draw:watchtower},
   {id:'ruin',tiers:1,phase:'P1',draw:ruin},
   {id:'escape-pod',tiers:1,phase:'P1',variants:['closed','open'],draw:escapePod},
+  {id:'power-atomic',tiers:1,phase:'P2',parts:['glow'],draw:atomic},
+  {id:'monument',tiers:1,phase:'P2',parts:['star'],draw:monument},
 ];
 
 function scaffolding(){

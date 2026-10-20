@@ -1994,6 +1994,146 @@
       "phase": "P1"
     },
     {
+      "id": "building.power-atomic",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic.svg",
+      "out": "public/assets/sprites/buildings/power-atomic.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "power-atomic",
+        "idle"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.power-atomic.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic-construction.svg",
+      "out": "public/assets/sprites/buildings/power-atomic-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-atomic",
+        "construction"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.power-atomic.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-atomic-off.svg",
+      "out": "public/assets/sprites/buildings/power-atomic-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "power-atomic",
+        "off"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument",
+      "category": "buildings",
+      "src": "art/src/buildings/monument.svg",
+      "out": "public/assets/sprites/buildings/monument.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star"
+      ],
+      "tags": [
+        "monument",
+        "idle"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/monument-construction.svg",
+      "out": "public/assets/sprites/buildings/monument-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star",
+        "scaffolding"
+      ],
+      "tags": [
+        "monument",
+        "construction"
+      ],
+      "phase": "P2"
+    },
+    {
+      "id": "building.monument.off",
+      "category": "buildings",
+      "src": "art/src/buildings/monument-off.svg",
+      "out": "public/assets/sprites/buildings/monument-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "star"
+      ],
+      "tags": [
+        "monument",
+        "off"
+      ],
+      "phase": "P2"
+    },
+    {
       "id": "building.escape-pod",
       "category": "buildings",
       "src": "art/src/buildings/escape-pod-closed.svg",
