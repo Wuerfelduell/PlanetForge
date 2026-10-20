@@ -22,7 +22,7 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   science: { name: "Wissen", icon: "🔬" },
 };
 
-export const BIOME_IDS = ["forest", "meadow", "mountain", "sea", "desert", "swamp"] as const;
+export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp"] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export interface DepositDef {
@@ -52,13 +52,13 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "food", max: 25, byHand: true },
     ],
   },
-  meadow: {
-    name: "Wiese",
+  savanna: {
+    name: "Savanne",
     color: 0x8cc55a,
     buildable: true,
     deposits: [{ resource: "food", max: 50, byHand: true }],
   },
-  mountain: {
+  mountains: {
     name: "Gebirge",
     color: 0x8b8178,
     buildable: true,
@@ -67,7 +67,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "iron", max: 50 },
     ],
   },
-  sea: {
+  ocean: {
     name: "Meer",
     color: 0x3d7fc4,
     buildable: false,
@@ -96,7 +96,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["hut", "farm", "mine", "well", "lab"] as const;
+export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -118,10 +118,10 @@ export interface BuildingDef {
   adjacency?: { biome: BiomeId; bonus: number };
 }
 
-const LAND: readonly BiomeId[] = ["forest", "meadow", "mountain", "desert", "swamp"];
+const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp"];
 
 export const BUILDINGS: Record<BuildingId, BuildingDef> = {
-  hut: {
+  housing: {
     name: "Hütte",
     icon: "🛖",
     description: "Platz für 2 weitere Einwohner.",
@@ -134,13 +134,13 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   farm: {
     name: "Farm",
     icon: "🌾",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Wiese.",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Savanne.",
     cost: { wood: 12 },
     unlockLevel: 0,
-    allowedBiomes: ["meadow", "forest", "swamp"],
+    allowedBiomes: ["savanna", "forest", "swamp"],
     workers: 2,
     produces: { resource: "food", perWorker: 0.5 },
-    adjacency: { biome: "meadow", bonus: 0.25 },
+    adjacency: { biome: "savanna", bonus: 0.25 },
   },
   mine: {
     name: "Mine",
@@ -148,13 +148,13 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Fördert alle Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. +25 % je Nachbar-Gebirge.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
-    allowedBiomes: ["mountain", "desert", "swamp"],
+    allowedBiomes: ["mountains", "desert", "swamp"],
     workers: 3,
     extracts: { resources: ["stone", "iron", "sand", "clay", "water"], perWorker: 0.6 },
-    adjacency: { biome: "mountain", bonus: 0.25 },
+    adjacency: { biome: "mountains", bonus: 0.25 },
   },
-  well: {
-    name: "Brunnen",
+  pump: {
+    name: "Pumpe",
     icon: "🪣",
     description: "Pumpt Wasser. +50 % je Nachbar-Meer.",
     cost: { stone: 12 },
@@ -162,7 +162,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     allowedBiomes: LAND,
     workers: 1,
     produces: { resource: "water", perWorker: 0.5 },
-    adjacency: { biome: "sea", bonus: 0.5 },
+    adjacency: { biome: "ocean", bonus: 0.5 },
   },
   lab: {
     name: "Labor",

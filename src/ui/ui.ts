@@ -5,6 +5,7 @@ import {
   BUILDING_IDS,
   BUILDINGS,
   cycleOf,
+  HOME_PLANET_ID,
   housing,
   idleWorkers,
   nextLevelThreshold,
@@ -16,7 +17,8 @@ import {
   type Command,
   type GameState,
   type ResourceId,
-  type SimEvent,
+  type GameEvent,
+  type PlanetState,
 } from "../sim";
 import { currentHint } from "./hints";
 
@@ -34,6 +36,8 @@ export class Ui {
   private lastHud = "";
   private lastPanel = "";
   private selected = 0;
+  /** Planet currently shown. Only the home planet exists so far. */
+  private planetId = HOME_PLANET_ID;
   private speed = 1;
 
   constructor(private readonly actions: UiActions) {
@@ -55,7 +59,7 @@ export class Ui {
     if (panel !== this.lastPanel) this.panel.innerHTML = this.lastPanel = panel;
   }
 
-  showEvents(events: SimEvent[]): void {
+  showEvents(events: GameEvent[]): void {
     for (const e of events) {
       switch (e.type) {
         case "born":
@@ -76,6 +80,8 @@ export class Ui {
           this.toast(`🔭 ${e.segments.length} neue Felder entdeckt`);
           break;
         case "cycle":
+        case "built":
+        case "demolished":
           break;
       }
     }
@@ -95,19 +101,19 @@ export class Ui {
     const target = (e.target as HTMLElement).closest<HTMLElement>("[data-action]");
     if (!target || target.hasAttribute("disabled")) return;
     const { action, value } = target.dataset;
-    const segment = this.selected;
+    const at = { planetId: this.planetId, segment: this.selected };
     switch (action) {
       case "assign":
-        this.actions.send({ type: "assign", segment, delta: Number(value) });
+        this.actions.send({ type: "assign", ...at, delta: Number(value) });
         break;
       case "build":
-        this.actions.send({ type: "build", segment, building: value as (typeof BUILDING_IDS)[number] });
+        this.actions.send({ type: "build", ...at, building: value as (typeof BUILDING_IDS)[number] });
         break;
       case "demolish":
-        this.actions.send({ type: "demolish", segment });
+        this.actions.send({ type: "demolish", ...at });
         break;
       case "gather":
-        this.actions.send({ type: "setGather", segment, resource: value as ResourceId });
+        this.actions.send({ type: "setGather", ...at, resource: value as ResourceId });
         break;
       case "speed":
         this.speed = Number(value);
@@ -145,7 +151,8 @@ export class Ui {
   }
 
   private renderPanel(state: GameState): string {
-    const s = state.planet.segments[this.selected]!;
+    const planet = state.planets.find((p) => p.id === this.planetId) as PlanetState;
+    const s = planet.segments[this.selected]!;
     const hint = `<p class="hint">💡 ${currentHint(state)}</p>`;
     if (!s.revealed) {
       return `<h2>❔ Unerforschtes Feld</h2><p class="muted">Bau ein Gebäude in der Nähe, um es aufzudecken.</p>${hint}`;
@@ -154,7 +161,7 @@ export class Ui {
     const def = s.building ? BUILDINGS[s.building] : null;
     const title = def ? `${def.icon} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
 
-    const output = segmentOutput(state, s);
+    const output = segmentOutput(planet, s);
     const deposits = s.deposits
       .map((d) => {
         const amount = d.infinite ? "∞" : `${Math.floor(d.amount)}/${d.max}`;
@@ -169,7 +176,7 @@ export class Ui {
     const rate = Object.entries(output)
       .map(([r, v]) => `+${(v as number).toFixed(1)} ${RESOURCES[r as ResourceId].icon}/s`)
       .join(" ");
-    const mult = adjacencyMultiplier(state, s);
+    const mult = adjacencyMultiplier(planet, s);
     const workers = cap
       ? `<div class="workers">
           <button class="round" data-action="assign" data-value="-1" ${s.workers > 0 ? "" : "disabled"}>－</button>

@@ -1,4 +1,6 @@
-import { applyCommand, createGame, RULES, step, type Command, type CommandResult, type GameState, type SimEvent } from "../sim";
+import { advanceWithEvents, applyCommand, createGame, type Command, type GameEvent, type GameState } from "../sim";
+
+export type SendResult = { ok: true } | { ok: false; error: string };
 
 /**
  * What the renderer and UI talk to. They never touch the simulation directly, so a networked
@@ -6,42 +8,46 @@ import { applyCommand, createGame, RULES, step, type Command, type CommandResult
  */
 export interface GameSession {
   readonly state: GameState;
-  /** Simulation speed multiplier; 0 pauses. */
+  /** The player this client acts as. */
+  readonly playerId: string;
+  /** Simulation speed multiplier; 0 pauses. A networked session may ignore it. */
   speed: number;
-  send(cmd: Command): CommandResult;
+  send(cmd: Command): SendResult;
   /** Called every frame with real elapsed time; returns events of the ticks that ran. */
-  update(elapsedMs: number): SimEvent[];
+  update(elapsedMs: number): GameEvent[];
 }
 
-const TICK_MS = 1000 / RULES.ticksPerSecond;
-/** Avoid a spiral of death after the tab was in the background. */
-const MAX_TICKS_PER_UPDATE = 50;
+export const LOCAL_PLAYER = { id: "local", name: "Ich" };
 
-/** Single player: this browser is the authority and applies commands immediately. */
+/**
+ * Single player: this browser is the authority. It runs its own game clock (sim time), which
+ * makes pause and fast-forward trivial and keeps the simulation independent of Date.now().
+ */
 export class LocalSession implements GameSession {
   speed = 1;
-  private accumulator = 0;
+  readonly playerId = LOCAL_PLAYER.id;
+  private clock: number;
 
-  constructor(public state: GameState) {}
-
-  static newGame(seed = (Math.random() * 2 ** 32) | 0): LocalSession {
-    return new LocalSession(createGame({ seed }));
+  constructor(public state: GameState) {
+    this.clock = state.simTime;
   }
 
-  send(cmd: Command): CommandResult {
-    return applyCommand(this.state, cmd);
+  static newGame(seed = Math.floor(Math.random() * 2 ** 32).toString(36)): LocalSession {
+    return new LocalSession(createGame(seed, [LOCAL_PLAYER]));
   }
 
-  update(elapsedMs: number): SimEvent[] {
-    const events: SimEvent[] = [];
-    this.accumulator += elapsedMs * this.speed;
-    let ticks = 0;
-    while (this.accumulator >= TICK_MS && ticks < MAX_TICKS_PER_UPDATE) {
-      events.push(...step(this.state));
-      this.accumulator -= TICK_MS;
-      ticks++;
-    }
-    if (ticks === MAX_TICKS_PER_UPDATE) this.accumulator = 0;
+  send(cmd: Command): SendResult {
+    const result = applyCommand(this.state, this.playerId, cmd, this.clock);
+    if (!result.ok) return result;
+    this.state = result.state;
+    return { ok: true };
+  }
+
+  update(elapsedMs: number): GameEvent[] {
+    // Cap a single frame (e.g. after the tab was in the background) to avoid a long freeze.
+    this.clock += Math.min(elapsedMs, 1000) * this.speed;
+    const { state, events } = advanceWithEvents(this.state, this.clock);
+    this.state = state;
     return events;
   }
 }

@@ -23,7 +23,7 @@ async function boot(): Promise<void> {
   const ui = new Ui({
     send(cmd) {
       const result = session.send(cmd);
-      if (!result.ok) ui.toast(result.reason, "warn");
+      if (!result.ok) ui.toast(result.error, "warn");
       ui.render(session.state);
     },
     setSpeed(speed) {
@@ -39,7 +39,7 @@ async function boot(): Promise<void> {
     },
   });
 
-  const view = new PlanetView(app, session.state.planet.segments.length, (index) => {
+  const view = new PlanetView(app, session.state.planets[0]!.segments.length, (index) => {
     ui.setSelected(index);
     ui.render(session.state);
   });

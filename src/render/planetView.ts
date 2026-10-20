@@ -111,7 +111,7 @@ export class PlanetView {
     g.circle(0, 0, rInner).fill(CORE_COLOR);
     g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
 
-    state.planet.segments.forEach((s, i) => {
+    state.planets[0]!.segments.forEach((s, i) => {
       const a0 = i * step - step / 2;
       const a1 = a0 + step;
       const mid = i * step;
