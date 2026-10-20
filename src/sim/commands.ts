@@ -1,67 +1,82 @@
 import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
 import { ringDistance } from "./generate";
-import { buildBlocker, idleWorkers, segmentAt, workerCapacity } from "./rules";
-import type { Command, CommandMeta, CommandResult, GameState, SimEvent } from "./state";
+import { buildBlocker, cloneState, idleWorkers, planetById, segmentAt, workerCapacity } from "./rules";
+import type { Command, CommandResult, GameEvent, GameState } from "./state";
+import { advanceInPlace } from "./step";
 
 /**
- * Validates and applies one command, mutating the state. Invalid commands change nothing.
- * The authority (local session today, host or server in coop) is the only caller.
+ * Simulates up to `now`, then validates and applies one command from `playerId`.
+ * Never mutates the input; on failure nothing is returned but the error.
  */
-export function applyCommand(state: GameState, cmd: Command, _meta: CommandMeta = {}, events: SimEvent[] = []): CommandResult {
-  const segment = segmentAt(state, cmd.segment);
-  if (!segment || !Number.isInteger(cmd.segment)) return fail("Unbekanntes Feld");
-  if (!segment.revealed) return fail("Feld noch unerforscht");
+export function applyCommand(state: GameState, playerId: string, cmd: Command, now: number): CommandResult {
+  const next = cloneState(state);
+  const events = advanceInPlace(next, now);
+  const error = executeCommand(next, playerId, cmd, events);
+  return error ? { ok: false, error } : { ok: true, state: next, events };
+}
+
+/** Validates and applies a command in place. Returns an error message, or null on success (then the state changed). */
+function executeCommand(state: GameState, playerId: string, cmd: Command, events: GameEvent[]): string | null {
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player) return "Unbekannter Spieler";
+  const planet = planetById(state, cmd.planetId);
+  if (!planet) return "Unbekannter Planet";
+  if (planet.teamId !== player.teamId) return "Dieser Planet gehört dir nicht";
+  const segment = Number.isInteger(cmd.segment) ? segmentAt(planet, cmd.segment) : undefined;
+  if (!segment || segment.index !== cmd.segment) return "Unbekanntes Feld";
+  if (!segment.revealed) return "Feld noch unerforscht";
 
   switch (cmd.type) {
     case "build": {
-      if (!(cmd.building in BUILDINGS)) return fail("Unbekanntes Gebäude");
-      const blocker = buildBlocker(state, segment, cmd.building);
-      if (blocker) return fail(blocker);
+      if (!(cmd.building in BUILDINGS)) return "Unbekanntes Gebäude";
+      const blocker = buildBlocker(state, planet, segment, cmd.building);
+      if (blocker) return blocker;
       const cost = BUILDINGS[cmd.building].cost;
-      for (const r of RESOURCE_IDS) state.resources[r] -= cost[r] ?? 0;
+      for (const r of RESOURCE_IDS) planet.resources[r] -= cost[r] ?? 0;
       // Hand gatherers go back to idle; the player re-assigns them to the building.
       segment.workers = 0;
       segment.building = cmd.building;
+      segment.builtBy = playerId;
+      events.push({ type: "built", planetId: planet.id, segment: segment.index, building: cmd.building, playerId });
       const revealed: number[] = [];
-      for (const s of state.planet.segments) {
-        if (!s.revealed && ringDistance(s.index, segment.index, state.planet.segments.length) <= RULES.buildRevealRadius) {
+      for (const s of planet.segments) {
+        if (!s.revealed && ringDistance(s.index, segment.index, planet.segments.length) <= RULES.buildRevealRadius) {
           s.revealed = true;
           revealed.push(s.index);
         }
       }
-      if (revealed.length) events.push({ type: "revealed", segments: revealed });
-      return ok();
+      if (revealed.length) events.push({ type: "revealed", planetId: planet.id, segments: revealed });
+      return null;
     }
     case "demolish": {
-      if (!segment.building) return fail("Hier steht nichts");
+      if (!segment.building) return "Hier steht nichts";
       const def = BUILDINGS[segment.building];
-      for (const r of RESOURCE_IDS) state.resources[r] += Math.floor((def.cost[r] ?? 0) * RULES.demolishRefund);
+      for (const r of RESOURCE_IDS) planet.resources[r] += Math.floor((def.cost[r] ?? 0) * RULES.demolishRefund);
       segment.building = null;
+      segment.builtBy = null;
       segment.workers = 0;
-      return ok();
+      events.push({ type: "demolished", planetId: planet.id, segment: segment.index, playerId });
+      return null;
     }
     case "assign": {
-      if (!Number.isInteger(cmd.delta) || cmd.delta === 0) return fail("Ungültige Anzahl");
+      if (!Number.isInteger(cmd.delta) || cmd.delta === 0) return "Ungültige Anzahl";
       const target = segment.workers + cmd.delta;
-      if (target < 0) return fail("Hier arbeitet niemand");
-      if (target > workerCapacity(segment)) return fail("Kein Platz für weitere Einwohner");
-      if (cmd.delta > idleWorkers(state)) return fail("Keine freien Einwohner");
+      if (target < 0) return "Hier arbeitet niemand";
+      if (target > workerCapacity(segment)) return "Kein Platz für weitere Einwohner";
+      if (cmd.delta > idleWorkers(planet)) return "Keine freien Einwohner";
       segment.workers = target;
-      return ok();
+      return null;
     }
     case "setGather": {
-      if (segment.building) return fail("Gebäude bestimmt, was abgebaut wird");
+      if (segment.building) return "Gebäude bestimmt, was abgebaut wird";
       const deposit = segment.deposits.find((d) => d.resource === cmd.resource && d.byHand);
-      if (!deposit) return fail("Kann man hier nicht von Hand sammeln");
+      if (!deposit) return "Kann man hier nicht von Hand sammeln";
       segment.gather = cmd.resource;
-      return ok();
+      return null;
     }
     default: {
       const unknown: never = cmd;
-      return fail(`Unbekannter Befehl ${(unknown as { type: string }).type}`);
+      return `Unbekannter Befehl ${(unknown as { type: string }).type}`;
     }
   }
 }
-
-const ok = (): CommandResult => ({ ok: true });
-const fail = (reason: string): CommandResult => ({ ok: false, reason });

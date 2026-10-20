@@ -1,25 +1,66 @@
-import type { BiomeId, BuildingId, ResourceId } from "./content";
+import type { BiomeId, BuildingId, PlanetTypeId, ResourceId } from "./content";
 
 /**
- * The complete game state. Plain JSON data only (no classes, no functions), so it can be
- * saved, sent over the network or diffed as is.
+ * The complete game state. Plain JSON data only (no classes, Maps, Sets or functions), so it
+ * can be saved, stored in a database row, sent over the network or diffed as is.
  */
+/**
+ * coop: everyone shares one start planet, its stockpile and the ascension (long-term play).
+ * versus: every player has an own start planet, stockpile and ascension (short matches).
+ */
+export type GameMode = "coop" | "versus";
+
 export interface GameState {
-  version: 1;
-  seed: number;
+  version: 4;
+  mode: GameMode;
+  maxPlayers: number;
+  seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
+  /** Timestamp (ms, caller's clock) up to which the simulation has been computed. */
+  simTime: number;
   tick: number;
+  players: PlayerState[];
+  /** coop: one team for everybody. versus: one team per player. */
+  teams: TeamState[];
+  sun: { type: string };
+  planets: PlanetState[];
+}
+
+export interface TeamState {
+  id: string;
+  /** Points from every planet of the team add up; levels unlock buildings for the whole team. */
+  ascension: { level: number; points: number };
+}
+
+export interface PlayerInit {
+  id: string;
+  name: string;
+}
+
+export interface PlayerState extends PlayerInit {
+  /** Index into a shared player color palette (the renderer picks the actual color). */
+  color: number;
+  teamId: string;
+  homePlanetId: string;
+}
+
+export interface PlanetState {
+  id: string;
+  name: string;
+  type: PlanetTypeId;
+  /** Position on the star map: orbit radius in arbitrary units, angle in radians. */
+  orbit: { radius: number; angle: number };
+  /** Start slot (0 … maxPlayers-1) if this is a start planet, else null. */
+  startSlot: number | null;
+  /** Team that controls the planet, null while nobody lives here. Every team member may act on it. */
+  teamId: string | null;
+  /** Stockpile, population and food are local to each planet. */
   resources: Record<ResourceId, number>;
   population: number;
   /** Seconds of progress toward the next birth. */
   birthProgress: number;
   starving: boolean;
-  ascension: { level: number; points: number };
-  planet: PlanetState;
-}
-
-export interface PlanetState {
   segments: SegmentState[];
 }
 
@@ -29,6 +70,8 @@ export interface SegmentState {
   revealed: boolean;
   deposits: DepositState[];
   building: BuildingId | null;
+  /** playerId of whoever built the building, null without building. */
+  builtBy: string | null;
   workers: number;
   /** Which deposit hand-gatherers collect when there is no building. */
   gather: ResourceId | null;
@@ -44,23 +87,20 @@ export interface DepositState {
 
 /** Player intents. The only way anything outside the simulation changes the state. */
 export type Command =
-  | { type: "build"; segment: number; building: BuildingId }
-  | { type: "demolish"; segment: number }
-  | { type: "assign"; segment: number; delta: number }
-  | { type: "setGather"; segment: number; resource: ResourceId };
+  | { type: "build"; planetId: string; segment: number; building: BuildingId }
+  | { type: "demolish"; planetId: string; segment: number }
+  | { type: "assign"; planetId: string; segment: number; delta: number }
+  | { type: "setGather"; planetId: string; segment: number; resource: ResourceId };
 
-/** Who sent a command. Unused in single player, needed for coop permissions and logs. */
-export interface CommandMeta {
-  playerId?: string;
-}
-
-export type CommandResult = { ok: true } | { ok: false; reason: string };
-
-/** Things that happened during a tick, for UI feedback (toasts, sounds). Not part of the state. */
-export type SimEvent =
-  | { type: "born"; population: number }
+/** Things that happened, for UI feedback (toasts, sounds). Not part of the state. */
+export type GameEvent =
+  | { type: "born"; planetId: string; population: number }
   | { type: "cycle"; cycle: number }
-  | { type: "levelUp"; level: number }
-  | { type: "depleted"; segment: number; resource: ResourceId }
-  | { type: "starving" }
-  | { type: "revealed"; segments: number[] };
+  | { type: "levelUp"; teamId: string; level: number }
+  | { type: "depleted"; planetId: string; segment: number; resource: ResourceId }
+  | { type: "starving"; planetId: string }
+  | { type: "revealed"; planetId: string; segments: number[] }
+  | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
+  | { type: "demolished"; planetId: string; segment: number; playerId: string };
+
+export type CommandResult = { ok: true; state: GameState; events: GameEvent[] } | { ok: false; error: string };

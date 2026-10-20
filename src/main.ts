@@ -1,4 +1,5 @@
 import { Application } from "pixi.js";
+import { homePlanet } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { PlanetView } from "./render/planetView";
@@ -23,7 +24,7 @@ async function boot(): Promise<void> {
   const ui = new Ui({
     send(cmd) {
       const result = session.send(cmd);
-      if (!result.ok) ui.toast(result.reason, "warn");
+      if (!result.ok) ui.toast(result.error, "warn");
       ui.render(session.state);
     },
     setSpeed(speed) {
@@ -34,15 +35,22 @@ async function boot(): Promise<void> {
       const speed = session.speed;
       session = LocalSession.newGame();
       session.speed = speed;
+      showHome();
       view.select(0);
       ui.render(session.state);
     },
   });
 
-  const view = new PlanetView(app, session.state.planet.segments.length, (index) => {
+  const home = () => homePlanet(session.state, session.playerId)!;
+  const view = new PlanetView(app, home().segments.length, (index) => {
     ui.setSelected(index);
     ui.render(session.state);
   });
+  const showHome = () => {
+    ui.setPlanet(home().id);
+    view.planetId = home().id;
+  };
+  showHome();
   app.stage.addChild(view.stage);
 
   const relayout = () => {

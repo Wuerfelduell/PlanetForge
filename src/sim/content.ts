@@ -3,7 +3,7 @@
  * (or later loaded from JSON) without touching the simulation code.
  */
 
-export const RESOURCE_IDS = ["food", "wood", "stone", "iron", "sand", "clay", "water", "science"] as const;
+export const RESOURCE_IDS = ["food", "wood", "stone", "iron", "sand", "clay", "water", "coal", "oil", "uranium", "aetherite", "science"] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
 export interface ResourceDef {
@@ -19,10 +19,14 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   sand: { name: "Sand", icon: "⏳" },
   clay: { name: "Lehm", icon: "🧱" },
   water: { name: "Wasser", icon: "💧" },
+  coal: { name: "Kohle", icon: "⚫" },
+  oil: { name: "Öl", icon: "🛢️" },
+  uranium: { name: "Uran", icon: "🟢" },
+  aetherite: { name: "Ätherit", icon: "💎" },
   science: { name: "Wissen", icon: "🔬" },
 };
 
-export const BIOME_IDS = ["forest", "meadow", "mountain", "sea", "desert", "swamp"] as const;
+export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal"] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export interface DepositDef {
@@ -52,13 +56,13 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "food", max: 25, byHand: true },
     ],
   },
-  meadow: {
-    name: "Wiese",
+  savanna: {
+    name: "Savanne",
     color: 0x8cc55a,
     buildable: true,
     deposits: [{ resource: "food", max: 50, byHand: true }],
   },
-  mountain: {
+  mountains: {
     name: "Gebirge",
     color: 0x8b8178,
     buildable: true,
@@ -67,7 +71,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "iron", max: 50 },
     ],
   },
-  sea: {
+  ocean: {
     name: "Meer",
     color: 0x3d7fc4,
     buildable: false,
@@ -94,9 +98,27 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "water", max: 40 },
     ],
   },
+  tundra: {
+    name: "Tundra",
+    color: 0xd8e4ec,
+    buildable: true,
+    deposits: [
+      { resource: "stone", max: 50, byHand: true },
+      { resource: "water", max: 60, byHand: true },
+    ],
+  },
+  crystal: {
+    name: "Kristallfeld",
+    color: 0x9b7fd1,
+    buildable: true,
+    deposits: [
+      { resource: "stone", max: 40, byHand: true },
+      { resource: "aetherite", max: 40 },
+    ],
+  },
 };
 
-export const BUILDING_IDS = ["hut", "farm", "mine", "well", "lab"] as const;
+export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -118,10 +140,10 @@ export interface BuildingDef {
   adjacency?: { biome: BiomeId; bonus: number };
 }
 
-const LAND: readonly BiomeId[] = ["forest", "meadow", "mountain", "desert", "swamp"];
+const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"];
 
 export const BUILDINGS: Record<BuildingId, BuildingDef> = {
-  hut: {
+  housing: {
     name: "Hütte",
     icon: "🛖",
     description: "Platz für 2 weitere Einwohner.",
@@ -134,13 +156,13 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   farm: {
     name: "Farm",
     icon: "🌾",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Wiese.",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Savanne.",
     cost: { wood: 12 },
     unlockLevel: 0,
-    allowedBiomes: ["meadow", "forest", "swamp"],
+    allowedBiomes: ["savanna", "forest", "swamp"],
     workers: 2,
     produces: { resource: "food", perWorker: 0.5 },
-    adjacency: { biome: "meadow", bonus: 0.25 },
+    adjacency: { biome: "savanna", bonus: 0.25 },
   },
   mine: {
     name: "Mine",
@@ -148,13 +170,13 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Fördert alle Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. +25 % je Nachbar-Gebirge.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
-    allowedBiomes: ["mountain", "desert", "swamp"],
+    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest"],
     workers: 3,
-    extracts: { resources: ["stone", "iron", "sand", "clay", "water"], perWorker: 0.6 },
-    adjacency: { biome: "mountain", bonus: 0.25 },
+    extracts: { resources: ["stone", "iron", "sand", "clay", "coal", "oil", "uranium", "aetherite"], perWorker: 0.6 },
+    adjacency: { biome: "mountains", bonus: 0.25 },
   },
-  well: {
-    name: "Brunnen",
+  pump: {
+    name: "Pumpe",
     icon: "🪣",
     description: "Pumpt Wasser. +50 % je Nachbar-Meer.",
     cost: { stone: 12 },
@@ -162,7 +184,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     allowedBiomes: LAND,
     workers: 1,
     produces: { resource: "water", perWorker: 0.5 },
-    adjacency: { biome: "sea", bonus: 0.5 },
+    adjacency: { biome: "ocean", bonus: 0.5 },
   },
   lab: {
     name: "Labor",
@@ -176,15 +198,62 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
+export const PLANET_TYPE_IDS = ["temperate", "arid", "ice", "ocean", "lava", "toxic"] as const;
+export type PlanetTypeId = (typeof PLANET_TYPE_IDS)[number];
+
+export interface PlanetTypeDef {
+  name: string;
+  /** Relative chance of each biome on this planet type. */
+  biomeWeights: Partial<Record<BiomeId, number>>;
+}
+
+export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
+  temperate: { name: "Gemäßigt", biomeWeights: { forest: 3, savanna: 3, mountains: 2, ocean: 2, swamp: 1, desert: 1 } },
+  arid: { name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ocean: 0.5 } },
+  ice: { name: "Eis", biomeWeights: { tundra: 4, mountains: 2, ocean: 2 } },
+  ocean: { name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
+  lava: { name: "Lava", biomeWeights: { mountains: 3, desert: 2, crystal: 1.5 } },
+  toxic: { name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
+};
+
+/**
+ * Rare resources are not tied to a biome. The generator places them as extra deposits so that
+ * start planets complement each other (see design/koop-design.md, 4.1). Each entry lists the
+ * biomes a deposit may sit on.
+ */
+export const RARE_RESOURCES: Partial<Record<ResourceId, readonly BiomeId[]>> = {
+  coal: ["mountains", "forest", "swamp"],
+  oil: ["desert", "swamp"],
+  uranium: ["mountains", "desert"],
+  aetherite: ["crystal", "mountains"],
+};
+
+export const SYSTEM = {
+  /** Start planets are always generated for this many players, so others can join later. */
+  maxPlayers: 4,
+  freePlanets: { min: 2, max: 4 },
+  /** versus: one start planet per player. */
+  startPlanetSegments: 24,
+  /** coop: one shared start planet. Bigger, because the game is about workers, not space. */
+  coopStartPlanetSegments: 32,
+  freePlanetSegments: [16, 24, 32],
+  /** Rare deposits per start planet / per free planet. */
+  rarePerStartPlanet: 2,
+  rarePerFreePlanet: { min: 2, max: 4 },
+  rareDepositMax: 60,
+  sunTypes: ["yellow", "red", "blue", "white"],
+} as const;
+
 /** Simulation constants. */
 export const RULES = {
   ticksPerSecond: 10,
   /** One planet rotation; drives food upkeep and ascension. */
   secondsPerCycle: 30,
-  segmentCount: 24,
   startRevealRadius: 2,
   buildRevealRadius: 2,
   startPopulation: 3,
+  /** coop: each player who joins brings this many inhabitants to the shared planet. */
+  coopJoinPopulation: 2,
   baseHousing: 3,
   /** Inhabitants that can gather by hand on a segment without a building. */
   handWorkersPerSegment: 2,

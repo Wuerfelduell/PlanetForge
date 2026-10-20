@@ -53,6 +53,13 @@ export class PlanetView {
     this.bindInput(app.canvas);
   }
 
+  /** Planet shown on the wheel. */
+  planetId = "";
+
+  private planet(state: GameState) {
+    return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
+  }
+
   get selectedIndex(): number {
     return this.selected;
   }
@@ -111,7 +118,7 @@ export class PlanetView {
     g.circle(0, 0, rInner).fill(CORE_COLOR);
     g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
 
-    state.planet.segments.forEach((s, i) => {
+    this.planet(state).segments.forEach((s, i) => {
       const a0 = i * step - step / 2;
       const a1 = a0 + step;
       const mid = i * step;
