@@ -136,6 +136,28 @@ function airFilter(){return foot(rect(73,69,110,155,'paper',30)+rect(84,60,88,20
   circle(128,129,47,'rock-dark')+circle(128,129,39,'science')+group('fan',rotor(128,129,32,'cream'))+
   circle(128,129,9,'sand')+leaf(126,211,.7)+line('M146 188H164M146 202H164','rock-dark',4)+glint('M83 179V199'));}
 
+function hydroFarm(){return foot(rect(52,61,152,164,'science',23)+
+  path('M189 78V201Q189 212 174 212','none',`stroke="${paint('deep-water')}" stroke-width="9"`)+
+  [114,162,211].map(y=>rect(64,y,128,9,'paper',4)+[88,126,164].map(x=>leaf(x,y-4,.6)+leaf(x+8,y-4,.5)+rect(x-12,y-12,30,10,'clay',4)).join('')).join('')+
+  group('glow',[80,129,178].map(y=>rect(70,y,116,6,state==='idle'?'energy':'coal',3,'stroke="none"')).join(''))+
+  rect(47,53,162,17,'leaf',8)+glint('M59 78V102'));}
+
+function storage(tier){
+  const y=tier===1?125:93;
+  return foot((tier===2?rect(164,45,38,169,'rock',14)+ellipse(183,45,19,9,'paper'):'')+
+    rect(48,y,156,102,'clay',16)+roof(y-20,'iron')+
+    rect(92,y+30,72,96-(y===125?24:0),'sand',10)+
+    line(`M128 ${y+35}V222M100 ${y+38}L156 216M156 ${y+38}L100 216`,'iron',5)+
+    crate(45,190)+crate(172,190)+(tier===2?crate(180,161,27):'')+glint(`M57 ${y+28}V${y+48}`));
+}
+
+function market(){return foot(post(49,117,109)+post(196,117,109)+
+  group('flag',line('M179 91V40','rock-dark',5)+path('M181 43Q205 32 220 48L208 62L219 76Q201 65 181 77Z','crystal'))+
+  path('M43 87H208L225 139H29Z','cream')+
+  [49,105,161].map(x=>path(`M${x} 88H${x+24}L${x+27} 137H${x-7}Z`,'clay','stroke="none"')).join('')+
+  path('M30 137H225V145Q210 162 195 145Q180 162 164 145Q148 162 132 145Q115 162 99 145Q82 162 65 145Q47 161 30 145Z','cream')+
+  [74,117,160].map(x=>sprout(x,192)).join('')+rect(37,195,180,30,'sand',9)+line('M61 208H100M154 208H195','iron',3));}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
@@ -149,6 +171,9 @@ const buildings = [
   {id:'power-wind',tiers:1,phase:'P1',parts:['blades'],draw:wind},
   {id:'power-solar',tiers:1,phase:'P1',draw:solar},
   {id:'air-filter',tiers:1,phase:'P1',parts:['fan'],draw:airFilter},
+  {id:'hydro-farm',tiers:1,phase:'P1',parts:['glow'],draw:hydroFarm},
+  {id:'storage',tiers:2,phase:'P1',draw:storage},
+  {id:'market',tiers:1,phase:'P1',parts:['flag'],draw:market},
 ];
 
 function scaffolding(){

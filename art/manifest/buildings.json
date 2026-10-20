@@ -1375,6 +1375,282 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "hydro-farm",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm-construction.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "hydro-farm",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.hydro-farm.off",
+      "category": "buildings",
+      "src": "art/src/buildings/hydro-farm-off.svg",
+      "out": "public/assets/sprites/buildings/hydro-farm-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "hydro-farm",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1.svg",
+      "out": "public/assets/sprites/buildings/storage-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/storage-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "storage",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t1-off.svg",
+      "out": "public/assets/sprites/buildings/storage-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2.svg",
+      "out": "public/assets/sprites/buildings/storage-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/storage-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "storage",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.storage.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/storage-t2-off.svg",
+      "out": "public/assets/sprites/buildings/storage-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "storage",
+        "tier2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market",
+      "category": "buildings",
+      "src": "art/src/buildings/market.svg",
+      "out": "public/assets/sprites/buildings/market.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag"
+      ],
+      "tags": [
+        "market",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/market-construction.svg",
+      "out": "public/assets/sprites/buildings/market-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "scaffolding"
+      ],
+      "tags": [
+        "market",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.market.off",
+      "category": "buildings",
+      "src": "art/src/buildings/market-off.svg",
+      "out": "public/assets/sprites/buildings/market-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag"
+      ],
+      "tags": [
+        "market",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
