@@ -1431,6 +1431,292 @@
       "phase": "P1"
     },
     {
+      "id": "people.glowsnails.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "snail",
+        "swamp",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-emblem.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "glowsnails",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "bat",
+        "crystal",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-emblem.svg",
+      "out": "public/assets/sprites/peoples/echobats-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "echobats",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.citizen-ring",
       "category": "peoples",
       "src": "art/src/peoples/citizen-ring.svg",

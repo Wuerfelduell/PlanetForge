@@ -21,6 +21,8 @@ const defs=[
  {id:'hornbeetles',animal:'beetle',color:'iron',fur:'iron',gear:'smith',ears:'horn',tail:'shell',body:'round',biome:'savanna',phase:'P1'},
  {id:'frostseals',animal:'seal',color:'snow',fur:'snow',gear:'scarf',ears:'none',tail:'none',body:'flipper',biome:'tundra',phase:'P1'},
  {id:'swapcoons',animal:'raccoon',color:'coal',fur:'rock',gear:'trader',ears:'round',tail:'striped',body:'pear',biome:'forest',phase:'P1'},
+ {id:'glowsnails',animal:'snail',color:'toxic',fur:'grass',gear:'satchel',ears:'antennae',tail:'spiral',body:'slug',biome:'swamp',phase:'P1'},
+ {id:'echobats',animal:'bat',color:'crystal',fur:'oil-sheen',gear:'crystal-miner',ears:'bat',tail:'wings',body:'pear',biome:'crystal',phase:'P1'},
 ];
 function emit(id,category,name,size,anchor,frames,fps,parts,tags,phase,draw,extra={}){
  const suffix=frames>1?'-f{f}':'';
@@ -54,13 +56,13 @@ function ears(p){
  return '';
 }
 function face(p,expression,portrait){
- const x=portrait?65:78, y=62, second=portrait;
+ const x=p.animal==='snail'?53:portrait?65:78, y=p.animal==='snail'?32:62, second=portrait||p.animal==='snail';
  const eye=(ex)=>expression==='happy'?path(`M${ex-3} ${y}Q${ex} ${y-5} ${ex+3} ${y}`):ellipse(ex,y,2.8,4.2,C('ink'),flat)+circle(ex-.7,y-1.5,.8,C('cream'),flat);
  let result='';
  if(p.animal==='raccoon')result+=path('M48 58Q63 48 74 56Q86 48 94 58L94 68Q82 73 73 65Q59 74 48 66Z',C('coal'),flat);
  if(p.animal==='owl')result+=ellipse(62,63,14,16,C('cream'),flat)+ellipse(84,63,12,15,C('cream'),flat);
- result+=eye(x)+(second?eye(84):'');
- if(expression==='angry')result+=line(`M${x-4} 54L${x+3} 57`)+(second?line('M81 57L88 54'):'');
+ result+=eye(x)+(second?eye(p.animal==='snail'?89:84):'');
+ if(expression==='angry')result+=line(`M${x-4} ${y-8}L${x+3} ${y-5}`)+(second?line(p.animal==='snail'?'M86 27L93 24':'M81 57L88 54'):'');
  if(p.animal==='owl')return result+path('M73 72Q79 69 84 73L79 80Z',C('sand'))+line('M55 84L59 87M65 86L69 89');
  if(p.animal==='snail'||p.animal==='beetle')return result+(expression==='angry'?line('M76 79Q83 75 90 79'):line('M76 76Q84 86 92 76'));
  result+=ellipse(portrait?78:88,73,14,10,C('cream'),flat);
@@ -99,7 +101,7 @@ function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
  if(p.body==='flipper')feet=group('feet',ellipse(43-step,114.5,16,4,C(p.fur))+ellipse(80+step,114.5,16,4,C(p.fur)));
  if(p.body==='hopper')feet=group('feet',ellipse(49-step,114.5-lift,17,4,C(p.fur))+ellipse(78+step,114.5,18,4,C(p.fur)));
  if(p.body==='slug')feet=group('feet',path(`M21 113Q32 103 55 108Q82 107 99 112Q104 118.5 91 118.5H27Q18 118.5 21 113Z`,C(p.fur)));
- const body=group('body',ellipse(61,93,['round','flipper'].includes(p.body)?27:21,22,C(p.fur))+path('M51 79Q70 76 76 93Q77 109 64 112Q45 113 44 98Z',C('cream'),flat));
+ const body=group('body',ellipse(p.body==='slug'?76:61,93,['round','flipper'].includes(p.body)?27:21,22,C(p.fur))+path('M51 79Q70 76 76 93Q77 109 64 112Q45 113 44 98Z',C('cream'),flat));
  const angle=state==='work'?(frame===0?-40:22):state==='walk'?-step*3:0;
  let arm=group('arm',ellipse(80,94,8,6,C(p.fur)),`rotate(${angle} 77 89)`);
  if(state==='work')arm=group('arm',ellipse(82,92,8,6,C(p.fur))+group('tool',rect(89,65,5,33,2,C('iron'))+rect(82,64,22,10,3,C('rock'))+path('M85 65H99', 'none',`stroke="${C('rock',.18)}" stroke-width="2"`)),`rotate(${angle} 78 91)`);
