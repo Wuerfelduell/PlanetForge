@@ -58,6 +58,7 @@ Deno.serve(async (req) => {
       p_clock_at: new Date(now).toISOString(),
       p_events: result.events,
       p_by: me.player_id,
+      p_removed: result.removed,
     });
     if (error) return json({ ok: false, error: error.message }, 500);
     if (version !== null) return json({ ok: true, version, state: result.state, events: result.events });

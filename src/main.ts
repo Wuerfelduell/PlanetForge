@@ -49,6 +49,15 @@ async function boot(): Promise<void> {
     play(next) {
       if (session instanceof LocalSession) saveGame(session.state);
       next.onError = (message) => ui.toast(message, "warn");
+      next.onRemoved = () => {
+        ui.toast("Du wurdest aus dem Spiel entfernt", "warn");
+        online.setCurrent(null);
+        const local = loadGame();
+        session = local ? new LocalSession(local) : LocalSession.newGame();
+        showHome();
+        view.select(0);
+        ui.render(session.state);
+      };
       session = next;
       showHome();
       view.select(0);
