@@ -1459,6 +1459,216 @@
         "tab-people"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "ui.tab-diplomacy",
+      "category": "ui",
+      "src": "art/src/ui/tab-diplomacy.svg",
+      "out": "public/assets/sprites/ui/tab-diplomacy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-diplomacy"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-discoveries",
+      "category": "ui",
+      "src": "art/src/ui/tab-discoveries.svg",
+      "out": "public/assets/sprites/ui/tab-discoveries.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-discoveries"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-coop",
+      "category": "ui",
+      "src": "art/src/ui/tab-coop.svg",
+      "out": "public/assets/sprites/ui/tab-coop.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-coop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.tab-settings",
+      "category": "ui",
+      "src": "art/src/ui/tab-settings.svg",
+      "out": "public/assets/sprites/ui/tab-settings.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tab-settings"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-build",
+      "category": "ui",
+      "src": "art/src/ui/icon-build.svg",
+      "out": "public/assets/sprites/ui/icon-build.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-build"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-demolish",
+      "category": "ui",
+      "src": "art/src/ui/icon-demolish.svg",
+      "out": "public/assets/sprites/ui/icon-demolish.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-demolish"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-upgrade",
+      "category": "ui",
+      "src": "art/src/ui/icon-upgrade.svg",
+      "out": "public/assets/sprites/ui/icon-upgrade.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-upgrade"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-assign",
+      "category": "ui",
+      "src": "art/src/ui/icon-assign.svg",
+      "out": "public/assets/sprites/ui/icon-assign.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-assign"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-unassign",
+      "category": "ui",
+      "src": "art/src/ui/icon-unassign.svg",
+      "out": "public/assets/sprites/ui/icon-unassign.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-unassign"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-info",
+      "category": "ui",
+      "src": "art/src/ui/icon-info.svg",
+      "out": "public/assets/sprites/ui/icon-info.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-info"
+      ],
+      "phase": "P0"
     }
   ]
 }
