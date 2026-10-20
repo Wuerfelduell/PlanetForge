@@ -1,0 +1,2557 @@
+{
+  "assets": [
+    {
+      "id": "people.burrowbeavers.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "beaver",
+        "forest",
+        "portrait"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.burrowbeavers.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.burrowbeavers.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-emblem.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "emblem"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "hedgehog",
+        "savanna",
+        "portrait"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.quillfolk.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.quillfolk.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-emblem.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "quillfolk",
+        "emblem"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.axolings.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-portrait.svg",
+      "out": "public/assets/sprites/peoples/axolings-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "axolotl",
+        "swamp",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/axolings-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/axolings-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/axolings-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "axolings",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/axolings-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/axolings-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-emblem.svg",
+      "out": "public/assets/sprites/peoples/axolings-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "axolings",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-portrait.svg",
+      "out": "public/assets/sprites/peoples/shellguards-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "armadillo",
+        "mountains",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/shellguards-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/shellguards-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/shellguards-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "shellguards",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/shellguards-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/shellguards-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.shellguards.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-emblem.svg",
+      "out": "public/assets/sprites/peoples/shellguards-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "shellguards",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "jerboa",
+        "desert",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "dunehoppers",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-emblem.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "dunehoppers",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "owl",
+        "mountains",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/starowls-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "starowls",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.starowls.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-emblem.svg",
+      "out": "public/assets/sprites/peoples/starowls-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "starowls",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "otter",
+        "ocean",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/tideotters-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "tideotters",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-emblem.svg",
+      "out": "public/assets/sprites/peoples/tideotters-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "tideotters",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "beetle",
+        "savanna",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "hornbeetles",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.hornbeetles.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-emblem.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "hornbeetles",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "seal",
+        "tundra",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-emblem.svg",
+      "out": "public/assets/sprites/peoples/frostseals-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "frostseals",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "raccoon",
+        "forest",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-emblem.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "swapcoons",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "snail",
+        "swamp",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "glowsnails",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.glowsnails.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-emblem.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "glowsnails",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "bat",
+        "crystal",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/echobats-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "echobats",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait.angry",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait-angry.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait-angry.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "portrait",
+        "angry"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-emblem.svg",
+      "out": "public/assets/sprites/peoples/echobats-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "echobats",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.citizen-ring",
+      "category": "peoples",
+      "src": "art/src/peoples/citizen-ring.svg",
+      "out": "public/assets/sprites/peoples/citizen-ring.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "coop",
+        "engine-tinted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "monster.rockmunch.portrait",
+      "category": "monsters",
+      "src": "art/src/monsters/rockmunch-portrait.svg",
+      "out": "public/assets/sprites/monsters/rockmunch-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head"
+      ],
+      "tags": [
+        "rockmunch",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.rockmunch.sprite",
+      "category": "monsters",
+      "src": "art/src/monsters/rockmunch-sprite-f{f}.svg",
+      "out": "public/assets/sprites/monsters/rockmunch-sprite-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "feet"
+      ],
+      "tags": [
+        "rockmunch",
+        "planet",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.stormjelly.portrait",
+      "category": "monsters",
+      "src": "art/src/monsters/stormjelly-portrait.svg",
+      "out": "public/assets/sprites/monsters/stormjelly-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head"
+      ],
+      "tags": [
+        "stormjelly",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.stormjelly.sprite",
+      "category": "monsters",
+      "src": "art/src/monsters/stormjelly-sprite-f{f}.svg",
+      "out": "public/assets/sprites/monsters/stormjelly-sprite-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "tentacles"
+      ],
+      "tags": [
+        "stormjelly",
+        "planet",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.thornback.portrait",
+      "category": "monsters",
+      "src": "art/src/monsters/thornback-portrait.svg",
+      "out": "public/assets/sprites/monsters/thornback-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head"
+      ],
+      "tags": [
+        "thornback",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.thornback.sprite",
+      "category": "monsters",
+      "src": "art/src/monsters/thornback-sprite-f{f}.svg",
+      "out": "public/assets/sprites/monsters/thornback-sprite-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "feet"
+      ],
+      "tags": [
+        "thornback",
+        "planet",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "monster.dice",
+      "category": "monsters",
+      "src": "art/src/monsters/fx-dice-f{f}.svg",
+      "out": "public/assets/sprites/monsters/fx-dice-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 6,
+      "fps": 10,
+      "parts": [
+        "pips"
+      ],
+      "tags": [
+        "battle",
+        "dice",
+        "faces-1-to-6"
+      ],
+      "phase": "P1",
+      "frameNames": [
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six"
+      ]
+    },
+    {
+      "id": "character.guide-mascot",
+      "category": "characters",
+      "src": "art/src/characters/guide-mascot-f{f}.svg",
+      "out": "public/assets/sprites/characters/guide-mascot-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 2,
+      "parts": [
+        "antenna",
+        "thruster",
+        "arms",
+        "shell",
+        "eyes",
+        "mouth"
+      ],
+      "tags": [
+        "tutorial",
+        "robot",
+        "drone"
+      ],
+      "phase": "P1",
+      "frameNames": [
+        "neutral",
+        "point",
+        "happy",
+        "worried"
+      ]
+    }
+  ]
+}
