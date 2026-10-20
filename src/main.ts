@@ -29,6 +29,13 @@ async function boot(): Promise<void> {
       if (!result.ok) ui.toast(result.error, "warn");
       ui.render(session.state);
     },
+    showPlanet(planetId) {
+      const planet = session.state.planets.find((p) => p.id === planetId);
+      if (!planet) return;
+      ui.setPlanet(planet.id);
+      view.setPlanet(planet.id, planet.segments.length);
+      ui.render(session.state);
+    },
     setSpeed(speed) {
       session.speed = speed;
     },
@@ -72,15 +79,21 @@ async function boot(): Promise<void> {
     if (session instanceof LocalSession) saveGame(session.state);
   };
 
-  const home = () => homePlanet(session.state, session.playerId)!;
-  const view = new PlanetView(app, home().segments.length, (index) => {
+  // The home planet, or any own planet once it has been conquered (versus).
+  const home = () => {
+    const state = session.state;
+    const economyId = state.players.find((p) => p.id === session.playerId)?.economyId;
+    const start = homePlanet(state, session.playerId)!;
+    return start.economyId === economyId ? start : (state.planets.find((p) => p.economyId === economyId) ?? start);
+  };
+  const view = new PlanetView(app, (index) => {
     ui.setSelected(index);
     ui.render(session.state);
   });
   const showHome = () => {
     ui.playerId = session.playerId;
     ui.setPlanet(home().id);
-    view.planetId = home().id;
+    view.setPlanet(home().id, home().segments.length);
   };
   showHome();
   app.stage.addChild(view.stage);

@@ -45,7 +45,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 7,
+    version: 8,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -64,7 +64,12 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     planets,
     units: {},
     nextUnitId: 0,
+    flights: [],
+    nextFlightId: 0,
     queues: {},
+    lastCombatTick: 0,
+    drawSuggested: false,
+    result: null,
     log: [],
   };
   for (const p of players) {
@@ -84,6 +89,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
 export function addPlayer(state: GameState, playerId: string, name: string, now: number, people?: PeopleId): { ok: true; state: GameState } | { ok: false; error: string } {
   if (state.players.some((p) => p.id === playerId)) return { ok: false, error: "Spieler ist schon dabei" };
   if (state.players.length >= state.settings.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
+  if (state.result) return { ok: false, error: "Das Spiel ist vorbei" };
   const next = JSON.parse(JSON.stringify(state)) as GameState;
   const events = advanceInPlace(next, now);
   const coop = next.settings.mode === "coop";
@@ -118,7 +124,7 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   const usedColors = new Set(next.players.map((p) => p.color));
   let color = 0;
   while (usedColors.has(color)) color++;
-  next.players.push({ id: playerId, name, color, people: chosen, economyId, homePlanetId: planet.id, joinedTick: next.tick });
+  next.players.push({ id: playerId, name, color, people: chosen, economyId, homePlanetId: planet.id, joinedTick: next.tick, eliminated: false, surrendered: false, offersDraw: false });
   events.push({ type: "joined", playerId });
   appendLog(next, events);
   return { ok: true, state: next };

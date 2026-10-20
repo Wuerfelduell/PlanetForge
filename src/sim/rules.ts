@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, RESOURCE_IDS, ROCKETS, RULES, type BuildingId, type ResourceId, type RocketId } from "./content";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
@@ -93,8 +93,7 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
 }
 
 export function canAfford(economy: EconomyState, building: BuildingId): boolean {
-  const cost = BUILDINGS[building].cost;
-  return RESOURCE_IDS.every((r) => economy.resources[r] >= (cost[r] ?? 0));
+  return canPay(economy, BUILDINGS[building].cost);
 }
 
 export const NOT_AFFORDABLE = "Zu wenig Ressourcen";
@@ -139,4 +138,85 @@ export function nextLevelThreshold(level: number): number | null {
 export function ringDistance(a: number, b: number, n: number): number {
   const d = Math.abs(a - b) % n;
   return Math.min(d, n - d);
+}
+
+/** Straight-line distance between two planets on the star map (orbit radius and angle). */
+export function planetDistance(a: PlanetState, b: PlanetState): number {
+  const ax = Math.cos(a.orbit.angle) * a.orbit.radius;
+  const ay = Math.sin(a.orbit.angle) * a.orbit.radius;
+  const bx = Math.cos(b.orbit.angle) * b.orbit.radius;
+  const by = Math.sin(b.orbit.angle) * b.orbit.radius;
+  return Math.hypot(ax - bx, ay - by);
+}
+
+export interface FlightPlan {
+  distance: number;
+  /** Rocket plus fuel. */
+  cost: Partial<Record<ResourceId, number>>;
+  seconds: number;
+}
+
+export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId, passengers: number): FlightPlan {
+  const def = ROCKETS[rocket];
+  const distance = planetDistance(from, to);
+  const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
+  const fuel = Math.ceil(distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers));
+  cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
+  return { distance, cost, seconds: Math.max(1, Math.round(distance * def.secondsPerDistance)) };
+}
+
+export function canPay(economy: EconomyState, cost: Partial<Record<ResourceId, number>>): boolean {
+  return RESOURCE_IDS.every((r) => economy.resources[r] >= (cost[r] ?? 0));
+}
+
+export function hasBuilding(planet: PlanetState, building: BuildingId): boolean {
+  return planet.segments.some((s) => s.building === building);
+}
+
+/**
+ * Why `playerId` cannot send a rocket from `from` to `to` with `count` passengers right now, or
+ * null. Shared by the launch command and the UI.
+ */
+export function launchBlocker(state: GameState, playerId: string, from: PlanetState, to: PlanetState, rocket: RocketId, count: number): string | null {
+  const player = playerById(state, playerId);
+  const def = ROCKETS[rocket];
+  if (!player || !def) return "Unbekannte Rakete";
+  if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
+  if (from.id === to.id) return "Ziel ist der Startplanet";
+  if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
+  const economy = state.economies[player.economyId]!;
+  if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  if (def.versusOnly && state.settings.mode !== "versus") return "Angriffe gibt es nur im Gegeneinander-Modus";
+  if (rocket === "combat" && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
+  if (!Number.isInteger(count) || count < 1) return "Mindestens ein Einwohner muss mitfliegen";
+  if (count > def.capacity) return `Höchstens ${def.capacity} Einwohner pro Rakete`;
+  if (idleUnits(state, from, playerId).length < count) return "Nicht genug freie Einwohner";
+  const plan = flightPlan(from, to, rocket, count);
+  if (plan.distance > def.maxRange) return "Zu weit weg";
+  if (!canPay(economy, plan.cost)) return NOT_AFFORDABLE;
+  return null;
+}
+
+/** Player whose people a unit counts for: captives still count for the player they came from. */
+export function countsFor(unit: UnitState): string {
+  return unit.originalOwner ?? unit.owner;
+}
+
+/** All inhabitants that count for a player, on planets and in flight. */
+export function peopleOf(state: GameState, playerId: string): number {
+  let n = 0;
+  for (const u of Object.values(state.units)) if (countsFor(u) === playerId) n++;
+  for (const f of state.flights) for (const u of f.units) if (countsFor(u) === playerId) n++;
+  return n;
+}
+
+export function activePlayers(state: GameState): PlayerState[] {
+  return state.players.filter((p) => !p.eliminated);
+}
+
+/** Bonus on the defenders' rolls on a planet. */
+export function planetDefense(planet: PlanetState): number {
+  let towers = 0;
+  for (const s of planet.segments) if (s.building) towers += BUILDINGS[s.building].defense ?? 0;
+  return RULES.homeAdvantage + Math.min(RULES.maxTowerBonus, towers);
 }
