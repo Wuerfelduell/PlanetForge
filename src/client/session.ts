@@ -1,6 +1,7 @@
 import { advanceWithEvents, applyCommand, createGame, type Command, type GameEvent, type GameState } from "../sim";
 
-export type SendResult = { ok: true } | { ok: false; error: string };
+/** `events`: what the command caused right away, when the session knows it (local play). */
+export type SendResult = { ok: true; events?: GameEvent[] } | { ok: false; error: string };
 
 /**
  * What the renderer and UI talk to. They never touch the simulation directly, so a networked
@@ -40,7 +41,7 @@ export class LocalSession implements GameSession {
     const result = applyCommand(this.state, this.playerId, cmd, this.clock);
     if (!result.ok) return result;
     this.state = result.state;
-    return { ok: true };
+    return { ok: true, events: result.events };
   }
 
   update(elapsedMs: number): GameEvent[] {

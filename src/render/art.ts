@@ -6,12 +6,14 @@ import { Assets, Spritesheet, Texture } from "pixi.js";
  */
 interface AtlasIndex {
   scales: Record<string, Record<string, { atlas?: string; frame?: string; standalone?: string }>>;
+  animations?: Record<string, { frames: string[]; fps: number }>;
 }
 
 /** Atlas categories the planet view needs. */
-const CATEGORIES = ["biomes", "buildings", "peoples", "planets"];
+const CATEGORIES = ["biomes", "buildings", "peoples", "planets", "fx"];
 
 const textures = new Map<string, Texture>();
+let animations: NonNullable<AtlasIndex["animations"]> = {};
 let ready = false;
 
 /** True once the atlases are loaded. */
@@ -25,6 +27,7 @@ export async function loadArt(): Promise<boolean> {
     const response = await fetch("assets/atlas/index.json");
     if (!response.ok) return false;
     const index = (await response.json()) as AtlasIndex;
+    animations = index.animations ?? {};
     const scale = (window.devicePixelRatio || 1) > 1.25 ? "2" : "1";
     const entries = index.scales[scale] ?? index.scales["1"]!;
     // First page of each category; PixiJS follows related_multi_packs to the others.
@@ -48,6 +51,14 @@ export async function loadArt(): Promise<boolean> {
     console.warn("Art not loaded, using placeholders", error);
     return false;
   }
+}
+
+/** Frames and speed of an animation (e.g. fx.explosion), if all its frames are loaded. */
+export function artAnimation(id: string): { textures: Texture[]; fps: number } | undefined {
+  const anim = animations[id];
+  const frames = anim?.frames.map((f) => textures.get(f));
+  if (!anim || !frames || frames.some((t) => !t)) return undefined;
+  return { textures: frames as Texture[], fps: anim.fps };
 }
 
 export function artTexture(id: string): Texture | undefined {

@@ -28,6 +28,10 @@ async function boot(): Promise<void> {
     send(cmd) {
       const result = session.send(cmd);
       if (!result.ok) ui.toast(result.error, "warn");
+      else if (result.events?.length) {
+        ui.showEvents(result.events);
+        view.play(result.events, session.state);
+      }
       ui.render(session.state);
     },
     showPlanet(planetId) {
@@ -121,7 +125,10 @@ async function boot(): Promise<void> {
   let uiTimer = 0;
   app.ticker.add((ticker) => {
     const events = session.update(ticker.deltaMS);
-    if (events.length) ui.showEvents(events);
+    if (events.length) {
+      ui.showEvents(events);
+      view.play(events, session.state);
+    }
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;

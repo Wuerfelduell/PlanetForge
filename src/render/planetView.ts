@@ -1,6 +1,6 @@
-import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, BUILDINGS, workerCount, type GameState, type PlanetState } from "../sim";
-import { artTexture, buildingArt, hasArt } from "./art";
+import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
+import { BIOMES, BUILDINGS, workerCount, type GameEvent, type GameState, type PlanetState } from "../sim";
+import { artAnimation, artTexture, buildingArt, hasArt } from "./art";
 
 const TOP = -Math.PI / 2;
 const TAP_SLOP_PX = 8;
@@ -64,6 +64,9 @@ export class PlanetView {
   private readonly ground = new Graphics();
   private readonly marker = new Graphics();
   private sprites: SegmentSprites[] = [];
+  /** One-shot effects (dust, explosions, rockets) on top of the wheel. */
+  private readonly fx = new Container();
+  private rockets: { sprite: Container; age: number; angle: number }[] = [];
   /** Art layers, bottom to top; empty while the placeholder drawing is used. */
   private readonly layers = { body: new SpritePool(), ground: new SpritePool(), props: new SpritePool(), buildings: new SpritePool(), citizens: new SpritePool(), overlays: new SpritePool() };
   private segmentCount = 0;
@@ -85,7 +88,7 @@ export class PlanetView {
   ) {
     this.stage.addChild(this.stars, this.wheel, this.marker);
     const l = this.layers;
-    this.wheel.addChild(l.body.container, this.ground, l.ground.container, l.props.container, l.buildings.container, l.citizens.container, l.overlays.container);
+    this.wheel.addChild(l.body.container, this.ground, l.ground.container, l.props.container, l.buildings.container, l.citizens.container, l.overlays.container, this.fx);
     this.bindInput(app.canvas);
   }
 
@@ -119,6 +122,97 @@ export class PlanetView {
 
   private planet(state: GameState) {
     return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
+  }
+
+  /** Plays effects for events on the shown planet. Needs the art; silently does nothing without it. */
+  play(events: GameEvent[], state: GameState): void {
+    if (!hasArt()) return;
+    const planet = this.planet(state);
+    const step = (Math.PI * 2) / this.segmentCount;
+    const segWidth = step * ART_SURFACE;
+    for (const e of events) {
+      switch (e.type) {
+        case "built":
+          if (e.planetId === planet.id) this.effect("fx.dust", e.segment * step, 1, segWidth * 1.4, 128);
+          break;
+        case "depleted":
+          if (e.planetId === planet.id) this.effect("fx.resource-pop", e.segment * step, 1.15, segWidth * 0.8, 64);
+          break;
+        case "born":
+          if (e.planetId === planet.id) this.effect("fx.heart", this.selected * step, 1.25, segWidth * 0.7, 64);
+          break;
+        case "levelUp":
+          if (e.economyId === planet.economyId) this.effect("fx.ascension", 0, 0, ART_SURFACE * 1.6, 512);
+          break;
+        case "discovered":
+          if (e.economyId === planet.economyId) this.effect("fx.sparkle", this.selected * step, 1.3, segWidth, 64);
+          break;
+        case "battle":
+          if (e.planetId === planet.id) for (let i = 0; i < 3; i++) this.effect("fx.explosion", (this.selected + i * 3 - 3) * step, 1.05, segWidth * 1.6, 256);
+          break;
+        case "launched":
+          if (e.from === planet.id) this.launchRocket(planet, step, segWidth);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  /** One animation at `radius` × surface (0 = planet center), `size` in art units of the planet (surface = 460). */
+  private effect(id: string, angle: number, radius: number, size: number, artSize: number): void {
+    const anim = artAnimation(id);
+    if (!anim) return;
+    const k = this.radius / ART_SURFACE;
+    const sprite = new AnimatedSprite(anim.textures);
+    sprite.anchor.set(0.5);
+    sprite.loop = false;
+    sprite.animationSpeed = anim.fps / 60;
+    sprite.scale.set((k * size) / artSize);
+    sprite.position.set(Math.cos(angle) * this.radius * radius, Math.sin(angle) * this.radius * radius);
+    sprite.rotation = angle + Math.PI / 2;
+    sprite.onComplete = () => sprite.destroy();
+    this.fx.addChild(sprite);
+    sprite.play();
+  }
+
+  private launchRocket(planet: PlanetState, step: number, segWidth: number): void {
+    const body = artTexture("building.rocket-small");
+    const flame = artAnimation("fx.rocket-flame");
+    if (!body) return;
+    const pad = planet.segments.find((s) => s.building === "launchpad")?.index ?? this.selected;
+    const k = this.radius / ART_SURFACE;
+    const rocket = new Container();
+    const hull = new Sprite(body);
+    hull.anchor.set(0.5, 0.9);
+    rocket.addChild(hull);
+    if (flame) {
+      const fire = new AnimatedSprite(flame.textures);
+      fire.anchor.set(0.5, 0);
+      fire.animationSpeed = flame.fps / 60;
+      fire.position.set(0, 0);
+      fire.scale.set(0.6);
+      fire.play();
+      rocket.addChildAt(fire, 0);
+    }
+    rocket.scale.set((k * segWidth) / 200);
+    const angle = pad * step;
+    rocket.rotation = angle + Math.PI / 2;
+    this.fx.addChild(rocket);
+    this.rockets.push({ sprite: rocket, age: 0, angle });
+  }
+
+  private updateRockets(deltaMs: number): void {
+    for (const r of this.rockets) {
+      r.age += deltaMs;
+      // Ease out of the atmosphere over 2.5 s, fading at the end.
+      const t = Math.min(1, r.age / 2500);
+      const dist = this.radius * (1 + 1.6 * t * t);
+      r.sprite.position.set(Math.cos(r.angle) * dist, Math.sin(r.angle) * dist);
+      r.sprite.alpha = 1 - Math.max(0, t - 0.7) / 0.3;
+    }
+    for (const r of this.rockets.filter((x) => x.age >= 2500)) r.sprite.destroy({ children: true });
+    this.rockets = this.rockets.filter((x) => x.age < 2500);
   }
 
   /** Redraws on the next frame, e.g. after the art finished loading. */
@@ -158,6 +252,7 @@ export class PlanetView {
     }
     this.wheel.position.set(this.cx, this.cy);
     this.wheel.rotation = this.rotation;
+    this.updateRockets(deltaMs);
     if (this.dirty || state.tick !== this.lastDrawnTick) {
       this.draw(state);
       this.lastDrawnTick = state.tick;
