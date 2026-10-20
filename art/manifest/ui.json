@@ -3001,6 +3001,226 @@
         "overlay-on-ui.discovery-badge"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "discovery.recycling",
+      "category": "discoveries",
+      "src": "art/src/discoveries/recycling.svg",
+      "out": "public/assets/sprites/discoveries/recycling.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "recycling",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.fortification",
+      "category": "discoveries",
+      "src": "art/src/discoveries/fortification.svg",
+      "out": "public/assets/sprites/discoveries/fortification.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "fortification",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.crystal-lore",
+      "category": "discoveries",
+      "src": "art/src/discoveries/crystal-lore.svg",
+      "out": "public/assets/sprites/discoveries/crystal-lore.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "crystal-lore",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.atomic-power",
+      "category": "discoveries",
+      "src": "art/src/discoveries/atomic-power.svg",
+      "out": "public/assets/sprites/discoveries/atomic-power.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "atomic-power",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.automation",
+      "category": "discoveries",
+      "src": "art/src/discoveries/automation.svg",
+      "out": "public/assets/sprites/discoveries/automation.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "automation",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.cartography",
+      "category": "discoveries",
+      "src": "art/src/discoveries/cartography.svg",
+      "out": "public/assets/sprites/discoveries/cartography.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "cartography",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.medicine",
+      "category": "discoveries",
+      "src": "art/src/discoveries/medicine.svg",
+      "out": "public/assets/sprites/discoveries/medicine.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "medicine",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.festival",
+      "category": "discoveries",
+      "src": "art/src/discoveries/festival.svg",
+      "out": "public/assets/sprites/discoveries/festival.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "festival",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.weather-control",
+      "category": "discoveries",
+      "src": "art/src/discoveries/weather-control.svg",
+      "out": "public/assets/sprites/discoveries/weather-control.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "weather-control",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.terraforming",
+      "category": "discoveries",
+      "src": "art/src/discoveries/terraforming.svg",
+      "out": "public/assets/sprites/discoveries/terraforming.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "terraforming",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
     }
   ]
 }
