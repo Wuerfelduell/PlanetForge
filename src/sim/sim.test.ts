@@ -6,6 +6,7 @@ import {
   addPlayer,
   createGame,
   homePlanet,
+  population,
   housing,
   RARE_RESOURCES,
   SYSTEM,
@@ -77,7 +78,7 @@ describe("world generation", () => {
       expect(new Set(g.planets.map((p) => p.name)).size).toBe(g.planets.length);
       const deposits = new Set(home(g).segments.flatMap((s) => s.deposits.map((d) => d.resource)));
       for (const r of Object.keys(RARE_RESOURCES)) expect(deposits.has(r as never)).toBe(true);
-      expect(g.planets.filter((p) => p !== home(g)).every((p) => p.segments.every((s) => !s.revealed) && p.population === 0)).toBe(true);
+      expect(g.planets.filter((p) => p !== home(g)).every((p) => p.segments.every((s) => !s.revealed) && population(p) === 0)).toBe(true);
     }
   });
 
@@ -87,7 +88,9 @@ describe("world generation", () => {
     expect(joined.ok).toBe(true);
     if (!joined.ok) return;
     expect(homePlanet(joined.state, MO.id)).toBe(home(joined.state));
-    expect(home(joined.state).population).toBe(RULES.startPopulation + RULES.coopJoinPopulation);
+    expect(population(home(joined.state))).toBe(RULES.startPopulation + RULES.coopJoinPopulation);
+    expect(home(joined.state).citizens).toEqual({ [P1.id]: RULES.startPopulation, [MO.id]: RULES.coopJoinPopulation });
+    expect(joined.state.players.map((p) => p.people)).toEqual(["burrowbeavers", "quillfolk"]);
     expect(joined.state.teams).toHaveLength(1);
     expect(joined.state.simTime).toBe(g.simTime + 5000);
     expect(addPlayer(joined.state, MO.id, MO.name, joined.state.simTime).ok).toBe(false);
@@ -117,10 +120,49 @@ describe("world generation", () => {
     if (!joined.ok) return;
     const mo = homePlanet(joined.state, MO.id)!;
     expect(mo.id).not.toBe(home(g).id);
-    expect(mo.population).toBe(RULES.startPopulation);
+    expect(population(mo)).toBe(RULES.startPopulation);
     const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
     const result = applyCommand(joined.state, MO.id, { type: "assign", planetId: home(g).id, segment: forest.index, delta: 1 }, g.simTime);
     expect(result).toEqual({ ok: false, error: "Dieser Planet gehört dir nicht" });
+  });
+
+  it("coop: each player moves only their own people and keeps teammates' buildings", () => {
+    let g = newGame(5);
+    const r = addPlayer(g, MO.id, MO.name, g.simTime);
+    if (!r.ok) throw new Error(r.error);
+    g = r.state;
+    const forest = home(g).segments.find((s) => s.revealed && s.biome === "forest")!;
+    const assign = (playerId: string, delta: number) => applyCommand(g, playerId, { type: "assign", planetId: home(g).id, segment: forest.index, delta }, g.simTime);
+    const a = assign(P1.id, 1);
+    if (!a.ok) throw new Error(a.error);
+    g = a.state;
+    expect(assign(MO.id, -1)).toEqual({ ok: false, error: "Hier arbeiten keine Leute von dir" });
+    const b = assign(MO.id, 1);
+    if (!b.ok) throw new Error(b.error);
+    g = b.state;
+    expect(home(g).segments[forest.index]!.workers).toEqual({ [P1.id]: 1, [MO.id]: 1 });
+    expect(idleWorkers(home(g), MO.id)).toBe(RULES.coopJoinPopulation - 1);
+
+    home(g).resources.wood = 15;
+    const built = applyCommand(g, P1.id, { type: "build", planetId: home(g).id, segment: forest.index, building: "housing" }, g.simTime);
+    if (!built.ok) throw new Error(built.error);
+    g = built.state;
+    expect(applyCommand(g, MO.id, { type: "demolish", planetId: home(g).id, segment: forest.index }, g.simTime)).toEqual({ ok: false, error: "Das hat ein Mitspieler gebaut" });
+    expect(applyCommand(g, P1.id, { type: "demolish", planetId: home(g).id, segment: forest.index }, g.simTime).ok).toBe(true);
+  });
+
+  it("coop: births go to the smallest people first", () => {
+    let g = newGame(5);
+    const r = addPlayer(g, MO.id, MO.name, g.simTime);
+    if (!r.ok) throw new Error(r.error);
+    g = r.state;
+    home(g).resources.food = 500;
+    home(g).resources.wood = 15;
+    const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
+    g = exec(g, { type: "build", segment: land.index, building: "housing" });
+    const { state, events } = run(g, RULES.ticksPerSecond * RULES.secondsPerBirth);
+    expect(events).toContainEqual(expect.objectContaining({ type: "born", playerId: MO.id }));
+    expect(home(state).citizens[MO.id]).toBe(RULES.coopJoinPopulation + 1);
   });
 
   it("refuses players beyond maxPlayers", () => {
@@ -229,7 +271,7 @@ describe("simulation", () => {
     const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
     g = exec(g, { type: "build", segment: land.index, building: "housing" });
     const { state, events } = run(g, RULES.ticksPerSecond * RULES.secondsPerBirth);
-    expect(home(state).population).toBe(RULES.startPopulation + 1);
+    expect(population(home(state))).toBe(RULES.startPopulation + 1);
     expect(events.some((e) => e.type === "born")).toBe(true);
   });
 

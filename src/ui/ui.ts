@@ -7,6 +7,8 @@ import {
   cycleOf,
   housing,
   idleWorkers,
+  population,
+  workerCount,
   nextLevelThreshold,
   RESOURCE_IDS,
   RESOURCES,
@@ -47,6 +49,9 @@ export class Ui {
       root.addEventListener("pointerup", (e) => this.onAction(e));
     }
   }
+
+  /** The local player, whose people the +/- buttons move. */
+  playerId = "";
 
   setPlanet(planetId: string): void {
     this.planetId = planetId;
@@ -150,7 +155,7 @@ export class Ui {
       <div class="row resources">${chips}<span class="spacer"></span>${speeds}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
       <div class="row status">
         <span class="chip" title="Planet">🪐 ${planet.name}</span>
-        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${planet.population}/${housing(planet)} <small>(${idleWorkers(planet)} frei)</small></span>
+        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(planet)}/${housing(planet)} <small>(${idleWorkers(planet, this.playerId)} frei)</small></span>
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>`;
@@ -158,7 +163,7 @@ export class Ui {
 
   private renderPanel(state: GameState, planet: PlanetState): string {
     const s = planet.segments[this.selected]!;
-    const hint = `<p class="hint">💡 ${currentHint(state, planet)}</p>`;
+    const hint = `<p class="hint">💡 ${currentHint(state, planet, this.playerId)}</p>`;
     if (!s.revealed) {
       return `<h2>❔ Unerforschtes Feld</h2><p class="muted">Bau ein Gebäude in der Nähe, um es aufzudecken.</p>${hint}`;
     }
@@ -184,9 +189,9 @@ export class Ui {
     const mult = adjacencyMultiplier(planet, s);
     const workers = cap
       ? `<div class="workers">
-          <button class="round" data-action="assign" data-value="-1" ${s.workers > 0 ? "" : "disabled"}>－</button>
-          <span>👤 ${s.workers}/${cap}</span>
-          <button class="round" data-action="assign" data-value="1" ${s.workers < cap && idleWorkers(planet) > 0 ? "" : "disabled"}>＋</button>
+          <button class="round" data-action="assign" data-value="-1" ${workerCount(s, this.playerId) > 0 ? "" : "disabled"}>－</button>
+          <span>👤 ${workerCount(s)}/${cap}${workerCount(s) !== workerCount(s, this.playerId) ? ` <small>(${workerCount(s, this.playerId)} von dir)</small>` : ""}</span>
+          <button class="round" data-action="assign" data-value="1" ${workerCount(s) < cap && idleWorkers(planet, this.playerId) > 0 ? "" : "disabled"}>＋</button>
           <span class="rate">${rate}${mult > 1 ? ` <small>Nachbarbonus ×${mult.toFixed(2)}</small>` : ""}</span>
         </div>`
       : "";

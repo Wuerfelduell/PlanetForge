@@ -1,5 +1,6 @@
 import {
   BIOMES,
+  PEOPLE_IDS,
   PLANET_TYPE_IDS,
   PLANET_TYPES,
   RARE_RESOURCES,
@@ -7,6 +8,7 @@ import {
   RULES,
   SYSTEM,
   type BiomeId,
+  type PeopleId,
   type PlanetTypeId,
   type ResourceId,
 } from "./content";
@@ -39,7 +41,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 4,
+    version: 5,
     mode,
     maxPlayers,
     seed,
@@ -52,7 +54,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     planets,
   };
   for (const p of players) {
-    const result = addPlayer(state, p.id, p.name, state.simTime);
+    const result = addPlayer(state, p.id, p.name, state.simTime, p.people);
     if (!result.ok) throw new Error(result.error);
     state = result.state;
   }
@@ -65,7 +67,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
  * and brings inhabitants. versus: takes the next free start planet as a new team.
  * Never mutates the input.
  */
-export function addPlayer(state: GameState, playerId: string, name: string, now: number): { ok: true; state: GameState } | { ok: false; error: string } {
+export function addPlayer(state: GameState, playerId: string, name: string, now: number, people?: PeopleId): { ok: true; state: GameState } | { ok: false; error: string } {
   if (state.players.some((p) => p.id === playerId)) return { ok: false, error: "Spieler ist schon dabei" };
   if (state.players.length >= state.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
   const next = JSON.parse(JSON.stringify(state)) as GameState;
@@ -86,19 +88,21 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
 
   if (planet.teamId === null) {
     planet.teamId = teamId;
-    planet.population = RULES.startPopulation;
+    planet.citizens[playerId] = RULES.startPopulation;
     for (const r of RESOURCE_IDS) planet.resources[r] = RULES.startResources[r] ?? 0;
     for (const s of planet.segments) {
       if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
     }
   } else {
-    planet.population += RULES.coopJoinPopulation;
+    planet.citizens[playerId] = RULES.coopJoinPopulation;
   }
 
   const usedColors = new Set(next.players.map((p) => p.color));
   let color = 0;
   while (usedColors.has(color)) color++;
-  next.players.push({ id: playerId, name, color, teamId, homePlanetId: planet.id });
+  const takenPeoples = new Set(next.players.map((p) => p.people));
+  const chosen = people ?? PEOPLE_IDS.find((id) => !takenPeoples.has(id))!;
+  next.players.push({ id: playerId, name, color, people: chosen, teamId, homePlanetId: planet.id });
   return { ok: true, state: next };
 }
 
@@ -139,7 +143,7 @@ function generatePlanets(rng: Rng, startPlanets: number, startSize: number): Pla
       startSlot,
       teamId: null,
       resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
-      population: 0,
+      citizens: {},
       birthProgress: 0,
       starving: false,
       segments,
@@ -234,7 +238,7 @@ function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
     deposits,
     building: null,
     builtBy: null,
-    workers: 0,
+    workers: {},
     gather: deposits.find((d) => d.byHand)?.resource ?? null,
   };
 }

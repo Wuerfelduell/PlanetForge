@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PlanetForge Sounds</title>
+    <style>
+      body { margin: 0; padding: 16px; font: 15px/1.4 system-ui, sans-serif; background: #141029; color: #fff4de; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #c77dff; margin: 20px 0 8px; }
+      p { margin: 0 0 12px; color: #f3e3c3; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; }
+      button { font: inherit; padding: 10px 14px; border-radius: 14px; border: 3px solid #2b2340; background: #fff4de; color: #2b2340; box-shadow: 0 4px 0 #b9a985; cursor: pointer; }
+      button:active { transform: translateY(3px); box-shadow: 0 1px 0 #b9a985; }
+      button.sel { background: #ff9f1c; }
+      textarea { width: 100%; box-sizing: border-box; min-height: 220px; font: 13px/1.4 ui-monospace, monospace; background: #241b4a; color: #fff4de; border: 2px solid #c77dff; border-radius: 12px; padding: 10px; }
+      .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0; }
+      #err { color: #ef476f; }
+    </style>
+  </head>
+  <body>
+    <h1>PlanetForge Sounds</h1>
+    <p>Antippen zum Anhören. Unten kannst du den gewählten Sound bearbeiten und die Werte nach <code>src/audio/sounds.ts</code> kopieren.</p>
+    <div class="bar">
+      <label>Lautstärke <input id="vol" type="range" min="0" max="1" step="0.05" value="0.8" /></label>
+      <button id="all">Alle nacheinander</button>
+    </div>
+    <div id="groups"></div>
+    <h2 id="edit-title">Bearbeiten</h2>
+    <textarea id="edit" spellcheck="false"></textarea>
+    <div class="bar">
+      <button id="play-edit">Bearbeitete Version abspielen</button>
+      <button id="copy">Kopieren</button>
+      <span id="err"></span>
+    </div>
+    <script type="module" src="/src/audio/preview.ts"></script>
+  </body>
+</html>

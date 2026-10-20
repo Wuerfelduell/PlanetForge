@@ -1,13 +1,13 @@
 import type { GameState } from "../sim";
 
-const KEY = "planetforge.save.v4";
+const KEY = "planetforge.save.v5";
 
 export function loadGame(): GameState | null {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
     const state = JSON.parse(raw) as GameState;
-    return state.version === 4 ? state : null;
+    return state.version === 5 ? state : null;
   } catch {
     return null;
   }

@@ -1,5 +1,5 @@
 import { BUILDINGS, RULES, type ResourceId } from "./content";
-import { cloneState, housing, nextLevelThreshold, teamById, segmentOutput, TICK_MS, TICKS_PER_CYCLE } from "./rules";
+import { cloneState, housing, nextLevelThreshold, population, teamById, segmentOutput, TICK_MS, TICKS_PER_CYCLE } from "./rules";
 import type { GameEvent, GameState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -59,13 +59,17 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       }
     }
 
-    if (planet.population < housing(planet) && !planet.starving && planet.resources.food >= RULES.birthFoodCost) {
+    if (population(planet) > 0 && population(planet) < housing(planet) && !planet.starving && planet.resources.food >= RULES.birthFoodCost) {
       planet.birthProgress += DT;
       if (planet.birthProgress >= RULES.secondsPerBirth - 1e-9) {
         planet.birthProgress = 0;
-        planet.population += 1;
+        // The smallest people on the planet grows first (join order breaks ties), so nobody falls behind.
+        const parents = state.players.filter((p) => p.id in planet.citizens);
+        if (parents.length === 0) continue;
+        const playerId = parents.reduce((a, b) => (planet.citizens[b.id]! < planet.citizens[a.id]! ? b : a)).id;
+        planet.citizens[playerId]! += 1;
         planet.resources.food -= RULES.birthFoodCost;
-        events.push({ type: "born", planetId: planet.id, population: planet.population });
+        events.push({ type: "born", planetId: planet.id, playerId, population: population(planet) });
       }
     }
   }
@@ -78,8 +82,9 @@ function endCycle(state: GameState, events: GameEvent[]): void {
   events.push({ type: "cycle", cycle: state.tick / TICKS_PER_CYCLE });
 
   for (const planet of state.planets) {
-    if (planet.population === 0) continue;
-    const upkeep = planet.population * RULES.foodPerInhabitantPerCycle;
+    const people = population(planet);
+    if (people === 0) continue;
+    const upkeep = people * RULES.foodPerInhabitantPerCycle;
     if (planet.resources.food >= upkeep) {
       planet.resources.food -= upkeep;
       planet.starving = false;
@@ -89,7 +94,7 @@ function endCycle(state: GameState, events: GameEvent[]): void {
       planet.starving = true;
     }
     const team = teamById(state, planet.teamId);
-    if (team) team.ascension.points += planet.population;
+    if (team) team.ascension.points += people;
   }
 
   for (const team of state.teams) {
