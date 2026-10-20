@@ -5,6 +5,8 @@ const TOP = -Math.PI / 2;
 const TAP_SLOP_PX = 8;
 const HIDDEN_COLOR = 0x2b3150;
 const CORE_COLOR = 0x5a3b2e;
+/** Player colors by PlayerState.color; the first one stays white for single player. */
+const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab];
 
 interface SegmentSprites {
   icon: Text;
@@ -51,6 +53,13 @@ export class PlanetView {
     }
     this.rotation = this.targetRotation = rotationFor(0, segmentCount);
     this.bindInput(app.canvas);
+  }
+
+  /** Planet shown on the wheel. */
+  planetId = "";
+
+  private planet(state: GameState) {
+    return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
   }
 
   get selectedIndex(): number {
@@ -111,7 +120,7 @@ export class PlanetView {
     g.circle(0, 0, rInner).fill(CORE_COLOR);
     g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
 
-    state.planets[0]!.segments.forEach((s, i) => {
+    this.planet(state).segments.forEach((s, i) => {
       const a0 = i * step - step / 2;
       const a1 = a0 + step;
       const mid = i * step;
@@ -120,13 +129,14 @@ export class PlanetView {
       g.poly(sector(rInner, R, a0, a1)).fill({ color, alpha: exhausted ? 0.55 : 1 });
       g.poly(sector(rInner, R, a0, a1)).stroke({ width: 1.5, color: 0x1a1d2e, alpha: 0.6 });
 
-      if (s.revealed && s.workers > 0) {
-        for (let w = 0; w < s.workers; w++) {
-          const t = (w + 1) / (s.workers + 1);
-          const a = a0 + step * t;
+      // One dot per worker, tinted with the owner's player color.
+      const dots = state.players.flatMap((p) => Array<number>(s.workers[p.id] ?? 0).fill(PLAYER_COLORS[p.color % PLAYER_COLORS.length]!));
+      if (s.revealed) {
+        dots.forEach((color, w) => {
+          const a = a0 + (step * (w + 1)) / (dots.length + 1);
           const r = (rInner + R) / 2;
-          g.circle(Math.cos(a) * r, Math.sin(a) * r, Math.max(3, R * 0.03)).fill(0xffffff).stroke({ width: 1.5, color: 0x1a1d2e });
-        }
+          g.circle(Math.cos(a) * r, Math.sin(a) * r, Math.max(3, R * 0.03)).fill(color).stroke({ width: 1.5, color: 0x1a1d2e });
+        });
       }
 
       const sp = this.sprites[i]!;

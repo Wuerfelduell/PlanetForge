@@ -1,6 +1,6 @@
 import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
 import { ringDistance } from "./generate";
-import { buildBlocker, cloneState, idleWorkers, planetById, segmentAt, workerCapacity } from "./rules";
+import { buildBlocker, cloneState, idleWorkers, planetById, segmentAt, workerCapacity, workerCount } from "./rules";
 import type { Command, CommandResult, GameEvent, GameState } from "./state";
 import { advanceInPlace } from "./step";
 
@@ -17,9 +17,11 @@ export function applyCommand(state: GameState, playerId: string, cmd: Command, n
 
 /** Validates and applies a command in place. Returns an error message, or null on success (then the state changed). */
 function executeCommand(state: GameState, playerId: string, cmd: Command, events: GameEvent[]): string | null {
-  if (!state.players.some((p) => p.id === playerId)) return "Unbekannter Spieler";
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player) return "Unbekannter Spieler";
   const planet = planetById(state, cmd.planetId);
   if (!planet) return "Unbekannter Planet";
+  if (planet.teamId !== player.teamId) return "Dieser Planet gehört dir nicht";
   const segment = Number.isInteger(cmd.segment) ? segmentAt(planet, cmd.segment) : undefined;
   if (!segment || segment.index !== cmd.segment) return "Unbekanntes Feld";
   if (!segment.revealed) return "Feld noch unerforscht";
@@ -27,12 +29,12 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   switch (cmd.type) {
     case "build": {
       if (!(cmd.building in BUILDINGS)) return "Unbekanntes Gebäude";
-      const blocker = buildBlocker(state, segment, cmd.building);
+      const blocker = buildBlocker(state, planet, segment, cmd.building);
       if (blocker) return blocker;
       const cost = BUILDINGS[cmd.building].cost;
-      for (const r of RESOURCE_IDS) state.resources[r] -= cost[r] ?? 0;
-      // Hand gatherers go back to idle; the player re-assigns them to the building.
-      segment.workers = 0;
+      for (const r of RESOURCE_IDS) planet.resources[r] -= cost[r] ?? 0;
+      // Hand gatherers go back to idle; their owners re-assign them to the building.
+      segment.workers = {};
       segment.building = cmd.building;
       segment.builtBy = playerId;
       events.push({ type: "built", planetId: planet.id, segment: segment.index, building: cmd.building, playerId });
@@ -48,21 +50,26 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     }
     case "demolish": {
       if (!segment.building) return "Hier steht nichts";
+      // On a shared planet nobody tears down a teammate's work (unless the builder left the game).
+      if (segment.builtBy && segment.builtBy !== playerId && state.players.some((p) => p.id === segment.builtBy)) {
+        return "Das hat ein Mitspieler gebaut";
+      }
       const def = BUILDINGS[segment.building];
-      for (const r of RESOURCE_IDS) state.resources[r] += Math.floor((def.cost[r] ?? 0) * RULES.demolishRefund);
+      for (const r of RESOURCE_IDS) planet.resources[r] += Math.floor((def.cost[r] ?? 0) * RULES.demolishRefund);
       segment.building = null;
       segment.builtBy = null;
-      segment.workers = 0;
+      segment.workers = {};
       events.push({ type: "demolished", planetId: planet.id, segment: segment.index, playerId });
       return null;
     }
     case "assign": {
       if (!Number.isInteger(cmd.delta) || cmd.delta === 0) return "Ungültige Anzahl";
-      const target = segment.workers + cmd.delta;
-      if (target < 0) return "Hier arbeitet niemand";
-      if (target > workerCapacity(segment)) return "Kein Platz für weitere Einwohner";
-      if (cmd.delta > idleWorkers(state)) return "Keine freien Einwohner";
-      segment.workers = target;
+      const own = workerCount(segment, playerId) + cmd.delta;
+      if (own < 0) return "Hier arbeiten keine Leute von dir";
+      if (workerCount(segment) + cmd.delta > workerCapacity(segment)) return "Kein Platz für weitere Einwohner";
+      if (cmd.delta > idleWorkers(planet, playerId)) return "Keine freien Einwohner";
+      if (own === 0) delete segment.workers[playerId];
+      else segment.workers[playerId] = own;
       return null;
     }
     case "setGather": {

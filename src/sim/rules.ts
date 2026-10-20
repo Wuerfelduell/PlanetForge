@@ -1,5 +1,5 @@
 import { BIOMES, BUILDINGS, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
-import type { GameState, PlanetState, SegmentState } from "./state";
+import type { GameState, PlanetState, SegmentState, TeamState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
 
@@ -24,22 +24,49 @@ export function neighbors(planet: PlanetState, index: number): SegmentState[] {
   return [segmentAt(planet, index - 1)!, segmentAt(planet, index + 1)!];
 }
 
-export function allSegments(state: GameState): SegmentState[] {
-  return state.planets.flatMap((p) => p.segments);
+export function teamById(state: GameState, id: string | null): TeamState | undefined {
+  return id === null ? undefined : state.teams.find((t) => t.id === id);
 }
 
-export function housing(state: GameState): number {
-  let total = RULES.baseHousing;
-  for (const s of allSegments(state)) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
+export function teamOfPlayer(state: GameState, playerId: string): TeamState | undefined {
+  return teamById(state, state.players.find((p) => p.id === playerId)?.teamId ?? null);
+}
+
+export function homePlanet(state: GameState, playerId: string): PlanetState | undefined {
+  const player = state.players.find((p) => p.id === playerId);
+  return player ? planetById(state, player.homePlanetId) : undefined;
+}
+
+export function housing(planet: PlanetState): number {
+  if (!planet.teamId) return 0;
+  // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
+  const peoples = Object.keys(planet.citizens).length;
+  let total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation;
+  for (const s of planet.segments) if (s.building) total += BUILDINGS[s.building].housing ?? 0;
   return total;
 }
 
-export function assignedWorkers(state: GameState): number {
-  return allSegments(state).reduce((sum, s) => sum + s.workers, 0);
+export function population(planet: PlanetState): number {
+  return sum(Object.values(planet.citizens));
 }
 
-export function idleWorkers(state: GameState): number {
-  return state.population - assignedWorkers(state);
+export function workerCount(segment: SegmentState, playerId?: string): number {
+  return playerId === undefined ? sum(Object.values(segment.workers)) : (segment.workers[playerId] ?? 0);
+}
+
+/** Assigned inhabitants on the planet, of one player or of everyone. */
+export function assignedWorkers(planet: PlanetState, playerId?: string): number {
+  return sum(planet.segments.map((s) => workerCount(s, playerId)));
+}
+
+/** Inhabitants without a job, of one player or of everyone. */
+export function idleWorkers(planet: PlanetState, playerId?: string): number {
+  const citizens = playerId === undefined ? population(planet) : (planet.citizens[playerId] ?? 0);
+  return citizens - assignedWorkers(planet, playerId);
+}
+
+function sum(values: number[]): number {
+  return values.reduce((a, b) => a + b, 0);
 }
 
 export function workerCapacity(segment: SegmentState): number {
@@ -55,38 +82,39 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
   return 1 + count * adj.bonus;
 }
 
-export function canAfford(state: GameState, building: BuildingId): boolean {
+export function canAfford(planet: PlanetState, building: BuildingId): boolean {
   const cost = BUILDINGS[building].cost;
-  return RESOURCE_IDS.every((r) => state.resources[r] >= (cost[r] ?? 0));
+  return RESOURCE_IDS.every((r) => planet.resources[r] >= (cost[r] ?? 0));
 }
 
-/** Why a building cannot go on a segment right now, or null if it can. */
-export function buildBlocker(state: GameState, segment: SegmentState, building: BuildingId): string | null {
+/** Why a building cannot go on a segment right now, or null if it can. Pays from the planet's own stockpile. */
+export function buildBlocker(state: GameState, planet: PlanetState, segment: SegmentState, building: BuildingId): string | null {
   const def = BUILDINGS[building];
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
-  if (state.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  if ((teamById(state, planet.teamId)?.ascension.level ?? 0) < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
-  if (!canAfford(state, building)) return "Zu wenig Ressourcen";
+  if (!canAfford(planet, building)) return "Zu wenig Ressourcen";
   return null;
 }
 
 /** Production per second of one segment at its current staffing, before starvation. */
 export function segmentOutput(planet: PlanetState, segment: SegmentState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
-  if (segment.workers <= 0) return out;
+  const workers = workerCount(segment);
+  if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment);
   const def = segment.building ? BUILDINGS[segment.building] : null;
   if (def?.produces) {
-    out[def.produces.resource] = def.produces.perWorker * segment.workers * mult;
+    out[def.produces.resource] = def.produces.perWorker * workers * mult;
   } else if (def?.extracts) {
     const available = segment.deposits.filter((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
     // Workers split evenly over everything the building can reach.
-    for (const d of available) out[d.resource] = (def.extracts.perWorker * segment.workers * mult) / available.length;
+    for (const d of available) out[d.resource] = (def.extracts.perWorker * workers * mult) / available.length;
   } else if (!def) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
-    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = RULES.handRatePerWorker * segment.workers;
+    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = RULES.handRatePerWorker * workers;
   }
   return out;
 }

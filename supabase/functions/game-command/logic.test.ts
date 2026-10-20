@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HOME_PLANET_ID, createGame } from "../../../src/sim/index";
+import { createGame, homePlanet } from "../../../src/sim/index";
 import { MAX_GAP_MS, nextSimTime, parseRequest, step, userIdFromJwt, type Member } from "./logic";
 
 const GAME = "0f3c2a4e-1b2c-4d5e-8f90-123456789abc";
@@ -41,7 +41,7 @@ describe("game-command logic", () => {
       clockAt: 0,
       members: [alice],
       playerId: "p1",
-      request: { gameId: GAME, kind: "command", cmd: { type: "assign", planetId: HOME_PLANET_ID, segment: 0, delta: 0 } },
+      request: { gameId: GAME, kind: "command", cmd: { type: "assign", planetId: homePlanet(state, "p1")!.id, segment: 0, delta: 0 } },
       now: 100,
     });
     expect(bad).toEqual({ ok: false, error: "Ungültige Anzahl" });

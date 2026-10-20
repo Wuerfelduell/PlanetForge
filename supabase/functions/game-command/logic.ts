@@ -1,4 +1,4 @@
-import { advance, applyCommand, createGame, type Command, type GameEvent, type GameState } from "../../../src/sim/index";
+import { addPlayer, advance, applyCommand, createGame, type Command, type GameEvent, type GameState } from "../../../src/sim/index";
 
 /**
  * Server-side rules around the simulation, kept free of I/O so they can be unit tested.
@@ -38,15 +38,15 @@ export function nextSimTime(state: GameState, clockAt: number | null, now: numbe
   return state.simTime + Math.min(Math.max(0, now - clockAt), MAX_GAP_MS);
 }
 
-/** Adds members who joined after the game started (coop drop-in). */
-export function ensurePlayers(state: GameState, members: Member[]): GameState {
-  const missing = members.filter((m) => !state.players.some((p) => p.id === m.playerId));
-  if (!missing.length) return state;
-  // TODO: replace with the sim's own addPlayer once it exists (start planet per player).
-  return {
-    ...state,
-    players: [...state.players, ...missing.map((m, i) => ({ id: m.playerId, name: m.name, color: state.players.length + i }))],
-  };
+/** Adds members who joined after the game started (coop drop-in), at the current sim time. */
+export function ensurePlayers(state: GameState, members: Member[], simNow: number): { ok: true; state: GameState } | { ok: false; error: string } {
+  for (const m of members) {
+    if (state.players.some((p) => p.id === m.playerId)) continue;
+    const joined = addPlayer(state, m.playerId, m.name, simNow);
+    if (!joined.ok) return joined;
+    state = joined.state;
+  }
+  return { ok: true, state };
 }
 
 export function step(input: StepInput): StepResult {
@@ -59,8 +59,10 @@ export function step(input: StepInput): StepResult {
     state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { now: 0 });
     clockAt = now;
   }
-  state = ensurePlayers(state, members);
   const simNow = nextSimTime(state, clockAt, now);
+  const joined = ensurePlayers(state, members, simNow);
+  if (!joined.ok) return joined;
+  state = joined.state;
 
   if (request.kind === "sync") {
     return { ok: true, state: advance(state, simNow), events: [], changed: true };
