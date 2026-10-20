@@ -268,6 +268,8 @@ export const RULES = {
   ticksPerSecond: 10,
   /** Default for settings.cycleSeconds: one planet rotation; drives food upkeep and ascension. */
   defaultCycleSeconds: 30,
+  /** Build orders per planet queue. */
+  queueLength: 3,
   /** Entries kept in GameState.log. */
   logLength: 200,
   startRevealRadius: 2,

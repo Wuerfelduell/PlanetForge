@@ -1,6 +1,6 @@
 import { BUILDINGS, RESOURCE_IDS, RULES } from "./content";
-import { ringDistance } from "./generate";
-import { buildBlocker, cloneState, idleUnits, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { placeBuilding } from "./build";
+import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
 
@@ -29,6 +29,20 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       state.lobby.open = cmd.type === "openLobby";
       if (state.lobby.open) state.lobby.paused = false;
       events.push({ type: "lobby", ...state.lobby, playerId });
+      return null;
+    }
+    case "kickPlayer": {
+      if (playerId !== state.hostId) return "Nur der Gastgeber kann Spieler entfernen";
+      if (cmd.playerId === playerId) return "Du kannst dich nicht selbst entfernen";
+      const index = state.players.findIndex((p) => p.id === cmd.playerId);
+      if (index < 0) return "Unbekannter Spieler";
+      state.players.splice(index, 1);
+      // Seb: the removed player's people simply vanish; nobody inherits them.
+      for (const [id, u] of Object.entries(state.units)) if (u.owner === cmd.playerId) delete state.units[id];
+      for (const queue of Object.values(state.queues)) {
+        for (let i = queue.length - 1; i >= 0; i--) if (queue[i]!.playerId === cmd.playerId) queue.splice(i, 1);
+      }
+      events.push({ type: "removed", playerId: cmd.playerId, by: playerId });
       return null;
     }
     case "pause":
@@ -60,6 +74,13 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   if (!state.lobby.open) return "Das Spiel ist geschlossen";
   const planet = planetById(state, cmd.planetId);
   if (!planet) return "Unbekannter Planet";
+  if (cmd.type === "dequeue") {
+    if (planet.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
+    const queue = state.queues[planet.id] ?? [];
+    if (!queue[cmd.index]) return "Diesen Auftrag gibt es nicht";
+    queue.splice(cmd.index, 1);
+    return null;
+  }
   const segment = checkSegment(player, planet, cmd.segment);
   if (typeof segment === "string") return segment;
 
@@ -68,22 +89,18 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (!(cmd.building in BUILDINGS)) return "Unbekanntes Gebäude";
       const blocker = buildBlocker(state, planet, segment, cmd.building);
       if (blocker) return blocker;
-      const economy = state.economies[planet.economyId!]!;
-      const cost = BUILDINGS[cmd.building].cost;
-      for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
-      // Hand gatherers go back to idle; their owners re-assign them to the building.
-      for (const u of workersOn(state, planet, segment.index)) u.segment = null;
-      segment.building = cmd.building;
-      segment.builtBy = playerId;
-      events.push({ type: "built", planetId: planet.id, segment: segment.index, building: cmd.building, playerId });
-      const revealed: number[] = [];
-      for (const s of planet.segments) {
-        if (!s.revealed && ringDistance(s.index, segment.index, planet.segments.length) <= RULES.buildRevealRadius) {
-          s.revealed = true;
-          revealed.push(s.index);
-        }
-      }
-      if (revealed.length) events.push({ type: "revealed", planetId: planet.id, segments: revealed });
+      placeBuilding(state, planet, segment, cmd.building, playerId, events);
+      return null;
+    }
+    case "enqueue": {
+      if (!(cmd.building in BUILDINGS)) return "Unbekanntes Gebäude";
+      const queue = (state.queues[planet.id] ??= []);
+      if (queue.length >= RULES.queueLength) return `Höchstens ${RULES.queueLength} Aufträge`;
+      if (queue.some((q) => q.segment === segment.index)) return "Für dieses Feld ist schon etwas geplant";
+      const blocker = buildBlocker(state, planet, segment, cmd.building);
+      // Only missing resources may be waited for; everything else must already fit.
+      if (blocker && blocker !== NOT_AFFORDABLE) return blocker;
+      queue.push({ segment: segment.index, building: cmd.building, playerId });
       return null;
     }
     case "demolish": {

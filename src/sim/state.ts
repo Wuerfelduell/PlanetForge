@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 6;
+  version: 7;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -35,6 +35,8 @@ export interface GameState {
   /** Every inhabitant is a unit with an owner; the owner alone moves it. */
   units: Record<string, UnitState>;
   nextUnitId: number;
+  /** Per planet up to RULES.queueLength build orders that run as soon as the economy can pay. */
+  queues: Record<string, QueuedBuild[]>;
   /** Recent events for the "since your last visit" view, newest last, at most RULES.logLength. */
   log: LogEntry[];
 }
@@ -84,6 +86,12 @@ export interface UnitState {
   role: "worker";
 }
 
+export interface QueuedBuild {
+  segment: number;
+  building: BuildingId;
+  playerId: string;
+}
+
 export interface PlanetState {
   id: string;
   name: string;
@@ -128,6 +136,11 @@ export type Command =
   /** Moves one specific unit; segment null makes it idle. */
   | { type: "assignUnit"; unitId: string; segment: number | null }
   | { type: "setGather"; planetId: string; segment: number; resource: ResourceId }
+  /** Queues a build that runs once the economy can pay for it. */
+  | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
+  | { type: "dequeue"; planetId: string; index: number }
+  /** Host only: removes a player; their units vanish (Seb: no gifting to teammates). */
+  | { type: "kickPlayer"; playerId: string }
   | { type: "openLobby" }
   | { type: "closeLobby" }
   | { type: "pause" }
@@ -144,6 +157,8 @@ export type GameEvent =
   | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
   | { type: "demolished"; planetId: string; segment: number; playerId: string }
   | { type: "joined"; playerId: string }
+  | { type: "removed"; playerId: string; by: string }
+  | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }
   | { type: "lobby"; open: boolean; paused: boolean; playerId: string };
 
 export type LogEntry = { tick: number; event: GameEvent };

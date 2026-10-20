@@ -7,6 +7,7 @@ import {
   cycleOf,
   housing,
   idleUnits,
+  NOT_AFFORDABLE,
   population,
   workerCount,
   economyOf,
@@ -92,9 +93,17 @@ export class Ui {
         case "revealed":
           this.toast(`🔭 ${e.segments.length} neue Felder entdeckt`);
           break;
+        case "queueDropped":
+          this.toast(`⏳ Geplante ${BUILDINGS[e.building].name} entfällt: ${e.reason}`, "warn");
+          break;
+        case "removed":
+          this.toast(`👋 ${e.playerId === this.playerId ? "Du wurdest" : "Ein Spieler wurde"} aus dem Spiel entfernt`, "warn");
+          break;
         case "cycle":
         case "built":
         case "demolished":
+        case "joined":
+        case "lobby":
           break;
       }
     }
@@ -121,6 +130,12 @@ export class Ui {
         break;
       case "build":
         this.actions.send({ type: "build", ...at, building: value as (typeof BUILDING_IDS)[number] });
+        break;
+      case "enqueue":
+        this.actions.send({ type: "enqueue", ...at, building: value as (typeof BUILDING_IDS)[number] });
+        break;
+      case "dequeue":
+        this.actions.send({ type: "dequeue", planetId: this.planetId, index: Number(value) });
         break;
       case "demolish":
         this.actions.send({ type: "demolish", ...at });
@@ -202,6 +217,11 @@ export class Ui {
         </div>`
       : "";
 
+    const queue = state.queues[planet.id] ?? [];
+    const queued = queue.find((q) => q.segment === s.index);
+    const queuedNote = queued
+      ? `<p class="muted">⏳ Geplant: ${BUILDINGS[queued.building].icon} ${BUILDINGS[queued.building].name}, wird gebaut, sobald genug da ist. <button data-action="dequeue" data-value="${queue.indexOf(queued)}">Abbrechen</button></p>`
+      : "";
     let actions = "";
     if (def) {
       actions = `<p class="muted">${def.description}</p><button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
@@ -214,8 +234,10 @@ export class Ui {
           const cost = Object.entries(bd.cost)
             .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
             .join(" ");
-          return `<button class="build" data-action="build" data-value="${b}" ${blocker ? "disabled" : ""} title="${bd.description}">
-              <span class="icon">${locked ? "🔒" : bd.icon}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}</span>
+          // Missing resources only: offer to queue the build instead of greying it out.
+          const queueable = blocker === NOT_AFFORDABLE && !queued;
+          return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${bd.description}">
+              <span class="icon">${locked ? "🔒" : bd.icon}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
         .join("")}</div>`;
@@ -223,7 +245,7 @@ export class Ui {
       actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>`;
     }
 
-    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${workers}${actions}${hint}`;
+    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${workers}${queuedNote}${actions}${hint}`;
   }
 }
 

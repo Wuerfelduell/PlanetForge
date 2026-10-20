@@ -230,6 +230,53 @@ describe("commands", () => {
   });
 });
 
+describe("host and queue", () => {
+  it("host removes a player; their units vanish and queued orders go", () => {
+    let g = join(newGame(4));
+    econ(g).resources.wood = 0;
+    const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
+    g = exec(g, { type: "enqueue", segment: land.index, building: "housing" }, MO.id);
+    expect(applyCommand(g, MO.id, { type: "kickPlayer", playerId: P1.id }, g.simTime)).toEqual({ ok: false, error: "Nur der Gastgeber kann Spieler entfernen" });
+    expect(applyCommand(g, P1.id, { type: "kickPlayer", playerId: P1.id }, g.simTime).ok).toBe(false);
+    g = exec(g, { type: "kickPlayer", playerId: MO.id });
+    expect(g.players.map((p) => p.id)).toEqual([P1.id]);
+    expect(Object.values(g.units).every((u) => u.owner === P1.id)).toBe(true);
+    expect(population(g, home(g))).toBe(RULES.startPopulation);
+    expect(g.queues[home(g).id]).toEqual([]);
+    expect(g.log.map((l) => l.event)).toContainEqual({ type: "removed", playerId: MO.id, by: P1.id });
+  });
+
+  it("queued builds run once affordable, in order, and stale ones drop", () => {
+    let g = newGame(4);
+    econ(g).resources.wood = 0;
+    const [a, b] = home(g).segments.filter((s) => s.revealed && s.biome !== "ocean");
+    g = exec(g, { type: "enqueue", segment: a!.index, building: "housing" });
+    g = exec(g, { type: "enqueue", segment: b!.index, building: "farm" });
+    expect(attempt(g, { type: "enqueue", segment: a!.index, building: "farm" })).toEqual({ ok: false, error: "Für dieses Feld ist schon etwas geplant" });
+    expect(attempt(g, { type: "enqueue", segment: a!.index, building: "lab" }).ok).toBe(false);
+
+    g = run(g, 1).state;
+    expect(home(g).segments[a!.index]!.building).toBeNull();
+    econ(g).resources.wood = 15;
+    let r = run(g, 1);
+    g = r.state;
+    expect(home(g).segments[a!.index]!.building).toBe("housing");
+    expect(r.events).toContainEqual(expect.objectContaining({ type: "built", segment: a!.index }));
+    expect(g.queues[home(g).id]).toHaveLength(1);
+
+    // Someone builds on the second segment directly: the order cannot run any more and is dropped.
+    econ(g).resources.wood = 15;
+    g = exec(g, { type: "build", segment: b!.index, building: "housing" });
+    r = run(g, 1);
+    expect(r.events).toContainEqual(expect.objectContaining({ type: "queueDropped", segment: b!.index }));
+    expect(r.state.queues[home(g).id]).toEqual([]);
+
+    g = exec(r.state, { type: "enqueue", segment: home(g).segments.find((s) => s.revealed && !s.building && s.biome !== "ocean")!.index, building: "housing" });
+    g = exec(g, { type: "dequeue", planetId: home(g).id, index: 0 });
+    expect(g.queues[home(g).id]).toEqual([]);
+  });
+});
+
 describe("lobby clock", () => {
   it("stops the clock while closed or paused, without catching up later", () => {
     let g = join(newGame(1));

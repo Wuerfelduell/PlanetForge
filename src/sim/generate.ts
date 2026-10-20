@@ -15,6 +15,7 @@ import {
 import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
+import { ringDistance } from "./rules";
 import type { DepositState, Difficulty, EconomyState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
 
 export interface GameOptions {
@@ -44,7 +45,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
 
   let state: GameState = {
-    version: 6,
+    version: 7,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -63,6 +64,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     planets,
     units: {},
     nextUnitId: 0,
+    queues: {},
     log: [],
   };
   for (const p of players) {
@@ -280,9 +282,4 @@ function shuffle<T>(items: T[], rng: Rng): void {
     const j = rng.int(0, i);
     [items[i], items[j]] = [items[j]!, items[i]!];
   }
-}
-
-export function ringDistance(a: number, b: number, n: number): number {
-  const d = Math.abs(a - b) % n;
-  return Math.min(d, n - d);
 }
