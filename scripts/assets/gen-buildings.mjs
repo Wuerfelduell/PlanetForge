@@ -242,5 +242,36 @@ for(const def of buildings){
 for(const asset of assets.filter(a=>a.id.startsWith('building.escape-pod.closed'))){
   assets.push({...asset,id:asset.id.replace('.closed',''),tags:[...asset.tags,'default-alias']});
 }
+// FX use a 128-unit design grid. Transform the 3-unit outline with the artwork.
+state='idle';
+const puff=(token)=>path('M30 95C10 94 10 66 27 63C20 39 47 29 60 44C75 23 103 39 98 61C122 61 120 94 100 95Z',token)+
+  glint('M34 62Q32 48 46 47');
+function smoke(f){
+  const scales=[.5,.7,.9,1],ys=[24,12,0,-15],opacities=[.9,.8,.5,.2];
+  return `<g opacity="${opacities[f-1]}" transform="translate(64 ${64+ys[f-1]}) scale(${scales[f-1]}) translate(-64 -64)">${puff('rock')}</g>`;
+}
+function dust(f){
+  const spread=[0,9,17,22][f-1],opacity=[.9,.8,.5,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    `<g transform="translate(${-spread} 12) scale(0.7)">${puff('sand')}</g>`+
+    `<g transform="translate(${37+spread} 17) scale(0.6)">${puff('paper')}</g>`+
+    [0,1,2].map(i=>circle(36+i*26+(i-1)*spread,42-f*4,4+(f===2?2:0),'sand')).join('')+'</g>';
+}
+function sparkle(f){
+  const r=[18,39,14][f-1];
+  return `<g opacity="${[.5,1,.3][f-1]}">${star(64,64,r,'energy')}${star(28,35,7,'cream')}${star(99,90,9,'cream')}${glint(`M60 ${69-r}L64 ${70-r}`)}</g>`;
+}
+const effects=[
+  {id:'smoke',size:64,frames:4,fps:6,draw:smoke},
+  {id:'dust',size:128,frames:4,fps:10,draw:dust},
+  {id:'sparkle',size:64,frames:3,fps:8,draw:sparkle},
+];
+for(const effect of effects){
+  const stem=`fx-${effect.id}`;
+  for(let f=1;f<=effect.frames;f++){
+    write(`art/src/fx/${stem}-f${f}.svg`,svg(`<g transform="scale(${effect.size/128})">${effect.draw(f)}</g>`,effect.size,effect.size,3));
+  }
+  assets.push({id:`fx.${effect.id}`,category:'fx',src:`art/src/fx/${stem}-f{f}.svg`,out:`public/assets/sprites/fx/${stem}-f{f}.png`,viewBox:[effect.size,effect.size],anchor:effect.anchor??[.5,.5],frames:effect.frames,fps:effect.fps,parts:[],tags:[effect.id,'animation',effect.loop?'loop':'once'],phase:'P1'});
+}
 write('art/manifest/buildings.json',JSON.stringify({assets},null,2)+'\n');
-console.log(`Buildings: ${assets.length} assets generated.`);
+console.log(`Buildings and FX: ${assets.length} assets generated.`);

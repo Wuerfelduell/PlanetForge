@@ -2203,6 +2203,75 @@
         "default-alias"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "fx.smoke",
+      "category": "fx",
+      "src": "art/src/fx/fx-smoke-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-smoke-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "smoke",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.dust",
+      "category": "fx",
+      "src": "art/src/fx/fx-dust-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-dust-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "dust",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.sparkle",
+      "category": "fx",
+      "src": "art/src/fx/fx-sparkle-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-sparkle-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 8,
+      "parts": [],
+      "tags": [
+        "sparkle",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
     }
   ]
 }
