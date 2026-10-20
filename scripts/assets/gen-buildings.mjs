@@ -283,6 +283,26 @@ function explosion(f){
     `<g transform="translate(64 64) scale(${size}) translate(-64 -64)">${puff(f<3?'ascension':'paper')}${star(64,65,f<3?23:12,'energy')}</g>`+
     [[25-f*2,34-f*2],[95+f*2,32],[35,96+f*2],[98,95]].map(([x,y],i)=>star(x,y,round((i%2?6:9)*size),i%2?'clay':'energy')).join('')+'</g>';
 }
+function ascension(f){
+  const y=[94,75,52,27][f-1],rx=[24,33,43,52][f-1],opacity=[.6,1,.7,.2][f-1];
+  return `<g opacity="${opacity}">`+
+    ellipse(64,y,rx,11,'cream',`fill-opacity="0.2" stroke="${C('ascension')}" stroke-width="6"`)+
+    ellipse(64,y-4,rx-3,9,'cream',`fill-opacity="0.1" stroke="${C('energy')}" stroke-width="3"`)+
+    [35,64,93].map((x,i)=>line(`M${x} ${y+18}V${Math.min(118,y+33+i*5)}`,'energy',3)+star(x,y-21-(i%2)*9,6,'cream')).join('')+'</g>';
+}
+function heart(f){
+  const size=[.7,1,.8][f-1],dy=[10,0,-12][f-1];
+  return `<g opacity="${[.7,1,.4][f-1]}" transform="translate(64 ${64+dy}) scale(${size}) translate(-64 -64)">`+
+    path('M64 99C49 89 22 69 25 48C28 28 52 27 64 44C76 27 100 28 103 48C106 69 79 89 64 99Z','danger')+
+    glint('M36 49Q39 38 48 41')+'</g>';
+}
+function anger(f){
+  const dy=[8,0,-10][f-1],opacity=[.7,1,.4][f-1];
+  return `<g opacity="${opacity}">`+
+    [0,1].map(i=>`<g transform="translate(${i?72:0} ${dy}) scale(0.4)">${puff('snow')}</g>`).join('')+
+    [34,92].map((x,i)=>line(`M${x} 92Q${x+(i?-10:10)} 80 ${x} 68Q${x+(i?10:-10)} 57 ${x} 51`,'rock',5)).join('')+
+    path('M53 48V62H40M75 48V62H88M53 87V74H40M75 87V74H88','none',`stroke="${C('danger')}" stroke-width="6"`)+'</g>';
+}
 const effects=[
   {id:'smoke',size:64,frames:4,fps:6,draw:smoke},
   {id:'dust',size:128,frames:4,fps:10,draw:dust},
@@ -290,6 +310,9 @@ const effects=[
   {id:'resource-pop',size:64,frames:3,fps:10,draw:resourcePop},
   {id:'rocket-flame',size:128,frames:3,fps:12,anchor:[.5,0],loop:true,draw:rocketFlame},
   {id:'explosion',size:256,frames:5,fps:12,draw:explosion},
+  {id:'ascension',size:512,frames:4,fps:6,draw:ascension},
+  {id:'heart',size:64,frames:3,fps:6,draw:heart},
+  {id:'anger',size:64,frames:3,fps:6,draw:anger},
 ];
 for(const effect of effects){
   const stem=`fx-${effect.id}`;

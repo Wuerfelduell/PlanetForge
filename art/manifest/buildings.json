@@ -2341,6 +2341,75 @@
         "once"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "fx.ascension",
+      "category": "fx",
+      "src": "art/src/fx/fx-ascension-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-ascension-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "ascension",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.heart",
+      "category": "fx",
+      "src": "art/src/fx/fx-heart-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-heart-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "heart",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.anger",
+      "category": "fx",
+      "src": "art/src/fx/fx-anger-f{f}.svg",
+      "out": "public/assets/sprites/fx/fx-anger-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 3,
+      "fps": 6,
+      "parts": [],
+      "tags": [
+        "anger",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
     }
   ]
 }
