@@ -131,7 +131,7 @@ function symbol(p){
 function emblem(p){
  const logs=group('symbol',group('log-a',rect(29,56,69,18,8,C('iron'))+ellipse(34,65,7,9,C('sand'))+line('M47 61H89M49 68H83'),'rotate(35 64 64)')+group('log-b',rect(29,56,69,18,8,C('iron'))+ellipse(34,65,7,9,C('sand'))+line('M47 61H89M49 68H83'),'rotate(-35 64 64)'));
  const berry=group('symbol',path('M36 80L30 62L43 65L44 40L58 52L69 32L77 56L96 49L91 72L101 78L82 91Z',C('iron'))+circle(58,72,13,C('danger'))+circle(77,78,13,C('clay'))+path('M66 60Q60 45 80 48Q80 61 66 60Z',C('leaf')));
- return `<g transform="scale(2)">${circle(64,64,55,C(p.color))}${path('M17 70Q30 113 74 109Q100 104 112 79Q107 118 65 119Q23 117 17 70Z',C(p.color,-.18),flat)}${path('M26 42Q34 24 54 21','none',`stroke="${C(p.color,.18)}" stroke-width="5"`)}${p.animal==='beaver'?logs:p.animal==='hedgehog'?berry:group('symbol',symbol(p))}</g>`;
+ return `<g transform="scale(2)" stroke-width="3">${circle(64,64,55,C(p.color))}${path('M17 70Q30 113 74 109Q100 104 112 79Q107 118 65 119Q23 117 17 70Z',C(p.color,-.18),flat)}${path('M26 42Q34 24 54 21','none',`stroke="${C(p.color,.18)}" stroke-width="5"`)}${p.animal==='beaver'?logs:p.animal==='hedgehog'?berry:group('symbol',symbol(p))}</g>`;
 }
 for(const p of defs){
  emit(`people.${p.id}.portrait`,'peoples',`${p.id}-portrait`,512,[.5,.5],1,0,['head','clothing'],[p.id,p.animal,p.biome,'portrait'],p.phase,()=>portrait(p,'neutral'));
@@ -140,5 +140,33 @@ for(const p of defs){
  emit(`people.${p.id}.emblem`,'peoples',`${p.id}-emblem`,256,[.5,.5],1,0,['symbol'],[p.id,'emblem'],p.phase,()=>emblem(p));
 }
 emit('people.citizen-ring','peoples','citizen-ring',128,[.5,.9375],1,0,[],['coop','engine-tinted'],'P0',()=>ellipse(64,120,30,5,'none',`stroke="${C('tint-white')}" stroke-width="3"`));
+// Monsters use the same outline / palette vocabulary, with independent silhouettes.
+function monster(id,frame=0){
+ const bob=frame?-1:1;
+ if(id==='rockmunch'){
+  const feet=group('feet',[27,47,68,90].map(x=>ellipse(x,114.5,8,4,C('rock-dark'))).join(''));
+  const segments=group('body',[27,43,60].map((x,i)=>ellipse(x,94-i*5,16,17+i*2,C('moss'))).join('')+path('M15 94Q13 81 27 80M32 84Q33 73 43 72','none',`stroke="${C('moss',.18)}" stroke-width="4"`));
+  const head=group('head',path('M62 47Q91 24 108 50Q121 78 107 101Q90 117 66 100Q50 82 62 47Z',C('moss'))+path('M102 46Q121 80 101 100Q82 111 66 95Q95 102 103 82Z',C('moss',-.18),flat)+ellipse(74,48,9,5,C('moss',.18),flat)+ellipse(78,64,4,6,C('ink'),flat)+ellipse(101,61,4,6,C('ink'),flat)+line('M71 54L82 57M97 54L106 51')+path('M68 80Q90 69 110 78Q108 104 87 102Q69 99 68 80Z',C('ink'))+[72,85,98].map((x,i)=>rect(x,78-i%2*2,9,11,3,C('rock'))).join('')+rect(82,94,10,7,3,C('rock')));
+  const snack=group('snack',path('M98 108L105 99L117 101L120 113L107 117Z',C('rock'))+line('M106 103L109 110L116 110'));
+  return feet+group('idle',segments+head+snack,`translate(0 ${bob})`);
+ }
+ if(id==='stormjelly'){
+  const tendrils=group('tentacles',path(frame?'M37 76Q29 90 43 102Q51 113 40 118.5M62 78Q77 93 60 103Q52 112 62 118.5M86 77Q94 94 83 102Q79 110 91 117':'M37 76Q47 90 34 102Q27 113 40 118.5M62 78Q47 93 65 103Q73 112 62 118.5M86 77Q74 94 88 102Q98 110 91 117','none',`stroke="${C('ink')}" stroke-width="7"`)+path(frame?'M37 76Q29 90 43 102Q51 113 40 118.5M62 78Q77 93 60 103Q52 112 62 118.5M86 77Q94 94 83 102Q79 110 91 117':'M37 76Q47 90 34 102Q27 113 40 118.5M62 78Q47 93 65 103Q73 112 62 118.5M86 77Q74 94 88 102Q98 110 91 117','none',`stroke="${C('science')}" stroke-width="4"`));
+  const head=group('head',path('M17 70Q7 52 23 44Q19 26 37 27Q48 11 64 23Q80 15 88 31Q108 27 107 48Q124 61 109 76Q96 89 82 81Q66 94 52 82Q32 94 17 70Z',C('science'))+path('M17 65Q26 80 43 72Q53 86 68 76Q80 84 91 73Q107 81 115 65Q118 80 105 82Q91 89 82 81Q66 94 52 82Q32 94 17 70Z',C('science',-.18),flat)+path('M25 45Q26 33 40 36Q48 22 60 29','none',`stroke="${C('science',.18)}" stroke-width="5"`)+ellipse(50,59,4,5,C('ink'),flat)+ellipse(79,58,4,5,C('ink'),flat)+line('M45 50L54 53M75 52L83 49')+path('M58 72Q65 66 72 71')+path('M66 31L55 48L66 46L61 58L79 38L68 40Z',C('energy')));
+  return tendrils+group('idle',head,`translate(0 ${bob})`);
+ }
+ const feet=group('feet',ellipse(43,114.5,13,4,C('leaf'))+ellipse(93,114.5,14,4,C('leaf')));
+ const tail=group('tail',path('M43 100Q18 112 9 93Q27 95 30 75Z',C('leaf')));
+ const shell=group('shell',path('M28 97L22 76Q20 72 27 71L34 71L30 55Q30 51 35 54L46 61L49 41Q50 35 55 42L62 56L74 42Q79 38 78 45L77 62L93 55Q98 54 95 61L88 76L103 85Q107 89 100 91L86 96Z',C('savanna'))+ellipse(57,85,29,23,C('moss'))+path('M36 84L46 68L64 67L77 79L71 99L48 103Z',C('moss',-.18))+line('M46 68L51 84L36 84M51 84L71 99M51 84L77 79'));
+ const head=group('head',path('M79 67Q97 52 109 67L111 78Q125 82 119 95Q113 109 88 104Q74 102 76 87Z',C('leaf'))+path('M82 96Q101 108 119 92Q116 108 91 106Q81 105 82 96Z',C('leaf',-.18),flat)+ellipse(91,69,6,3,C('leaf',.18),flat)+ellipse(101,80,4,5,C('ink'),flat)+line('M96 73L104 75')+line('M96 95Q104 100 114 93')+path('M101 97L105 104L109 97Z',C('cream'))+circle(116,86,1.5,C('ink'),flat));
+ return feet+tail+group('idle',shell+head,`translate(0 ${bob})`);
+}
+for(const id of ['rockmunch','stormjelly','thornback']){
+ emit(`monster.${id}.portrait`,'monsters',`${id}-portrait`,512,[.5,.5],1,0,['head'],[id,'portrait'],'P1',()=>`<g transform="translate(-5 -18) scale(4.1)" stroke-width="2.9">${monster(id)}</g>`);
+ emit(`monster.${id}.sprite`,'monsters',`${id}-sprite`,256,[.5,.9375],2,2,['head',...(id==='stormjelly'?['tentacles']:['feet'])],[id,'planet','idle'],'P1',f=>`<g transform="scale(2)" stroke-width="3">${monster(id,f)}</g>`);
+}
+const pipFaces=[[[64,64]],[[44,44],[84,84]],[[44,44],[64,64],[84,84]],[[44,44],[84,44],[44,84],[84,84]],[[44,44],[84,44],[64,64],[44,84],[84,84]],[[44,40],[84,40],[44,64],[84,64],[44,88],[84,88]]];
+emit('monster.dice','monsters','fx-dice',128,[.5,.5],6,10,['pips'],['battle','dice','faces-1-to-6'],'P1',f=>rect(18,18,92,92,18,C('cream'))+path('M20 84Q20 106 40 106H88Q107 106 107 88V39Q101 90 87 94H39Q27 94 20 84Z',C('paper'),flat)+path('M29 48V38Q29 29 41 29H58','none',`stroke="${C('cream',.18)}" stroke-width="5"`)+group('pips',pipFaces[f].map(([x,y])=>circle(x,y,6,C('ink'),flat)).join('')),{frameNames:['one','two','three','four','five','six']});
+
 write('art/manifest/peoples.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Peoples: ${assets.length} ids / ${assets.reduce((n,a)=>n+a.frames,0)} SVGs.`);
