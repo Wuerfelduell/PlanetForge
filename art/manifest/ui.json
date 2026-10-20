@@ -214,6 +214,221 @@
         "mini"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "resource.iron",
+      "category": "resources",
+      "src": "art/src/resources/iron.svg",
+      "out": "public/assets/sprites/resources/iron.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "iron"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.iron.mini",
+      "category": "resources",
+      "src": "art/src/resources/iron-mini.svg",
+      "out": "public/assets/sprites/resources/iron-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "iron",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.coal",
+      "category": "resources",
+      "src": "art/src/resources/coal.svg",
+      "out": "public/assets/sprites/resources/coal.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "coal"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.coal.mini",
+      "category": "resources",
+      "src": "art/src/resources/coal-mini.svg",
+      "out": "public/assets/sprites/resources/coal-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "coal",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.water",
+      "category": "resources",
+      "src": "art/src/resources/water.svg",
+      "out": "public/assets/sprites/resources/water.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "water"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.water.mini",
+      "category": "resources",
+      "src": "art/src/resources/water-mini.svg",
+      "out": "public/assets/sprites/resources/water-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "water",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.oil",
+      "category": "resources",
+      "src": "art/src/resources/oil.svg",
+      "out": "public/assets/sprites/resources/oil.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "oil"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.oil.mini",
+      "category": "resources",
+      "src": "art/src/resources/oil-mini.svg",
+      "out": "public/assets/sprites/resources/oil-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "oil",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.biogas",
+      "category": "resources",
+      "src": "art/src/resources/biogas.svg",
+      "out": "public/assets/sprites/resources/biogas.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "biogas"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.biogas.mini",
+      "category": "resources",
+      "src": "art/src/resources/biogas-mini.svg",
+      "out": "public/assets/sprites/resources/biogas-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "biogas",
+        "mini"
+      ],
+      "phase": "P0"
     }
   ]
 }
