@@ -2178,6 +2178,251 @@
         "logo"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "ui.panel-dark",
+      "category": "ui",
+      "src": "art/src/ui/panel-dark.svg",
+      "out": "public/assets/sprites/ui/panel-dark.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel-dark"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.panel-tooltip",
+      "category": "ui",
+      "src": "art/src/ui/panel-tooltip.svg",
+      "out": "public/assets/sprites/ui/panel-tooltip.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel-tooltip"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.card",
+      "category": "ui",
+      "src": "art/src/ui/card.svg",
+      "out": "public/assets/sprites/ui/card.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "card"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.bar-bg",
+      "category": "ui",
+      "src": "art/src/ui/bar-bg.svg",
+      "out": "public/assets/sprites/ui/bar-bg.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "bar-bg"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.toast",
+      "category": "ui",
+      "src": "art/src/ui/toast.svg",
+      "out": "public/assets/sprites/ui/toast.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "toast"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.tooltip-pointer",
+      "category": "ui",
+      "src": "art/src/ui/tooltip-pointer.svg",
+      "out": "public/assets/sprites/ui/tooltip-pointer.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "tooltip-pointer"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.progress-bg",
+      "category": "ui",
+      "src": "art/src/ui/progress-bg.svg",
+      "out": "public/assets/sprites/ui/progress-bg.png",
+      "viewBox": [
+        128,
+        32
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "progress-bg"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        14,
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "id": "ui.progress-fill",
+      "category": "ui",
+      "src": "art/src/ui/progress-fill.svg",
+      "out": "public/assets/sprites/ui/progress-fill.png",
+      "viewBox": [
+        128,
+        32
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "progress",
+        "engine-clipped"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        14,
+        12,
+        14,
+        12
+      ]
+    },
+    {
+      "id": "ui.ring-progress",
+      "category": "ui",
+      "src": "art/src/ui/ring-progress.svg",
+      "out": "public/assets/sprites/ui/ring-progress.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "track",
+        "progress-anchor"
+      ],
+      "tags": [
+        "ui",
+        "ring-progress"
+      ],
+      "phase": "P1",
+      "progress": {
+        "center": [
+          64,
+          64
+        ],
+        "radius": 42.5,
+        "startAngle": -90,
+        "clockwise": true,
+        "strokeWidth": 10
+      }
+    },
+    {
+      "id": "ui.icon-move",
+      "category": "ui",
+      "src": "art/src/ui/icon-move.svg",
+      "out": "public/assets/sprites/ui/icon-move.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-move"
+      ],
+      "phase": "P1"
     }
   ]
 }

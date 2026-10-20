@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 23, core: 52, logo: true, extras: 0, discoveries: 0, brand: false};
+const RELEASE = {resources: 23, core: 52, logo: true, extras: 10, discoveries: 0, brand: false};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;
@@ -201,6 +201,60 @@ if(RELEASE.logo){
   emit('brand.logo-mark','brand',group(logoMark(),'scale(4)','stroke-width="3"'),512);
   emit('brand.logo','brand',group(logoMark(),'translate(6 70) scale(3)','stroke-width="4"')+group(wordmark(),'translate(405 204)'),1024,512);
 }
+
+const extras=[];
+const addExtra=(...args)=>extras.push(()=>emit(...args));
+for(const [name,color] of [['panel-dark','space'],['panel-tooltip','cream'],['card','cream'],['bar-bg','paper'],['toast','cream']])
+  addExtra(`ui.${name}`,'ui',panel(color),192,192,'P1',nine);
+addExtra('ui.tooltip-pointer','ui',p('M10 12 H54 L35 48 Q32 53 29 48Z','paper')+p('M10 12 H54 L34 42 Q32 45 30 42Z','cream'),64,64,'P1',{anchor:[.5,0]});
+addExtra('ui.progress-bg','ui',rect(2,2,124,28,14,'paper')+rect(7,7,114,18,9,'rock-dark'),128,32,'P1',{anchor:null,sliceInsets:[14,12,14,12]});
+addExtra('ui.progress-fill','ui',rect(2,3,124,26,13,'grass')+shadow('M3 18 H125 Q125 29 113 29 H15 Q3 29 3 18Z','grass')+shine('M15 9 H111'),128,32,'P1',{anchor:null,sliceInsets:[14,12,14,12],parts:[],tags:['ui','progress','engine-clipped']});
+addExtra('ui.ring-progress','ui',`<g id="track">${circ(64,64,49,'paper')}${circ(64,64,36,'space')}</g><g id="progress-anchor"/>`,128,128,'P1',{parts:['track','progress-anchor'],progress:{center:[64,64],radius:42.5,startAngle:-90,clockwise:true,strokeWidth:10}});
+for(const id of ['move','launch','trade','peace','alliance','war','ultimatum','ping','chat','invite','sound-on','sound-off','help'])addExtra(`ui.icon-${id}`,'ui',action(id),128,128,'P1');
+addExtra('ui.avatar-frame','ui',p('M64 12 A52 52 0 1 1 63.9 12Z M64 24 A40 40 0 1 0 64.1 24Z','tint-white','fill-rule="evenodd"'),128,128,'P1',{tintable:true});
+addExtra('ui.crown-host','ui',p('M9 20 L22 29 L32 11 L42 29 L55 20 L49 49 H15Z','energy')+rect(15,45,34,9,3,'ascension')+circ(9,18,4,'cream')+circ(32,10,4,'cream')+circ(55,18,4,'cream'),64,64,'P1');
+for(const state of ['normal','locked','available']){
+  const token=state==='locked'?'rock':state==='available'?'crystal':'cream';
+  const outline='M55 12 Q64 7 73 12 L106 31 Q114 36 114 46 V83 Q114 92 106 97 L73 116 Q64 121 55 116 L22 97 Q14 92 14 83 V46 Q14 36 22 31Z';
+  const background=p(outline,token)+p('M55 22 Q64 17 73 22 L98 37 Q104 40 104 47 V82 Q104 86 98 90 L73 105 Q64 110 55 105 L30 90 Q24 86 24 82 V47 Q24 40 30 37Z',state==='locked'?'rock-dark':'cream',`stroke="${C(state==='locked'?'rock-dark':'crystal')}" stroke-width="4"`);
+  const deco=state==='locked'?group(rect(39,58,50,40,8,'rock')+p('M48 58 V45 A16 16 0 0 1 80 45 V58',null,'stroke-width="7"')+circ(64,75,5,'ink'),'translate(16 16) scale(0.7)'):state==='available'?star(101,24,13,'energy')+star(25,100,9,'crystal'):'';
+  addExtra(`ui.discovery-badge${state==='normal'?'':'-'+state}`,'ui',background+deco,128,128,'P1');
+}
+for(const generate of extras.slice(0,RELEASE.extras))generate();
+
+const discoveryIds=['diplomacy','ecology','space-mining','pure-science','deep-drilling','efficient-housing','green-thumb','rocketry','long-range-sight','trade-routes','recycling','fortification','crystal-lore','atomic-power','automation','cartography','medicine','festival','weather-control','terraforming','survival-kits','storage-tech','energy-grid','swift-feet'];
+const sprout = () => p('M64 109 V54',null,'stroke-width="5"')+p('M64 70 Q26 72 20 39 Q56 35 64 70Z','leaf')+p('M64 53 Q65 19 103 21 Q101 55 64 53Z','grass');
+const heart = () => p('M64 105 Q16 74 19 46 Q22 19 47 27 Q58 30 64 42 Q72 23 91 27 Q114 31 109 54 Q105 78 64 105Z','danger');
+function discovery(id){
+  switch(id){
+    case 'diplomacy':return paws();
+    case 'ecology':return group(leaf(),'translate(-10 -5) scale(0.9)')+group(resource('water'),'translate(55 47) scale(0.6)');
+    case 'space-mining':return p('M58 37 L91 26 L112 51 L101 91 L70 112 L43 95 L37 66Z','rock')+group(p('M32 102 L82 27',null,'stroke-width="13"')+p('M22 49 Q38 12 78 19 Q100 23 110 43 Q65 27 22 49Z','science'),'translate(-9 -4)');
+    case 'pure-science':return group(resource('science'),'translate(-6 6) scale(0.9)')+star(93,32,23,'energy');
+    case 'deep-drilling':return rect(43,15,43,23,7,'clay')+p('M48 38 H81 L79 93 L64 114 L49 93Z','rock')+p('M48 49 L81 41 M48 66 L80 58 M49 83 L79 75 M54 100 L77 92',null,'stroke-width="6"')+shine('M52 23 H72');
+    case 'efficient-housing':return group(house(),'translate(-6 4) scale(0.9)')+circ(95,91,24,'ok')+group(plus(),'translate(65 61) scale(0.5)');
+    case 'green-thumb':return p('M19 100 L17 79 Q18 71 26 75 L38 83 H65 L82 71 Q93 63 98 71 Q107 69 111 77 Q115 83 106 90 L82 107 Q74 112 62 111 L40 108 L31 115Z','clay')+group(sprout(),'translate(28 -2) scale(0.6)');
+    case 'rocketry':return ellipse(64,76,53,22,'space','fill-opacity="0"')+group(rocket(),'translate(14 -3) scale(0.8)')+p('M16 89 Q29 100 56 100',null,`stroke="${C('science')}" stroke-width="5"`)+star(106,24,8,'energy');
+    case 'long-range-sight':return p('M56 78 L37 112 M64 77 L81 113',null,'stroke-width="8"')+p('M26 54 L88 19 L108 50 L47 87Z','science')+ellipse(98,35,12,18,'snow','transform="rotate(-32 98 35)"')+p('M22 60 L32 76 L18 85 L10 72Z','rock')+shine('M43 53 L76 34');
+    case 'trade-routes':return action('trade');
+    case 'recycling':return group(crate(),'translate(31 31) scale(0.5)')+p('M25 58 Q24 26 56 21 L56 13 L78 29 L57 43 V34 Q37 38 38 58Z','leaf')+p('M80 33 Q111 47 106 76 L115 78 L95 95 L80 72 L90 74 Q94 56 77 47Z','leaf')+p('M86 101 Q62 121 36 103 L30 111 L26 85 L51 88 L44 95 Q61 106 78 91Z','leaf');
+    case 'fortification':return p('M16 106 V31 H34 V46 H48 V31 H65 V46 H79 V31 H96 V106Z','rock')+detail('M17 71 H62 M37 71 V91 M17 91 H62')+group(shield(),'translate(53 42) scale(0.6)');
+    case 'crystal-lore':return resource('aetherite')+star(22,91,13,'energy');
+    case 'atomic-power':return [0,60,120].map(n=>ellipse(64,64,49,19,'uranium',`fill-opacity="0" transform="rotate(${n} 64 64)"`)).join('')+circ(64,64,12,'uranium')+circ(113,64,6,'cream')+circ(40,22,6,'uranium')+circ(40,106,6,'uranium');
+    case 'automation':return group(gear(),'translate(-2 49) scale(0.6)')+p('M61 95 L79 72 L65 51 L80 26',null,'stroke-width="14"')+circ(79,72,10,'clay')+circ(65,51,10,'rock')+p('M71 24 L75 13 L88 21 L100 18 L108 31 L94 41',null,'stroke-width="8"');
+    case 'cartography':return p('M15 31 L46 17 L81 32 L113 18 V98 L81 112 L46 98 L15 113Z','paper')+p('M46 17 V98 M81 32 V112',null)+p('M26 80 Q31 46 57 57 Q75 69 97 45',null,`stroke="${C('clay')}" stroke-width="5" stroke-dasharray="3 10"`)+star(96,44,10,'science');
+    case 'medicine':return group(rect(18,44,94,38,13,'paper')+rect(48,44,35,38,5,'clay')+[31,98].map(x=>circ(x,63,3,'rock-dark')).join(''),'rotate(-35 64 64)')+group(heart(),'translate(61 -4) scale(0.5)');
+    case 'festival':return p('M15 35 Q64 69 113 35',null,'stroke-width="5"')+p('M17 38 L45 49 L25 77Z','clay')+p('M48 51 H77 L64 83Z','energy')+p('M81 49 L110 38 L101 77Z','science')+star(28,100,10,'crystal')+star(93,100,10,'ascension');
+    case 'weather-control':return [0,45,90,135].map(n=>group(p('M68 13 V22 M68 79 V88',null,`stroke="${C('ascension')}" stroke-width="6"`),`rotate(${n} 68 50)`)).join('')+circ(68,50,25,'energy')+p('M25 105 Q9 103 15 87 Q16 78 30 76 Q31 56 52 58 Q67 57 73 73 Q96 63 104 83 Q119 85 114 99 Q110 109 95 107Z','snow');
+    case 'terraforming':return group(planet(),'translate(-4 27) scale(0.8)')+group(sprout(),'translate(49 -3) scale(0.6)');
+    case 'survival-kits':return p('M64 16 Q94 20 101 55 L107 94 Q109 110 94 112 H35 Q20 110 22 94 L28 55 Q34 20 64 16Z','paper')+rect(39,37,50,40,16,'science')+p('M44 92 H84',null,'stroke-width="8"')+shine('M48 48 L60 44')+p('M22 94 L14 107 M106 94 L114 107',null,'stroke-width="7"');
+    case 'storage-tech':return group(crate(),'translate(-2 57) scale(0.6)')+group(crate(),'translate(58 57) scale(0.6)')+group(crate(),'translate(28 1) scale(0.6)');
+    case 'energy-grid':return p('M26 24 L104 64 L26 104Z',null,'stroke-width="5"')+circ(26,24,14,'science')+circ(104,64,14,'science')+circ(26,104,14,'science')+group(bolt(),'translate(26 20) scale(0.7)');
+    case 'swift-feet':return p('M61 67 Q78 32 115 24 L100 53 L83 63 L107 54 Q98 81 80 83 L95 81 Q89 99 65 94Z','snow')+group(paw('clay'),'translate(-4 21) scale(0.8)')+detail('M95 42 L77 62');
+    default:throw new Error(`Unknown discovery ${id}`);
+  }
+}
+for(const id of discoveryIds.slice(0,RELEASE.discoveries))emit(`discovery.${id}`,'discoveries',group(discovery(id),'translate(13 13) scale(0.8)','stroke-width="3.8"'),128,128,'P1',{tags:['discoveries',id,'overlay-on-ui.discovery-badge']});
 
 write('art/manifest/ui.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`UI art: ${assets.length} ids generated.`);
