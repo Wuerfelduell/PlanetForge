@@ -1,6 +1,8 @@
 import { Application } from "pixi.js";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
+import { OnlineMenu } from "./net/menu";
+import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
 import { Ui } from "./ui/ui";
 import "./style.css";
@@ -32,12 +34,31 @@ async function boot(): Promise<void> {
     newGame() {
       clearSave();
       const speed = session.speed;
+      leaveOnline();
       session = LocalSession.newGame();
       session.speed = speed;
       view.select(0);
       ui.render(session.state);
     },
   });
+
+  // Cloud games (coop and solo saves): the server is the authority, nothing is saved locally.
+  const online = new OnlineMenu({
+    play(next) {
+      if (session instanceof LocalSession) saveGame(session.state);
+      next.onError = (message) => ui.toast(message, "warn");
+      session = next;
+      view.select(0);
+      ui.render(session.state);
+    },
+  });
+  const leaveOnline = () => {
+    if (session instanceof NetworkSession) void session.close();
+    online.setCurrent(null);
+  };
+  const saveLocal = () => {
+    if (session instanceof LocalSession) saveGame(session.state);
+  };
 
   const view = new PlanetView(app, session.state.planets[0]!.segments.length, (index) => {
     ui.setSelected(index);
@@ -60,7 +81,7 @@ async function boot(): Promise<void> {
   app.ticker.add((ticker) => {
     const events = session.update(ticker.deltaMS);
     if (events.length) ui.showEvents(events);
-    if (events.some((e) => e.type === "cycle")) saveGame(session.state);
+    if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
     if (uiTimer > 200) {
@@ -69,9 +90,9 @@ async function boot(): Promise<void> {
     }
   });
 
-  window.addEventListener("pagehide", () => saveGame(session.state));
+  window.addEventListener("pagehide", saveLocal);
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") saveGame(session.state);
+    if (document.visibilityState === "hidden") saveLocal();
   });
 }
 

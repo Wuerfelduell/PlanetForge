@@ -1,0 +1,6 @@
+{
+  // Typecheck for the Edge Function logic: same no-DOM rules as the simulation it bundles.
+  // index.ts (Deno globals, jsr: imports) is checked by Deno at deploy time.
+  "extends": "./tsconfig.sim.json",
+  "include": ["src/sim", "supabase/functions/game-command/logic.ts"]
+}
