@@ -1669,6 +1669,216 @@
         "icon-info"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "ui.icon-close",
+      "category": "ui",
+      "src": "art/src/ui/icon-close.svg",
+      "out": "public/assets/sprites/ui/icon-close.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-close"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-back",
+      "category": "ui",
+      "src": "art/src/ui/icon-back.svg",
+      "out": "public/assets/sprites/ui/icon-back.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-back"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-confirm",
+      "category": "ui",
+      "src": "art/src/ui/icon-confirm.svg",
+      "out": "public/assets/sprites/ui/icon-confirm.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-confirm"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-cancel",
+      "category": "ui",
+      "src": "art/src/ui/icon-cancel.svg",
+      "out": "public/assets/sprites/ui/icon-cancel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-cancel"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-rotate-left",
+      "category": "ui",
+      "src": "art/src/ui/icon-rotate-left.svg",
+      "out": "public/assets/sprites/ui/icon-rotate-left.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rotate-left"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-rotate-right",
+      "category": "ui",
+      "src": "art/src/ui/icon-rotate-right.svg",
+      "out": "public/assets/sprites/ui/icon-rotate-right.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rotate-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-pause",
+      "category": "ui",
+      "src": "art/src/ui/icon-pause.svg",
+      "out": "public/assets/sprites/ui/icon-pause.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-pause"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-1",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-1.svg",
+      "out": "public/assets/sprites/ui/icon-speed-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-2",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-2.svg",
+      "out": "public/assets/sprites/ui/icon-speed-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-speed-3",
+      "category": "ui",
+      "src": "art/src/ui/icon-speed-3.svg",
+      "out": "public/assets/sprites/ui/icon-speed-3.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-speed-3"
+      ],
+      "phase": "P0"
     }
   ]
 }
