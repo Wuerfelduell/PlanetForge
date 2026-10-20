@@ -23,7 +23,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            scripts/assets/package-lock.json
       - run: npm ci
+      # Original art: SVGs -> PixiJS atlases in public/assets (generated, not committed).
+      - run: npm --prefix scripts/assets ci
+      - run: npm --prefix scripts/assets run assets:gen
+      - run: npm --prefix scripts/assets run assets:build
+      # The game only needs the atlases plus the resource and building icons for the HTML UI.
+      - run: find public/assets/sprites -mindepth 1 -maxdepth 1 ! -name resources ! -name buildings -exec rm -rf {} +
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

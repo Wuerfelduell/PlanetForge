@@ -25,10 +25,12 @@ import {
   type Command,
   type GameState,
   type ResourceId,
+  type BuildingId,
   type GameEvent,
   type PlanetState,
 } from "../sim";
 import { currentHint } from "./hints";
+import { buildingIconUrl, resourceIconUrl } from "../render/art";
 
 export interface UiActions {
   send(cmd: Command): void;
@@ -57,6 +59,17 @@ export class Ui {
     for (const root of [this.hud, this.panel]) {
       root.addEventListener("pointerup", (e) => this.onAction(e));
     }
+  }
+
+  /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
+  art = false;
+
+  private res(resource: ResourceId): string {
+    return this.art ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
+  }
+
+  private bicon(building: BuildingId): string {
+    return this.art ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
   }
 
   /** The local player, whose people the +/- buttons move. */
@@ -224,7 +237,7 @@ export class Ui {
     if (!economy) return "";
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
     const chips = shown
-      .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${RESOURCES[r].icon} ${Math.floor(economy.resources[r])}</span>`)
+      .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${this.res(r)} ${Math.floor(economy.resources[r])}</span>`)
       .join("");
     const ascension = economy.ascension;
     const lvl = ascension.level;
@@ -315,7 +328,7 @@ export class Ui {
             const blocker = launchBlocker(state, this.playerId, planet, to, rocket, count);
             const economy = economyOf(state, planet)!;
             const cost = Object.entries(plan.cost)
-              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
+              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
               .join(" ");
             const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
             return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
@@ -337,7 +350,7 @@ export class Ui {
     }
     const biome = BIOMES[s.biome];
     const def = s.building ? BUILDINGS[s.building] : null;
-    const title = def ? `${def.icon} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
+    const title = def ? `${this.bicon(s.building!)} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index));
     const deposits = s.deposits
@@ -346,13 +359,13 @@ export class Ui {
         const active = output[d.resource] ? " active" : "";
         const tag = d.byHand ? "" : `<small>Mine</small>`;
         const selectable = !def && d.byHand;
-        return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${RESOURCES[d.resource].icon} ${amount} ${tag}</button>`;
+        return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
       })
       .join("");
 
     const cap = workerCapacity(s);
     const rate = Object.entries(output)
-      .map(([r, v]) => `+${(v as number).toFixed(1)} ${RESOURCES[r as ResourceId].icon}/s`)
+      .map(([r, v]) => `+${(v as number).toFixed(1)} ${this.res(r as ResourceId)}/s`)
       .join(" ");
     const mult = adjacencyMultiplier(planet, s);
     const workers = cap
@@ -380,12 +393,12 @@ export class Ui {
           const blocker = buildBlocker(state, planet, s, b);
           const locked = economy.ascension.level < bd.unlockLevel;
           const cost = Object.entries(bd.cost)
-            .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
+            .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
             .join(" ");
           // Missing resources only: offer to queue the build instead of greying it out.
           const queueable = blocker === NOT_AFFORDABLE && !queued;
           return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${bd.description}">
-              <span class="icon">${locked ? "🔒" : bd.icon}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
+              <span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
         .join("")}</div>`;

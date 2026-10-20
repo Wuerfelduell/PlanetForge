@@ -5,6 +5,7 @@ import { clearSave, loadGame, saveGame } from "./client/save";
 import { OnlineMenu } from "./net/menu";
 import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
+import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
 import "./style.css";
 
@@ -108,6 +109,14 @@ async function boot(): Promise<void> {
   resize.observe(document.getElementById("hud")!);
   ui.render(session.state);
   relayout();
+
+  // The art loads in the background; until then (or without a built atlas) placeholders are shown.
+  void loadArt().then((ok) => {
+    if (!ok) return;
+    ui.art = true;
+    view.invalidate();
+    ui.render(session.state);
+  });
 
   let uiTimer = 0;
   app.ticker.add((ticker) => {

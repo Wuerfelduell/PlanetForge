@@ -152,3 +152,10 @@ button:not(:disabled):active { transform: scale(0.96); }
 .target .build { min-width: 128px; }
 .target .build .cost .short { color: var(--bad); }
 button.chip { font: inherit; cursor: pointer; }
+
+img.ri { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+img.bi { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
+.build .icon img.bi { width: 40px; height: 40px; }
+
+/* The hidden attribute must win over display rules of overlays (e.g. the online menu). */
+[hidden] { display: none !important; }
