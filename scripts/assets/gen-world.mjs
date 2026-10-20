@@ -288,6 +288,10 @@ function spaceBackground() {
   return `<defs><linearGradient id="space-bg" x2="0" y2="1"><stop stop-color="${C('space-deep')}"/><stop offset="1" stop-color="${C('space')}"/></linearGradient></defs>${group('background', '<path d="M 0 0 H 1024 V 2048 H 0 Z" fill="url(#space-bg)" stroke="none"/>')}`;
 }
 
+function sightRadius() {
+  return `<defs><radialGradient id="sight"><stop offset="88%" stop-color="${C('science')}" stop-opacity="0"/><stop offset="91%" stop-color="${C('science')}" stop-opacity="0.1"/><stop offset="93%" stop-color="${C('science')}" stop-opacity="0.6"/><stop offset="1" stop-color="${C('science')}" stop-opacity="0"/></radialGradient></defs>${group('edge', circle(512, 512, 496, 'url(#sight)', 'stroke="none"') + circle(512, 512, 460, 'none', `stroke="${C('science')}" stroke-width="2" opacity="0.5"`))}`;
+}
+
 // Each biome exports one reusable north-facing sector per planet size.
 for (const biome of biomes) for (const n of sizes) {
   add(`biome.${biome}.wedge.${n}`, 'biomes', `${biome}-wedge-${n}`, wedge(biome, n), 1024, 1024, 'P0', [.5, .5], ['ground'], [biome, 'wedge', `segments-${n}`]);
@@ -313,5 +317,9 @@ add('space.sun-corona', 'space', 'sun-corona', corona(), 1024, 1024, 'P1', [.5, 
 ['a', 'b', 'c', 'd', 'rich'].forEach((name, i) => add(`space.asteroid-${name}`, 'space', `asteroid-${name}`, asteroid(i), 256, 256, 'P1', [.5, .5], ['asteroid'], ['star-map']));
 for (let i = 0; i < 2; i++) add(`space.nebula-${i ? 'b' : 'a'}`, 'space', `nebula-${i ? 'b' : 'a'}`, nebula(i), 1024, 1024, 'P1', [.5, .5], ['nebula'], ['background']);
 add('space.bg-space', 'space', 'bg-space', spaceBackground(), 1024, 2048, 'P1', [.5, .5], ['background']);
+add('space.orbit-dash', 'space', 'orbit-dash', group('dash', path('M 8 4 H 24 M 40 4 H 56', 'none', `stroke="${C('cream')}" stroke-width="2" opacity="0.5"`)), 64, 8, 'P1', [.5, .5], ['dash'], ['star-map', 'tileable']);
+add('space.sight-radius-edge', 'space', 'sight-radius-edge', sightRadius(), 1024, 1024, 'P1', [.5, .5], ['edge'], ['star-map']);
+add('space.travel-path-dot', 'space', 'travel-path-dot', group('dot', circle(32, 32, 8, C('cream'), 'stroke-width="1.5"') + circle(30, 30, 2, C('tint-white'), 'stroke="none"')), 64, 64, 'P1', [.5, .5], ['dot'], ['star-map']);
+add('space.waypoint', 'space', 'waypoint', group('waypoint', path('M 64 14 Q 69 14 72 23 L 83 45 L 105 56 Q 119 64 105 72 L 83 83 L 72 105 Q 64 119 56 105 L 45 83 L 23 72 Q 9 64 23 56 L 45 45 L 56 23 Q 59 14 64 14 Z', C('cream')) + circle(64, 64, 15, C('science')) + path('M 58 55 Q 61 51 66 52', 'none', `stroke="${C('snow')}" stroke-width="3"`)), 128, 128, 'P1', [.5, .5], ['waypoint'], ['star-map']);
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`World: ${assets.length} SVG masters generated.`);
