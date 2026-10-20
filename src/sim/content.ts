@@ -118,7 +118,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab"] as const;
+export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab", "launchpad", "watchtower"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -138,6 +138,8 @@ export interface BuildingDef {
   extracts?: { resources: readonly ResourceId[]; perWorker: number };
   /** +bonus multiplier for each neighboring segment of the given biome. */
   adjacency?: { biome: BiomeId; bonus: number };
+  /** Added to the defenders' battle rolls on this planet (counted up to RULES.maxTowerBonus). */
+  defense?: number;
 }
 
 const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"];
@@ -195,6 +197,70 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     allowedBiomes: LAND,
     workers: 2,
     produces: { resource: "science", perWorker: 0.2 },
+  },
+  launchpad: {
+    name: "Startrampe",
+    icon: "🚀",
+    description: "Schickt Raketen mit Einwohnern zu anderen Planeten.",
+    cost: { wood: 25, stone: 15 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 0,
+  },
+  watchtower: {
+    name: "Wachturm",
+    icon: "🗼",
+    description: "+1 auf die Würfe der Verteidiger dieses Planeten.",
+    cost: { wood: 10, stone: 20 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 0,
+    defense: 1,
+  },
+};
+
+export interface RocketDef {
+  name: string;
+  icon: string;
+  /** Paid on every launch; the rocket is used up on landing. */
+  cost: Partial<Record<ResourceId, number>>;
+  unlockLevel: number;
+  capacity: number;
+  /** Fuel = ceil(distance × (perDistance + perPassenger × passengers)). */
+  fuel: { resource: ResourceId; perDistance: number; perPassenger: number };
+  secondsPerDistance: number;
+  maxRange: number;
+  versusOnly?: boolean;
+}
+
+/**
+ * Rockets (numbers after src/data/balance SPACE). Fuel is wood for now: oil is not on every
+ * versus start planet and there is no trade yet, and nobody may be locked out of flying.
+ */
+export const ROCKET_IDS = ["colony", "combat"] as const;
+export type RocketId = (typeof ROCKET_IDS)[number];
+
+export const ROCKETS: Record<RocketId, RocketDef> = {
+  colony: {
+    name: "Siedlerrakete",
+    icon: "🚀",
+    cost: { wood: 15, stone: 10 },
+    unlockLevel: 2,
+    capacity: 3,
+    fuel: { resource: "wood", perDistance: 1.5, perPassenger: 1 },
+    secondsPerDistance: 3,
+    maxRange: 16,
+  },
+  combat: {
+    name: "Kampfrakete",
+    icon: "⚔️",
+    cost: { iron: 20, wood: 20, stone: 15 },
+    unlockLevel: 3,
+    capacity: 4,
+    fuel: { resource: "wood", perDistance: 2, perPassenger: 1.5 },
+    secondsPerDistance: 4,
+    maxRange: 16,
+    versusOnly: true,
   },
 };
 
@@ -291,4 +357,14 @@ export const RULES = {
   /** Cumulative ascension points needed for level 1, 2, 3, … */
   ascensionThresholds: [15, 50, 120, 250, 450, 750, 1200, 1800, 2600, 3600],
   startResources: { food: 20, wood: 10 } as Partial<Record<ResourceId, number>>,
+  /** A fresh colony reveals this far around its landing site. */
+  colonyRevealRadius: 1,
+  battleDie: 6,
+  /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
+  homeAdvantage: 1,
+  maxTowerBonus: 2,
+  /** versus: captives count for their original owner for this many cycles, then join the captor. */
+  captiveAssimilationCycles: 10,
+  /** versus: after this many cycles without a battle the game offers a draw. */
+  drawOfferCycles: 300,
 } as const;

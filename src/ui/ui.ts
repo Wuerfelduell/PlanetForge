@@ -6,14 +6,19 @@ import {
   BUILDINGS,
   cycleOf,
   housing,
+  flightPlan,
   idleUnits,
+  launchBlocker,
   NOT_AFFORDABLE,
+  ROCKETS,
+  type RocketId,
   population,
   workerCount,
   economyOf,
   nextLevelThreshold,
   RESOURCE_IDS,
   RESOURCES,
+  RULES,
   segmentOutput,
   ticksPerCycle,
   workerCapacity,
@@ -27,6 +32,8 @@ import { currentHint } from "./hints";
 
 export interface UiActions {
   send(cmd: Command): void;
+  /** Shows another planet on the wheel. */
+  showPlanet(planetId: string): void;
   setSpeed(speed: number): void;
   newGame(): void;
 }
@@ -99,6 +106,42 @@ export class Ui {
         case "removed":
           this.toast(`👋 ${e.playerId === this.playerId ? "Du wurdest" : "Ein Spieler wurde"} aus dem Spiel entfernt`, "warn");
           break;
+        case "launched": {
+          const to = this.planetName(e.to);
+          if (e.playerId === this.playerId) this.toast(`${ROCKETS[e.rocket].icon} Rakete nach ${to} gestartet`);
+          else if (this.isMine(e.to)) this.toast(`⚠️ ${this.playerName(e.playerId)} greift ${to} an! Freie Einwohner verteidigen.`, "bad");
+          break;
+        }
+        case "landed":
+          if (e.playerId === this.playerId) this.toast(e.colonized ? `🚩 Kolonie auf ${this.planetName(e.planetId)} gegründet` : `🚀 ${e.count} Einwohner auf ${this.planetName(e.planetId)} gelandet`, "good");
+          break;
+        case "battle": {
+          const where = this.planetName(e.planetId);
+          if (e.attacker === this.playerId) {
+            this.toast(e.won ? `⚔️ ${where} erobert! ${e.captured} Gefangene` : `⚔️ Angriff auf ${where} gescheitert`, e.won ? "good" : "bad");
+          } else if (e.defender === this.playerId) {
+            this.toast(e.won ? `💥 ${where} ist verloren` : `🛡️ ${where} gehalten, ${e.attackerLosses} Angreifer besiegt`, e.won ? "bad" : "good");
+          }
+          break;
+        }
+        case "assimilated":
+          if (e.playerId === this.playerId) this.toast(`🤝 ${e.count} Gefangene gehören jetzt zu deinem Volk`);
+          break;
+        case "eliminated":
+          this.toast(e.playerId === this.playerId ? "💀 Dein Volk ist ausgelöscht" : `💀 ${this.playerName(e.playerId)} ist ausgeschieden`, e.playerId === this.playerId ? "bad" : "info");
+          break;
+        case "surrendered":
+          if (e.playerId !== this.playerId) this.toast(`🏳️ ${this.playerName(e.playerId)} gibt auf`);
+          break;
+        case "drawOffer":
+          if (e.playerId !== this.playerId && e.offer) this.toast(`🤝 ${this.playerName(e.playerId)} bietet Unentschieden an`);
+          break;
+        case "drawSuggested":
+          this.toast("🤝 Lange kein Kampf mehr. Ihr könnt euch auf Unentschieden einigen.");
+          break;
+        case "gameOver":
+          this.toast("draw" in e.result ? "🤝 Unentschieden" : e.result.winner === this.playerId ? "🏆 Du hast gewonnen!" : `🏁 ${this.playerName(e.result.winner)} hat gewonnen`, "good");
+          break;
         case "cycle":
         case "built":
         case "demolished":
@@ -140,6 +183,25 @@ export class Ui {
       case "demolish":
         this.actions.send({ type: "demolish", ...at });
         break;
+      case "launch": {
+        const [to, rocket, count] = value!.split(":");
+        this.actions.send({ type: "launch", planetId: this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
+        break;
+      }
+      case "planet": {
+        const own = this.ownPlanets();
+        const next = own[(own.findIndex((p) => p.id === this.planetId) + 1) % own.length];
+        if (next) this.actions.showPlanet(next.id);
+        break;
+      }
+      case "draw": {
+        const me = this.state?.players.find((p) => p.id === this.playerId);
+        this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
+        break;
+      }
+      case "surrender":
+        if (confirm("Wirklich aufgeben? Dein Volk verschwindet.")) this.actions.send({ type: "surrender" });
+        break;
       case "gather":
         this.actions.send({ type: "setGather", ...at, resource: value as ResourceId });
         break;
@@ -170,14 +232,88 @@ export class Ui {
     const speeds = [0, 1, 3]
       .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
       .join("");
+    const own = this.ownPlanets();
+    const planetChip =
+      own.length > 1
+        ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
+        : `<span class="chip" title="Planet">🪐 ${planet.name}</span>`;
+    const me = state.players.find((p) => p.id === this.playerId);
+    const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
+    const versusButtons = duel
+      ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
+      : "";
     return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
+      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
       <div class="row status">
-        <span class="chip" title="Planet">🪐 ${planet.name}</span>
+        ${planetChip}
         <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(state, planet)}/${housing(state, planet)} <small>(${idleUnits(state, planet, this.playerId).length} frei)</small></span>
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>`;
+      </div>${this.renderFlights(state)}`;
+  }
+
+  /** Own rockets and attacks on own planets, with time to arrival. */
+  private renderFlights(state: GameState): string {
+    const chips: string[] = [];
+    const result = state.result;
+    if (result) {
+      const text = "draw" in result ? "🤝 Unentschieden" : result.winner === this.playerId ? "🏆 Gewonnen!" : `🏁 ${this.playerName(result.winner)} hat gewonnen`;
+      chips.push(`<span class="chip">${text}</span>`);
+    } else if (state.players.find((p) => p.id === this.playerId)?.eliminated) {
+      chips.push(`<span class="chip bad">💀 Ausgeschieden</span>`);
+    }
+    for (const f of state.flights) {
+      const seconds = Math.ceil((f.arrivalTick - state.tick) / RULES.ticksPerSecond);
+      if (f.owner === this.playerId) chips.push(`<span class="chip">${ROCKETS[f.rocket].icon} ${this.planetName(f.to)} <small>${f.units.length}👤 ${seconds} s</small></span>`);
+      else if (this.isMine(f.to)) chips.push(`<span class="chip bad">⚠️ ${this.planetName(f.to)} <small>${f.units.length} Angreifer ${seconds} s</small></span>`);
+    }
+    return chips.length ? `<div class="row status">${chips.join("")}</div>` : "";
+  }
+
+  private ownPlanets(): PlanetState[] {
+    const state = this.state;
+    const me = state?.players.find((p) => p.id === this.playerId);
+    return state && me ? state.planets.filter((p) => p.economyId === me.economyId) : [];
+  }
+
+  private isMine(planetId: string): boolean {
+    return this.ownPlanets().some((p) => p.id === planetId);
+  }
+
+  private planetName(planetId: string): string {
+    return this.state?.planets.find((p) => p.id === planetId)?.name ?? "?";
+  }
+
+  private playerName(playerId: string): string {
+    return this.state?.players.find((p) => p.id === playerId)?.name ?? "Mitspieler";
+  }
+
+  /** Launch pad: one row per reachable planet with the rockets that can go there. */
+  private renderLaunches(state: GameState, planet: PlanetState): string {
+    const idle = idleUnits(state, planet, this.playerId).length;
+    const me = state.players.find((p) => p.id === this.playerId);
+    const rows = state.planets
+      .filter((p) => p.id !== planet.id)
+      .map((to) => {
+        const status = to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
+        const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
+        const buttons = rockets
+          .map((rocket) => {
+            const count = Math.max(1, Math.min(ROCKETS[rocket].capacity, idle));
+            const plan = flightPlan(planet, to, rocket, count);
+            const blocker = launchBlocker(state, this.playerId, planet, to, rocket, count);
+            const economy = economyOf(state, planet)!;
+            const cost = Object.entries(plan.cost)
+              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${RESOURCES[r as ResourceId].icon}${v}</span>`)
+              .join(" ");
+            const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
+            return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
+          })
+          .join("");
+        return `<div class="target"><span>🪐 ${to.name} <small>${status} · ${to.segments.length} Felder</small></span>${buttons}</div>`;
+      })
+      .join("");
+    return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>`;
   }
 
   private renderPanel(state: GameState, planet: PlanetState): string {
@@ -224,7 +360,8 @@ export class Ui {
       : "";
     let actions = "";
     if (def) {
-      actions = `<p class="muted">${def.description}</p><button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
+      const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>`;
+      actions = `${info}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
       actions = `<div class="builds">${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
         .map((b) => {

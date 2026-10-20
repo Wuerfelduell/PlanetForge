@@ -23,5 +23,6 @@ export function currentHint(state: GameState, planet: PlanetState, playerId: str
   if (population(state, planet) >= housing(state, planet)) return "Alle Häuser sind voll. Eine weitere Hütte bringt mehr Einwohner.";
   if (economy.ascension.level === 0) return "Jeder Planetenumlauf bringt Aufstiegspunkte je Einwohner. Stufe 1 schaltet Mine und Pumpe frei.";
   if (economy.ascension.level === 1) return "Mit Minen förderst du auch Eisen. Stufe 2 schaltet das Labor frei.";
+  if (!planet.segments.some((s) => s.building === "launchpad")) return "Bau eine Startrampe: damit schickst du Einwohner zu freien Planeten und gründest Kolonien.";
   return "Bau ein Labor und sammle Wissen. Weitere Systeme folgen.";
 }
