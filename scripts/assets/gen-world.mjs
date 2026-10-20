@@ -106,10 +106,54 @@ function prop(biome, variant) {
     b += path('M 25 84 Q 63 91 105 80 Q 106 88 68 93 Q 39 94 25 87 Z', C('crystal', -.18), 'stroke="none"');
     b += ellipse(47, 57, 10, 7, C('cream'), 'stroke="none"') + ellipse(78, 63, 7, 5, C('cream'), 'stroke="none"');
   }
+  if (biome === 'savanna' && variant < 2) {
+    b += trunk(64, 84, 10);
+    b += treetop(43, 91, 24, 24, 'moss') + treetop(83, 90, 25, 26, 'leaf') + treetop(61, variant ? 70 : 79, 26, 25, 'grass');
+    for (const [x, y] of [[39, 91], [50, 95], [65, 78], [78, 94], [88, 91]]) {
+      b += circle(x, y, 5, C(variant ? 'ascension' : 'clay')) + circle(x - 1, y - 2, 1.5, C('sand'), 'stroke="none"');
+    }
+  }
+  if (biome === 'savanna' && variant === 2) {
+    b += path('M 54 118.5 L 59 79 L 39 60 L 47 56 L 66 72 L 79 51 L 86 56 L 70 81 L 73 118.5 Z', C('clay'));
+    b += treetop(40, 48, 25, 17, 'moss') + treetop(85, 43, 29, 19, 'moss') + treetop(61, 35, 29, 19, 'grass');
+  }
+  if (biome === 'desert' && variant < 2) {
+    const s = variant ? 12 : 0;
+    b += path(`M 54 118.5 L 54 83 L 38 83 Q 27 83 27 71 L 27 ${55 + s} Q 27 ${43 + s} 39 ${47 + s} Q 43 ${49 + s} 43 ${55 + s} L 43 68 L 54 68 L 54 39 Q 54 22 66 22 Q 79 22 79 39 L 79 82 L 89 82 L 89 65 Q 89 55 99 56 Q 107 57 107 67 L 107 88 Q 107 99 94 99 L 79 99 L 79 118.5 Z`, C('leaf'));
+    b += path('M 70 40 L 70 113 M 35 56 L 35 70 M 98 68 L 98 86', 'none', `stroke="${C('leaf', .18)}" stroke-width="3"`);
+    b += path('M 58 45 L 53 43 M 81 58 L 76 60 M 81 105 L 76 103', 'none', `stroke="${C('cream')}" stroke-width="2"`);
+    if (variant) b += circle(63, 25, 6, C('danger')) + circle(71, 25, 6, C('danger')) + circle(67, 21, 6, C('danger')) + circle(67, 27, 3, C('energy'), 'stroke="none"');
+  }
+  if (biome === 'desert' && variant === 2) {
+    b += path('M 13 115 Q 25 107 44 90 Q 65 71 82 86 Q 99 104 114 112 Q 120 118.5 109 118.5 L 20 118.5 Q 10 118 13 115 Z', C('sand'));
+    b += path('M 70 83 Q 73 102 107 116 L 52 116 Q 60 100 70 83 Z', C('sand', -.18), 'stroke="none"');
+    b += path('M 29 109 Q 49 90 61 89', 'none', `stroke="${C('sand', .18)}" stroke-width="4"`);
+  }
+  if (biome === 'tundra' && variant < 2) {
+    b += trunk(64, 79, 12);
+    const wide = variant ? 6 : 0;
+    b += path(`M ${24 - wide} 103 Q 43 81 42 79 L 32 79 Q 49 59 49 55 L 42 55 Q 59 34 60 23 Q 64 13 68 23 Q 72 40 86 55 L 79 55 Q 84 69 96 79 L 86 79 Q 92 91 ${104 + wide} 103 Q 64 117 ${24 - wide} 103 Z`, C('leaf'));
+    b += path('M 42 55 Q 59 34 60 23 Q 64 13 68 23 Q 72 40 86 55 Q 76 62 67 53 Q 56 64 42 55 Z', C('snow'));
+    b += path('M 32 79 L 42 66 Q 64 76 86 65 L 96 79 Q 80 90 65 79 Q 49 89 32 79 Z', C('snow'));
+    b += path(`M ${24 - wide} 103 L ${33 - wide} 92 Q 63 106 ${96 + wide} 92 L ${104 + wide} 103 Q 64 117 ${24 - wide} 103 Z`, C('snow'));
+  }
+  if (biome === 'tundra' && variant === 2) {
+    b += path('M 22 118.5 Q 14 115 19 101 L 32 77 Q 35 70 45 68 L 72 62 Q 82 61 89 71 L 111 102 Q 120 118.5 105 118.5 Z', C('snow'));
+    b += path('M 73 65 L 70 94 L 107 115 L 62 115 L 49 94 Z', C('snow', -.18), 'stroke="none"');
+    b += path('M 36 83 L 46 77 L 58 76 M 26 107 L 30 96', 'none', `stroke="${C('tint-white')}" stroke-width="4"`);
+  }
+  if (biome === 'crystal') {
+    b += ellipse(64, 111, 41, 7, C('crystal'), 'stroke="none" opacity="0.2"');
+    if (variant === 0) b += crystal(42, 116, 48, 24) + crystal(78, 116, 60, 27) + crystal(62, 116, 91, 30);
+    if (variant === 1) b += crystal(41, 116, 70, 26) + crystal(83, 116, 44, 31) + crystal(63, 116, 57, 27);
+    if (variant === 2) b += crystal(62, 116, 98, 43) + crystal(91, 117, 36, 21);
+    b += path('M 25 48 L 25 58 M 20 53 L 30 53 M 99 31 L 99 41 M 94 36 L 104 36', 'none', `stroke="${C('crystal', .18)}" stroke-width="3"`);
+  }
   return group('prop', b);
 }
 const propNames = {
   forest: ['tree-a', 'tree-b', 'tree-c'], mountains: ['peak-a', 'peak-b', 'peak-c'], ocean: ['wave-a', 'wave-b', 'buoy'], swamp: ['reed-a', 'reed-b', 'mushroom'],
+  savanna: ['bush-a', 'bush-b', 'acacia'], desert: ['cactus-a', 'cactus-b', 'dune'], tundra: ['pine-snow-a', 'pine-snow-b', 'ice-rock'], crystal: ['crystal-a', 'crystal-b', 'crystal-c'],
 };
 
 // Each biome exports one reusable north-facing sector per planet size.

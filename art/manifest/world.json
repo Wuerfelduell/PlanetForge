@@ -1043,6 +1043,282 @@
         "prop"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-a",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-a.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-b",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-b.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.acacia",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-acacia.svg",
+      "out": "public/assets/sprites/biomes/savanna-acacia.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune.svg",
+      "out": "public/assets/sprites/biomes/desert-dune.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-a",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-a.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-b",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-b.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.ice-rock",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-ice-rock.svg",
+      "out": "public/assets/sprites/biomes/tundra-ice-rock.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-a",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-a.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-b",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-b.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-c",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-c.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop"
+      ],
+      "phase": "P0"
     }
   ]
 }
