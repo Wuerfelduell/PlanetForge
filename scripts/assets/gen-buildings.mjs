@@ -73,11 +73,36 @@ function farm(tier){
     glint('M51 122Q49 89 76 84')+rect(108,153,41,71,'snow',10)+line('M128 164V213','science',4));
 }
 
+function foundry(tier){
+  const y=tier===1?82:51;
+  return foot(rect(158,y,37,130,'iron',9)+rect(150,y-8,53,19,'clay',7)+anchor('smoke-anchor',177,y-8)+
+    (tier===2?rect(57,100,34,119,'rock',9)+rect(51,93,46,17,'rock-dark',7):'')+
+    rect(51,147,154,78,'clay',22)+path('M186 157V202Q186 215 173 215H72','none',`stroke="${paint('iron')}" stroke-width="10"`)+
+    line('M64 171H88M174 176H194M161 112H190M161 133H190','iron',4)+
+    path('M88 223V193Q88 164 126 164Q164 164 164 193V223Z','coal')+
+    group('glow',path('M101 220Q96 202 111 190L123 201Q138 175 142 190Q160 214 149 220Z',state==='idle'?'ascension':'coal')+
+      path('M117 220Q110 210 127 201Q142 216 134 220Z',lit()))+
+    rect(87,219,79,8,'rock-dark',4)+glint(`M165 ${y+20}V${y+43}`));
+}
+
+function lab(tier){
+  const y=tier===1?133:114;
+  return foot(rect(53,y,150,94,'paper',28)+path(`M190 ${y+18}V204Q190 217 171 217H78`,'none',`stroke="${paint('paper',-.18)}" stroke-width="10"`)+
+    group('dome',path(`M46 ${y}Q47 ${y-67} 128 ${y-67}Q207 ${y-67} 210 ${y}Z`,'science')+
+      path(`M128 ${y-66}Q163 ${y-42} 159 ${y}`,'none',`stroke="${paint('deep-water')}" stroke-width="8"`)+
+      glint(`M61 ${y-16}Q66 ${y-43} 94 ${y-49}`)+rect(42,y-1,172,15,'rock',7))+
+    line(`M171 ${y-48}L193 ${y-84}`,'rock-dark',6)+group('antenna-light',circle(195,y-87,10,state==='idle'?'danger':'coal'))+
+    (tier===2?path('M61 153Q26 146 39 117L75 139Z','cream')+line('M59 154V180','rock-dark',7)+circle(41,125,5,'crystal'):'')+
+    windowPane(73,174,30,28)+windowPane(153,174,30,28)+door(113,184,30,41));
+}
+
 const buildings = [
   {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
   {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
-  {id:'farm',tiers:1,multi:true,phase:'P0',draw:farm},
+  {id:'farm',tiers:2,phase:'P0',draw:farm},
+  {id:'foundry',tiers:2,phase:'P0',parts:['glow','smoke-anchor'],draw:foundry},
+  {id:'lab',tiers:1,multi:true,phase:'P0',parts:['dome','antenna-light'],draw:lab},
 ];
 
 function scaffolding(){
