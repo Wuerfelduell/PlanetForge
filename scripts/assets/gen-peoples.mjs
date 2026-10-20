@@ -19,6 +19,8 @@ const defs=[
  {id:'starowls',animal:'owl',color:'science',fur:'rock-dark',gear:'goggles',ears:'tufts',tail:'taper',body:'round',biome:'mountains',phase:'P1'},
  {id:'tideotters',animal:'otter',color:'water',fur:'iron',gear:'vest',ears:'small',tail:'taper',body:'pear',biome:'ocean',phase:'P1'},
  {id:'hornbeetles',animal:'beetle',color:'iron',fur:'iron',gear:'smith',ears:'horn',tail:'shell',body:'round',biome:'savanna',phase:'P1'},
+ {id:'frostseals',animal:'seal',color:'snow',fur:'snow',gear:'scarf',ears:'none',tail:'none',body:'flipper',biome:'tundra',phase:'P1'},
+ {id:'swapcoons',animal:'raccoon',color:'coal',fur:'rock',gear:'trader',ears:'round',tail:'striped',body:'pear',biome:'forest',phase:'P1'},
 ];
 function emit(id,category,name,size,anchor,frames,fps,parts,tags,phase,draw,extra={}){
  const suffix=frames>1?'-f{f}':'';
@@ -64,6 +66,7 @@ function face(p,expression,portrait){
  result+=ellipse(portrait?78:88,73,14,10,C('cream'),flat);
  result+=ellipse(portrait?82:99,68,4,3,C('ink'),flat);
  result+=expression==='angry'?line(portrait?'M73 80Q80 76 87 80':'M83 80Q89 77 94 80'):line(portrait?'M73 77Q80 85 87 77':'M82 77Q88 82 94 76');
+ if(p.animal==='seal'||p.animal==='otter')result+=line('M75 74L66 71M75 78L65 79M93 74L103 72M93 78L103 80');
  if(p.animal==='beaver')result+=rect(portrait?76:85,79,9,7,2,C('snow'))+line(portrait?'M80.5 80V85':'M89.5 80V85');
  return result;
 }
@@ -105,7 +108,7 @@ function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
 }
 function portrait(p,expression){
  // A 3/4 face with two eyes; bust expands toward the bottom, without a background tile.
- return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${p.tail==='quills'?tail(p):''}${group('bust',path('M28 113Q30 84 60 83Q92 80 102 113Q69 124 28 113Z',C(p.color)))}${head(p,expression,true)}${clothing(p,true)}</g>`;
+ return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${['quills','shell','spiral','wings','striped'].includes(p.tail)?tail(p):''}${group('bust',path('M35 113Q37 84 65 83Q92 80 102 113Q69 124 35 113Z',C(p.color)))}${head(p,expression,true)}${clothing(p,true)}</g>`;
 }
 function symbol(p){
  const f=C(p.color,-.18), gold=C('sand');

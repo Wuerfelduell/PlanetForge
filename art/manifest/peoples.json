@@ -1145,6 +1145,292 @@
       "phase": "P1"
     },
     {
+      "id": "people.frostseals.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "seal",
+        "tundra",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/frostseals-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "frostseals",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-emblem.svg",
+      "out": "public/assets/sprites/peoples/frostseals-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "frostseals",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "raccoon",
+        "forest",
+        "portrait"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "swapcoons",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.swapcoons.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-emblem.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "swapcoons",
+        "emblem"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.citizen-ring",
       "category": "peoples",
       "src": "art/src/peoples/citizen-ring.svg",
