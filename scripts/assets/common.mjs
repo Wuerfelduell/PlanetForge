@@ -15,7 +15,14 @@ export function shade(hex, delta) {
 export const C=(token,tone=0)=>tone?shade(palette[token],tone):palette[token];
 export const colors = new Set(Object.values(palette).flatMap(v=>[v,shade(v,.18),shade(v,-.18)]));
 export const round=n=>Math.round(n*10)/10;
-export const manifest=()=>JSON.parse(read('art/manifest.json'));
+// Each asset group owns one fragment in art/manifest/, so groups can be built in parallel
+// without touching a shared file. art/manifest.json is the generated merge (assets:gen).
+export function manifest(){
+ const dir=path.join(ROOT,'art/manifest');
+ const parts=fs.existsSync(dir)?fs.readdirSync(dir).filter(f=>f.endsWith('.json')).sort():[];
+ const assets=parts.flatMap(f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8')).assets??[]);
+ return {version:1,palette:'art/palette.json',phase:parts.map(f=>f.replace('.json','')).join('+')||'setup',assets};
+}
 export function files(dir){return fs.existsSync(path.join(ROOT,dir))?fs.readdirSync(path.join(ROOT,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?files(`${dir}/${e.name}`):[`${dir}/${e.name}`]):[];}
 export function expanded(m){return m.assets.flatMap(a=>Array.from({length:a.frames},(_,i)=>({...a,frame:i+1,key:a.frames>1?`${a.id}.f${i+1}`:a.id,src:a.src.replace('{f}',i+1),out:a.out.replace('{f}',i+1)})));}
 export function svg(body,w=128,h=w,stroke=6*w/256){return `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ${w} ${h}" fill="none" stroke="${C('ink')}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>\n`;}
