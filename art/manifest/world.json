@@ -1940,6 +1940,221 @@
       "phase": "P0"
     },
     {
+      "id": "planet.planet-arid",
+      "category": "planets",
+      "src": "art/src/planets/planet-arid.svg",
+      "out": "public/assets/sprites/planets/planet-arid.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-arid",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-arid.svg",
+      "out": "public/assets/sprites/planets/atmosphere-arid.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ice",
+      "category": "planets",
+      "src": "art/src/planets/planet-ice.svg",
+      "out": "public/assets/sprites/planets/planet-ice.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-ice",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-ice.svg",
+      "out": "public/assets/sprites/planets/atmosphere-ice.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-lava",
+      "category": "planets",
+      "src": "art/src/planets/planet-lava.svg",
+      "out": "public/assets/sprites/planets/planet-lava.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-lava",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-lava.svg",
+      "out": "public/assets/sprites/planets/atmosphere-lava.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-toxic",
+      "category": "planets",
+      "src": "art/src/planets/planet-toxic.svg",
+      "out": "public/assets/sprites/planets/planet-toxic.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-toxic",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-toxic.svg",
+      "out": "public/assets/sprites/planets/atmosphere-toxic.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ocean",
+      "category": "planets",
+      "src": "art/src/planets/planet-ocean.svg",
+      "out": "public/assets/sprites/planets/planet-ocean.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.atmosphere-ocean",
+      "category": "planets",
+      "src": "art/src/planets/atmosphere-ocean.svg",
+      "out": "public/assets/sprites/planets/atmosphere-ocean.png",
+      "viewBox": [
+        1088,
+        1088
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "atmosphere"
+      ],
+      "tags": [
+        "halo",
+        "radius-460-520"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "space.sun-yellow",
       "category": "space",
       "src": "art/src/space/sun-yellow.svg",

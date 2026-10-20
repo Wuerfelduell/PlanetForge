@@ -251,6 +251,10 @@ for (const kind of ['fog', 'depleted', 'polluted', 'selected', 'hover', 'player-
 }
 add('planet.planet-temperate', 'planets', 'planet-temperate', planet('temperate'), 1024, 1024, 'P0', [.5, .5], ['body']);
 add('planet.atmosphere-temperate', 'planets', 'atmosphere-temperate', atmosphere('temperate'), 1088, 1088, 'P0', [.5, .5], ['atmosphere'], ['halo', 'radius-460-520']);
+for (const type of Object.keys(worlds).filter(type => type !== 'temperate')) {
+  add(`planet.planet-${type}`, 'planets', `planet-${type}`, planet(type), 1024, 1024, 'P1', [.5, .5], ['body']);
+  add(`planet.atmosphere-${type}`, 'planets', `atmosphere-${type}`, atmosphere(type), 1088, 1088, 'P1', [.5, .5], ['atmosphere'], ['halo', 'radius-460-520']);
+}
 add('space.sun-yellow', 'space', 'sun-yellow', sun('yellow'), 1024, 1024, 'P0', [.5, .5], ['glow', 'rays', 'core']);
 add('space.starfield-tile', 'space', 'starfield-tile', starfield(), 512, 512, 'P0', [.5, .5], ['far-stars', 'near-stars'], ['tileable']);
 write('art/manifest/world.json', JSON.stringify({ assets }, null, 2) + '\n');
