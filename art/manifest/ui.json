@@ -2423,6 +2423,216 @@
         "icon-move"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.icon-launch",
+      "category": "ui",
+      "src": "art/src/ui/icon-launch.svg",
+      "out": "public/assets/sprites/ui/icon-launch.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-launch"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-trade",
+      "category": "ui",
+      "src": "art/src/ui/icon-trade.svg",
+      "out": "public/assets/sprites/ui/icon-trade.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-trade"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-peace",
+      "category": "ui",
+      "src": "art/src/ui/icon-peace.svg",
+      "out": "public/assets/sprites/ui/icon-peace.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-peace"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-alliance",
+      "category": "ui",
+      "src": "art/src/ui/icon-alliance.svg",
+      "out": "public/assets/sprites/ui/icon-alliance.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-alliance"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-war",
+      "category": "ui",
+      "src": "art/src/ui/icon-war.svg",
+      "out": "public/assets/sprites/ui/icon-war.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-war"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-ultimatum",
+      "category": "ui",
+      "src": "art/src/ui/icon-ultimatum.svg",
+      "out": "public/assets/sprites/ui/icon-ultimatum.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ultimatum"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-ping",
+      "category": "ui",
+      "src": "art/src/ui/icon-ping.svg",
+      "out": "public/assets/sprites/ui/icon-ping.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ping"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-chat",
+      "category": "ui",
+      "src": "art/src/ui/icon-chat.svg",
+      "out": "public/assets/sprites/ui/icon-chat.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-chat"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-invite",
+      "category": "ui",
+      "src": "art/src/ui/icon-invite.svg",
+      "out": "public/assets/sprites/ui/icon-invite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-invite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-sound-on",
+      "category": "ui",
+      "src": "art/src/ui/icon-sound-on.svg",
+      "out": "public/assets/sprites/ui/icon-sound-on.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-sound-on"
+      ],
+      "phase": "P1"
     }
   ]
 }
