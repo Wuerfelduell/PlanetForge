@@ -988,6 +988,255 @@
         "mini"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "ui.panel",
+      "category": "ui",
+      "src": "art/src/ui/panel.svg",
+      "out": "public/assets/sprites/ui/panel.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "panel"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary",
+      "category": "ui",
+      "src": "art/src/ui/button-primary.svg",
+      "out": "public/assets/sprites/ui/button-primary.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-primary-pressed.svg",
+      "out": "public/assets/sprites/ui/button-primary-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-primary-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-primary-disabled.svg",
+      "out": "public/assets/sprites/ui/button-primary-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary.svg",
+      "out": "public/assets/sprites/ui/button-secondary.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary-pressed.svg",
+      "out": "public/assets/sprites/ui/button-secondary-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-secondary-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-secondary-disabled.svg",
+      "out": "public/assets/sprites/ui/button-secondary-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger",
+      "category": "ui",
+      "src": "art/src/ui/button-danger.svg",
+      "out": "public/assets/sprites/ui/button-danger.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "normal"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger-pressed",
+      "category": "ui",
+      "src": "art/src/ui/button-danger-pressed.svg",
+      "out": "public/assets/sprites/ui/button-danger-pressed.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "pressed"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-danger-disabled",
+      "category": "ui",
+      "src": "art/src/ui/button-danger-disabled.svg",
+      "out": "public/assets/sprites/ui/button-danger-disabled.png",
+      "viewBox": [
+        192,
+        192
+      ],
+      "anchor": null,
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "button",
+        "disabled"
+      ],
+      "phase": "P0",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
     }
   ]
 }

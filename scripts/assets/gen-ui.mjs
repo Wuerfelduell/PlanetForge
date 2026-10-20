@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Release counters keep each intermediate checkpoint reproducible.
-const RELEASE = {resources: 23, core: 0, logo: false, extras: 0, discoveries: 0, brand: false};
+const RELEASE = {resources: 23, core: 10, logo: false, extras: 0, discoveries: 0, brand: false};
 const assets = [];
 const p = (d, color, extra = '') => `<path d="${d}" fill="${color ? C(color) : 'none'}" ${extra}/>`;
 const rect = (x,y,w,h,r,color,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C(color)}" ${extra}/>`;
@@ -68,5 +68,106 @@ for(const id of resourceIds.slice(0,RELEASE.resources)) {
   emit(`resource.${id}.mini`,'resources',group(resource(id,true),'scale(0.5)','stroke-width="8"'),64,64,'P0',{stroke:4,tags:['resources',id,'mini']});
 }
 
+// Shared UI vocabulary: solid silhouettes, inset highlights, no baked-in labels.
+const plus = () => p('M58 33 H70 V57 H94 V69 H70 V93 H58 V69 H34 V57 H58Z','cream');
+const hammer = () => p('M67 49 L83 63 L43 109 Q38 114 33 109 L24 101 Q20 97 25 92Z','clay')+p('M44 20 Q65 12 91 29 L107 45 Q111 50 106 56 L95 68 L72 48 L61 55 L43 39Z','rock')+shine('M54 25 Q69 23 81 31');
+const rocket = () => p('M42 72 Q26 75 23 105 L47 96 M85 72 Q102 77 105 105 L82 96','clay')+p('M64 13 Q32 35 43 91 Q64 101 85 91 Q96 35 64 13Z','paper')+circ(64,52,13,'science')+p('M53 99 Q48 112 64 116 Q80 112 75 99Z','energy')+shine('M54 32 L49 43');
+const house = () => rect(29,55,70,54,12,'paper')+p('M18 58 L55 20 Q64 12 73 20 L110 58 Q114 64 104 65 H24 Q14 64 18 58Z','clay')+rect(53,74,23,35,8,'leaf')+shine('M34 48 L59 24');
+const planet = () => circ(64,64,40,'water')+p('M30 43 Q47 33 60 44 L55 59 L37 66 L29 82 Q17 64 30 43Z','grass')+p('M86 38 Q99 49 104 62 L86 66 L80 90 L66 96 L60 80 L73 68 L70 53Z','grass')+shine('M47 34 Q55 29 64 29');
+const shield = () => p('M64 18 Q86 34 106 33 L101 73 Q94 99 64 113 Q34 99 27 73 L22 33 Q42 34 64 18Z','science')+shadow('M64 20 V110 Q94 98 100 73 L105 34 Q87 34 64 20Z','science')+shine('M34 44 L38 66');
+const arrow = (direction='right') => group(p('M18 55 H69 V33 Q69 27 76 32 L107 58 Q114 64 107 70 L76 96 Q69 101 69 95 V73 H18Z','cream'),direction==='left'?'translate(128 0) scale(-1 1)':'translate(0 0)');
+function gear(color='paper') {
+  let s='';
+  for(let i=0;i<8;i++)s+=group(rect(54,14,20,27,5,color),`rotate(${i*45} 64 64)`);
+  return s+circ(64,64,35,color)+circ(64,64,14,'space');
+}
+const link = () => group(rect(17,44,59,28,14,'science')+rect(52,57,59,28,14,'paper')+p('M48 59 L79 70',null,'stroke-width="6"'),'rotate(-25 64 64)');
+const paws = () => group(paw('clay'),'translate(-2 15) scale(0.7)')+group(paw('paper'),'translate(132 109) rotate(180) scale(0.7)');
+const speech = () => p('M29 25 H98 Q113 25 113 41 V76 Q113 91 98 91 H60 L33 111 V91 H29 Q15 91 15 76 V41 Q15 25 29 25Z','cream');
+function rotateIcon(left=false) {
+  return group(p('M97 45 Q87 17 59 19 Q28 21 21 51 Q13 90 47 105 Q81 119 102 89 L86 78 Q74 98 53 87 Q31 78 40 55 Q47 34 66 38 Q75 39 80 48 L67 51 L101 69 L112 35Z','cream'),left?'translate(128 0) scale(-1 1)':'translate(0 0)');
+}
+function action(id) {
+  switch(id) {
+    case 'build': return hammer();
+    case 'demolish': return p('M34 17 H94 V42',null,'stroke-width="7"')+circ(80,81,30,'rock-dark')+shine('M61 72 Q64 63 72 61')+detail('M94 18 L70 45 L94 43');
+    case 'upgrade': return p('M64 16 L109 57 H83 V81 H45 V57 H19Z','ascension')+p('M29 105 L64 83 L99 105 L99 116 L64 97 L29 116Z','energy');
+    case 'assign': case 'unassign': return group(paw('paper'),'translate(-2 -2) scale(0.85)')+circ(93,93,24,id==='assign'?'ok':'danger')+p('M80 93 H106'+(id==='assign'?' M93 80 V106':''),null,`stroke="${C('cream')}" stroke-width="7"`);
+    case 'info': return p('M16 31 Q42 21 64 34 Q88 21 112 31 V101 Q89 92 64 105 Q41 92 16 101Z','cream')+line('M64 34 V105')+group(star(64,64,25,'science'),'translate(13 -14) scale(0.8)')+detail('M26 46 L48 46 M26 58 L48 58 M26 70 L43 70');
+    case 'close': return p('M31 19 L64 52 L97 19 L109 31 L76 64 L109 97 L97 109 L64 76 L31 109 L19 97 L52 64 L19 31Z','cream');
+    case 'back': return arrow('left');
+    case 'confirm': return p('M17 65 L32 50 L53 74 L97 25 L113 39 L56 105 Q53 109 49 105Z','ok');
+    case 'cancel': return circ(64,64,45,'danger')+circ(64,64,29,'cream')+p('M34 29 L98 93 L93 99 L29 35Z','danger');
+    case 'rotate-left': return rotateIcon(true);
+    case 'rotate-right': return rotateIcon();
+    case 'pause': return rect(29,22,25,84,7,'cream')+rect(74,22,25,84,7,'cream');
+    case 'speed-1': case 'speed-2': case 'speed-3': {
+      const count=Number(id.at(-1)),width=count===1?55:count===2?36:25,gap=7,total=count*width+(count-1)*gap,start=(128-total)/2;
+      return Array.from({length:count},(_,i)=>p(`M${start+i*(width+gap)} 28 Q${start+i*(width+gap)} 23 ${start+i*(width+gap)+5} 27 L${start+i*(width+gap)+width} 60 Q${start+i*(width+gap)+width+4} 64 ${start+i*(width+gap)+width} 68 L${start+i*(width+gap)+5} 101 Q${start+i*(width+gap)} 105 ${start+i*(width+gap)} 100Z`,'cream')).join('');
+    }
+    case 'move': return p('M64 14 L84 36 H73 V55 H92 V44 L114 64 L92 84 V73 H73 V92 H84 L64 114 L44 92 H55 V73 H36 V84 L14 64 L36 44 V55 H55 V36 H44Z','cream');
+    case 'launch': return rocket();
+    case 'trade': return group(crate(),'translate(29 32) scale(0.55)')+p('M18 41 H91 V28 L112 49 L91 69 V55 H18Z','science')+p('M110 88 H37 V75 L16 96 L37 116 V102 H110Z','clay');
+    case 'peace': return p('M64 113 V49',null,'stroke-width="5"')+p('M62 88 Q21 95 22 60 Q56 57 62 88Z','leaf')+p('M66 69 Q102 75 108 39 Q74 38 66 69Z','leaf')+p('M64 49 Q38 26 64 13 Q90 26 64 49Z','grass');
+    case 'alliance': return group(shield(),'translate(2 7) scale(0.65)')+group(shield(),'translate(43 7) scale(0.65)')+group(link(),'translate(28 49) scale(0.55)');
+    case 'war': return p('M23 17 L49 25 L92 88 L81 99 L34 41Z','rock')+p('M105 17 L79 25 L36 88 L47 99 L94 41Z','snow')+p('M24 83 L50 106 M77 105 L104 83',null,'stroke-width="10"')+p('M21 111 L34 96 M107 111 L94 96',null,'stroke-width="9"');
+    case 'ultimatum': return p('M64 15 L114 103 Q117 110 108 110 H20 Q11 110 15 103Z','ascension')+group(bolt('ink'),'translate(38 36) scale(0.4)');
+    case 'ping': return p('M64 115 Q26 78 26 51 A38 38 0 0 1 102 51 Q102 78 64 115Z','cream')+circ(64,51,15,'science');
+    case 'chat': return speech()+[40,64,88].map(x=>circ(x,59,6,'rock-dark')).join('');
+    case 'invite': return group(link(),'translate(-3 -8) scale(0.85)')+group(paw(),'translate(45 53) scale(0.6)');
+    case 'sound-on': case 'sound-off': return p('M17 47 H35 L66 24 Q72 19 72 28 V101 Q72 109 66 103 L35 81 H17Z','paper')+(id==='sound-on'?p('M86 43 Q107 64 86 85 M98 29 Q128 64 98 99',null,'stroke-width="7"'):p('M88 50 L111 78 M111 50 L88 78',null,'stroke-width="8"'));
+    case 'help': return circ(64,64,45,'cream')+p('M28 35 L44 48 M84 80 L101 95 M35 101 L49 84 M80 44 L94 27',null,`stroke="${C('clay')}" stroke-width="20"`)+circ(64,64,23,'science');
+    default: throw new Error(`Unknown action ${id}`);
+  }
+}
+function panel(color='cream',state='normal',w=192,h=192,r=24) {
+  const disabled=state==='disabled', pressed=state==='pressed',token=disabled?'rock':color;
+  const edge=6, y=pressed?9:3, bottom=h-3;
+  return rect(3,9,w-6,h-12,r,token,`fill-opacity="1"`)+
+    `<rect x="3" y="9" width="${w-6}" height="${h-12}" rx="${r}" fill="${C(token,-.18)}"/>`+
+    rect(3,y,w-6,bottom-y-(pressed?0:edge),r,token)+
+    p(`M${r+4} ${y+8} H${w-r-4}`,null,`stroke="${C(token,.18)}" stroke-width="3"`);
+}
+function buttonRound(state='normal') {
+  const pressed=state==='pressed',token=state==='disabled'?'rock':'cream';
+  return circ(64,68,52,token)+`<circle cx="64" cy="68" r="52" fill="${C(token,-.18)}"/>`+circ(64,pressed?68:62,52,token)+shine(`M30 ${pressed?44:38} Q42 ${pressed?27:21} 61 ${pressed?26:20}`);
+}
+function tab(id) {
+  switch(id){
+    case 'planet':return planet();
+    case 'starmap':return p('M25 28 L92 34 L63 70 L101 99 M63 70 L27 103',null)+star(25,28,15,'energy')+circ(92,34,13,'water')+circ(63,70,9,'crystal')+circ(101,99,11,'clay')+circ(27,103,7,'snow');
+    case 'build':return group(house(),'translate(-2 17) scale(0.85)')+group(hammer(),'translate(46 -3) scale(0.65)');
+    case 'people':return resource('population');
+    case 'diplomacy':return paws();
+    case 'discoveries':return group(resource('science'),'translate(0 7) scale(0.9)')+star(94,30,18,'crystal');
+    case 'coop':return group(link(),'translate(0 -14)')+group(paw('paper'),'translate(-6 48) scale(0.6)')+group(paw('clay'),'translate(62 48) scale(0.6)');
+    case 'settings':return gear();
+    default:throw new Error(`Unknown tab ${id}`);
+  }
+}
+const badgeIds=['no-energy','no-workers','storage-full','depleted','polluted','hungry','producing','upgrade-ready','attack'];
+function badge(id) {
+  const fill=['producing','upgrade-ready'].includes(id)?'grass':id==='attack'?'danger':'paper';
+  const symbol=id==='no-energy'?bolt():id==='no-workers'?paw():id==='storage-full'?crate():id==='depleted'?p('M21 36 L50 27 L65 44 L52 66 L72 80 L60 107 L25 101Z','rock')+p('M84 28 L107 37 L108 96 L83 107 L92 78 L72 63Z','rock'):id==='polluted'?resource('pollution'):id==='hungry'?resource('food'):id==='producing'?gear():id==='upgrade-ready'?action('upgrade'):action('war');
+  return circ(32,32,28,fill)+group(symbol,'translate(10 10) scale(0.34)','stroke-width="5"')+(['no-energy','no-workers','hungry'].includes(id)?p('M14 50 L50 14',null,`stroke="${C('danger')}" stroke-width="5"`):'')+(id==='storage-full'?p('M12 11 H52',null,'stroke-width="4"'):'');
+}
+
+const core=[];
+const nine={anchor:null,sliceInsets:[48,48,48,48]};
+const addCore=(...args)=>core.push(()=>emit(...args));
+addCore('ui.panel','ui',panel(),192,192,'P0',nine);
+for(const [name,color] of [['primary','ascension'],['secondary','cream'],['danger','danger'],['ok','ok']])
+  for(const state of ['normal','pressed','disabled'])addCore(`ui.button-${name}${state==='normal'?'':'-'+state}`,'ui',panel(color,state),192,192,'P0',{...nine,tags:['ui','button',state]});
+for(const state of ['normal','pressed','disabled'])addCore(`ui.button-round${state==='normal'?'':'-'+state}`,'ui',buttonRound(state));
+for(const name of ['planet','starmap','build','people','diplomacy','discoveries','coop','settings'])addCore(`ui.tab-${name}`,'ui',tab(name));
+const coreActions=['build','demolish','upgrade','assign','unassign','info','close','back','confirm','cancel','rotate-left','rotate-right','pause','speed-1','speed-2','speed-3'];
+for(const id of coreActions)addCore(`ui.icon-${id}`,'ui',action(id));
+for(const id of badgeIds)addCore(`ui.badge-${id}`,'ui',badge(id),64);
+addCore('ui.cursor-player','ui',group(paw('tint-white'),'translate(-1 -1) scale(0.5)')+p('M16 33 L17 56 L26 48 L33 47Z','tint-white'),64,64,'P0',{tintable:true,anchor:[.25,.875]});
+core.push(()=>animated('ui.ping-marker',f=>`<g id="pulse" opacity="${[1,.7,.3][f-1]}">${ellipse(64,103,[16,30,46][f-1],[5,9,13][f-1],'tint-white')}</g><g id="pin">${group(action('ping'),`translate(20 ${[-5,1,-2][f-1]}) scale(0.7)`)}</g>`));
+addCore('ui.segment-selector','ui',p('M40 81 V41 Q40 25 56 25 H200 Q216 25 216 41 V81',null,`stroke="${C('cream')}" stroke-width="16"`)+p('M88 99 H168 L128 145Z','ascension'),256,256,'P0',{anchor:[.5,.6]});
+for(const generate of core.slice(0,RELEASE.core))generate();
+
 write('art/manifest/ui.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`UI art: ${assets.length} ids generated.`);
+
