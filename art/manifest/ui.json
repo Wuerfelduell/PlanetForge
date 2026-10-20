@@ -859,6 +859,135 @@
         "mini"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "resource.ascension",
+      "category": "resources",
+      "src": "art/src/resources/ascension.svg",
+      "out": "public/assets/sprites/resources/ascension.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "ascension"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.ascension.mini",
+      "category": "resources",
+      "src": "art/src/resources/ascension-mini.svg",
+      "out": "public/assets/sprites/resources/ascension-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "ascension",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.pollution",
+      "category": "resources",
+      "src": "art/src/resources/pollution.svg",
+      "out": "public/assets/sprites/resources/pollution.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "pollution"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.pollution.mini",
+      "category": "resources",
+      "src": "art/src/resources/pollution-mini.svg",
+      "out": "public/assets/sprites/resources/pollution-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "pollution",
+        "mini"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.population",
+      "category": "resources",
+      "src": "art/src/resources/population.svg",
+      "out": "public/assets/sprites/resources/population.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "population"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "resource.population.mini",
+      "category": "resources",
+      "src": "art/src/resources/population-mini.svg",
+      "out": "public/assets/sprites/resources/population-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "resources",
+        "population",
+        "mini"
+      ],
+      "phase": "P0"
     }
   ]
 }
