@@ -121,6 +121,31 @@
       "phase": "P0"
     },
     {
+      "id": "people.burrowbeavers.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.burrowbeavers.emblem",
       "category": "peoples",
       "src": "art/src/peoples/burrowbeavers-emblem.svg",
@@ -264,6 +289,31 @@
       "phase": "P0"
     },
     {
+      "id": "people.quillfolk.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.quillfolk.emblem",
       "category": "peoples",
       "src": "art/src/peoples/quillfolk-emblem.svg",
@@ -403,6 +453,31 @@
         "citizen",
         "work",
         "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.axolings.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/axolings-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/axolings-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "axolings",
+        "portrait",
+        "happy"
       ],
       "phase": "P1"
     },
@@ -550,6 +625,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.shellguards.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/shellguards-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/shellguards-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "shellguards",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.shellguards.emblem",
       "category": "peoples",
       "src": "art/src/peoples/shellguards-emblem.svg",
@@ -689,6 +789,31 @@
         "citizen",
         "work",
         "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.dunehoppers.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/dunehoppers-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/dunehoppers-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "dunehoppers",
+        "portrait",
+        "happy"
       ],
       "phase": "P1"
     },
@@ -836,6 +961,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.starowls.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/starowls-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/starowls-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "starowls",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.starowls.emblem",
       "category": "peoples",
       "src": "art/src/peoples/starowls-emblem.svg",
@@ -975,6 +1125,31 @@
         "citizen",
         "work",
         "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.tideotters.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/tideotters-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/tideotters-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "tideotters",
+        "portrait",
+        "happy"
       ],
       "phase": "P1"
     },
@@ -1122,6 +1297,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.hornbeetles.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/hornbeetles-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/hornbeetles-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "hornbeetles",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.hornbeetles.emblem",
       "category": "peoples",
       "src": "art/src/peoples/hornbeetles-emblem.svg",
@@ -1261,6 +1461,31 @@
         "citizen",
         "work",
         "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.frostseals.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/frostseals-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/frostseals-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "frostseals",
+        "portrait",
+        "happy"
       ],
       "phase": "P1"
     },
@@ -1408,6 +1633,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.swapcoons.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/swapcoons-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/swapcoons-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "swapcoons",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.swapcoons.emblem",
       "category": "peoples",
       "src": "art/src/peoples/swapcoons-emblem.svg",
@@ -1551,6 +1801,31 @@
       "phase": "P1"
     },
     {
+      "id": "people.glowsnails.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/glowsnails-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/glowsnails-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "glowsnails",
+        "portrait",
+        "happy"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "people.glowsnails.emblem",
       "category": "peoples",
       "src": "art/src/peoples/glowsnails-emblem.svg",
@@ -1690,6 +1965,31 @@
         "citizen",
         "work",
         "facing-right"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "people.echobats.portrait.happy",
+      "category": "peoples",
+      "src": "art/src/peoples/echobats-portrait-happy.svg",
+      "out": "public/assets/sprites/peoples/echobats-portrait-happy.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "echobats",
+        "portrait",
+        "happy"
       ],
       "phase": "P1"
     },
