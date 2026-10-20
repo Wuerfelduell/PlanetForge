@@ -1,0 +1,311 @@
+{
+  "assets": [
+    {
+      "id": "people.burrowbeavers.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-portrait.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "beaver",
+        "forest",
+        "portrait"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.burrowbeavers.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/burrowbeavers-emblem.svg",
+      "out": "public/assets/sprites/peoples/burrowbeavers-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "burrowbeavers",
+        "emblem"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.portrait",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-portrait.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-portrait.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "head",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "hedgehog",
+        "savanna",
+        "portrait"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.idle",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-idle-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-idle-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 2,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "idle",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.walk",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-walk-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-walk-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "walk",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.citizen.work",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-citizen-work-f{f}.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-citizen-work-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "head",
+        "body",
+        "tail",
+        "feet",
+        "arm",
+        "clothing",
+        "tool"
+      ],
+      "tags": [
+        "quillfolk",
+        "citizen",
+        "work",
+        "facing-right"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.quillfolk.emblem",
+      "category": "peoples",
+      "src": "art/src/peoples/quillfolk-emblem.svg",
+      "out": "public/assets/sprites/peoples/quillfolk-emblem.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "symbol"
+      ],
+      "tags": [
+        "quillfolk",
+        "emblem"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "people.citizen-ring",
+      "category": "peoples",
+      "src": "art/src/peoples/citizen-ring.svg",
+      "out": "public/assets/sprites/peoples/citizen-ring.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "coop",
+        "engine-tinted"
+      ],
+      "phase": "P0"
+    }
+  ]
+}
