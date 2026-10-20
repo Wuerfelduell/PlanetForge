@@ -8,6 +8,10 @@ import { addPlayer, advance, applyCommand, createGame, type Command, type GameEv
  * more than MAX_GAP_MS; a longer gap means nobody was online and counts as a pause.
  */
 export const MAX_GAP_MS = 60_000;
+/** Seb: the lobby closes after 10 minutes without players; without heartbeats nobody was online. */
+export const LOBBY_IDLE_MS = 10 * 60_000;
+/** State shape the bundled simulation writes; saves of another shape start over (prototype phase). */
+export const SIM_VERSION = createGame("version-probe", [{ id: "p1", name: "p" }]).version;
 
 // Available in Deno, browsers and Node; declared here because this file is checked without DOM types.
 declare function atob(data: string): string;
@@ -30,7 +34,8 @@ export interface StepInput {
 }
 
 export type StepResult =
-  | { ok: true; state: GameState; events: GameEvent[]; changed: boolean }
+  /** `removed`: players the host kicked, whose memberships have to end with this save. */
+  | { ok: true; state: GameState; events: GameEvent[]; changed: boolean; removed: string[] }
   | { ok: false; error: string };
 
 export function nextSimTime(state: GameState, clockAt: number | null, now: number): number {
@@ -53,23 +58,33 @@ export function step(input: StepInput): StepResult {
   const { members, playerId, request, now } = input;
   if (!members.some((m) => m.playerId === playerId)) return { ok: false, error: "Du bist nicht in diesem Spiel" };
 
-  let state = input.state;
+  let state = input.state?.version === SIM_VERSION ? input.state : null;
   let clockAt = input.clockAt;
   if (!state) {
     state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { now: 0 });
     clockAt = now;
   }
   const simNow = nextSimTime(state, clockAt, now);
+  const events: GameEvent[] = [];
+  if (clockAt !== null && now - clockAt >= LOBBY_IDLE_MS && state.lobby.open) {
+    const closed = applyCommand(state, state.hostId, { type: "closeLobby" }, simNow);
+    if (closed.ok) {
+      state = closed.state;
+      events.push(...closed.events);
+    }
+  }
   const joined = ensurePlayers(state, members, simNow);
   if (!joined.ok) return joined;
   state = joined.state;
 
   if (request.kind === "sync") {
-    return { ok: true, state: advance(state, simNow), events: [], changed: true };
+    return { ok: true, state: advance(state, simNow), events, changed: true, removed: [] };
   }
   const result = applyCommand(state, playerId, request.cmd, simNow);
   if (!result.ok) return result;
-  return { ok: true, state: result.state, events: result.events, changed: true };
+  events.push(...result.events);
+  const removed = result.events.flatMap((e) => (e.type === "removed" ? [e.playerId] : []));
+  return { ok: true, state: result.state, events, changed: true, removed };
 }
 
 /**

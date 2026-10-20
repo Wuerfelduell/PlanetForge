@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createGame, homePlanet } from "../../../src/sim/index";
-import { MAX_GAP_MS, nextSimTime, parseRequest, step, userIdFromJwt, type Member } from "./logic";
+import { LOBBY_IDLE_MS, MAX_GAP_MS, nextSimTime, parseRequest, step, userIdFromJwt, type Member } from "./logic";
 
 const GAME = "0f3c2a4e-1b2c-4d5e-8f90-123456789abc";
 const alice: Member = { playerId: "p1", name: "Alice" };
@@ -45,6 +45,30 @@ describe("game-command logic", () => {
       now: 100,
     });
     expect(bad).toEqual({ ok: false, error: "Ungültige Anzahl" });
+  });
+
+  it("reports players the host kicked, so their membership ends", () => {
+    const state = createGame("s", [{ id: "p1", name: "Alice" }, { id: "p2", name: "Bob" }]);
+    const r = step({ state, clockAt: 0, members: [alice, bob], playerId: "p1", request: { gameId: GAME, kind: "command", cmd: { type: "kickPlayer", playerId: "p2" } }, now: 100 });
+    expect(r.ok && r.removed).toEqual(["p2"]);
+    expect(r.ok && r.state.players.map((p) => p.id)).toEqual(["p1"]);
+  });
+
+  it("closes the lobby when nobody was online for ten minutes", () => {
+    const state = createGame("s", [{ id: "p1", name: "Alice" }, { id: "p2", name: "Bob" }]);
+    const sync = { gameId: GAME, kind: "sync" } as const;
+    const soon = step({ state, clockAt: 0, members: [alice, bob], playerId: "p2", request: sync, now: LOBBY_IDLE_MS - 1 });
+    expect(soon.ok && soon.state.lobby.open).toBe(true);
+    const later = step({ state, clockAt: 0, members: [alice, bob], playerId: "p2", request: sync, now: LOBBY_IDLE_MS });
+    expect(later.ok && later.state.lobby.open).toBe(false);
+    expect(later.ok && later.events.some((e) => e.type === "lobby")).toBe(true);
+  });
+
+  it("starts over when the save was written by an older simulation", () => {
+    const old = { ...createGame("s", [{ id: "p1", name: "Alice" }]), version: 1 } as unknown as Parameters<typeof step>[0]["state"];
+    const r = step({ state: old, clockAt: 0, members: [alice], playerId: "p1", request: { gameId: GAME, kind: "sync" }, now: LOBBY_IDLE_MS * 2 });
+    expect(r.ok && r.state.seed).toBe(GAME);
+    expect(r.ok && r.state.lobby.open).toBe(true);
   });
 
   it("parses only well-formed requests", () => {

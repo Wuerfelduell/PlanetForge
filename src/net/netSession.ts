@@ -30,6 +30,8 @@ export class NetworkSession implements GameSession {
   online: string[] = [];
   onError: (message: string) => void = () => {};
   onPresence: (online: string[]) => void = () => {};
+  /** The host removed this player; the session is closed and must not be rendered any more. */
+  onRemoved: () => void = () => {};
 
   private clock: number;
   private version: number;
@@ -117,6 +119,11 @@ export class NetworkSession implements GameSession {
   /** Server state wins. `force` also takes an equal version, to undo a rejected prediction. */
   private accept(version: number, state: GameState, force = false): void {
     if (version < this.version || (version === this.version && !force)) return;
+    if (!state.players.some((p) => p.id === this.playerId)) {
+      void this.close();
+      this.onRemoved();
+      return;
+    }
     this.version = version;
     this.state = state;
     this.clock = state.simTime;
