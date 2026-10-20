@@ -77,7 +77,7 @@ export const DISCOVERIES = {
   },
   diplomacy: {
     name: "Diplomatie",
-    description: "Bündnisse werden möglich, Handel bringt 10 % mehr.",
+    description: "Bündnisse werden möglich, Handel bringt 10 % mehr. Gegeneinander: Gefangene werden sofort Teil des eigenen Volks.",
     minLevel: 2,
     unlocks: { actions: ["alliance"] },
     modifiers: [{ stat: "tradeRate", mul: 1.1 }],
@@ -163,9 +163,9 @@ export const DISCOVERIES = {
   },
   automation: {
     name: "Automatisierung",
-    description: "Alle Produktionsgebäude +15 %.",
+    description: "In jedem Produktionsgebäude kann ein Automat einen Einwohner ersetzen. Jeder Automat braucht 2 Energie.",
     minLevel: 7,
-    modifiers: [{ stat: "buildingOutput", mul: 1.15 }],
+    modifiers: [{ stat: "automatonSlots", add: 1 }],
   },
   terraforming: {
     name: "Terraforming",

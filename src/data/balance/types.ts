@@ -4,7 +4,7 @@
  *
  * Units used everywhere:
  * - rates are per worker and second (the sim runs 10 ticks per second),
- * - one cycle = one planet rotation (see RULES.secondsPerCycle),
+ * - one cycle = one planet rotation (MODES.*.secondsPerCycle: 60 s coop, 20 s versus),
  * - costs are whole resource units,
  * - pollution is a planet-wide value from 0 to 100.
  */
@@ -163,7 +163,8 @@ export type StatKey =
   | "energyOutput"
   | "ascensionPerCycle"
   | "demolishRefund"
-  | "escapePodReward";
+  | "escapePodReward"
+  | "automatonSlots";
 
 export interface PeopleDef<R extends string = string, B extends string = string> {
   name: string;

@@ -7,7 +7,7 @@
 import { BUILDINGS, BUILDING_IDS, RECIPES, RECIPE_IDS } from "./buildings";
 import { DISCOVERIES, DISCOVERY_IDS, DISCOVERY_RULES } from "./discoveries";
 import { PEOPLES, PEOPLE_BASE, PEOPLE_IDS } from "./peoples";
-import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MODES, MODE_IDS, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE, VERSUS_COMBAT, type ModeId } from "./progression";
+import { ASCENSION, BATTLE, COOP, DIPLOMACY, ENERGY, MODES, MODE_IDS, MONSTERS, MONSTER_IDS, PACING, POLLUTION, RULES, SPACE, TEMPO, DIFFICULTY, VERSUS_COMBAT, type ModeId } from "./progression";
 import { BIOMES, BIOME_IDS, PLANET_TYPES, RESOURCES, RESOURCE_IDS } from "./resources";
 
 export * from "./buildings";
@@ -29,6 +29,8 @@ export const BALANCE = {
   discoveries: DISCOVERIES,
   discoveryRules: DISCOVERY_RULES,
   rules: RULES,
+  tempo: TEMPO,
+  difficulty: DIFFICULTY,
   ascension: ASCENSION,
   energy: ENERGY,
   pollution: POLLUTION,
@@ -74,6 +76,16 @@ export function discoveryCost(owned: number, mode: ModeId = "coop", players = 1,
 export function secondsPerBirth(citizens: number, mode: ModeId = "coop", birthTimeMul = 1): number {
   const m = MODES[mode];
   return (m.birthBase + m.birthPerCitizen * citizens) * birthTimeMul;
+}
+
+/** Citizens a player brings when joining a coop game at the given team level. */
+export function coopJoinCitizens(teamLevel: number): number {
+  return RULES.coopJoinPopulation + Math.floor(teamLevel / RULES.coopJoinLevelsPerExtraCitizen);
+}
+
+/** Food per citizen and second on a planet with `citizens` citizens. */
+export function foodUpkeepPerSecond(citizens: number, mul = 1): number {
+  return ((RULES.foodPerInhabitantPerMinute * (1 + RULES.foodUpkeepGrowthPerCitizen * citizens)) / 60) * mul;
 }
 
 /** Fuel for one rocket flight. */

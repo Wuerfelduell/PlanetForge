@@ -21,10 +21,10 @@ export interface LevelEta {
 export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
   const out: LevelEta[] = [];
   const startPop = RULES.startPopulation + (mode === "coop" ? (players - 1) * RULES.coopJoinPopulation : 0);
+  const pointsPerSecond = ASCENSION.pointsPerCitizenPerMinute / 60;
   const planets = [{ pop: startPop, progress: 0 }];
   let points = 0;
   let level = 0;
-  const cycle = RULES.secondsPerCycle;
   for (let t = 1; level < ASCENSION.maxLevel && t < 10 * 3600; t++) {
     if (mode === "coop" && level >= 6 && planets.length < players) planets.push({ pop: 1, progress: 0 });
     let pop = 0;
@@ -36,7 +36,7 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
       }
       pop += p.pop;
     }
-    points += pop / cycle;
+    points += pop * pointsPerSecond;
     while (level < ASCENSION.maxLevel && points >= ascensionThreshold(level + 1, mode, players)!) {
       level += 1;
       out.push({ level, minute: t / 60, population: pop });
@@ -49,9 +49,9 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
 export function sciencePerGame(mode: ModeId = "coop", players = 1): { science: number; discoveries: number } {
   const last = mode === "versus" ? 8 : ASCENSION.maxLevel;
   const timeline = levelTimeline(mode, players).slice(0, last);
-  // Ascension points equal citizen-cycles, so lab output follows from them directly.
-  const citizenCycles = ascensionThreshold(last, mode, players)!;
-  let science = citizenCycles * PACING.labWorkerShare * PACING.sciencePerLabWorkerPerCycle;
+  // Ascension points are citizen-minutes × 2, so lab output follows from them directly.
+  const citizenMinutes = ascensionThreshold(last, mode, players)! / ASCENSION.pointsPerCitizenPerMinute;
+  let science = citizenMinutes * PACING.labWorkerShare * PACING.sciencePerLabWorkerPerMinute;
   for (const { level } of timeline) science += DISCOVERY_RULES.sciencePerLevel * level;
   let discoveries = 0;
   let left = science;

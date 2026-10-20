@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ascensionThreshold, BALANCE, buildingSprite, discoveryCost, IDS, rocketFuel, secondsPerBirth, type ResourceId } from "./index";
+import { ascensionThreshold, BALANCE, buildingSprite, discoveryCost, IDS, rocketFuel, secondsPerBirth, foodUpkeepPerSecond, coopJoinCitizens, type ResourceId } from "./index";
 import { homeAvailability, jobsPerCitizen, levelTimeline, sciencePerGame } from "./pacing";
 
 const { buildings, recipes, resources, biomes, peoples, discoveries, pacing } = BALANCE;
@@ -105,7 +105,7 @@ describe("sanity", () => {
   });
 
   it("food: a full farm feeds several citizens, a hand gatherer only a few", () => {
-    const perCitizen = BALANCE.rules.foodPerInhabitantPerCycle / BALANCE.rules.secondsPerCycle;
+    const perCitizen = foodUpkeepPerSecond(10);
     const farm = buildings.farm.tiers[0];
     const fedByFarm = (farm.produces.perWorker * farm.workers) / perCitizen;
     const fedByHand = BALANCE.rules.handRatePerWorker / perCitizen;
@@ -138,8 +138,11 @@ describe("pacing", () => {
     const coop = levelTimeline("coop").at(-1)!.minute;
     const attacksOpen = levelTimeline("versus")[BALANCE.versusCombat.attackMinLevel - 1]!.minute;
     expect(coop).toBeGreaterThan(150);
-    expect(attacksOpen).toBeLessThan(25);
-    expect(BALANCE.versusCombat.attackMinLevel).toBeGreaterThanOrEqual(BALANCE.space.rockets["rocket-small"].unlockLevel);
+    expect(attacksOpen).toBeLessThan(10);
+    const { rockets } = BALANCE.space;
+    expect(BALANCE.versusCombat.attackMinLevel).toBeGreaterThanOrEqual(rockets["rocket-combat"].unlockLevel);
+    expect(BALANCE.versusCombat.sabotageMinLevel).toBeGreaterThanOrEqual(rockets["rocket-scout"].unlockLevel);
+    expect(BALANCE.buildings.launchpad.tiers[0].unlockLevel).toBeLessThanOrEqual(rockets["rocket-scout"].unlockLevel);
   });
 
   it("more coop players are a bit faster than solo, never slower and never trivial", () => {
@@ -159,7 +162,9 @@ describe("pacing", () => {
   it("formulas", () => {
     expect(ascensionThreshold(1)).toBe(25);
     expect(ascensionThreshold(11)).toBeNull();
-    expect(ascensionThreshold(10, "coop", 2)).toBe(Math.round(12900 * 1.15));
+    expect(ascensionThreshold(10, "coop", 2)).toBe(Math.round(12900 * 1.3));
+    expect(coopJoinCitizens(0)).toBe(3);
+    expect(coopJoinCitizens(5)).toBe(5);
     expect(ascensionThreshold(10, "versus", 4)).toBe(1900);
     expect(discoveryCost(0)).toBe(30);
     expect(discoveryCost(1)).toBe(41);

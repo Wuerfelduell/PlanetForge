@@ -72,7 +72,7 @@ export const BUILDINGS = {
   },
   pump: {
     name: "Pumpe",
-    description: "Pumpt Flüssigkeiten aus dem Feld und aus einem benachbarten Meer.",
+    description: "Pumpt Wasser, Biogas und Öl aus dem Feld und Wasser aus einem benachbarten Meer.",
     art: "pump",
     biomes: "any-land",
     tiers: [
@@ -81,7 +81,7 @@ export const BUILDINGS = {
         unlockLevel: 1,
         buildSeconds: 6,
         workers: 1,
-        extracts: { resources: ["water", "biogas"], perWorker: 0.4, fromNeighbors: ["ocean"] },
+        extracts: { resources: ["water", "biogas", "oil"], perWorker: 0.4, fromNeighbors: ["ocean"] },
       },
       {
         cost: { steel: 10, stone: 15 },
@@ -192,7 +192,7 @@ export const BUILDINGS = {
     art: "launchpad",
     biomes: "any-land",
     unique: true,
-    tiers: [{ cost: { concrete: 25, steel: 20, stone: 30 }, unlockLevel: 6, buildSeconds: 15, workers: 0 }],
+    tiers: [{ cost: { stone: 30, wood: 20, iron: 10 }, unlockLevel: 2, buildSeconds: 15, workers: 0 }],
   },
   "power-solar": {
     name: "Solarfeld",
