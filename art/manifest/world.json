@@ -767,6 +767,282 @@
         "segments-32"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-a",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-a.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-b",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-b.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-c",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-c.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-a",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-a.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-b",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-b.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-c",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-c.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-c.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-a",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-a.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-b",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-b.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.buoy",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-buoy.svg",
+      "out": "public/assets/sprites/biomes/ocean-buoy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop"
+      ],
+      "phase": "P0"
     }
   ]
 }
