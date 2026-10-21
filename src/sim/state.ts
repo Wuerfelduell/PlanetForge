@@ -191,6 +191,8 @@ export interface SegmentState {
   tier?: number;
   /** Burnt by invaders: no building, no gathering, no regrowth until cleared. */
   scorched?: true;
+  /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
+  ruin?: true;
 }
 
 export interface DepositState {

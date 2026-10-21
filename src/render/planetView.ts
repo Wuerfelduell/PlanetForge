@@ -607,7 +607,14 @@ export class PlanetView {
       if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
       else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
-      if (s.building) {
+      const ruin = !s.building && s.ruin ? artTexture("building.ruin") : undefined;
+      if (ruin) {
+        // Rubble where invaders wrecked a building, until something new is built or the field is cleared.
+        const sprite = l.buildings.take(ruin);
+        sprite.position.set(surface.x, surface.y);
+        sprite.rotation = mid + Math.PI / 2;
+        sprite.scale.set((k * segWidth) / ART_FOOTPRINT);
+      } else if (s.building) {
         const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
         const anim = empty ? undefined : buildingAnim(s.building, s.tier);
         const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined, s.tier);
