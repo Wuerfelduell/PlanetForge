@@ -211,3 +211,5 @@ ul.owned small { color: var(--muted); }
 }
 #music-control .music-pop[hidden] { display: none; }
 #music-control .music-volume { width: 140px; accent-color: var(--accent); }
+.shield-ring { position: relative; width: min(180px, 50vw); aspect-ratio: 1; margin: 6px auto 0; }
+.shield-ring img { position: absolute; inset: 0; width: 100%; height: 100%; }

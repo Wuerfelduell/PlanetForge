@@ -1,0 +1,407 @@
+{
+  "assets": [
+    {
+      "id": "building.battery",
+      "category": "buildings",
+      "src": "art/src/buildings/battery.svg",
+      "out": "public/assets/sprites/buildings/battery.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.battery.off",
+      "category": "buildings",
+      "src": "art/src/buildings/battery-off.svg",
+      "out": "public/assets/sprites/buildings/battery-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.battery.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/battery-construction.svg",
+      "out": "public/assets/sprites/buildings/battery-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "invader.mothership.idle",
+      "category": "invaders",
+      "src": "art/src/invaders/mothership-idle-f{f}.svg",
+      "out": "public/assets/sprites/invaders/mothership-idle-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "hull",
+        "lights"
+      ],
+      "tags": [
+        "invaders",
+        "mothership",
+        "idle",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "invader.mothership.damaged",
+      "category": "invaders",
+      "src": "art/src/invaders/mothership-damaged.svg",
+      "out": "public/assets/sprites/invaders/mothership-damaged.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "hull",
+        "lights",
+        "cracks",
+        "smoke"
+      ],
+      "tags": [
+        "invaders",
+        "mothership",
+        "damaged"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "invader.escort",
+      "category": "invaders",
+      "src": "art/src/invaders/escort-f{f}.svg",
+      "out": "public/assets/sprites/invaders/escort-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 5,
+      "parts": [
+        "hull",
+        "engine"
+      ],
+      "tags": [
+        "invaders",
+        "escort",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.invader-beam",
+      "category": "fx",
+      "src": "art/src/fx/invader-beam-f{f}.svg",
+      "out": "public/assets/sprites/fx/invader-beam-f{f}.png",
+      "viewBox": [
+        128,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "beam",
+        "pulse"
+      ],
+      "tags": [
+        "invaders",
+        "beam",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "sun.shield.segment.empty",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-empty.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-empty.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "empty"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
+    },
+    {
+      "id": "sun.shield.segment.built",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-built.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-built.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "built"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
+    },
+    {
+      "id": "sun.shield.segment.damaged",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-damaged.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-damaged.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "damaged"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
+    },
+    {
+      "id": "fx.sun-flare",
+      "category": "fx",
+      "src": "art/src/fx/sun-flare-f{f}.svg",
+      "out": "public/assets/sprites/fx/sun-flare-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "flare",
+        "embers"
+      ],
+      "tags": [
+        "invaders",
+        "supernova-warning",
+        "once",
+        "outward-up"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.supernova",
+      "category": "fx",
+      "src": "art/src/fx/supernova-f{f}.svg",
+      "out": "public/assets/sprites/fx/supernova-f{f}.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 6,
+      "fps": 10,
+      "parts": [
+        "shockwave",
+        "core",
+        "sparkles"
+      ],
+      "tags": [
+        "invaders",
+        "supernova",
+        "game-over",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.invasion",
+      "category": "ui",
+      "src": "art/src/ui/invasion.svg",
+      "out": "public/assets/sprites/ui/invasion.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "invaders",
+        "hud",
+        "alert"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.shield",
+      "category": "ui",
+      "src": "art/src/ui/shield.svg",
+      "out": "public/assets/sprites/ui/shield.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "sun"
+      ],
+      "tags": [
+        "invaders",
+        "hud",
+        "sun-shield"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
