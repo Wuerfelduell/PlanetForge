@@ -25,11 +25,28 @@ const roof = (y,token='clay') => path(`M36 ${y+30}Q28 ${y+24} 40 ${y+14}L108 ${y
 const crate = (x,y,s=34) => rect(x,y,s,s,'sand',7)+line(`M${x+6} ${y+6}L${x+s-6} ${y+s-6}M${x+s-6} ${y+6}L${x+6} ${y+s-6}`,'iron',4);
 
 function housing(tier){
+  if(tier===2)return foot(rect(167,63,25,61,'rock',8)+rect(162,57,35,13,'rock-dark',6)+anchor('chimney-smoke-anchor',180,57)+
+    rect(53,122,150,104,'iron',17)+line('M62 146H194M62 168H194M62 190H194M62 211H194','clay',4)+
+    line('M72 125V220M185 125V220','iron',9)+roof(100,'iron')+
+    line('M70 106L81 115L92 105M101 91L112 101L123 91M133 90L144 101L155 92M165 107L176 116L187 108','clay',4)+
+    group('windows',windowPane(84,153,28,31)+windowPane(146,153,28,31))+
+    rect(106,190,45,36,'paper',8)+door(114,194,29,31)+glint('M62 140V159'));
   if(tier===3){
-    const pods=[{x:62,y:151,w:132,c:'clay'},{x:81,y:94,w:113,c:'sand'},{x:62,y:37,w:132,c:'paper'}];
-    return foot(post(167,18,40,'rock')+anchor('chimney-smoke-anchor',173,18)+pods.map(p=>
-      rect(p.x,p.y,p.w,70,p.c,26)+path(`M${p.x+p.w-18} ${p.y+16}Q${p.x+p.w} ${p.y+63} ${p.x+p.w-24} ${p.y+64}H${p.x+20}`,'none',`stroke="${paint(p.c,-.18)}" stroke-width="9"`)+glint(`M${p.x+16} ${p.y+17}H${p.x+48}`)).join('')+
-      group('windows',[[83,56],[139,56],[99,113],[153,113],[79,172],[159,172]].map(([x,y])=>windowPane(x,y,20,24)).join(''))+door(114,184,31,41));
+    return foot(rect(168,37,27,68,'iron',8)+rect(162,31,39,14,'clay',6)+anchor('chimney-smoke-anchor',181,31)+
+      rect(51,102,154,124,'rock',18)+path('M187 114V205Q187 216 174 216H66','none',`stroke="${paint('rock-dark')}" stroke-width="10"`)+
+      roof(77,'clay')+rect(49,155,158,11,'paper',5)+
+      line('M58 137H70M183 137H198M58 186H69M184 186H199M65 212H82M175 212H190','paper',4)+
+      rect(58,146,13,7,'clay',2,'stroke="none"')+rect(182,171,15,8,'clay',2,'stroke="none"')+
+      group('windows',[118,179].map(y=>windowPane(76,y,27,28)+windowPane(153,y,27,28)).join(''))+
+      door(113,181,30,44)+glint('M59 111V123'));
+  }
+  if(tier===4){
+    return foot(post(166,25,30,'rock')+anchor('chimney-smoke-anchor',172,25)+line('M97 39V18M88 24H105','rock-dark',4)+
+      rect(62,37,132,189,'paper',24)+path('M179 53V207Q179 215 168 215','none',`stroke="${paint('paper',-.18)}" stroke-width="10"`)+
+      rect(58,35,140,16,'clay',8)+[89,131,173].map(y=>rect(58,y,140,9,'clay',4)).join('')+
+      group('windows',[58,100,142].flatMap(y=>[78,118,158].map(x=>windowPane(x,y,20,23))).join('')+
+        windowPane(78,188,20,23)+windowPane(158,188,20,23))+
+      door(113,188,30,37)+glint('M69 59V78'));
   }
   const chimney=tier===2?rect(170,55,25,77,'iron',9)+rect(164,49,37,15,'clay',7):'';
   return foot(chimney+anchor('chimney-smoke-anchor',182,tier===2?49:88)+rect(52,129,152,100,tier===1?'paper':'clay',34)+
@@ -76,6 +93,22 @@ function farm(tier){
 }
 
 function foundry(tier){
+  if(tier===2)return foot(
+    rect(58,46,32,83,'rock-dark',8)+rect(51,39,46,16,'rock',6)+
+    rect(170,32,32,97,'rock-dark',8)+rect(163,25,46,16,'rock',6)+anchor('smoke-anchor',186,25)+
+    line('M64 64H84M64 87H84M176 52H196M176 76H196','iron',4)+glint('M66 57V72M178 43V58')+
+    rect(42,119,172,107,'rock',17)+path('M35 121L52 98H201L221 121Z','rock-dark')+glint('M54 107H91')+
+    rect(54,161,65,64,'coal',10)+line('M64 171H101M64 185H91','rock-dark',5)+
+    [60,89,118].map(x=>windowPane(x,130,21,19)).join('')+
+    line('M181 115V131L196 139','ink',12)+line('M181 115V131L196 139','iron',6)+
+    path('M152 141L202 154L190 180Q174 185 152 164Z','rock-dark')+
+    ellipse(177,147,26,8,'coal','transform="rotate(16 177 147)"')+glint('M159 156L169 169')+
+    path('M103 200H177L165 225H115Z','coal')+
+    group('glow',ellipse(177,146,19,4,state==='idle'?'ascension':'coal','transform="rotate(16 177 146)"')+
+      path('M158 145Q142 153 147 164L140 199H132L137 164Q132 151 150 143Z',state==='idle'?'ascension':'coal','stroke="none"')+
+      ellipse(140,201,30,7,state==='idle'?'ascension':'coal')+
+      line('M151 150Q139 157 142 165L137 197',lit(),4)+line('M119 200H153',lit(),4))+
+    line('M122 215H157','rock-dark',4));
   const y=tier===1?82:51;
   return foot(rect(158,y,37,130,'iron',9)+rect(150,y-8,53,19,'clay',7)+anchor('smoke-anchor',177,y-8)+
     (tier===2?rect(57,100,34,119,'rock',9)+rect(51,93,46,17,'rock-dark',7):'')+
@@ -160,7 +193,20 @@ function market(){return foot(post(49,117,109)+post(196,117,109)+
   path('M30 137H225V145Q210 162 195 145Q180 162 164 145Q148 162 132 145Q115 162 99 145Q82 162 65 145Q47 161 30 145Z','cream')+
   [74,117,160].map(x=>sprout(x,192)).join('')+rect(37,195,180,30,'sand',9)+line('M61 208H100M154 208H195','iron',3));}
 
-function watchtower(){return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
+function watchtower(tier){
+  if(tier===2)return foot(
+    group('banner',line('M128 87V25','rock-dark',5)+path('M131 28Q152 18 176 32L165 46L177 60Q154 47 131 60Z','danger')+circle(149,40,5,'sand'))+
+    path('M65 223L73 119H183L191 223Z','rock')+
+    path('M167 123H183L191 223H170Z','rock-dark','stroke="none"')+
+    line('M75 151H179M70 185H185M100 127V151M144 151V184M96 185V218','paper',4)+
+    path('M61 119V80Q61 76 66 76H84V94H105V76H150V94H171V76H189Q195 76 195 82V119Z','paper')+
+    rect(57,115,142,14,'rock-dark',6)+glint('M67 82H77M111 82H137')+
+    path('M109 225V195Q109 176 128 176Q147 176 147 195V225Z','coal')+
+    line('M122 190V222M134 190V222M113 204H143','iron',4)+
+    rect(93,142,39,21,'coal',8)+
+    path('M119 144L172 132Q180 132 182 143L183 151L125 165Z','rock-dark')+
+    ellipse(179,143,8,14,'coal','transform="rotate(-12 179 143)"')+glint('M131 146L162 139'));
+  return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
   line('M101 171L157 208M153 171L99 208','sand',6)+rect(64,95,128,51,'paper',12)+
   [83,117,151].map(x=>rect(x,110,22,25,'coal',7)).join('')+roof(76,'leaf')+
   group('banner',path('M142 145H177V188L160 201L142 188Z','danger')+circle(160,163,7,'sand'))+glint('M79 102H113'));}
@@ -193,8 +239,90 @@ function monument(){return foot(rect(62,205,132,21,'paper',9)+
   group('star',star(128,40,25,'energy')+glint('M123 34L127 27'))+
   glint('M109 112L104 183')+line('M93 216H163','clay',4));}
 
+// New civic and production buildings share the original state/palette helpers.
+function park(){return foot(
+  ellipse(128,215,92,13,'grass')+post(68,120,97,'iron')+
+  path('M76 161L54 143M76 149L96 129','none',`stroke="${paint('iron')}" stroke-width="10"`)+
+  circle(75,109,43,'leaf')+path('M101 82Q131 119 91 145','none',`stroke="${paint('moss')}" stroke-width="12"`)+glint('M44 99Q48 80 65 79')+
+  post(94,186,33,'rock-dark')+post(137,186,33,'rock-dark')+rect(89,165,65,13,'iron',5)+rect(89,183,65,12,'clay',5)+
+  line('M99 170H143','sand',3)+ellipse(188,212,30,11,'rock')+ellipse(188,208,25,7,'water')+
+  post(182,177,31,'paper')+ellipse(188,176,21,8,'paper')+ellipse(188,173,16,5,'water')+
+  line('M188 170V150Q174 143 175 156M188 151Q201 143 202 156','science',5)+
+  rect(36,213,62,12,'iron',6)+[48,67,85].map((x,i)=>line(`M${x} 216V199`,'leaf',3)+circle(x,198,7,i===1?'clay':'danger')+circle(x-1,197,2,'cream','stroke="none"')).join(''));}
+
+const fish = (x,y) => path(`M${x} ${y}Q${x+10} ${y-11} ${x+22} ${y}Q${x+10} ${y+11} ${x} ${y}L${x-7} ${y-7}V${y+7}Z`,'science')+circle(x+16,y-2,1.5,'ink','stroke="none"');
+function fishery(tier){
+  const water=path('M124 207Q149 195 168 206Q193 197 222 208V226H118Z','water')+line('M146 218Q154 222 162 218M199 220H213','cream',3);
+  const jetty=post(45,182,43)+post(111,182,43)+rect(33,190,110,14,'iron',5)+line('M45 194H125','sand',3);
+  if(tier===1)return foot(water+post(50,150,42)+post(116,150,42)+rect(40,108,98,75,'iron',12)+
+    line('M47 131H132M46 151H132M54 166H72','clay',3)+path('M33 112L80 77Q88 71 97 78L146 112Z','deep-water')+
+    glint('M48 105L81 82')+door(79,143,27,41)+windowPane(48,120,23,24)+
+    path('M117 133L145 153L127 187L105 168Z','paper')+line('M113 148L134 165M110 160L127 174M124 144L113 168M134 151L123 179','iron',3)+
+    jetty+line('M154 201L136 191','iron',4)+path('M151 198H222Q211 224 175 218Z','clay')+line('M166 204H208','sand',4)+
+    post(187,163,36,'iron')+path('M188 165L208 188H188Z','paper'));
+  return foot(water+rect(125,126,88,63,'paper',12)+path('M116 128L157 92Q168 86 180 94L220 128Z','deep-water')+
+    line('M145 143H198M145 155H198','rock-dark',3)+door(177,151,25,38)+
+    post(57,57,134,'rock')+path('M49 58H158L150 77H49Z','science')+line('M65 65H139','cream',4)+
+    line('M69 81L111 60M63 102L92 75','rock-dark',5)+line('M145 77V121','ink',3)+path('M145 121Q155 131 145 137Q135 139 135 130','none')+
+    jetty+crate(37,163,30)+crate(77,163,30)+fish(45,165)+fish(85,165)+
+    rect(163,171,34,28,'paper',7)+windowPane(172,177,17,15)+line('M199 164V199','iron',4)+
+    path('M132 196H224L214 215Q178 229 147 215Z','clay')+line('M148 205H213','cream',4));
+}
+
+function glassworks(){return foot(rect(47,111,142,112,'paper',17)+
+  rect(151,68,24,54,'rock',8)+path('M38 113L68 85H183L206 113Z','rock-dark')+glint('M57 105L72 92H111')+
+  path('M128 222V168Q128 123 172 123Q218 123 218 168V222Z','iron')+
+  path('M143 222V177Q143 151 172 151Q202 151 202 177V222Z','coal')+
+  group('glow',path('M151 217V180Q151 164 172 164Q193 164 193 180V217Z',state==='idle'?'ascension':'coal')+
+    path('M161 215Q155 200 168 188L177 197L183 186Q195 213 182 215Z',lit()))+
+  line('M137 173H144M200 172H209M145 143L151 151M188 139L183 151','clay',4)+glint('M139 154Q141 139 154 135')+
+  post(45,147,77)+post(112,147,77)+rect(39,209,86,11,'iron',4)+rect(39,174,86,9,'iron',4)+
+  path('M53 204V184L60 179V169H70V180L76 186V204Z','science')+glint('M59 188V197')+
+  rect(85,185,24,21,'water',5)+glint('M91 190V198')+
+  path('M53 165V132L79 126V165Z','science')+path('M83 165V139L107 133V165Z','water')+glint('M60 139V152M90 144V156'));}
+
+function library(){return foot(rect(43,118,170,108,'paper',20)+
+  path('M193 137V204Q193 215 181 215H64','none',`stroke="${paint('paper',-.18)}" stroke-width="10"`)+
+  path('M35 119Q47 63 128 59Q209 63 221 119Z','crystal')+
+  path('M129 63Q169 71 177 118','none',`stroke="${paint('oil-sheen')}" stroke-width="8"`)+
+  rect(33,116,190,13,'oil-sheen',6)+glint('M54 102Q67 79 94 74')+
+  [57,167].map(x=>path(`M${x} 194V158Q${x} 140 ${x+16} 140Q${x+32} 140 ${x+32} 158V194Z`,lit())+
+    line(`M${x+16} 145V191M${x+3} 169H${x+29}`,'iron',3)).join('')+
+  door(109,176,38,49)+path('M100 143Q113 137 128 145Q143 137 156 143V164Q142 158 128 167Q114 158 100 164Z','cream')+
+  line('M128 146V163M106 148L119 150M137 150L149 148','iron',3)+rect(55,205,32,14,'clay',6)+leaf(70,207,.5));}
+
+function refinery(){
+  const pipe=d=>line(d,'ink',14)+line(d,'rock',8);
+  const tank=(x,y)=>rect(x,y,48,223-y,'paper',19)+ellipse(x+24,y,24,11,'rock')+line(`M${x+7} ${y+26}H${x+41}`,'rock-dark',4)+glint(`M${x+8} ${y+13}V${y+25}`);
+  return foot(rect(155,68,43,150,'rock',19)+ellipse(176,69,21,9,'paper')+
+    [93,123,153].map(y=>rect(149,y,55,10,'rock-dark',5)).join('')+
+    post(170,43,24,'iron')+path('M176 43Q159 35 174 20Q173 30 182 29Q191 41 176 43Z',state==='idle'?'ascension':'coal')+
+    line('M188 80V177M161 83V91','cream',3)+pipe('M155 105H139V174H118M155 145H131V207H85')+
+    tank(35,159)+tank(91,184)+rect(151,184,58,41,'iron',10)+door(165,196,24,29)+
+    rect(201,200,20,25,'clay',4)+path('M205 199V193H216V199','none')+line('M205 207L216 217M216 207L205 217','iron',3));
+}
+
+function observatory(){return foot(
+  path('M55 150Q128 128 201 150V210Q201 228 128 228Q55 228 55 210Z','snow')+
+  path('M184 158V206Q184 216 161 217','none',`stroke="${paint('rock')}" stroke-width="10"`)+
+  // The hemisphere and telescope rotate together about the dome center.
+  group('dome',path('M49 145Q49 72 128 72Q207 72 207 145Z','snow')+
+    path('M124 75Q155 95 154 145H178Q177 95 149 75Z','coal')+
+    path('M137 119L185 69L207 89L157 139Z','rock')+
+    path('M175 78L187 65Q190 61 195 65L212 80Q216 84 211 89L201 99Z','snow')+
+    ellipse(200,78,8,12,'deep-water','transform="rotate(-48 200 78)"')+
+    glint('M67 120Q71 91 101 85M148 117L177 87')+rect(45,143,166,14,'rock',7))+
+  path('M112 224V190Q112 174 128 174Q144 174 144 190V224Z','deep-water')+
+  circle(128,194,8,lit())+line('M66 171H91M166 171H190','rock-dark',4)+glint('M64 183V205'));}
+
 const buildings = [
-  {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
+  {id:'park',tiers:1,phase:'P1',draw:park},
+  {id:'fishery',tiers:2,phase:'P1',draw:fishery},
+  {id:'glassworks',tiers:1,phase:'P1',parts:['glow'],draw:glassworks},
+  {id:'library',tiers:1,phase:'P1',draw:library},
+  {id:'refinery',tiers:1,phase:'P1',draw:refinery},
+  {id:'observatory',tiers:1,phase:'P1',parts:['dome'],draw:observatory},
+  {id:'housing',tiers:4,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
   {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
   {id:'farm',tiers:2,phase:'P0',draw:farm},
@@ -210,7 +338,7 @@ const buildings = [
   {id:'storage',tiers:2,phase:'P1',draw:storage},
   {id:'market',tiers:1,phase:'P1',parts:['flag'],draw:market},
   {id:'rocket-big',tiers:1,phase:'P1',parts:['flame-anchor'],draw:(t,v)=>rocket(t,v,true)},
-  {id:'watchtower',tiers:1,phase:'P1',parts:['banner'],draw:watchtower},
+  {id:'watchtower',tiers:2,phase:'P1',parts:['banner'],draw:watchtower},
   {id:'ruin',tiers:1,phase:'P1',draw:ruin},
   {id:'escape-pod',tiers:1,phase:'P1',variants:['closed','open'],draw:escapePod},
   {id:'power-atomic',tiers:1,phase:'P2',parts:['glow'],draw:atomic},
