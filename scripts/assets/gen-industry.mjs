@@ -41,8 +41,27 @@ function biogas(){
     path('M164 202Q153 186 170 188Q180 196 164 202Z','leaf')+base();
 }
 
+function gasPower(){
+  return rect(186,68,19,118,'paper',9)+rect(181,60,29,16,'rock',7)+
+    group('steam',path('M188 49Q176 48 181 37Q171 26 182 20Q191 13 198 24Q211 22 212 34Q213 45 202 46Z','snow',
+      `stroke="${paint('rock')}" stroke-width="3" opacity="${state==='idle'?.7:0}"`))+
+    glint('M192 86V110')+pipe('M186 170H216V212H194','rock',9)+
+    path('M102 111H150Q201 111 201 166V222H102Z','science')+
+    shade('M176 132Q189 149 189 174V211H145','science',10)+
+    ellipse(103,168,60,57,'paper')+ellipse(103,168,45,43,'rock-dark')+
+    ellipse(103,168,34,32,'deep-water')+
+    [0,120,240].map(a=>`<g transform="rotate(${a} 103 168)">${path('M98 165Q79 142 99 141Q117 139 109 160L106 167Z','snow')}</g>`).join('')+
+    circle(103,168,10,'rock')+circle(100,165,3,'cream','stroke="none"')+
+    glint('M55 154Q60 132 78 128M119 119H144')+
+    rect(155,155,34,47,'paper',12)+
+    path('M170 194Q156 188 168 173L174 165Q172 176 180 181Q185 193 170 194Z','deep-water','stroke-width="3"')+
+    path('M169 188Q166 184 172 179Q179 189 172 189Z','science','stroke="none"')+
+    rect(61,217,132,9,'rock-dark',4)+base();
+}
+
 const buildings = [
   {id:'biogas-plant',draw:biogas,parts:['gas-flame']},
+  {id:'power-gas',draw:gasPower,parts:['steam']},
 ];
 const assets=[];
 function emit(id,category,stem,body,size,anchor,parts=[],tags=[]){

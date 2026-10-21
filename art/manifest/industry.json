@@ -69,6 +69,76 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.power-gas",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas.svg",
+      "out": "public/assets/sprites/buildings/power-gas.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam"
+      ],
+      "tags": [
+        "power-gas",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-gas.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas-construction.svg",
+      "out": "public/assets/sprites/buildings/power-gas-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-gas",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-gas.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas-off.svg",
+      "out": "public/assets/sprites/buildings/power-gas-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam"
+      ],
+      "tags": [
+        "power-gas",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
