@@ -185,8 +185,10 @@ export interface SegmentState {
   building: BuildingId | null;
   /** playerId of whoever built the building, null without building. */
   builtBy: string | null;
-  /** Which deposit hand-gatherers collect when there is no building. */
+  /** Which deposit hand-gatherers collect when there is no building (crafting buildings: the recipe). */
   gather: ResourceId | null;
+  /** Upgrade stage of the building, 1 when missing. */
+  tier?: number;
 }
 
 export interface DepositState {
@@ -203,6 +205,8 @@ export type TerraformKind = "plantTrees" | "fillSand" | "fillClay";
 export type Command =
   | { type: "build"; planetId: string; segment: number; building: BuildingId }
   | { type: "demolish"; planetId: string; segment: number }
+  /** Upgrades the building on a segment to its next stage. */
+  | { type: "upgrade"; planetId: string; segment: number }
   /** Moves `delta` of the sender's units onto (+) or off (−) a segment. */
   | { type: "assign"; planetId: string; segment: number; delta: number }
   /** Moves one specific unit; segment null makes it idle. */
@@ -240,6 +244,7 @@ export type GameEvent =
   | { type: "revealed"; planetId: string; segments: number[] }
   | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
   | { type: "demolished"; planetId: string; segment: number; playerId: string }
+  | { type: "upgraded"; planetId: string; segment: number; building: BuildingId; tier: number; playerId: string }
   | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
   | { type: "removed"; playerId: string; by: string }

@@ -1,6 +1,7 @@
-import { BUILDINGS, RECIPES, RULES, type ResourceId } from "./content";
+import { RECIPES, RULES, type ResourceId } from "./content";
 import {
   buildBlocker,
+  buildingStats,
   cloneState,
   craftRate,
   housing,
@@ -80,13 +81,13 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     // Forests next to a worked forester regrow faster, empty ones get replanted.
     const forested = new Map<number, { mul: number; replant: boolean }>();
     for (const segment of planet.segments) {
-      const f = segment.building ? BUILDINGS[segment.building].forester : undefined;
+      const f = buildingStats(segment)?.forester;
       if (!f || !workers.get(`${planet.id}:${segment.index}`)) continue;
       for (const n of neighbors(planet, segment.index)) if (n.biome === "forest") forested.set(n.index, { mul: f.neighborRegenMul, replant: f.replantsDepleted });
     }
 
     for (const segment of planet.segments) {
-      const def = segment.building ? BUILDINGS[segment.building] : null;
+      const def = buildingStats(segment);
       const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
       if (economy && def?.crafts) craft(planet, segment, working, economy, rateFactor);
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {

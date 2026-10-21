@@ -1,5 +1,5 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, BUILDINGS, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
+import { BIOMES, BUILDINGS, buildingStats, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
@@ -602,9 +602,9 @@ export class PlanetView {
       if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
       if (s.building) {
-        const empty = BUILDINGS[s.building].workers > 0 && workerCount(state, planet, i) === 0;
-        const anim = empty ? undefined : buildingAnim(s.building);
-        const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined);
+        const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
+        const anim = empty ? undefined : buildingAnim(s.building, s.tier);
+        const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined, s.tier);
         const rotation = mid + Math.PI / 2;
         const scale = (k * segWidth) / ART_FOOTPRINT;
         if (texture) {

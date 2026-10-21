@@ -1,6 +1,6 @@
 import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { placeBuilding } from "./build";
-import { shieldBlocker, shieldFlightPlan } from "./rules";
+import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, upgradeBlocker } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
@@ -177,12 +177,24 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       // On a shared planet nobody tears down a teammate's work (unless the builder left the game).
       if (segment.builtBy && segment.builtBy !== playerId && playerById(state, segment.builtBy)) return "Das hat ein Mitspieler gebaut";
       const economy = state.economies[planet.economyId!]!;
-      const def = BUILDINGS[segment.building];
-      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((def.cost[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
+      const paid = paidFor(segment);
+      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((paid[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
       for (const u of workersOn(state, planet, segment.index)) u.segment = null;
       segment.building = null;
       segment.builtBy = null;
+      delete segment.tier;
       events.push({ type: "demolished", planetId: planet.id, segment: segment.index, playerId });
+      return null;
+    }
+    case "upgrade": {
+      if (!segment.building) return "Hier steht nichts";
+      const blocker = upgradeBlocker(state, planet, segment);
+      if (blocker) return blocker;
+      const economy = state.economies[planet.economyId!]!;
+      const next = nextUpgrade(segment)!;
+      for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+      segment.tier = (segment.tier ?? 1) + 1;
+      events.push({ type: "upgraded", planetId: planet.id, segment: segment.index, building: segment.building, tier: segment.tier, playerId });
       return null;
     }
     case "assign": {
@@ -200,7 +212,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       return null;
     }
     case "setGather": {
-      const crafts = segment.building ? BUILDINGS[segment.building].crafts : undefined;
+      const crafts = buildingStats(segment)?.crafts;
       if (crafts) {
         // Crafting buildings: `gather` picks the recipe.
         if (!crafts.recipes.includes(cmd.resource as RecipeId)) return "Das stellt dieses Gebäude nicht her";

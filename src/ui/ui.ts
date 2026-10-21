@@ -33,6 +33,9 @@ import {
   RECIPES,
   segmentOutput,
   segmentRecipe,
+  buildingStats,
+  nextUpgrade,
+  upgradeBlocker,
   toolFactor,
   ticksPerCycle,
   workerCapacity,
@@ -228,6 +231,9 @@ export class Ui {
         case "gameOver":
           this.toast(this.resultText(e.result), "supernova" in e.result ? "bad" : "good");
           break;
+        case "upgraded":
+          if (e.playerId === this.playerId) this.toast(`⬆️ ${BUILDINGS[e.building].name} auf Stufe ${e.tier} ausgebaut`, "good");
+          break;
         case "cycle":
         case "built":
         case "demolished":
@@ -269,6 +275,9 @@ export class Ui {
         break;
       case "demolish":
         this.actions.send({ type: "demolish", ...at });
+        break;
+      case "upgrade":
+        this.actions.send({ type: "upgrade", ...at });
         break;
       case "terraform":
         this.actions.send({ type: "terraform", ...at, kind: value as TerraformKind });
@@ -621,8 +630,9 @@ export class Ui {
       return `<h2>❔ Unerforschtes Feld</h2><p class="muted">Bau ein Gebäude in der Nähe, um es aufzudecken.</p>${hint}`;
     }
     const biome = BIOMES[s.biome];
-    const def = s.building ? BUILDINGS[s.building] : null;
-    const title = def ? `${this.bicon(s.building!)} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
+    const def = buildingStats(s);
+    const stage = def?.upgrades ? ` <small>Stufe ${s.tier ?? 1}</small>` : "";
+    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
@@ -631,7 +641,8 @@ export class Ui {
         const empty = !d.infinite && d.amount <= 0;
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
-        const tag = d.byHand ? "" : `<small>Mine</small>`;
+        const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
+        const tag = d.byHand ? "" : `<small>Mine${deep ? ` ${deep}` : ""}</small>`;
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
       })
@@ -687,7 +698,17 @@ export class Ui {
     let actions = "";
     if (def) {
       const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>`;
-      actions = `${info}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
+      const next = nextUpgrade(s);
+      let upgrade = "";
+      if (next) {
+        const blocker = upgradeBlocker(state, planet, s);
+        const locked = economy.ascension.level < next.unlockLevel;
+        const cost = Object.entries(next.cost)
+          .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+          .join(" ");
+        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">Ausbauen auf Stufe ${(s.tier ?? 1) + 1}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}</span></button>`;
+      }
+      actions = `${info}${upgrade}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
       actions = `<div class="builds">${terraforms}${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
         .map((b) => {

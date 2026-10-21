@@ -304,7 +304,7 @@ function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] 
   return out;
 }
 
-const TINKER_DEPOSITS = new Set<string>(["fiber", "copper"]);
+const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold"]);
 
 function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
   // Tinkering deposits vary from a side stream so worlds of older seeds stay the same.
@@ -350,13 +350,14 @@ function shuffle<T>(items: T[], rng: Rng): void {
 /**
  * Brings a saved state from an older version up to date, or null if that is not possible.
  * 11 → 12: the tinkering resources start at 0 (new deposits only appear on new planets).
+ * Resources that are new since a state was saved start at 0 too.
  */
 export function upgradeState(state: unknown): GameState | null {
   const s = state as GameState | null;
   if (!s || typeof s !== "object") return null;
-  if ((s.version as number) === 11) {
-    for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
-    (s as { version: number }).version = 12;
-  }
-  return s.version === 12 ? s : null;
+  if ((s.version as number) !== 11 && s.version !== 12) return null;
+  // Resources added later (bricks, gold) are also filled into version 12 states.
+  for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
+  (s as { version: number }).version = 12;
+  return s;
 }
