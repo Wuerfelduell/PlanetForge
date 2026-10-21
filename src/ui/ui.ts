@@ -96,6 +96,8 @@ export class Ui {
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
   private showDiscoveries = false;
+  /** Full resource list open under the top bar. */
+  private showResources = false;
   /** Open tab of the build menu; kept while the player taps from field to field. */
   private buildTab: BuildingCategory | "terrain" = "housing";
   /** Star map open, and the planet (or "sun") picked on it. */
@@ -328,6 +330,9 @@ export class Ui {
         this.buildTab = value as BuildingCategory | "terrain";
         this.lastPanel = "";
         break;
+      case "resources":
+        this.showResources = !this.showResources;
+        break;
       case "discoveries":
         this.showDiscoveries = !this.showDiscoveries;
         this.lastPanel = "";
@@ -389,9 +394,16 @@ export class Ui {
     const economy = this.myEconomy(state) ?? economyOf(state, planet);
     if (!economy) return NO_HUD;
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
-    const chips = shown
-      .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${this.res(r)} ${Math.floor(economy.resources[r])}</span>`)
-      .join("");
+    const chip = (r: ResourceId) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}: ${Math.floor(economy.resources[r])}">${this.res(r)} ${short(economy.resources[r])}</span>`;
+    // Only the key resources stay in the bar; the rest open as a list with a tap on "+n".
+    const key = shown.filter((r) => KEY_RESOURCES.has(r));
+    const more = shown.length - key.length;
+    const chips = key.map(chip).join("");
+    const moreButton =
+      (more > 0 ? `<button class="chip more${this.showResources ? " on" : ""}" data-action="resources" title="Alle Rohstoffe">+${more} ${this.showResources ? "▴" : "▾"}</button>` : "");
+    const list = this.showResources && more > 0
+      ? `<div class="res-list">${shown.map((r) => `<span class="res-item${r === "food" && economy.starving ? " bad" : ""}">${this.res(r)} <span class="res-name">${RESOURCES[r].name}</span> <b>${Math.floor(economy.resources[r])}</b></span>`).join("")}</div>`
+      : "";
     const ascension = economy.ascension;
     const lvl = ascension.level;
     const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
@@ -415,7 +427,7 @@ export class Ui {
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    const controls = `${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
+    const controls = `${moreButton}${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
     const rest = `
       <div class="row status main">
         ${planetChip}
@@ -424,7 +436,7 @@ export class Ui {
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>${this.renderFlights(state, versusButtons)}`;
+      </div>${this.renderFlights(state, versusButtons)}${list}`;
     return { chips, controls, rest };
   }
 
@@ -813,6 +825,15 @@ export class Ui {
 function fmt(v: number): string {
   return Number.isInteger(Math.round(v * 10) / 10) ? String(Math.round(v)) : v.toFixed(1);
 }
+
+/** Bar numbers: 12 345 becomes "12k" so more chips fit on a phone. */
+function short(amount: number): string {
+  const n = Math.floor(amount);
+  return n >= 10000 ? `${Math.floor(n / 1000)}k` : String(n);
+}
+
+/** Resources always shown in the top bar; the others sit behind "+n". */
+const KEY_RESOURCES = new Set<ResourceId>(["food", "wood", "stone", "iron", "science", "fuel"]);
 
 interface HudHtml {
   chips: string;
