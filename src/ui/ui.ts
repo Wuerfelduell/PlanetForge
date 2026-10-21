@@ -74,7 +74,8 @@ export class Ui {
   private readonly hud = el("hud");
   private readonly panel = el("panel-body");
   private readonly toasts = el("toasts");
-  private lastHud = "";
+  private lastHud = NO_HUD;
+  private hudParts: { chips: HTMLElement; controls: HTMLElement; rest: HTMLElement } | null = null;
   private lastPanel = "";
   private selected = 0;
   private state: GameState | null = null;
@@ -148,7 +149,16 @@ export class Ui {
     const planet = state.planets.find((p) => p.id === this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
-    if (hud !== this.lastHud) this.hud.innerHTML = this.lastHud = hud;
+    // Three parts, so the resource strip stays the same element and keeps its scroll position
+    // (and an ongoing swipe) while the numbers tick.
+    if (!this.hudParts) {
+      this.hud.innerHTML = `<div class="row resources"><div class="res-scroll"></div><span class="spacer"></span><div class="hud-controls"></div></div><div class="hud-rest"></div>`;
+      this.hudParts = { chips: this.hud.querySelector(".res-scroll")!, controls: this.hud.querySelector(".hud-controls")!, rest: this.hud.querySelector(".hud-rest")! };
+    }
+    if (hud.chips !== this.lastHud.chips) this.hudParts.chips.innerHTML = hud.chips;
+    if (hud.controls !== this.lastHud.controls) this.hudParts.controls.innerHTML = hud.controls;
+    if (hud.rest !== this.lastHud.rest) this.hudParts.rest.innerHTML = hud.rest;
+    this.lastHud = hud;
     const panel = this.renderPanel(state, planet);
     if (panel !== this.lastPanel) this.panel.innerHTML = this.lastPanel = panel;
   }
@@ -343,12 +353,13 @@ export class Ui {
         if (this.speed > 0) this.lastSpeed = this.speed;
         this.speed = Number(value);
         this.actions.setSpeed(this.speed);
-        this.lastHud = "";
+        this.lastHud = NO_HUD;
         break;
       case "map":
         this.mapOpen = !this.mapOpen;
         this.showDiscoveries = false;
-        this.lastPanel = this.lastHud = "";
+        this.lastPanel = "";
+        this.lastHud = NO_HUD;
         this.actions.showMap(this.mapOpen);
         break;
       case "mapTarget":
@@ -357,7 +368,8 @@ export class Ui {
         break;
       case "view":
         this.mapOpen = false;
-        this.lastPanel = this.lastHud = "";
+        this.lastPanel = "";
+        this.lastHud = NO_HUD;
         this.actions.showMap(false);
         this.actions.showPlanet(value!);
         break;
@@ -372,10 +384,10 @@ export class Ui {
     }
   }
 
-  private renderHud(state: GameState, planet: PlanetState): string {
+  private renderHud(state: GameState, planet: PlanetState): HudHtml {
     // Always the viewer's own stock, also while looking at someone else's planet.
     const economy = this.myEconomy(state) ?? economyOf(state, planet);
-    if (!economy) return "";
+    if (!economy) return NO_HUD;
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
     const chips = shown
       .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${this.res(r)} ${Math.floor(economy.resources[r])}</span>`)
@@ -403,8 +415,8 @@ export class Ui {
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button></div>
+    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button>`;
+    const rest = `
       <div class="row status main">
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
@@ -413,6 +425,7 @@ export class Ui {
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>${this.renderFlights(state)}`;
+    return { chips, controls, rest };
   }
 
   /** Own rockets and attacks on own planets, with time to arrival. */
@@ -793,6 +806,13 @@ export class Ui {
 function fmt(v: number): string {
   return Number.isInteger(Math.round(v * 10) / 10) ? String(Math.round(v)) : v.toFixed(1);
 }
+
+interface HudHtml {
+  chips: string;
+  controls: string;
+  rest: string;
+}
+const NO_HUD: HudHtml = { chips: "", controls: "", rest: "" };
 
 function el(id: string): HTMLElement {
   const node = document.getElementById(id);
