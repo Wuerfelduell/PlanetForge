@@ -85,6 +85,11 @@ export class Ui {
     return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="">` : "📜";
   }
 
+  /** HUD badge from the ui atlas (single PNG), the emoji until the art is loaded. */
+  private badge(name: "invasion" | "shield", emoji: string): string {
+    return this.art ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
+  }
+
   private res(resource: ResourceId): string {
     return this.art ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
   }
@@ -375,15 +380,15 @@ export class Ui {
     if (inv && (inv.spotted || inv.sieging)) {
       chips.push(
         inv.sieging
-          ? `<span class="chip bad">👾 Belagerung: ${this.targetName(inv.target)} <small>Schiff ${inv.hp}/${inv.maxHp}</small></span>`
-          : `<span class="chip bad">👾 Welle ${inv.wave} → ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
+          ? `<span class="chip bad">${this.badge("invasion", "👾")} Belagerung: ${this.targetName(inv.target)} <small>Schiff ${inv.hp}/${inv.maxHp}</small></span>`
+          : `<span class="chip bad">${this.badge("invasion", "👾")} Welle ${inv.wave} → ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
       );
     }
     const nova = novaTickNow(state);
     const built = state.sun.shield.filter((x) => x.built).length;
-    if (state.sun.saved) chips.push(`<span class="chip">🌞 Hülle geschlossen</span>`);
+    if (state.sun.saved) chips.push(`<span class="chip">${this.badge("shield", "🌞")} Hülle geschlossen</span>`);
     else if (nova !== null && (built > 0 || cycleOf(state) >= SUPERNOVA.firstHintCycle)) {
-      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}">☀️ Hülle ${built}/${SUPERNOVA.segments} <small>Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen</small></span>`);
+      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}">${this.badge("shield", "☀️")} Hülle ${built}/${SUPERNOVA.segments} <small>Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen</small></span>`);
     }
     for (const f of state.flights) {
       const seconds = Math.ceil((f.arrivalTick - state.tick) / RULES.ticksPerSecond);
@@ -470,7 +475,16 @@ export class Ui {
       .filter(([, v]) => (v as number) > 0)
       .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
       .join(" ");
-    return `<h2>☀️ Schutzhülle</h2><p class="muted">Jedes Segment verschiebt die Supernova, alle ${SUPERNOVA.segments} verhindern sie. Bau: ${SUPERNOVA.crew} Einwohner fliegen hin (${build.seconds} s) und kommen zurück. Kosten: ${cost}</p><div class="shield">${segments}</div>`;
+    // The ring around the sun as it stands: dashed = missing, cracked = under half.
+    const ring = this.art
+      ? `<div class="shield-ring"><img src="assets/sprites/space/sun-${state.sun.type}.png" alt="">${state.sun.shield
+          .map((seg, i) => {
+            const look = !seg.built ? "empty" : seg.hp < 50 ? "damaged" : "built";
+            return `<img style="transform: rotate(${(i * 360) / state.sun.shield.length}deg)" src="assets/sprites/space/sun-shield-segment-${look}.png" alt="">`;
+          })
+          .join("")}</div>`
+      : "";
+    return `<h2>${this.badge("shield", "☀️")} Schutzhülle</h2><p class="muted">Jedes Segment verschiebt die Supernova, alle ${SUPERNOVA.segments} verhindern sie. Bau: ${SUPERNOVA.crew} Einwohner fliegen hin (${build.seconds} s) und kommen zurück. Kosten: ${cost}</p>${ring}<div class="shield">${segments}</div>`;
   }
 
   /** Discovery choice (coop: everyone votes, most votes win, a tie decides nothing) and what the team owns. */

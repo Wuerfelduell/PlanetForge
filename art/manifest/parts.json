@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.battery.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/battery-back.svg",
+      "out": "public/assets/sprites/buildings/anim/battery-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.battery.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/battery-part.svg",
+      "out": "public/assets/sprites/buildings/anim/battery-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5859
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.battery.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/battery-front.svg",
+      "out": "public/assets/sprites/buildings/anim/battery-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.power-wind.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/power-wind-back.svg",

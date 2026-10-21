@@ -107,6 +107,12 @@ export class PlanetView {
   private readonly invader = new Text({ text: "🛸", style: { fontSize: 40 } });
   private readonly invaderShip = new Sprite();
   private readonly invaderBar = new Graphics();
+  /** Small escort ships circling the mothership. */
+  private readonly escorts = [new Sprite(), new Sprite()];
+  /** Screen-level one-shots: invader beams, sun flare, supernova. */
+  private readonly screenFx = new Effects();
+  private width = 0;
+  private height = 0;
   /** Art layers, bottom to top; empty while the placeholder drawing is used. */
   private readonly layers = { body: new SpritePool(), ground: new SpritePool(), props: new SpritePool(), buildings: new SpritePool(), parts: new SpritePool(), fronts: new SpritePool(), citizens: new SpritePool(), overlays: new SpritePool() };
   private readonly effects = new Effects();
@@ -137,7 +143,8 @@ export class PlanetView {
   ) {
     this.invader.anchor.set(0.5);
     this.invaderShip.anchor.set(0.5);
-    this.stage.addChild(this.stars, this.wheel, this.marker, this.invader, this.invaderShip, this.invaderBar);
+    for (const e of this.escorts) e.anchor.set(0.5);
+    this.stage.addChild(this.stars, this.wheel, this.marker, this.invader, ...this.escorts, this.invaderShip, this.invaderBar, this.screenFx.container);
     const l = this.layers;
     this.wheel.addChild(l.body.container, this.ground, l.ground.container, l.props.container, l.buildings.container, l.parts.container, l.fronts.container, l.citizens.container, this.effects.container, l.overlays.container, this.fx);
     this.bindInput(app.canvas);
@@ -282,6 +289,8 @@ export class PlanetView {
   layout(width: number, height: number, topInset: number, bottomInset: number): void {
     const free = Math.max(120, height - topInset - bottomInset);
     this.radius = Math.min(width * 0.4, free * 0.4);
+    this.width = width;
+    this.height = height;
     this.cx = width / 2;
     this.cy = topInset + free / 2 + this.radius * 0.06;
     this.drawStars(width, height);
@@ -319,6 +328,24 @@ export class PlanetView {
       this.puffSmoke(deltaMs);
     }
     this.effects.update(deltaMs);
+    this.animateEscorts(state);
+    this.screenFx.update(deltaMs);
+  }
+
+  /** Two escorts circle the mothership while it is shown. */
+  private animateEscorts(state: GameState): void {
+    const ship = this.invaderShip;
+    const frames = ship.visible ? artFrames("invader.escort") : [];
+    this.escorts.forEach((e, i) => {
+      e.visible = frames.length > 0;
+      if (!e.visible) return;
+      const a = this.time * 1.3 + i * Math.PI;
+      const w = ship.width;
+      e.texture = frames[(Math.floor(state.tick / 3) + i) % frames.length]!;
+      e.scale.set((w * 0.28) / Math.max(1, e.texture.orig.width));
+      e.position.set(ship.x + Math.cos(a) * w * 0.7, ship.y + Math.sin(a) * w * 0.25);
+      e.alpha = ship.alpha;
+    });
   }
 
   /** Visual feedback for simulation events on the shown planet. */
@@ -335,6 +362,22 @@ export class PlanetView {
           this.effects.sparkle(p.x, p.y, p.angle, this.segmentWidth() * 0.6);
         }
         sfx.play("fog.reveal");
+      } else if (e.type === "siege" && e.target === this.planetId && this.invaderShip.visible) {
+        // Beam from the mothership straight down to the surface below it.
+        const sx = this.invaderShip.x;
+        const sy = this.invaderShip.y + this.invaderShip.height * 0.25;
+        const below = Math.atan2(sy - this.cy, sx - this.cx) + (Math.random() - 0.5) * 0.3;
+        const tx = this.cx + Math.cos(below) * this.radius;
+        const ty = this.cy + Math.sin(below) * this.radius;
+        const length = Math.hypot(tx - sx, ty - sy);
+        const rotation = Math.atan2(ty - sy, tx - sx) - Math.PI / 2;
+        this.screenFx.once(artFrames("fx.invader-beam"), sx, sy, rotation, this.radius * 0.35, length, 700);
+      } else if (e.type === "sunWarning") {
+        const size = Math.min(this.width, this.height) * 0.7;
+        this.screenFx.once(artFrames("fx.sun-flare"), this.width * 0.9, this.height * 0.1, 0, size, size, 1800);
+      } else if (e.type === "gameOver" && "supernova" in e.result) {
+        const size = Math.max(this.width, this.height) * 1.3;
+        this.screenFx.once(artFrames("fx.supernova"), this.width / 2, this.height / 2, 0, size, size, 3200);
       }
     }
   }
