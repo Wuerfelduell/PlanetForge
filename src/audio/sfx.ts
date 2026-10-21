@@ -20,6 +20,8 @@ const VARIANTS = 4;
  * Browsers (iOS especially) only allow audio after a user gesture, so call `unlock()`
  * from the first tap/click handler; until then `play()` is a silent no-op.
  */
+const SETTINGS_KEY = 'planetforge.sfx';
+
 export class Sfx {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
@@ -27,6 +29,21 @@ export class Sfx {
   private lastPlayed = new Map<SfxId, number>();
   private volume = 0.8;
   private muted = false;
+
+  constructor() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}') as Partial<{ volume: number; muted: boolean }>;
+      if (typeof saved.volume === 'number') this.volume = Math.max(0, Math.min(1, saved.volume));
+      if (typeof saved.muted === 'boolean') this.muted = saved.muted;
+    } catch {
+      // no storage: defaults
+    }
+  }
+
+  /** Volume and mute, remembered in this browser. */
+  get settings(): { volume: number; muted: boolean } {
+    return { volume: this.volume, muted: this.muted };
+  }
 
   unlock(): void {
     if (!this.ctx) {
@@ -72,11 +89,21 @@ export class Sfx {
   setVolume(v: number): void {
     this.volume = Math.max(0, Math.min(1, v));
     this.applyVolume();
+    this.save();
   }
 
   setMuted(m: boolean): void {
     this.muted = m;
     this.applyVolume();
+    this.save();
+  }
+
+  private save(): void {
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings));
+    } catch {
+      // ignore: only a convenience
+    }
   }
 
   private applyVolume(): void {
