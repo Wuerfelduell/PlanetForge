@@ -25,6 +25,26 @@ describe("game-command logic", () => {
     expect(defaults.ok && defaults.state.settings).toMatchObject({ goal: "supernova", invaders: "normal", maxPlayers: 4 });
   });
 
+  it("creates versus games with one economy and start planet per player", () => {
+    const r = step({ state: null, clockAt: null, members: [alice, bob], playerId: "p1", request: { gameId: GAME, kind: "sync" }, now: 1_000, options: { mode: "versus", goal: "supernova", maxPlayers: 2 } });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.state.settings).toMatchObject({ mode: "versus", goal: "endless", invaders: "off", maxPlayers: 2 });
+    const [a, b] = r.state.players;
+    expect(a.economyId).not.toBe(b.economyId);
+    expect(a.homePlanetId).not.toBe(b.homePlanetId);
+  });
+
+  it("keeps members the simulation can't seat as spectators", () => {
+    const carol: Member = { playerId: "p3", name: "Carol" };
+    const input = { state: null, clockAt: null, members: [alice, bob], playerId: "p1", request: { gameId: GAME, kind: "sync" as const }, now: 1_000, options: { mode: "versus" as const, maxPlayers: 2 } };
+    const first = step(input);
+    if (!first.ok) throw new Error(first.error);
+    const later = step({ ...input, state: first.state, clockAt: 1_000, members: [alice, bob, carol], now: 2_000 });
+    expect(later.ok).toBe(true);
+    expect(later.ok && later.state.players.map((p) => p.id)).toEqual(["p1", "p2"]);
+  });
+
   it("runs the clock by the wall-clock gap, but pauses gaps longer than a minute", () => {
     const state = createGame("s", [{ id: "p1", name: "A" }]);
     expect(nextSimTime(state, 10_000, 15_000)).toBe(5_000);

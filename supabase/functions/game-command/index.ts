@@ -21,7 +21,7 @@ interface LoadedGame {
   clock_at: string | null;
   /** Missing until the options migration ran. */
   max_players?: number;
-  options?: { goal?: "endless" | "supernova"; invaders?: "off" | "normal" | "strong" };
+  options?: { mode?: "coop" | "versus"; goal?: "endless" | "supernova"; invaders?: "off" | "normal" | "strong" };
   members: { user_id: string; player_id: string; display_name: string }[];
 }
 

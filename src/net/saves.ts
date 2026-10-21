@@ -13,6 +13,7 @@ export interface SaveSlot {
   lastPlayedAt: string;
   isHost: boolean;
   playerCount: number;
+  mode: "coop" | "versus";
 }
 
 const errorText: Record<string, string> = {
@@ -42,6 +43,7 @@ export async function listSaves(): Promise<SaveSlot[]> {
     lastPlayedAt: r.last_played_at,
     isHost: r.is_host,
     playerCount: Number(r.player_count),
+    mode: r.mode === "versus" ? "versus" : "coop",
   }));
 }
 
@@ -52,6 +54,8 @@ export function firstFreeSlot(saves: SaveSlot[]): number | null {
 
 /** Coop options the host picks for a new game (design 13.4); the server keeps them with the save. */
 export interface SaveOptions {
+  /** Default coop. Versus ignores goal and invaders. */
+  mode?: "coop" | "versus";
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
 }
