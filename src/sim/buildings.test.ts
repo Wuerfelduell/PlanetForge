@@ -221,4 +221,25 @@ describe("new buildings", () => {
     expect(ship.seconds).toBeLessThan(rocket.seconds);
     expect(ROCKETS.starship.capacity).toBeGreaterThan(ROCKETS.colony.capacity);
   });
+
+  it("every start planet hides one small gem field outside the start area", () => {
+    for (const seed of ["a", "b", "c", "d", "e"]) {
+      const g = createGame(seed, [P1], { now: 0, invaders: "off", goal: "endless" });
+      const home = homePlanet(g, P1.id)!;
+      const gems = home.segments.flatMap((s) => s.deposits.filter((d) => ["diamond", "emerald", "ruby"].includes(d.resource)).map((d) => ({ s, d })));
+      expect(gems).toHaveLength(1);
+      expect(gems[0]!.s.index).toBeGreaterThan(RULES.startRevealRadius);
+      expect(gems[0]!.d.amount).toBeLessThanOrEqual(12);
+    }
+  });
+
+  it("the gem mine digs gems only very slowly", () => {
+    let g = world(["mountains", "savanna"]);
+    seg(g, 0).deposits = [{ resource: "ruby", amount: 10, max: 10, infinite: false, byHand: false }];
+    g = build(g, 0, "gem-mine", 2);
+    g = run(g, 10);
+    // 2 workers × 0.03 per second ≈ 0.6 rubies in 10 s.
+    expect(econ(g).resources.ruby - 500).toBeGreaterThan(0.4);
+    expect(econ(g).resources.ruby - 500).toBeLessThan(1);
+  });
 });

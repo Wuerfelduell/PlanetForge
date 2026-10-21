@@ -1,6 +1,7 @@
 import {
   BIOMES,
   CRYO,
+  GEMS,
   PEOPLE_IDS,
   PLANET_TYPE_IDS,
   PLANET_TYPES,
@@ -106,6 +107,21 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     // Two oil fields (playtest: one field was about one colony flight, and easy to build over).
     const oilFields = () => p.segments.filter((x) => x.deposits.some((d) => d.resource === "oil")).length;
     for (let tries = 0; tries < 6 && oilFields() < SYSTEM.oilFieldsPerStartPlanet; tries++) placeRareDeposit(oilRng, p.segments, "oil", true, true);
+  }
+  // Gems: one field on every start planet, now and then one elsewhere. Own stream as well.
+  const gemRng = new Rng(seedFromString(`${seed}:gems`));
+  for (const p of planets) {
+    if (p.startSlot === null && gemRng.next() >= GEMS.planetChance) continue;
+    const gem = gemRng.pick(GEMS.ids);
+    const n = p.segments.length;
+    const away = p.segments.filter((s) => p.startSlot === null || ringDistance(s.index, 0, n) > RULES.startRevealRadius);
+    const fitting = away.filter((s) => GEMS.biomes[gem]!.includes(s.biome));
+    const land = away.filter((s) => BIOMES[s.biome].buildable);
+    const pool = fitting.length ? fitting : land;
+    if (!pool.length) continue;
+    const s = gemRng.pick(pool);
+    const amount = gemRng.int(...GEMS.amount);
+    s.deposits.push({ resource: gem, amount, max: amount, infinite: false, byHand: false });
   }
   // Cryo pods with frozen peoples on free planets, from their own stream as well.
   const cryoRng = new Rng(seedFromString(`${seed}:cryo`));
