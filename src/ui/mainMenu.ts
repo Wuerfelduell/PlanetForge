@@ -3,8 +3,9 @@ import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
 import "./mainMenu.css";
 
-/** Choices for a new game (design 13.4). Versus has neither goal nor invaders. */
+/** Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only. */
 export interface NewGameOptions {
+  mode: "coop" | "versus";
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
 }
@@ -109,6 +110,7 @@ export class MainMenu {
     const c = this.choice;
     const pick = (group: string, value: string, label: string, on: boolean, note = "") =>
       `<button class="menu-choice${on ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}${note ? `<small>${note}</small>` : ""}</button>`;
+    const versus = c.mode === "versus";
     const confirm = this.confirmNew
       ? `<div class="menu-confirm"><span>Dein Planet auf diesem Gerät wird überschrieben.</span><button class="danger" data-go="start!">Ja, neu starten</button><button data-go="cancelStart">Nein</button></div>`
       : "";
@@ -116,9 +118,25 @@ export class MainMenu {
       <h2>✨ Neues Spiel</h2>
       <p class="menu-label">Spielmodus</p>
       <div class="menu-choices">
-        ${pick("mode", "coop", "🤝 Koop", true, "Gemeinsamer Planet")}
-        <button class="menu-choice" disabled>⚔️ Versus<small>kommt bald</small></button>
+        ${pick("mode", "coop", "🤝 Koop", !versus, "Gemeinsamer Planet")}
+        ${pick("mode", "versus", "⚔️ Versus", versus, "Jeder gegen jeden")}
       </div>
+      ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : this.renderCoopChoices(pick)}
+      <p class="menu-label">Spielen</p>
+      <div class="menu-choices">
+        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
+        ${pick("where", "online", "👥 Online", versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
+      </div>
+      ${confirm}
+      <div class="menu-actions">
+        <button data-go="home">Zurück</button>
+        <button class="primary" data-go="start">Los geht's</button>
+      </div>`;
+  }
+
+  private renderCoopChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
+    const c = this.choice;
+    return `
       <p class="menu-label">Ziel</p>
       <div class="menu-choices">
         ${pick("goal", "supernova", "☀️ Supernova abwenden", c.goal === "supernova", "Schild um die Sonne bauen")}
@@ -129,16 +147,6 @@ export class MainMenu {
         ${pick("invaders", "off", "Aus", c.invaders === "off")}
         ${pick("invaders", "normal", "Normal", c.invaders === "normal")}
         ${pick("invaders", "strong", "Stark", c.invaders === "strong")}
-      </div>
-      <p class="menu-label">Spielen</p>
-      <div class="menu-choices">
-        ${pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
-        ${pick("where", "online", "👥 Online", this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
-      </div>
-      ${confirm}
-      <div class="menu-actions">
-        <button data-go="home">Zurück</button>
-        <button class="primary" data-go="start">Los geht's</button>
       </div>`;
   }
 
@@ -181,7 +189,8 @@ export class MainMenu {
     const pick = target.dataset.pick;
     if (pick) {
       const value = target.dataset.value!;
-      if (pick === "goal") this.choice.goal = value as NewGameOptions["goal"];
+      if (pick === "mode") this.choice.mode = value as NewGameOptions["mode"];
+      else if (pick === "goal") this.choice.goal = value as NewGameOptions["goal"];
       else if (pick === "invaders") this.choice.invaders = value as NewGameOptions["invaders"];
       else if (pick === "where") this.where = value as Where;
       writeOptions(this.choice);
@@ -211,7 +220,7 @@ export class MainMenu {
         break;
       case "start":
         // Starting alone over a running local game asks first; online games use a free slot.
-        if (this.where === "local" && this.actions.current()) {
+        if (this.where === "local" && this.choice.mode === "coop" && this.actions.current()) {
           this.confirmNew = true;
           this.render();
           break;
@@ -232,7 +241,8 @@ export class MainMenu {
     this.busy = true;
     this.error = "";
     this.render();
-    Promise.resolve(this.actions.newGame({ ...this.choice }, this.where, this.slot))
+    const where = this.choice.mode === "versus" ? "online" : this.where;
+    Promise.resolve(this.actions.newGame({ ...this.choice }, where, this.slot))
       .then(() => {
         this.busy = false;
         this.close();
@@ -276,7 +286,7 @@ function escape(text: string): string {
 }
 
 function readOptions(): NewGameOptions {
-  const fallback: NewGameOptions = { goal: "supernova", invaders: "normal" };
+  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal" };
   try {
     return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
   } catch {

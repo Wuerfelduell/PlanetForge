@@ -52,7 +52,7 @@ async function boot(): Promise<void> {
   });
 
   /** A fresh game on this device; the old local save is replaced. */
-  const newLocalGame = (options: NewGameOptions) => {
+  const newLocalGame = (options: Omit<NewGameOptions, "mode">) => {
     clearSave();
     leaveOnline();
     session = LocalSession.newGame(undefined, options);
@@ -151,7 +151,7 @@ async function boot(): Promise<void> {
         return `${where} · ⭐ ${level} · Umlauf ${cycleOf(state) + 1}`;
       },
       async newGame(options, where, slot) {
-        if (where === "local") newLocalGame(options);
+        if (where === "local") newLocalGame({ goal: options.goal, invaders: options.invaders });
         else await online.create(options, slot);
       },
       openOnline: () => void online.open(),

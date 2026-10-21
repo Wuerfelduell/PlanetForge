@@ -95,7 +95,7 @@ export class OnlineMenu {
       } else {
         const info = el("span", "slot-name");
         info.append(el("b", "", save.name));
-        info.append(el("small", "", `${save.isHost ? "Host" : "Gast"} · ${save.playerCount} Spieler · Code ${save.joinCode}`));
+        info.append(el("small", "", `${save.mode === "versus" ? "⚔️ Versus" : "🤝 Koop"} · ${save.isHost ? "Host" : "Gast"} · ${save.playerCount} Spieler · Code ${save.joinCode}`));
         row.append(info);
         row.append(button(this.current?.gameId === save.id ? "Läuft" : "Spielen", () => this.run(() => this.play(save.id))));
         row.append(
