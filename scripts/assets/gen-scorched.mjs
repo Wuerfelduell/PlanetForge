@@ -49,9 +49,47 @@ function scorched(segments) {
   return `<defs>${edgeMask(segments)}</defs><g id="overlay" mask="url(#edge)">${body}</g>`;
 }
 
+function ruin() {
+  return '<g id="ruin">' +
+    // Smoke is translucent vector strokes, not a blur or an opaque cloud.
+    line('M98 119C80 105 109 94 95 77C86 67 89 59 96 53', 'rock', 6, 'opacity="0.4"') +
+    line('M164 148C177 136 151 126 162 111', 'rock', 5, 'opacity="0.3"') +
+    path('M38 224Q38 205 53 196L78 189L96 201L125 184L150 198L180 186L206 201L219 225Z', C('coal')) +
+    // A low, jagged wall without architectural cues to any particular building.
+    path('M62 211V133Q62 126 70 127L84 131L91 122L103 139L101 160L122 169L119 211Z', C('rock-dark')) +
+    path('M92 125L103 139L101 160L122 169L119 211H99V171L89 158Z', C('coal'), 'stroke="none"') +
+    path('M67 181Q77 169 88 181L99 175V211H64Z', C('coal'), 'stroke="none"') +
+    line('M69 140V153M70 164H89M72 183H81', 'rock', 3) +
+    line('M69 135L80 137', 'paper', 4) +
+    // Two snapped beams, with clear thick silhouettes and a charred end.
+    path('M69 217L59 204L158 145L158 156L175 152L166 168L181 169L80 224Z', C('iron', -.18)) +
+    line('M72 203L137 164', 'clay', 3) +
+    path('M168 219L97 165L109 164L108 153L123 166L128 160L185 205Z', C('coal')) +
+    line('M124 173L173 210', 'rock-dark', 3) +
+    // Rubble uses the same rounded, faceted stone language as the base buildings.
+    path('M44 225L46 208L62 199L83 209L88 226Z', C('rock')) +
+    path('M64 201L83 209L88 226H66Z', C('rock-dark'), 'stroke="none"') +
+    path('M89 225L93 208L116 196L138 208L142 226Z', C('rock-dark')) +
+    path('M116 197L138 208L142 226H118Z', C('coal'), 'stroke="none"') +
+    path('M153 226L155 207L177 191L195 200L203 225Z', C('rock')) +
+    path('M178 193L195 200L203 225H184Z', C('rock-dark'), 'stroke="none"') +
+    line('M53 211L61 207M102 210L113 204M164 207L175 199', 'paper', 4) +
+    path('M199 226L204 216L216 213L222 226Z', C('rock-dark')) +
+    // The same 200 px outlined footprint and y=240 ground as gen-buildings.
+    `<rect x="31" y="225" width="194" height="12" rx="6" fill="${C('rock-dark')}"/>` +
+    line('M42 233H214', 'coal', 5) +
+    path('M126 221L132 217L138 221L132 224Z', C('ascension'), 'stroke="none"') +
+    line('M130 220L132 219', 'energy', 3) + '</g>';
+}
+
 for (const n of [12, 16, 24, 32]) {
   emit(`overlay.scorched.${n}`, 'biomes', `overlay-scorched-${n}`, scorched(n), 1024, [.5, .5], ['overlay']);
 }
+
+// This ID already belongs to buildings.json with the required canvas, anchor,
+// frame count and path. Reuse that registration instead of duplicating the ID.
+// Run this generator after gen-buildings.mjs when rebuilding all source art.
+write('art/src/buildings/ruin.svg', svg(ruin(), 256));
 
 write('art/manifest/scorched.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`Scorched art: ${assets.length} new ids generated.`);
