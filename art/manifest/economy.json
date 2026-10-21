@@ -721,6 +721,72 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.badge-no-tools",
+      "category": "ui",
+      "src": "art/src/ui/badge-no-tools.svg",
+      "out": "public/assets/sprites/ui/badge-no-tools.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge",
+        "no-tools"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.badge-noise",
+      "category": "ui",
+      "src": "art/src/ui/badge-noise.svg",
+      "out": "public/assets/sprites/ui/badge-noise.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge",
+        "noise"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.badge-neighbor-bonus",
+      "category": "ui",
+      "src": "art/src/ui/badge-neighbor-bonus.svg",
+      "out": "public/assets/sprites/ui/badge-neighbor-bonus.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge",
+        "neighbor-bonus"
+      ],
+      "phase": "P1"
     }
   ]
 }

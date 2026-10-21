@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Every numbered delivery remains reproducible at its own commit.
-const RELEASE = 2;
+const RELEASE = 3;
 const assets = [];
 let state = 'idle';
 const paint = (token,tone=0) => C(state==='off'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -209,6 +209,19 @@ if(RELEASE>=2) {
   }
   state='idle';
 }
+
+function badge(name) {
+  let symbol='';
+  if(name==='no-tools')symbol=g(hammer(),'translate(6 6) scale(0.4)','stroke-width="5"')+
+    line('M14 50 L50 14','danger',5);
+  if(name==='noise')symbol=rect(14,26,6,12,3,'danger')+
+    line('M28 23 Q38 32 28 41 M37 16 Q54 32 37 48','danger',4);
+  if(name==='neighbor-bonus')symbol=p('M29 14 Q32 10 35 14 L50 29 Q54 34 47 34 H40 V49 Q40 52 37 52 H27 Q24 52 24 49 V34 H17 Q10 34 14 29Z','ok')+
+    shadow('M35 15 L50 29 Q54 34 47 34 H40 V49 Q40 52 37 52 H33 V30 H43Z','ok')+
+    shine('M21 28 L30 19',2);
+  return circle(32,32,28,'paper')+symbol;
+}
+if(RELEASE>=3)for(const name of ['no-tools','noise','neighbor-bonus'])emit(`ui.badge-${name}`,'ui',`badge-${name}`,badge(name),64,{tags:['ui','badge',name]});
 
 write('art/manifest/economy.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Economy art: ${assets.length} ids generated (release ${RELEASE}).`);
