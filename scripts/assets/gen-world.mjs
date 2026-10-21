@@ -3,8 +3,8 @@ import { C, svg, round, write } from './common.mjs';
 // All geometry is in reference pixels; no random input or external artwork.
 const assets = [];
 const sizes = [12, 16, 24, 32];
-const biomes = ['forest', 'mountains', 'ocean', 'swamp', 'savanna', 'desert', 'tundra', 'crystal', 'glacier', 'lava'];
-const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'savanna', desert: 'sand', tundra: 'snow', crystal: 'crystal', glacier: 'glacier', lava: 'lava' };
+const biomes = ['forest', 'mountains', 'ocean', 'swamp', 'savanna', 'desert', 'tundra', 'crystal', 'glacier', 'lava', 'ash'];
+const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'savanna', desert: 'sand', tundra: 'snow', crystal: 'crystal', glacier: 'glacier', lava: 'lava', ash: 'ash' };
 const path = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
 const ellipse = (x, y, rx, ry, fill, extra = '') => `<ellipse cx="${round(x)}" cy="${round(y)}" rx="${round(rx)}" ry="${round(ry)}" fill="${fill}" ${extra}/>`;
@@ -52,6 +52,7 @@ export function wedge(biome, segments) {
     if (biome === 'crystal') mark = path('M -6 5 L -3 -5 Q 0 -8 2 -4 L 6 4 Z', C('crystal', .18), `stroke="${C('crystal', -.18)}" stroke-width="2"`);
     if (biome === 'glacier') mark = path('M -9 -9 L -3 -3 L -6 4 L 2 10 M -3 -3 L 7 -5 L 11 0', 'none', `stroke="${C('science')}" stroke-width="2.5"`) + path('M -11 -8 L -5 -2 M -7 6 L 0 12', 'none', `stroke="${C('snow')}" stroke-width="1.5"`);
     if (biome === 'lava') mark = path('M -10 -13 L -4 -5 L -7 3 L 3 12 M -4 -5 L 8 -8 L 12 -3', 'none', `stroke="${C('lava')}" stroke-width="5"`) + path('M -10 -13 L -4 -5 L -7 3 L 3 12 M -4 -5 L 8 -8', 'none', `stroke="${C('ascension')}" stroke-width="2"`) + path('M 6 3 Q 14 1 13 8 Q 10 13 5 10 Z', C('lava'), 'stroke="none"') + path('M -13 7 L -9 9 L -12 13 Z', C('rock-dark'), 'stroke="none"');
+    if (biome === 'ash') mark = path('M -13 6 Q -7 -5 1 -1 Q 6 2 12 5', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`) + ellipse(-7, 10, 2.5, 1.5, C('coal'), 'stroke="none"') + ellipse(4, 8, 1.5, 1, C('coal'), 'stroke="none"') + path('M 8 -2 Q 1 -2 2 -8 Q 7 -8 8 -2 Q 8 -8 14 -8 Q 15 -3 8 -2 Z', C('moss'), 'stroke="none" opacity="0.6"');
     body += `<g transform="translate(${x} ${y}) rotate(${round(angle * 180 / Math.PI)})">${mark}</g>`;
   }
   return `<defs>${edgeMask(segments)}</defs>${group('ground', body, 'mask="url(#edge)"')}`;
@@ -111,6 +112,35 @@ function lavaProp(variant) {
     + path('M 72 56 H 85 M 37 80 H 47', 'none', `stroke="${C('energy')}" stroke-width="2"`)
     + path('M 74 69 L 71 85 L 78 94 L 72 109 M 36 93 L 34 108', 'none', `stroke="${C('lava')}" stroke-width="3"`)
     + path('M 65 68 V 86 M 30 92 V 106', 'none', `stroke="${C('rock-dark')}" stroke-width="2"`);
+}
+function ashSprout(x, y) {
+  return path(`M ${x} ${y} V ${y - 6}`, 'none', `stroke="${C('moss')}" stroke-width="2" opacity="0.7"`)
+    + path(`M ${x} ${y - 5} Q ${x - 10} ${y - 3} ${x - 10} ${y - 12} Q ${x - 2} ${y - 14} ${x} ${y - 5} Q ${x + 2} ${y - 15} ${x + 10} ${y - 12} Q ${x + 11} ${y - 4} ${x} ${y - 5} Z`, C('moss'), 'stroke-width="1.5" opacity="0.7"');
+}
+function ashProp(variant) {
+  let b = '';
+  if (variant === 0) {
+    b += path('M 24 118.5 Q 17 116 26 108 Q 42 91 47 72 Q 53 62 66 64 Q 80 64 84 78 Q 89 98 107 110 Q 114 118.5 103 118.5 Z', C('ash'));
+    b += path('M 73 69 Q 85 73 85 84 Q 92 104 107 110 Q 114 118.5 103 118.5 H 57 Q 79 109 73 69 Z', C('ash', -.18), 'stroke="none"');
+    b += ellipse(65, 71, 17, 6, C('ash', .18), 'stroke-width="2"') + ellipse(65, 71, 10, 3, C('coal'), 'stroke="none"');
+    b += path('M 40 101 Q 46 94 49 84 M 51 108 Q 57 104 61 94', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`);
+    b += ellipse(90, 109, 3, 2, C('coal'), 'stroke="none"') + ashSprout(27, 115);
+  }
+  if (variant === 1) {
+    b += path('M 27 118.5 Q 25 115 37 111 Q 64 99 91 112 Q 106 117 99 118.5 Z', C('ash'));
+    b += path('M 51 117 Q 57 101 56 81 L 35 64 L 28 39 L 34 35 L 40 43 L 43 58 L 57 65 L 58 28 L 64 18 L 70 27 L 68 57 L 84 47 L 88 29 L 95 25 L 99 32 L 92 55 L 70 72 L 72 101 L 84 118 Z', C('coal'));
+    b += path('M 66 31 L 68 29 L 66 62 L 69 72 L 71 103 L 82 117 H 67 Q 62 91 66 31 Z', C('coal', -.18), 'stroke="none"');
+    b += path('M 61 38 L 60 61 M 39 49 L 42 60 L 51 67 M 61 85 L 64 98 M 81 53 L 88 47', 'none', `stroke="${C('ash', .18)}" stroke-width="2"`);
+    b += ashSprout(32, 114) + ellipse(94, 114, 4, 2, C('coal'), 'stroke="none"');
+  }
+  if (variant === 2) {
+    b += path('M 29 118.5 Q 23 114 25 103 L 27 83 Q 29 62 49 59 L 69 50 Q 88 47 99 69 L 110 103 Q 115 118.5 101 118.5 Z', C('ash'));
+    b += path('M 86 55 Q 98 68 100 81 L 110 103 Q 115 118.5 101 118.5 H 48 Q 96 105 86 55 Z', C('ash', -.18), 'stroke="none"');
+    b += ellipse(49, 83, 8, 6, C('coal'), 'stroke-width="1.5"') + ellipse(78, 96, 11, 7, C('coal'), 'stroke-width="1.5"') + ellipse(72, 69, 4, 3, C('coal'), 'stroke="none"');
+    b += path('M 41 71 Q 46 65 55 65 M 43 88 Q 49 92 55 87', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`);
+    b += ashSprout(24, 116);
+  }
+  return b;
 }
 function prop(biome, variant) {
   let b = shadow();
@@ -205,6 +235,7 @@ function prop(biome, variant) {
     if (variant === 2) b += glacierFloe();
   }
   if (biome === 'lava') b += lavaProp(variant);
+  if (biome === 'ash') b += ashProp(variant);
   return group('prop', b);
 }
 const propNames = {
@@ -212,6 +243,7 @@ const propNames = {
   savanna: ['bush-a', 'bush-b', 'acacia'], desert: ['cactus-a', 'cactus-b', 'dune'], tundra: ['pine-snow-a', 'pine-snow-b', 'ice-rock'], crystal: ['crystal-a', 'crystal-b', 'crystal-c'],
   glacier: ['serac-a', 'serac-b', 'ice-floe'],
   lava: ['vent-a', 'vent-b', 'basalt'],
+  ash: ['ash-cone', 'dead-tree', 'ash-rock'],
 };
 
 function overlay(kind, segments) {

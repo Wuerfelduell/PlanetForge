@@ -238,7 +238,26 @@ function lava(variant, stage) {
   return columns.map(([x, h, w]) => basaltGrowth(round(64 + (x - 64) * spread), round(h * s), round(w * spread))).join('');
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier, lava };
+function ash(variant, stage) {
+  if (!stage) return ellipse(64, 115, 42, 3.5, C('ash'), 'stroke-width="2"')
+    + path(`M ${39 + variant * 4} 114 L ${44 + variant * 4} 110 L ${48 + variant * 4} 115 Z`, C('coal'), 'stroke-width="1.5"')
+    + ellipse(82, 115, 5, 1.5, C('ash', -.18), flat) + line('M 52 115 H 68', 'ash', 1.5);
+  // The renewable resource is the ash deposit: even the dead-tree variant
+  // rebuilds a mound, with a charred splinter identifying its former prop.
+  const height = round([54, 46, 68][variant] * (stage === 1 ? .3 : .7)), top = round(118.5 - height);
+  const left = stage === 1 ? 39 : 26, right = stage === 1 ? 91 : 104;
+  let b = path(`M ${left} 118.5 Q ${left - 5} 115 ${left + 3} 110 Q 51 ${top + 9} 58 ${top + 2} Q 67 ${top - 3} 76 ${top + 6} Q 87 111 ${right} 115 Q ${right + 3} 118.5 ${right - 5} 118.5 Z`, C('ash'));
+  b += path(`M 69 ${top + 2} Q 78 ${top + 6} 81 ${Math.min(116, top + 17)} Q 91 112 ${right - 1} 116 L ${right - 5} 117 H 55 Q 75 111 69 ${top + 2} Z`, C('ash', -.18), flat);
+  b += path(`M ${stage === 1 ? 50 : 42} 110 Q 51 ${top + 11} 59 ${top + 7}`, 'none', `stroke="${C('ash', .18)}" stroke-width="2"`);
+  if (variant === 0) b += ellipse(65, top + 5, stage === 1 ? 6 : 11, stage === 1 ? 2 : 3.5, C('coal'), 'stroke-width="1.5"');
+  if (variant === 1) b += path(`M 59 ${Math.min(117, top + 14)} L 60 ${top + 3} L 64 ${top - 4} L 69 ${top + 4} L 67 ${Math.min(117, top + 17)} Z`, C('coal'), 'stroke-width="2"') + line(`M 64 ${top + 4} V ${top + 12}`, 'rock-dark', 1.5);
+  if (variant === 2) b += ellipse(62, top + 14, stage === 1 ? 3 : 5, stage === 1 ? 2 : 3.5, C('coal'), 'stroke-width="1.5"');
+  b += ellipse(82, 114, 3, 1.5, C('coal'), flat);
+  if (stage === 2) b += line('M 34 116 V 110', 'moss', 1.5, 'opacity="0.7"') + path('M 34 111 Q 25 111 26 105 Q 33 104 34 111 Q 36 104 42 106 Q 42 112 34 111 Z', C('moss'), 'stroke-width="1.5" opacity="0.7"');
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier, lava, ash };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
 if (fullProps.length !== Object.keys(renderers).length * 3) throw new Error(`Expected three full props per renderer, found ${fullProps.length}`);
