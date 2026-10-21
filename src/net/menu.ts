@@ -1,5 +1,7 @@
 import { NetworkSession } from "./netSession";
-import { createSave, firstFreeSlot, inviteLink, joinSave, leaveGame, listSaves, removeSave, SLOT_COUNT, type SaveOptions, type SaveSlot } from "./saves";
+import { createSave, firstFreeSlot, inviteLink, joinSave, leaveGame, listSaves, removeSave, SLOT_COUNT, takenPeoples, type SaveOptions, type SaveSlot } from "./saves";
+import { PEOPLES } from "../sim";
+import { freePeople, isPeopleId, peoplePickerHtml, preferredPeople } from "../ui/peoplePicker";
 import { ensureSignedIn } from "./supabase";
 import "./menu.css";
 
@@ -40,11 +42,11 @@ export class OnlineMenu {
   }
 
   /** Starts a new cloud game in the given slot (or the first free one) and plays it. */
-  async create(options: SaveOptions, slot?: number): Promise<void> {
+  async create(options: SaveOptions, slot?: number, people?: string): Promise<void> {
     await ensureSignedIn();
     const target = slot ?? firstFreeSlot(await listSaves());
     if (target === null) throw new Error("Alle 5 Online-Plätze sind belegt. Verlasse oder entferne zuerst ein Spiel unter Online-Spiele.");
-    const id = await createSave(target, `Welt ${target}`, playerName(), options);
+    const id = await createSave(target, `Welt ${target}`, playerName(), options, people ?? null);
     await this.play(id);
   }
 
@@ -95,7 +97,7 @@ export class OnlineMenu {
       } else {
         const info = el("span", "slot-name");
         info.append(el("b", "", save.name));
-        info.append(el("small", "", `${save.mode === "versus" ? "⚔️ Versus" : "🤝 Koop"} · ${save.isHost ? "Host" : "Gast"} · ${save.playerCount} Spieler · Code ${save.joinCode}`));
+        info.append(el("small", "", `${save.mode === "versus" ? "⚔️ Versus" : "🤝 Koop"}${isPeopleId(save.people) ? ` · ${PEOPLES[save.people].icon} ${PEOPLES[save.people].name}` : ""} · ${save.isHost ? "Host" : "Gast"} · ${save.playerCount} Spieler · Code ${save.joinCode}`));
         row.append(info);
         row.append(button(this.current?.gameId === save.id ? "Läuft" : "Spielen", () => this.run(() => this.play(save.id))));
         row.append(
@@ -127,9 +129,13 @@ export class OnlineMenu {
       button("Beitreten", () =>
         this.run(async () => {
           if (free === null) throw new Error("Alle 5 Plätze sind belegt. Verlasse oder entferne zuerst ein Spiel.");
-          const id = await joinSave(codeInput.value, free, name(nameInput));
-          history.replaceState(null, "", window.location.pathname);
-          await this.play(id);
+          const code = codeInput.value.trim();
+          if (!code) throw new Error("Gib zuerst den Code deines Freundes ein.");
+          name(nameInput);
+          // Already a member of that game: no new people to pick.
+          const mine = saves.find((g) => g.joinCode.toUpperCase() === code.toUpperCase());
+          if (mine) return this.play(mine.id);
+          this.renderJoinPick(code, free, new Set(await takenPeoples(code)));
         }),
       ),
     );
@@ -155,6 +161,33 @@ export class OnlineMenu {
 
     sheet.append(el("p", "muted note", "Deine Spielstände hängen an diesem Browser. Werden die Browserdaten gelöscht, sind sie nicht mehr erreichbar."));
     sheet.append(button("Zurück", () => this.close(), "quiet"));
+    this.root.replaceChildren(sheet);
+  }
+
+  /** Before joining a friend's game: pick an own people; the ones already in it are greyed out. */
+  private renderJoinPick(code: string, slot: number, taken: Set<string>, picked = freePeople(preferredPeople(), taken)): void {
+    const sheet = el("div", "sheet");
+    sheet.append(el("h2", "", "Wähle dein Volk"));
+    sheet.append(el("p", "muted note", taken.size ? "Ausgegraute Völker spielen in diesem Spiel schon." : "Mit diesem Volk trittst du dem Spiel bei."));
+    const grid = el("div", "people");
+    grid.innerHTML = peoplePickerHtml(picked, taken);
+    grid.addEventListener("click", (e) => {
+      const value = (e.target as HTMLElement).closest<HTMLElement>("[data-pick=people]")?.dataset.value;
+      if (isPeopleId(value) && !taken.has(value)) this.renderJoinPick(code, slot, taken, value);
+    });
+    sheet.append(grid);
+    const actions = el("div", "join");
+    actions.append(
+      button("Zurück", () => void this.open(code), "quiet"),
+      button(`Mit ${PEOPLES[picked].name} beitreten`, () =>
+        this.run(async () => {
+          const id = await joinSave(code, slot, playerName(), picked);
+          history.replaceState(null, "", window.location.pathname);
+          await this.play(id);
+        }),
+      ),
+    );
+    sheet.append(actions);
     this.root.replaceChildren(sheet);
   }
 

@@ -1,9 +1,8 @@
 import type { Music } from "../audio/music";
 import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
-import { BIOMES, PEOPLE_IDS, PEOPLES as PEOPLE_ICONS, type PeopleId } from "../sim";
-import { PEOPLES } from "../data/balance/peoples";
-import { RESOURCES } from "../data/balance/resources";
+import { PEOPLE_IDS, type PeopleId } from "../sim";
+import { isPeopleId, peopleArt, peoplePickerHtml } from "./peoplePicker";
 import "./mainMenu.css";
 
 /** Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only. */
@@ -65,6 +64,7 @@ export class MainMenu {
   set art(on: boolean) {
     this.hasArt = on;
     this.root.classList.toggle("art", on);
+    peopleArt.on = on;
     // Set here, not in the CSS, so the paths resolve against the page like the other art.
     const images = { "--menu-bg": "brand/menu-bg", "--menu-bg-landscape": "brand/menu-bg-landscape", "--menu-button": "ui/ui-button-menu", "--menu-button-pressed": "ui/ui-button-menu-pressed" };
     const hd = (window.devicePixelRatio || 1) > 1.25 ? "@2x" : "";
@@ -183,23 +183,8 @@ export class MainMenu {
       </div>`;
   }
 
-  /** Portrait grid of the 12 peoples; the chosen one shows its strengths below. */
   private renderPeople(): string {
-    const chosen = this.choice.people;
-    const def = PEOPLES[chosen];
-    const face = (id: PeopleId) =>
-      this.hasArt ? `<img src="assets/sprites/peoples/${id}-portrait.png" alt="">` : `<span class="people-emoji">${PEOPLE_ICONS[id].icon}</span>`;
-    const grid = PEOPLE_IDS.map(
-      (id) => `<button class="people-pick${id === chosen ? " on" : ""}" data-pick="people" data-value="${id}" title="${escape(PEOPLES[id].name)}">${face(id)}</button>`,
-    ).join("");
-    return `
-      <p class="menu-label">Dein Volk</p>
-      <div class="people-grid">${grid}</div>
-      <div class="people-info">
-        <b>${escape(def.name)}</b> <small>(${escape(def.animal)})</small>
-        <p><b>${escape(def.ability.name)}:</b> ${escape(def.ability.description)}</p>
-        <p class="menu-note">Mag ${escape(BIOMES[def.favoriteBiome].name)} und ${escape(RESOURCES[def.favoriteResource].name)} (Bonus beim Sammeln und Bauen).</p>
-      </div>`;
+    return `<p class="menu-label">Dein Volk</p>${peoplePickerHtml(this.choice.people)}`;
   }
 
   private renderCoopChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
@@ -374,7 +359,7 @@ function readOptions(): NewGameOptions {
   const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", people: PEOPLE_IDS[0] };
   try {
     const saved = { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") } as NewGameOptions;
-    if (!PEOPLE_IDS.includes(saved.people)) saved.people = fallback.people;
+    if (!isPeopleId(saved.people)) saved.people = fallback.people;
     return saved;
   } catch {
     return fallback;

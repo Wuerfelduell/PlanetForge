@@ -166,7 +166,7 @@ async function boot(): Promise<void> {
       },
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
-        else await online.create(options, slot);
+        else await online.create(options, slot, options.people);
       },
       openOnline: () => void online.open(),
       save() {

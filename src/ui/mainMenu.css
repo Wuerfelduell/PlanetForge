@@ -162,3 +162,4 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
 #main-menu .people-info { padding: 8px 10px; border-radius: 12px; background: var(--surface); font-size: 14px; }
 #main-menu .people-info small { color: var(--muted); }
 #main-menu .people-info p { margin: 4px 0 0; }
+#main-menu .people-note { color: var(--muted); font-size: 13px; }
