@@ -1,0 +1,75 @@
+{
+  "assets": [
+    {
+      "id": "menu.bg",
+      "category": "brand",
+      "src": "art/src/brand/menu-bg.svg",
+      "out": "public/assets/sprites/brand/menu-bg.png",
+      "viewBox": [
+        1080,
+        1920
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "menu",
+        "background",
+        "portrait",
+        "quiet-upper-middle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "menu.bg-landscape",
+      "category": "brand",
+      "src": "art/src/brand/menu-bg-landscape.svg",
+      "out": "public/assets/sprites/brand/menu-bg-landscape.png",
+      "viewBox": [
+        1920,
+        1080
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "menu",
+        "background",
+        "landscape",
+        "quiet-upper-middle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "menu.bg-parallax-stars",
+      "category": "brand",
+      "src": "art/src/brand/menu-bg-parallax-stars.svg",
+      "out": "public/assets/sprites/brand/menu-bg-parallax-stars.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "stars"
+      ],
+      "tags": [
+        "menu",
+        "parallax",
+        "tileable",
+        "transparent"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
