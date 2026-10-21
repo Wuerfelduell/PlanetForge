@@ -82,6 +82,31 @@ function ruin() {
     line('M130 220L132 219', 'energy', 3) + '</g>';
 }
 
+function cleanupIcon() {
+  return '<g id="clear-scorched">' +
+    path('M43 111L49 101L59 103L65 96L76 101L86 111Q65 119 43 111Z', C('coal')) +
+    path('M51 109L57 105L63 109L58 112ZM69 105L73 102L79 107L74 110Z', C('ascension'), 'stroke="none"') +
+    line('M55 108L58 107M72 105L74 104', 'energy', 2) +
+    // Shovel behind the broom: an open D grip and a broad, rounded metal blade.
+    '<g transform="rotate(-38 64 64)">' +
+    `<rect x="60" y="30" width="8" height="54" rx="4" fill="${C('clay')}"/>` +
+    path('M54 15Q64 11 74 15V26Q74 35 64 37Q54 35 54 26Z', C('iron')) +
+    path('M59 20Q64 18 69 20V26Q69 30 64 31Q59 30 59 26Z', C('cream'), 'stroke-width="1.5"') +
+    path('M50 79Q64 83 78 79V94Q78 105 64 113Q50 105 50 94Z', C('rock')) +
+    path('M65 83L78 79V94Q78 105 64 113Z', C('rock-dark'), 'stroke="none"') +
+    line('M56 87V93', 'cream', 4) +
+    line('M64 88V103', 'ink', 1.5) + '</g>' +
+    // A full straw fan makes the broom distinct from the shovel at icon size.
+    '<g transform="rotate(38 64 64)">' +
+    `<rect x="60" y="13" width="8" height="69" rx="4" fill="${C('iron')}"/>` +
+    line('M63 20V58', 'sand', 2) +
+    path('M54 77H74L85 106Q64 116 43 106Z', C('sand')) +
+    path('M68 78H74L85 106Q77 110 70 111Z', C('savanna'), 'stroke="none"') +
+    path('M53 78Q64 74 75 78L77 85Q64 89 51 85Z', C('clay')) +
+    line('M55 94L52 105M64 94V108M73 94L76 105', 'iron', 1.5) +
+    line('M55 81L62 80', 'cream', 3) + '</g></g>';
+}
+
 for (const n of [12, 16, 24, 32]) {
   emit(`overlay.scorched.${n}`, 'biomes', `overlay-scorched-${n}`, scorched(n), 1024, [.5, .5], ['overlay']);
 }
@@ -90,6 +115,8 @@ for (const n of [12, 16, 24, 32]) {
 // frame count and path. Reuse that registration instead of duplicating the ID.
 // Run this generator after gen-buildings.mjs when rebuilding all source art.
 write('art/src/buildings/ruin.svg', svg(ruin(), 256));
+
+emit('ui.icon-clear-scorched', 'ui', 'icon-clear-scorched', cleanupIcon(), 128, [.5, .5]);
 
 write('art/manifest/scorched.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`Scorched art: ${assets.length} new ids generated.`);
