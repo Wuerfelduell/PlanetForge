@@ -20,6 +20,8 @@ export const TERRAFORM: Record<TerraformKind, TerraformDef> = {
   plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna"], to: "forest", cost: { food: 5 } },
   fillSand: { name: "Mit Sand aufschütten", icon: "🏜️", from: ["ocean"], to: "desert", cost: { sand: 30 } },
   fillClay: { name: "Mit Erde aufschütten", icon: "🟫", from: ["ocean"], to: "savanna", cost: { clay: 30 } },
+  // Seb: draining a swamp works too, but costs more sand than filling in the sea.
+  drainSwamp: { name: "Sumpf trockenlegen", icon: "🏜️", from: ["swamp"], to: "savanna", cost: { sand: 50 } },
 };
 
 /** Share of max a planted or newly filled deposit starts with. */
