@@ -816,11 +816,17 @@ export const SUPERNOVA = {
   delayPerSegmentCycles: 20,
   /** A segment below this hp does not count. */
   workingHp: 50,
-  segmentCost: { iron: 40, stone: 60, aetherite: 10, science: 20 } as Partial<Record<ResourceId, number>>,
-  repairCost: { iron: 15, stone: 15 } as Partial<Record<ResourceId, number>>,
+  /**
+   * Playtest 2026-10-21: 12 segments took 6 minutes. A segment now needs the late chain (steel,
+   * concrete) and real research, a crew of 3 and a long flight, so the shell is a project.
+   */
+  segmentCost: { steel: 15, concrete: 15, aetherite: 10, science: 60 } as Partial<Record<ResourceId, number>>,
+  repairCost: { steel: 5, concrete: 5 } as Partial<Record<ResourceId, number>>,
   /** Inhabitants who fly to the sun to build or repair, then come back. */
-  crew: 2,
-  unlockLevel: 4,
+  crew: 3,
+  /** Extra seconds every shield flight takes on top of the distance (the sun is far and hot). */
+  flightSeconds: 60,
+  unlockLevel: 6,
 } as const;
 
 export interface RocketDef {

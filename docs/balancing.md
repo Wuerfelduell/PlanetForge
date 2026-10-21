@@ -194,6 +194,8 @@ Nach Sebs Playtest (21.10.2026) war Fliegen zu leicht, man war zu schnell durch.
 - **Öl ist knapp.** Leere Vorkommen wachsen nicht nach. Das Öl auf dem Heimatplaneten (je ein Sumpf- und Wüstenfeld, etwa 90) reicht für knapp zwei Kolonieflüge. Wer weiter will, braucht eine Kolonie mit Öl oder Handel. Plastik braucht ebenfalls Öl, man muss also abwägen. Der Test „flying is hard“ hält das bei 1,5 bis 3 Flügen.
 - **Kolonisieren erst ab Stufe 4.** Die Siedlerrakete kostet 20 Bretter, 15 Eisen, 5 Werkzeug und 3 Stoff. Gegeneinander bleiben Sabotage (Stufe 2, 12 Treibstoff für einen Saboteur) und Angriff (Stufe 3) früh, kosten aber auch Treibstoff.
 
+**Schutzhülle um die Sonne (Playtest 21.10.2026).** Im Test standen alle 12 Segmente in 6 Minuten. Jetzt geht die Hülle erst ab Stufe 6. Ein Segment kostet 15 Stahl, 15 Beton, 10 Ätherit und 60 Wissen, braucht 3 Einwohner als Crew, und jeder Flug dauert 60 Sekunden länger (`SUPERNOVA` in `src/sim/content.ts`). Damit ist die Hülle ein Großprojekt am Ende der Kette, und das übrige Wissen hat eine Verwendung.
+
 Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie. Die Werte stehen in `SPACE.rockets` in `progression.ts`, die Kurzformel in `rocketFuel()`.
 
 ## Was zuerst im Playtest prüfen

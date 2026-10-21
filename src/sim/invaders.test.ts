@@ -208,6 +208,7 @@ describe("supernova", () => {
   it("a shield flight builds a segment, delays the nova and brings the crew home", () => {
     const events: GameEvent[] = [];
     let g = lateGame({ invaders: "off" });
+    g.economies.e0!.ascension.level = SUPERNOVA.unlockLevel;
     const home = homePlanet(g, P1.id)!;
     home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
     const nova = novaTickNow(g)!;
@@ -229,6 +230,7 @@ describe("supernova", () => {
   it("a complete working shell saves the sun", () => {
     const events: GameEvent[] = [];
     let g = lateGame({ invaders: "off" });
+    g.economies.e0!.ascension.level = SUPERNOVA.unlockLevel;
     const home = homePlanet(g, P1.id)!;
     home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
     g.sun.shield = g.sun.shield.map((_, i) => (i === 0 ? { built: false, hp: 0 } : { built: true, hp: 100 }));
