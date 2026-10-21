@@ -8,7 +8,7 @@ import {
   economyOfPlayer,
   homePlanet,
   OFFERABLE,
-  RULES,
+  nextLevelThreshold,
   segmentOutput,
   TICK_MS,
   ticksPerCycle,
@@ -31,7 +31,7 @@ function almostLevelOne(players = [P1]): GameState {
   }
   g = clone(g);
   const economy = economyOfPlayer(g, P1.id)!;
-  economy.ascension.points = RULES.ascensionThresholds[0] - 1;
+  economy.ascension.points = nextLevelThreshold(0, "coop", players.length)! - 1;
   economy.resources.food = 500;
   return g;
 }

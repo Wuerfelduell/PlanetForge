@@ -1,5 +1,7 @@
 import { BIOMES, BUILDINGS, MARKET, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
+import { ASCENSION } from "../data/balance/progression";
+import { ascensionThreshold, foodUpkeepPerSecond, secondsPerBirth as balanceSecondsPerBirth } from "../data/balance/index";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
@@ -283,8 +285,38 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   return out;
 }
 
-export function nextLevelThreshold(level: number): number | null {
-  return RULES.ascensionThresholds[level] ?? null;
+/**
+ * Points needed to go from `level` to the next one (cumulative). Coop thresholds grow with the
+ * team: × (0.7 + 0.3 · players), design doc 4.6.
+ */
+export function nextLevelThreshold(level: number, mode: GameState["settings"]["mode"] = "coop", players = 1): number | null {
+  return ascensionThreshold(level + 1, mode, players);
+}
+
+/** Players who share this economy and are still in the game. */
+export function economyPlayers(state: GameState, economy: EconomyState): number {
+  return Math.max(1, state.players.filter((p) => p.economyId === economy.id && !p.eliminated).length);
+}
+
+/** Threshold for the economy's next level, with its mode and team size. */
+export function economyThreshold(state: GameState, economy: EconomyState, level = economy.ascension.level): number | null {
+  return nextLevelThreshold(level, state.settings.mode, economyPlayers(state, economy));
+}
+
+/** Seconds per birth on a planet with `residents` inhabitants: base + perCitizen × residents (per mode). */
+export function secondsPerBirth(state: GameState, residents: number): number {
+  return balanceSecondsPerBirth(residents, state.settings.mode);
+}
+
+/** Food all `people` of an economy eat in one cycle; grows a little faster than the head count. */
+export function foodUpkeepPerCycle(state: GameState, people: number): number {
+  return people * foodUpkeepPerSecond(people) * state.settings.cycleSeconds;
+}
+
+/** Ascension points per cycle: inhabitants plus every building stage above the first. */
+export function ascensionPerCycle(state: GameState, people: number, upgrades: number): { people: number; upgrades: number } {
+  const perMinute = state.settings.cycleSeconds / 60;
+  return { people: people * ASCENSION.pointsPerCitizenPerMinute * perMinute, upgrades: upgrades * ASCENSION.pointsPerUpgradePerMinute * perMinute };
 }
 
 export function ringDistance(a: number, b: number, n: number): number {

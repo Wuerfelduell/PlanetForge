@@ -3,6 +3,8 @@
  * (or later loaded from JSON) without touching the simulation code.
  */
 
+import { RULES as BALANCE_RULES } from "../data/balance/progression";
+
 export const RESOURCE_IDS = [
   "food", "wood", "stone", "iron", "sand", "clay", "water", "coal", "oil", "uranium", "aetherite", "science",
   // Tinkering (src/data/balance, "Tüfteln"): raw goods and what sawmill and workshop make of them.
@@ -954,10 +956,15 @@ export const RULES = {
   /** Inhabitants that can gather by hand on a segment without a building. */
   handWorkersPerSegment: 2,
   handRatePerWorker: 0.3,
-  foodPerInhabitantPerCycle: 2,
   starvingRateFactor: 0.5,
-  birthFoodCost: 10,
-  secondsPerBirth: 12,
+  /**
+   * Births, food upkeep and ascension thresholds come from src/data/balance (MODES, RULES), see
+   * rules.ts: secondsPerBirth, foodUpkeepPerCycle, nextLevelThreshold. Playtest 2026-10-21: the
+   * old flat values here (12 s per birth, 2 food) made hut spam the best strategy.
+   */
+  birthFoodCost: BALANCE_RULES.birthFoodCost,
+  /** Food beyond this rots at the end of a cycle: base + perCitizen × people of the economy. */
+  foodStock: BALANCE_RULES.foodStock,
   /** Fraction of max that regrows per second on a segment nobody works on. */
   regenPerSecond: 0.01,
   demolishRefund: 0.5,
@@ -966,9 +973,7 @@ export const RULES = {
    * team's ascension level `fromLevel` on (when the workshop unlocks). Without tools: withoutToolsMul.
    */
   tools: { perWorkerPerMinute: 0.1, withoutToolsMul: 0.6, fromLevel: 2 },
-  /** Cumulative ascension points needed for level 1, 2, 3, … */
-  ascensionThresholds: [15, 50, 120, 250, 450, 750, 1200, 1800, 2600, 3600],
-  startResources: { food: 20, wood: 10 } as Partial<Record<ResourceId, number>>,
+  startResources: BALANCE_RULES.startResources as Partial<Record<ResourceId, number>>,
   /** A fresh colony reveals this far around its landing site. */
   colonyRevealRadius: 1,
   battleDie: 6,

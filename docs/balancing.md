@@ -119,6 +119,14 @@ Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, ta
 
 ## Spielmodi und Pacing
 
+**Playtest 21.10.2026.** Die Simulation lief mit eigenen, viel schnelleren Zahlen (Geburt 12 s flach, 2 Nahrung pro Umlauf, Schwellen 15 bis 3600). Ein Spieler, der nur Hütten und Farmen baut, war nach 37 Minuten auf Stufe 10, schneller als einer mit der ganzen Produktionskette. Jetzt liest `src/sim` Geburten, Nahrung, Schwellen und Startvorrat direkt aus `src/data/balance`, damit die beiden nicht wieder auseinanderlaufen. Dazu kommen drei Änderungen:
+
+- Ausgebaute Gebäude bringen Aufstiegspunkte (siehe unten), damit die Kette zählt.
+- Nahrung über 120 + 10 je Einwohner verdirbt am Ende des Umlaufs (`RULES.foodStock`), statt sich fünfstellig zu stapeln.
+- Der Start hat 25 statt 15 Holz, damit die erste Hütte sofort geht.
+
+Der Test `src/sim/pacing.test.ts` lässt einen Hütten-Bot 60 Minuten spielen. Er darf nach 40 Minuten höchstens Stufe 5 und nach 60 Minuten höchstens Stufe 6 haben, muss aber mindestens Stufe 4 erreichen. Vorher lag er nach 40 Minuten bei Stufe 8, jetzt bei 4 bis 5.
+
 Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progression.ts`):
 
 | | Gemeinsam | Gegeneinander |
@@ -130,7 +138,7 @@ Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progress
 | Geburt (Sekunden) | 30 + 6 × Einwohner | 12 + 3 × Einwohner |
 | Entdeckungskosten | 30 × 1,35ⁿ | halb so viel |
 
-Aufstiegspunkte: 2 pro Einwohner und Minute (das entspricht 1 pro Einwohner und 30-Sekunden-Umlauf wie im Prototyp), dazu kommt das Monument. Die Schwellen hat `pacing.ts` aus dem Geburtenmodell abgeleitet. Die Annahme ist, dass Nahrung und Wohnraum mithalten, also ist das die schnellste realistische Kurve.
+Aufstiegspunkte: 2 pro Einwohner und Minute (das entspricht 1 pro Einwohner und 30-Sekunden-Umlauf wie im Prototyp), dazu 2 pro Minute für jede Ausbaustufe über der ersten (Wohnhaus 3 zählt also 2) und das Monument. Die Schwellen hat `pacing.ts` aus dem Geburtenmodell abgeleitet. Die Annahme ist, dass Nahrung und Wohnraum mithalten, also ist das die schnellste realistische Kurve.
 
 | Stufe | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 |---|---|---|---|---|---|---|---|---|---|---|
