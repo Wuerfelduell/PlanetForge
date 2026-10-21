@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 4;
+const STAGE = 5;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -106,6 +106,32 @@ function invaderBeam(frame){
       spark(39,220,frame===2?6:4,'cream')+spark(89,235,frame===3?6:3,'toxic'));
 }
 if(STAGE>=4)emit({id:'fx.invader-beam',category:'fx',stem:'invader-beam',size:[128,256],anchor:[.5,0],frames:4,fps:8,parts:['beam','pulse'],tags:['beam','loop'],draw:invaderBeam});
+
+// World-space geometry: zero degrees is twelve o'clock. A narrow 40 px shell
+// needs a 6 px edge (not a 24 px silhouette stroke that would swallow its plates).
+const polar=(r,a)=>[round(512+Math.sin(a*Math.PI/180)*r),round(512-Math.cos(a*Math.PI/180)*r)];
+const point=(r,a)=>polar(r,a).join(' ');
+const arc=(r,a,b)=>`M${point(r,a)} A${r} ${r} 0 0 1 ${point(r,b)}`;
+const sector=(inner,outer,a,b)=>`M${point(outer,a)} A${outer} ${outer} 0 0 1 ${point(outer,b)} L${point(inner,b)} A${inner} ${inner} 0 0 0 ${point(inner,a)}Z`;
+function plate(a,b){
+  const mid=round((a+b)/2),[x,y]=polar(320,mid);
+  return path(sector(306,334,a,b),'rock','stroke-width="4"')+
+    line(arc(330,a+1,b-1),'snow',3)+line(arc(309,a+1,b-1),'rock-dark',3)+
+    group(`crystal-${mid}`,path('M0 -11 L8 0 L0 11 L-8 0Z','crystal','stroke-width="3"')+
+      path('M0 -11 V11 L8 0Z','oil-sheen','stroke="none"'),`transform="translate(${x} ${y}) rotate(${mid})"`)+
+    [a+1.4,b-1.4].map(t=>{const [rx,ry]=polar(320,t);return circle(rx,ry,2.4,'cream','stroke-width="1.5"');}).join('');
+}
+function sunShield(mode){
+  const outline=sector(303,337,-14.4,14.4);
+  if(mode==='empty')return group('shell',path(outline,'none',`stroke="${C('rock')}" stroke-width="5" stroke-dasharray="8 9" opacity="0.7"`));
+  const rails=line(arc(337,-14.4,14.4),'ink',6)+line(arc(303,-14.4,14.4),'ink',6)+
+    line(arc(337,-14.1,14.1),'rock',2)+line(arc(303,-14.1,14.1),'rock',2);
+  const body=mode==='built'?path(outline,'rock-dark','stroke-width="6"')+[-14,-4.5,5].map(a=>plate(a,a+9)).join(''):
+    rails+plate(-14,-5)+path(`M${point(334,-4.5)} L${point(334,-.4)} L${point(324,-2)} L${point(319,.5)} L${point(313,-2.5)} L${point(306,-1)} L${point(306,-4.5)}Z`,'rock','stroke-width="4"')+
+    line(`M${point(335,-11.8)} L${point(325,-10.5)} L${point(319,-12.1)} L${point(305,-9.8)}`,'ink',4);
+  return group('shell',body);
+}
+if(STAGE>=5)for(const mode of ['empty','built','damaged'])emit({id:`sun.shield.segment.${mode}`,category:'space',stem:`sun-shield-segment-${mode}`,size:[1024,1024],parts:['shell'],tags:['sun-shield',mode],meta:{geometry:{center:[512,512],innerRadius:300,outerRadius:340,segments:12,angleDegrees:30,orientation:'12-o-clock'}},draw:()=>sunShield(mode)});
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Invader art: stage ${STAGE}, ${assets.length} ids generated.`);

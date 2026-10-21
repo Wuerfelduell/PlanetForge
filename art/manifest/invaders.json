@@ -196,6 +196,111 @@
         "loop"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "sun.shield.segment.empty",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-empty.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-empty.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "empty"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
+    },
+    {
+      "id": "sun.shield.segment.built",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-built.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-built.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "built"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
+    },
+    {
+      "id": "sun.shield.segment.damaged",
+      "category": "space",
+      "src": "art/src/space/sun-shield-segment-damaged.svg",
+      "out": "public/assets/sprites/space/sun-shield-segment-damaged.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "shell"
+      ],
+      "tags": [
+        "invaders",
+        "sun-shield",
+        "damaged"
+      ],
+      "phase": "P1",
+      "geometry": {
+        "center": [
+          512,
+          512
+        ],
+        "innerRadius": 300,
+        "outerRadius": 340,
+        "segments": 12,
+        "angleDegrees": 30,
+        "orientation": "12-o-clock"
+      }
     }
   ]
 }
