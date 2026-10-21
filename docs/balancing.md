@@ -115,6 +115,8 @@ Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, En
 | Verteidigung | Wachturm 2 (Stufe 2 Festungsturm ab 5, +2), Abwehrbatterie 5 |
 | Raumfahrt | Startrampe 2, Raffinerie 2 |
 
+Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Computer, 10 Ätherit, 20 Stahl, 10 Beton, fliegt mit Uran (2 + 0,2 je Distanz + 0,1 je Passagier), 6 Plätze, Reichweite 40, doppelt so schnell.
+
 Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, tauscht ein Händler jede Ware (außer Wissen) gegen jede andere. Preis = Menge × Wert der gewünschten Ware × 1,5 ÷ Wert der gegebenen Ware, aufgerundet; Werte wie in src/data/balance/resources.ts (`MARKET` in content.ts).
 
 ## Spielmodi und Pacing

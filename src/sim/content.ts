@@ -840,7 +840,7 @@ export interface RocketDef {
  * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
  * locked out of flying.
  */
-export const ROCKET_IDS = ["colony", "combat"] as const;
+export const ROCKET_IDS = ["colony", "combat", "starship"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
 export const ROCKETS: Record<RocketId, RocketDef> = {
@@ -864,6 +864,17 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 4,
     maxRange: 16,
     versusOnly: true,
+  },
+  // The big ship after Planet of Mine: computers and ätherite, flies on uranium, far and fast.
+  starship: {
+    name: "Sternenschiff",
+    icon: "🛸",
+    cost: { computer: 2, aetherite: 10, steel: 20, concrete: 10 },
+    unlockLevel: 8,
+    capacity: 6,
+    fuel: { resource: "uranium", takeoff: 2, perDistance: 0.2, perPassenger: 0.1 },
+    secondsPerDistance: 1.5,
+    maxRange: 40,
   },
 };
 
