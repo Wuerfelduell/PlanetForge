@@ -1,4 +1,4 @@
-import { advanceWithEvents, applyCommand, createGame, type Command, type GameOptions, type GameEvent, type GameState } from "../sim";
+import { advanceWithEvents, applyCommand, createGame, type Command, type PeopleId, type GameOptions, type GameEvent, type GameState } from "../sim";
 
 /** `events`: what the command caused right away, when the session knows it (local play). */
 export type SendResult = { ok: true; events?: GameEvent[] } | { ok: false; error: string };
@@ -33,8 +33,8 @@ export class LocalSession implements GameSession {
     this.clock = state.simTime;
   }
 
-  static newGame(seed = Math.floor(Math.random() * 2 ** 32).toString(36), options: GameOptions = {}): LocalSession {
-    return new LocalSession(createGame(seed, [LOCAL_PLAYER], options));
+  static newGame(seed = Math.floor(Math.random() * 2 ** 32).toString(36), options: GameOptions = {}, people?: PeopleId): LocalSession {
+    return new LocalSession(createGame(seed, [{ ...LOCAL_PLAYER, people }], options));
   }
 
   send(cmd: Command): SendResult {

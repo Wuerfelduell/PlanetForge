@@ -1,6 +1,9 @@
 import type { Music } from "../audio/music";
 import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
+import { BIOMES, PEOPLE_IDS, PEOPLES as PEOPLE_ICONS, type PeopleId } from "../sim";
+import { PEOPLES } from "../data/balance/peoples";
+import { RESOURCES } from "../data/balance/resources";
 import "./mainMenu.css";
 
 /** Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only. */
@@ -8,6 +11,8 @@ export interface NewGameOptions {
   mode: "coop" | "versus";
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
+  /** The player's own people (Volk). */
+  people: PeopleId;
 }
 
 export type Where = "local" | "online";
@@ -165,6 +170,7 @@ export class MainMenu {
         ${pick("mode", "versus", `${this.icon("mode-versus", "⚔️")} Versus`, versus, "Jeder gegen jeden")}
       </div>
       ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : this.renderCoopChoices(pick)}
+      ${this.renderPeople()}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
         ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
@@ -174,6 +180,25 @@ export class MainMenu {
       <div class="menu-actions">
         <button data-go="home">Zurück</button>
         <button class="primary" data-go="start">Los geht's</button>
+      </div>`;
+  }
+
+  /** Portrait grid of the 12 peoples; the chosen one shows its strengths below. */
+  private renderPeople(): string {
+    const chosen = this.choice.people;
+    const def = PEOPLES[chosen];
+    const face = (id: PeopleId) =>
+      this.hasArt ? `<img src="assets/sprites/peoples/${id}-portrait.png" alt="">` : `<span class="people-emoji">${PEOPLE_ICONS[id].icon}</span>`;
+    const grid = PEOPLE_IDS.map(
+      (id) => `<button class="people-pick${id === chosen ? " on" : ""}" data-pick="people" data-value="${id}" title="${escape(PEOPLES[id].name)}">${face(id)}</button>`,
+    ).join("");
+    return `
+      <p class="menu-label">Dein Volk</p>
+      <div class="people-grid">${grid}</div>
+      <div class="people-info">
+        <b>${escape(def.name)}</b> <small>(${escape(def.animal)})</small>
+        <p><b>${escape(def.ability.name)}:</b> ${escape(def.ability.description)}</p>
+        <p class="menu-note">Mag ${escape(BIOMES[def.favoriteBiome].name)} und ${escape(RESOURCES[def.favoriteResource].name)} (Bonus beim Sammeln und Bauen).</p>
       </div>`;
   }
 
@@ -233,6 +258,7 @@ export class MainMenu {
     if (pick) {
       const value = target.dataset.value!;
       if (pick === "mode") this.choice.mode = value as NewGameOptions["mode"];
+      else if (pick === "people") this.choice.people = value as PeopleId;
       else if (pick === "goal") this.choice.goal = value as NewGameOptions["goal"];
       else if (pick === "invaders") this.choice.invaders = value as NewGameOptions["invaders"];
       else if (pick === "where") this.where = value as Where;
@@ -345,9 +371,11 @@ function escape(text: string): string {
 }
 
 function readOptions(): NewGameOptions {
-  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal" };
+  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", people: PEOPLE_IDS[0] };
   try {
-    return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
+    const saved = { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") } as NewGameOptions;
+    if (!PEOPLE_IDS.includes(saved.people)) saved.people = fallback.people;
+    return saved;
   } catch {
     return fallback;
   }
