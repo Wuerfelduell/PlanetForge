@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 6;
+const STAGE = 7;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -176,6 +176,26 @@ function supernova(frame){
 if(STAGE>=6){
   emit({id:'fx.sun-flare',category:'fx',stem:'sun-flare',size:[512,512],frames:4,fps:8,parts:['flare','embers'],tags:['supernova-warning','once','outward-up'],draw:sunFlare});
   emit({id:'fx.supernova',category:'fx',stem:'supernova',size:[1024,1024],frames:6,fps:10,parts:['shockwave','core','sparkles'],tags:['supernova','game-over','once'],draw:supernova});
+}
+
+function invasionBadge(){
+  return circle(32,32,28,'danger')+shadow('M51 13 Q65 40 42 54 Q26 64 13 51 Q31 68 51 53 Q68 34 51 13Z','danger')+
+    // Single-color saucer silhouette remains legible inside a 32 px HUD chip.
+    path('M14 35 Q12 31 22 29 Q23 19 32 19 Q42 19 43 29 Q54 31 51 35 Q47 42 32 44 Q18 42 14 35Z','cream')+
+    line('M20 35 Q32 40 45 35','danger',2)+line('M18 13 L22 17 M32 10 V15 M46 13 L42 17','cream',2);
+}
+function shieldBadge(){
+  return path('M32 5 Q43 13 55 13 L52 37 Q48 50 32 59 Q16 50 12 37 L9 13 Q21 13 32 5Z','science')+
+    shadow('M32 8 V56 Q48 48 51 36 L54 14 Q43 14 32 8Z','science')+
+    group('sun',Array.from({length:8},(_,i)=>{
+      const a=i*Math.PI/4;
+      return line(`M${round(32+Math.sin(a)*13)} ${round(30+Math.cos(a)*13)} L${round(32+Math.sin(a)*17)} ${round(30+Math.cos(a)*17)}`,'energy',2);
+    }).join('')+circle(32,30,10,'energy')+circle(29,27,3,'cream','stroke="none"'))+
+    line('M15 20 L16 28','cream',1.5);
+}
+if(STAGE>=7){
+  emit({id:'ui.invasion',category:'ui',stem:'invasion',size:[64,64],tags:['hud','alert'],draw:invasionBadge});
+  emit({id:'ui.shield',category:'ui',stem:'shield',size:[64,64],parts:['sun'],tags:['hud','sun-shield'],draw:shieldBadge});
 }
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');

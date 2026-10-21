@@ -356,6 +356,52 @@
         "once"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.invasion",
+      "category": "ui",
+      "src": "art/src/ui/invasion.svg",
+      "out": "public/assets/sprites/ui/invasion.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "invaders",
+        "hud",
+        "alert"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.shield",
+      "category": "ui",
+      "src": "art/src/ui/shield.svg",
+      "out": "public/assets/sprites/ui/shield.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "sun"
+      ],
+      "tags": [
+        "invaders",
+        "hud",
+        "sun-shield"
+      ],
+      "phase": "P1"
     }
   ]
 }
