@@ -647,7 +647,8 @@ export class PlanetView {
         if (chimney && !empty) this.chimneys.push({ ...at(chimney[0], chimney[1]), angle: mid, size: segWidth * k * 0.35, key: smokeKey });
       } else {
         const props = PROPS[s.biome] ?? [];
-        const prop = props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
+        // Nothing grows on scorched earth, not even a stump.
+        const prop = !s.scorched && props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
         const fill = propFill(s);
         // The prop is what the field holds: it shrinks while it is harvested, grows back while it
         // regrows and is a stump (or gone, without that art) when the deposit is used up.
