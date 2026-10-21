@@ -7,6 +7,7 @@ import {
   energyDemand,
   energySupply,
   housing,
+  needsSuits,
   neighbors,
   NOT_AFFORDABLE,
   ascensionPerCycle,
@@ -25,7 +26,7 @@ import { grantPick, modified, resolveOffer } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
 import { goalsCycle } from "./invaders";
-import type { GameEvent, GameState, PlanetState } from "./state";
+import type { EconomyState, GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
 
@@ -195,6 +196,23 @@ function birth(state: GameState, planet: PlanetState, residents: number, events:
   events.push({ type: "born", planetId: planet.id, playerId: parent.id, unitId });
 }
 
+/** Settlers on airless planets wear out suits; without any left, one of them dies per cycle. */
+function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): void {
+  for (const planet of state.planets) {
+    if (planet.economyId !== economy.id || !needsSuits(planet)) continue;
+    const settlers = Object.values(state.units).filter((u) => u.planetId === planet.id);
+    if (!settlers.length) continue;
+    const need = settlers.length * RULES.suits.perInhabitantPerCycle;
+    if (economy.resources.suits >= need) {
+      economy.resources.suits -= need;
+      continue;
+    }
+    economy.resources.suits = 0;
+    delete state.units[settlers[settlers.length - 1]!.id];
+    events.push({ type: "suffocated", planetId: planet.id, left: settlers.length - 1 });
+  }
+}
+
 function endCycle(state: GameState, residents: Map<string, number>, events: GameEvent[]): void {
   events.push({ type: "cycle", cycle: state.tick / ticksPerCycle(state) });
 
@@ -210,6 +228,8 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
       if (!economy.starving) events.push({ type: "starving", economyId: economy.id });
       economy.starving = true;
     }
+
+    breathe(state, economy, events);
 
     const a = economy.ascension;
     // Monuments and upgraded buildings add their points on top of what the people earn.

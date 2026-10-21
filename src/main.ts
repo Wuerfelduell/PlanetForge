@@ -256,6 +256,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   levelUp: "ascension.levelup",
   depleted: "alert.warning",
   starving: "alert.hungry",
+  suffocated: "alert.warning",
   launched: "rocket.launch",
   landed: "rocket.land",
   battle: "battle.dice",

@@ -272,6 +272,7 @@ export type GameEvent =
   | { type: "invasionArrived"; target: string; wave: number }
   | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
   | { type: "invasionDefeated"; target: string; wave: number }
+  | { type: "suffocated"; planetId: string; left: number }
   | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
   | { type: "sunWarning"; cyclesLeft: number }
   | { type: "shieldBuilt"; segment: number; repaired: boolean }
