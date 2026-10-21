@@ -7,6 +7,8 @@ export const RESOURCE_IDS = [
   "food", "wood", "stone", "iron", "sand", "clay", "water", "coal", "oil", "uranium", "aetherite", "science",
   // Tinkering (src/data/balance, "Tüfteln"): raw goods and what sawmill and workshop make of them.
   "fiber", "copper", "planks", "tools", "wire", "cloth",
+  // Foundry goods and deep deposits (stage 2 buildings).
+  "bricks", "gold",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -34,6 +36,8 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   tools: { name: "Werkzeug", icon: "🔧" },
   wire: { name: "Kupferdraht", icon: "🧵" },
   cloth: { name: "Stoff", icon: "🧶" },
+  bricks: { name: "Ziegel", icon: "🧱" },
+  gold: { name: "Gold", icon: "🪙" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal"] as const;
@@ -46,6 +50,8 @@ export interface DepositDef {
   infinite?: boolean;
   /** Can be collected by inhabitants without a building. */
   byHand?: boolean;
+  /** Deep deposit: only a building stage that lists it reaches it (gold, mine stage 2). */
+  tier?: 2;
 }
 
 export interface BiomeDef {
@@ -83,6 +89,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 90, byHand: true },
       { resource: "iron", max: 50 },
       { resource: "copper", max: 45 },
+      { resource: "gold", max: 15, tier: 2 },
     ],
   },
   ocean: {
@@ -134,7 +141,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "lab", "launchpad", "watchtower", "battery"] as const;
+export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "lab", "foundry", "launchpad", "watchtower", "battery"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -167,11 +174,19 @@ export interface BuildingDef {
   usesTools?: boolean;
   /** Worked foresters make neighbor forests regrow faster and replant empty ones. */
   forester?: { neighborRegenMul: number; replantsDepleted: boolean };
+  /**
+   * Upgrades in place: stage 2, 3, … Each costs `cost`, needs `unlockLevel`, and its values
+   * replace the stage below (they do not add up). Workers stay on the building.
+   */
+  upgrades?: readonly BuildingUpgrade[];
   /** Added to the defenders' battle rolls on this planet (counted up to RULES.maxTowerBonus). */
   defense?: number;
   /** Damage to a besieging invader ship per worker and siege round. */
   battery?: number;
 }
+
+export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
+  Partial<Pick<BuildingDef, "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense">>;
 
 export interface AdjacencyDef {
   biome?: BiomeId;
@@ -180,7 +195,10 @@ export interface AdjacencyDef {
 }
 
 /** Buildings whose noise lowers housing and lab output next to them. */
-const NOISY: readonly AdjacencyDef[] = [{ building: "mine", bonus: -0.25 }];
+const NOISY: readonly AdjacencyDef[] = [
+  { building: "mine", bonus: -0.25 },
+  { building: "foundry", bonus: -0.25 },
+];
 
 const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"];
 
@@ -195,6 +213,10 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 0,
     housing: 2,
     adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }],
+    upgrades: [
+      { cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
+      { cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
+    ],
   },
   farm: {
     name: "Farm",
@@ -210,6 +232,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "pump", bonus: 0.2 },
       { building: "mine", bonus: -0.25 },
     ],
+    upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
   },
   sawmill: {
     name: "Sägewerk",
@@ -223,6 +246,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     needsNeighbor: ["forest"],
     adjacency: [{ biome: "forest", bonus: 0.3 }],
     usesTools: true,
+    upgrades: [{ cost: { bricks: 10, tools: 5 }, unlockLevel: 4, workers: 4, crafts: { recipes: ["planks"], speed: 1.5 } }],
   },
   forester: {
     name: "Förster",
@@ -246,6 +270,14 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
     needsDeposit: true,
     usesTools: true,
+    upgrades: [
+      {
+        cost: { iron: 15, bricks: 10, tools: 5 },
+        unlockLevel: 5,
+        workers: 5,
+        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "oil", "uranium", "aetherite", "gold"], perWorker: 0.8 },
+      },
+    ],
   },
   pump: {
     name: "Pumpe",
@@ -272,6 +304,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "sawmill", bonus: 0.15 },
       { building: "mine", bonus: 0.15 },
     ],
+    upgrades: [{ cost: { bricks: 15, iron: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "wire", "cloth"], speed: 1.5 } }],
   },
   lab: {
     name: "Labor",
@@ -283,6 +316,18 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 2,
     produces: { resource: "science", perWorker: 0.2 },
     adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, ...NOISY],
+    upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 } }],
+  },
+  foundry: {
+    name: "Gießerei",
+    icon: "🏭",
+    description: "Brennt Ziegel oder Holzkohle. +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+    cost: { stone: 25, clay: 15, planks: 10 },
+    unlockLevel: 3,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["bricks", "charcoal"], speed: 1 },
+    adjacency: [{ building: "mine", bonus: 0.1 }],
   },
   launchpad: {
     name: "Startrampe",
@@ -315,7 +360,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
-export type RecipeId = "planks" | "tools" | "wire" | "cloth";
+export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal";
 
 export interface RecipeDef {
   name: string;
@@ -331,6 +376,8 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   tools: { name: "Werkzeug", inputs: { iron: 1, planks: 1 }, outputs: { tools: 2 }, seconds: 10 },
   wire: { name: "Kupferdraht", inputs: { copper: 1 }, outputs: { wire: 1 }, seconds: 4 },
   cloth: { name: "Stoff", inputs: { fiber: 3 }, outputs: { cloth: 1 }, seconds: 8 },
+  bricks: { name: "Ziegel", inputs: { clay: 2, coal: 1 }, outputs: { bricks: 2 }, seconds: 6 },
+  charcoal: { name: "Holzkohle", inputs: { wood: 3 }, outputs: { coal: 1 }, seconds: 6 },
 };
 
 /**

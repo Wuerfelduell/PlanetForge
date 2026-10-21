@@ -1,7 +1,7 @@
-import { BUILDINGS, INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
-import { planetById, planetDefense, ticksPerCycle } from "./rules";
+import { buildingStats, planetById, planetDefense, ticksPerCycle } from "./rules";
 import type { EconomyState, Flight, GameEvent, GameState, Invasion, PlanetState } from "./state";
 
 /**
@@ -106,7 +106,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     const planet = planetById(state, inv.target)!;
     const residents = Object.values(state.units).filter((u) => u.planetId === planet.id);
     for (const s of planet.segments) {
-      const per = s.building ? BUILDINGS[s.building].battery : undefined;
+      const per = buildingStats(s)?.battery;
       if (per) damage += per * residents.filter((u) => u.segment === s.index).length;
     }
     const defenders = residents.filter((u) => u.segment === null).slice(0, 10);

@@ -257,6 +257,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   invasionLeft: "alert.warning",
   sunWarning: "alert.warning",
   shieldBuilt: "build.complete",
+  upgraded: "build.complete",
   shieldComplete: "ascension.levelup",
   eliminated: "coop.leave",
 };

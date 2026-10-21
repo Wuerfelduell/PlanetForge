@@ -170,3 +170,53 @@ describe("tinkering", () => {
     expect(upgradeState({ version: 9 })).toBeNull();
   });
 });
+
+describe("building stages", () => {
+  it("an upgrade costs, needs its level and replaces the values; demolishing refunds all stages", () => {
+    let g = world(["savanna", "savanna", "savanna"], 1);
+    g = build(g, 1, "housing");
+    const planetId = homePlanet(g, P1.id)!.id;
+    const base = housing(g, homePlanet(g, P1.id)!);
+    expect(applyCommand(g, P1.id, { type: "upgrade", planetId, segment: 1 }, g.simTime)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 2" });
+    g = clone(g);
+    econ(g).ascension.level = 2;
+    const planks = econ(g).resources.planks;
+    g = exec(g, { type: "upgrade", planetId, segment: 1 });
+    expect(seg(g, 1).tier).toBe(2);
+    expect(econ(g).resources.planks).toBe(planks - 10);
+    expect(housing(g, homePlanet(g, P1.id)!)).toBe(base + 2);
+    expect(applyCommand(g, P1.id, { type: "upgrade", planetId, segment: 1 }, g.simTime)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 5" });
+
+    const wood = econ(g).resources.wood;
+    g = exec(g, { type: "demolish", planetId, segment: 1 });
+    expect(seg(g, 1).tier).toBeUndefined();
+    expect(econ(g).resources.planks).toBe(planks - 10 + 5);
+    expect(econ(g).resources.wood).toBe(wood + 7);
+  });
+
+  it("gold lies deep: only a stage 2 mine reaches it", () => {
+    let g = world(["mountains", "savanna"], 5);
+    seg(g, 0).deposits = [
+      { resource: "iron", amount: 100, max: 100, infinite: false, byHand: false },
+      { resource: "gold", amount: 100, max: 100, infinite: false, byHand: false },
+    ];
+    g = build(g, 0, "mine", 3);
+    g = clone(g);
+    econ(g).resources.tools = 50;
+    const gold = econ(g).resources.gold;
+    g = run(g, 5);
+    expect(econ(g).resources.gold).toBe(gold);
+    g = exec(g, { type: "upgrade", planetId: homePlanet(g, P1.id)!.id, segment: 0 });
+    g = run(g, 5);
+    expect(econ(g).resources.gold).toBeGreaterThan(gold);
+    expect(seg(g, 0).deposits.find((d) => d.resource === "gold")!.amount).toBeLessThan(100);
+  });
+
+  it("the foundry fires bricks from clay and coal", () => {
+    let g = world(["savanna", "savanna", "savanna"], 3);
+    g = build(g, 1, "foundry", 2);
+    const bricks = econ(g).resources.bricks;
+    g = run(g, 6);
+    expect(econ(g).resources.bricks).toBeCloseTo(bricks + 4, 1);
+  });
+});
