@@ -166,4 +166,28 @@ describe("new buildings", () => {
     without = run(g, 10);
     expect(econ(without).resources.science - science).toBeCloseTo(base * 1.2, 3);
   });
+
+  it("leftover food becomes biogas, and the gas plant burns it for power", () => {
+    let g = world(["savanna", "savanna", "savanna"]);
+    g = build(g, 0, "biogas-plant", 1);
+    g = build(g, 2, "power-gas", 1);
+    const biogas = econ(g).resources.biogas;
+    g = run(g, 6);
+    // 1 worker × 1.0 / 6 s per craft makes 1 biogas; the plant burns 0.08/s.
+    expect(econ(g).resources.biogas).toBeCloseTo(biogas + 1 - 6 * 0.08, 1);
+    expect(homePlanet(g, P1.id)!.power!.supply).toBe(5);
+  });
+
+  it("oil becomes plastic, plastic electronics, and the chip factory makes computers", () => {
+    let g = world(["savanna", "savanna", "savanna", "savanna"]);
+    const planetId = homePlanet(g, P1.id)!.id;
+    g = build(g, 0, "plastics", 1);
+    g = build(g, 3, "electronics", 1);
+    g = exec(g, { type: "upgrade", planetId, segment: 3 });
+    g = exec(g, { type: "setGather", planetId, segment: 3, resource: "computer" });
+    const before = { plastic: econ(g).resources.plastic, computer: econ(g).resources.computer };
+    g = run(g, 30);
+    expect(econ(g).resources.plastic).toBeGreaterThan(before.plastic);
+    expect(econ(g).resources.computer).toBeGreaterThan(before.computer);
+  });
 });
