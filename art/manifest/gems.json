@@ -1,0 +1,444 @@
+{
+  "assets": [
+    {
+      "id": "resource.diamond",
+      "category": "resources",
+      "src": "art/src/resources/diamond.svg",
+      "out": "public/assets/sprites/resources/diamond.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "diamond"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.diamond.mini",
+      "category": "resources",
+      "src": "art/src/resources/diamond-mini.svg",
+      "out": "public/assets/sprites/resources/diamond-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "diamond-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.emerald",
+      "category": "resources",
+      "src": "art/src/resources/emerald.svg",
+      "out": "public/assets/sprites/resources/emerald.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "emerald"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.emerald.mini",
+      "category": "resources",
+      "src": "art/src/resources/emerald-mini.svg",
+      "out": "public/assets/sprites/resources/emerald-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "emerald-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ruby",
+      "category": "resources",
+      "src": "art/src/resources/ruby.svg",
+      "out": "public/assets/sprites/resources/ruby.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "ruby"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ruby.mini",
+      "category": "resources",
+      "src": "art/src/resources/ruby-mini.svg",
+      "out": "public/assets/sprites/resources/ruby-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "ruby-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.gem-mine",
+      "category": "buildings",
+      "src": "art/src/buildings/gem-mine.svg",
+      "out": "public/assets/sprites/buildings/gem-mine.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "gem-mine"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.gem-mine.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/gem-mine-construction.svg",
+      "out": "public/assets/sprites/buildings/gem-mine-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "gems",
+        "gem-mine-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.gem-mine.off",
+      "category": "buildings",
+      "src": "art/src/buildings/gem-mine-off.svg",
+      "out": "public/assets/sprites/buildings/gem-mine-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "gem-mine-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.crystal-palace",
+      "category": "buildings",
+      "src": "art/src/buildings/crystal-palace.svg",
+      "out": "public/assets/sprites/buildings/crystal-palace.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "windows",
+        "banner"
+      ],
+      "tags": [
+        "gems",
+        "crystal-palace"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.crystal-palace.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/crystal-palace-construction.svg",
+      "out": "public/assets/sprites/buildings/crystal-palace-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "windows",
+        "banner",
+        "scaffolding"
+      ],
+      "tags": [
+        "gems",
+        "crystal-palace-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.crystal-palace.off",
+      "category": "buildings",
+      "src": "art/src/buildings/crystal-palace-off.svg",
+      "out": "public/assets/sprites/buildings/crystal-palace-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "windows",
+        "banner"
+      ],
+      "tags": [
+        "gems",
+        "crystal-palace-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.prism-dome",
+      "category": "buildings",
+      "src": "art/src/buildings/prism-dome.svg",
+      "out": "public/assets/sprites/buildings/prism-dome.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prism"
+      ],
+      "tags": [
+        "gems",
+        "prism-dome"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "prism": [
+          128,
+          135
+        ]
+      }
+    },
+    {
+      "id": "building.prism-dome.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/prism-dome-construction.svg",
+      "out": "public/assets/sprites/buildings/prism-dome-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prism",
+        "scaffolding"
+      ],
+      "tags": [
+        "gems",
+        "prism-dome-construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "prism": [
+          128,
+          135
+        ]
+      }
+    },
+    {
+      "id": "building.prism-dome.off",
+      "category": "buildings",
+      "src": "art/src/buildings/prism-dome-off.svg",
+      "out": "public/assets/sprites/buildings/prism-dome-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prism"
+      ],
+      "tags": [
+        "gems",
+        "prism-dome-off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "prism": [
+          128,
+          135
+        ]
+      }
+    },
+    {
+      "id": "building.ruby-laser",
+      "category": "buildings",
+      "src": "art/src/buildings/ruby-laser.svg",
+      "out": "public/assets/sprites/buildings/ruby-laser.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "gems",
+        "ruby-laser"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.ruby-laser.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/ruby-laser-construction.svg",
+      "out": "public/assets/sprites/buildings/ruby-laser-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "gems",
+        "ruby-laser-construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.ruby-laser.off",
+      "category": "buildings",
+      "src": "art/src/buildings/ruby-laser-off.svg",
+      "out": "public/assets/sprites/buildings/ruby-laser-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "gems",
+        "ruby-laser-off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    }
+  ]
+}

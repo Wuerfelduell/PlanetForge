@@ -5,6 +5,8 @@ import {read,write,round} from './common.mjs';
 
 // Part group id and pivot (in the 256 canvas) per building sprite. Motions live in the game code.
 export const PARTS = {
+ 'building.prism-dome':{file:'prism-dome',part:'prism',pivot:[128,135]},
+ 'building.ruby-laser':{file:'ruby-laser',part:'barrel',pivot:[128,150]},
  'building.observatory':{file:'observatory',part:'dome',pivot:[128,145]},
  'building.sawmill.t1':{file:'sawmill-t1',part:'blade',pivot:[152,166]},
  'building.sawmill.t2':{file:'sawmill-t2',part:'blade',pivot:[145,151]},
