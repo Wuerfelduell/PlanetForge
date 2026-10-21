@@ -1,0 +1,95 @@
+{
+  "assets": [
+    {
+      "id": "building.battery",
+      "category": "buildings",
+      "src": "art/src/buildings/battery.svg",
+      "out": "public/assets/sprites/buildings/battery.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.battery.off",
+      "category": "buildings",
+      "src": "art/src/buildings/battery-off.svg",
+      "out": "public/assets/sprites/buildings/battery-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    },
+    {
+      "id": "building.battery.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/battery-construction.svg",
+      "out": "public/assets/sprites/buildings/battery-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "invaders",
+        "battery",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          150
+        ]
+      }
+    }
+  ]
+}
