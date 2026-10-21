@@ -301,6 +301,61 @@
         "angleDegrees": 30,
         "orientation": "12-o-clock"
       }
+    },
+    {
+      "id": "fx.sun-flare",
+      "category": "fx",
+      "src": "art/src/fx/sun-flare-f{f}.svg",
+      "out": "public/assets/sprites/fx/sun-flare-f{f}.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "flare",
+        "embers"
+      ],
+      "tags": [
+        "invaders",
+        "supernova-warning",
+        "once",
+        "outward-up"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.supernova",
+      "category": "fx",
+      "src": "art/src/fx/supernova-f{f}.svg",
+      "out": "public/assets/sprites/fx/supernova-f{f}.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 6,
+      "fps": 10,
+      "parts": [
+        "shockwave",
+        "core",
+        "sparkles"
+      ],
+      "tags": [
+        "invaders",
+        "supernova",
+        "game-over",
+        "once"
+      ],
+      "phase": "P1"
     }
   ]
 }

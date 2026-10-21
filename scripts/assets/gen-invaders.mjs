@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 5;
+const STAGE = 6;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -132,6 +132,51 @@ function sunShield(mode){
   return group('shell',body);
 }
 if(STAGE>=5)for(const mode of ['empty','built','damaged'])emit({id:`sun.shield.segment.${mode}`,category:'space',stem:`sun-shield-segment-${mode}`,size:[1024,1024],parts:['shell'],tags:['sun-shield',mode],meta:{geometry:{center:[512,512],innerRadius:300,outerRadius:340,segments:12,angleDegrees:30,orientation:'12-o-clock'}},draw:()=>sunShield(mode)});
+
+function sunFlare(frame){
+  const scale=[.6,.9,1,.7][frame-1], opacity=[.6,1,.9,.3][frame-1];
+  const tongue='M43 68 Q32 54 47 38 Q37 19 57 10 Q80 2 88 25 Q74 23 77 37 Q95 27 106 42 Q117 65 83 73 Q64 82 43 68Z';
+  const body=`<defs><filter id="flare-glow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="3"/></filter></defs>`+
+    group('flare',path(tongue,'ascension','stroke="none" opacity="0.6" filter="url(#flare-glow)"')+
+      path(tongue,'ascension')+
+      path('M51 67 Q42 52 58 37 Q49 26 64 19 Q60 42 77 49 Q92 41 96 49 Q99 62 78 66Z','energy')+
+      path('M57 65 Q54 48 64 44 Q65 58 80 58 Q74 70 57 65Z','cream','stroke="none"')+
+      ellipse(64,70,22,6,'energy')+line('M53 67 Q60 62 72 66','cream',3),
+      `opacity="${opacity}" transform="translate(64 64) scale(${scale}) translate(-64 -64)"`)+
+    group('embers',spark(24-frame*2,46-frame*3,frame===2?6:4,'energy')+
+      spark(103+frame,78-frame*5,frame===3?6:3,'ascension')+spark(48,88+frame*4,3,'cream'),`opacity="${opacity}" stroke-width="1.5"`);
+  return `<g transform="scale(4)" stroke-width="3">${body}</g>`;
+}
+// Rounded radial lobes use quadratic corners, not a sharp star polygon.
+function burst(r,tips=11){
+  const pts=Array.from({length:tips*2},(_,i)=>{
+    const a=i*Math.PI/tips-Math.PI/2, radius=i%2?r*.83:r;
+    return [128+Math.cos(a)*radius,128+Math.sin(a)*radius];
+  });
+  const mid=(a,b)=>a.map((v,i)=>round((v+b[i])/2));
+  let d=`M${mid(pts.at(-1),pts[0]).join(' ')}`;
+  pts.forEach((p,i)=>{d+=` Q${p.map(round).join(' ')} ${mid(p,pts[(i+1)%pts.length]).join(' ')}`;});
+  return d+'Z';
+}
+function supernova(frame){
+  const core=[9,23,43,64,89,109][frame-1], shock=[34,55,78,99,115,122][frame-1];
+  const opacity=[.9,1,1,.9,.7,.4][frame-1], halo=core+2;
+  const body=`<defs><filter id="nova-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter></defs>`+
+    group('shockwave',path(burst(shock),'danger')+
+      path(burst(shock-8),'ascension','stroke-width="3"')+
+      circle(128,128,shock-10,'energy',`fill-opacity="0" stroke="${C('energy')}" stroke-width="4"`),`opacity="${opacity}"`)+
+    group('core',circle(128,128,halo,'energy','stroke="none" filter="url(#nova-glow)"')+
+      circle(128,128,core,'energy')+circle(128,128,round(core*.72),'tint-white','stroke="none"'),`opacity="${opacity}"`)+
+    group('sparkles',Array.from({length:6},(_,i)=>{
+      const a=(i*60+frame*7)*Math.PI/180,r=[49,70,92,108,117,120][frame-1];
+      return spark(round(128+Math.cos(a)*r),round(128+Math.sin(a)*r),[7,8,8,6,4,3][frame-1],i%2?'cream':'energy');
+    }).join(''),`opacity="${opacity}" stroke-width="2"`);
+  return `<g transform="scale(4)" stroke-width="6">${body}</g>`;
+}
+if(STAGE>=6){
+  emit({id:'fx.sun-flare',category:'fx',stem:'sun-flare',size:[512,512],frames:4,fps:8,parts:['flare','embers'],tags:['supernova-warning','once','outward-up'],draw:sunFlare});
+  emit({id:'fx.supernova',category:'fx',stem:'supernova',size:[1024,1024],frames:6,fps:10,parts:['shockwave','core','sparkles'],tags:['supernova','game-over','once'],draw:supernova});
+}
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Invader art: stage ${STAGE}, ${assets.length} ids generated.`);
