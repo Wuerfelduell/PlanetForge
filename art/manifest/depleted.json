@@ -863,6 +863,438 @@
         "regrow-2"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
     }
   ]
 }

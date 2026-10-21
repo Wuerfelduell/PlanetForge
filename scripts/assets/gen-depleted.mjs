@@ -103,7 +103,48 @@ function ocean(variant, stage) {
   return b;
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean };
+function desert(variant, stage) {
+  if (variant === 2) {
+    if (!stage) return ellipse(64, 115, 43, 3.5, C('sand'), 'stroke-width="2"') + ellipse(64, 114, 29, 2.5, C('sand', -.18), flat) + line('M 31 113 Q 40 110 48 111 M 88 116 L 98 116', 'paper', 2);
+    const top = stage === 1 ? 109 : 94, left = stage === 1 ? 40 : 27, right = stage === 1 ? 90 : 103;
+    return path(`M ${left} 117 Q 52 ${top + 6} 59 ${top + 1} Q 66 ${top - 3} 73 ${top + 2} Q 88 113 ${right} 116 Q ${right + 4} 118.5 ${right - 5} 118.5 H ${left + 5} Z`, C('sand')) + path(`M 68 ${top} Q 75 114 ${right - 3} 117 H 57 Q 62 ${top + 7} 68 ${top} Z`, C('sand', -.18), flat) + line(`M ${left + 11} 114 Q 58 ${top + 1} 63 ${top + 2}`, 'paper', 2);
+  }
+  if (!stage) return path(`M 54 118.5 L 56 ${103 + variant} Q 64 100 73 ${103 + variant} L 76 118.5 Z`, C('moss')) + ellipse(64.5, 103 + variant, 8.5, 3, C('paper')) + line('M 59 110 L 58 115 M 69 111 L 70 116', 'moss', 1.5) + path('M 39 116 L 44 112 L 48 117 Z', C('moss'), 'stroke-width="2"');
+  const h = stage === 1 ? 28 : 66, top = 118.5 - h, left = stage === 1 ? 59 : 56, right = stage === 1 ? 71 : 74;
+  let b = '';
+  if (stage === 2) b += path('M 57 92 L 46 92 Q 40 92 40 85 L 40 75 Q 40 68 47 71 Q 50 72 50 77 L 50 82 L 57 82 Z', C('leaf')) + path('M 73 101 L 84 101 Q 93 101 93 91 L 93 85 Q 93 78 86 80 Q 83 81 83 87 L 83 91 L 73 91 Z', C('leaf'));
+  b += path(`M ${left} 118.5 L ${left} ${top + 9} Q ${left} ${top} 65 ${top} Q ${right} ${top} ${right} ${top + 9} L ${right} 118.5 Z`, C('leaf'));
+  b += path(`M ${right - 4} ${top + 12} V 117 H ${right - 1} V ${top + 10} Z`, C('leaf', -.18), flat) + line(`M ${left + 4} ${top + 10} V 114`, 'grass', 2);
+  if (stage === 2) b += line('M 58 73 L 54 71 M 75 87 L 71 89', 'cream', 1.5) + (variant ? circle(65, top + 1, 4, C('danger')) + circle(64, top, 1.5, C('energy'), flat) : '');
+  return b;
+}
+function swamp(variant, stage) {
+  if (variant === 2) {
+    if (!stage) return path('M 54 118.5 L 54 112 Q 64 106 74 112 L 74 118.5 Z', C('cream')) + ellipse(64, 111, 11, 4, C('paper')) + ellipse(64, 111, 6, 1.8, C('clay', -.18), flat) + ellipse(88, 117, 5, 1.5, C('moss'), flat);
+    const top = stage === 1 ? 94 : 62, capY = stage === 1 ? 107 : 94, half = stage === 1 ? 14 : 30, stem = stage === 1 ? 5 : 9;
+    let b = path(`M ${64 - stem} 118.5 Q ${67 - stem} 110 ${64 - stem} ${capY} L ${64 + stem} ${capY} Q ${61 + stem} 110 ${64 + stem + 2} 118.5 Z`, C('cream'));
+    b += path(`M 67 ${capY + 1} L ${63 + stem} ${capY + 1} Q ${61 + stem} 111 ${64 + stem} 117 H 66 Z`, C('paper'), flat);
+    b += path(`M ${64 - half} ${capY} Q ${64 - half} ${top + 4} 59 ${top} Q ${64 + half - 10} ${top - 5} ${64 + half} ${capY} Q ${67 + half} ${capY + 4} ${60 + half} ${capY + 6} Q 64 ${capY + 12} ${68 - half} ${capY + 6} Q ${60 - half} ${capY + 4} ${64 - half} ${capY} Z`, C('crystal'));
+    b += path(`M ${68 - half} ${capY + 5} Q 64 ${capY + 9} ${62 + half} ${capY + 2} Q ${61 + half} ${capY + 6} 64 ${capY + 8} Z`, C('crystal', -.18), flat) + ellipse(stage === 1 ? 59 : 52, top + (stage === 1 ? 6 : 14), stage === 1 ? 3 : 7, stage === 1 ? 2 : 5, C('cream'), flat);
+    if (stage === 2) b += ellipse(75, 80, 5, 3.5, C('cream'), flat);
+    return b;
+  }
+  let b = ellipse(64, 116, 31, 3.5, C('clay', -.18), `${flat} opacity="0.5"`);
+  for (let i = 0; i < 3; i++) {
+    const x = 50 + i * 14, h = [86, 74, 62][(i + variant) % 3];
+    const top = !stage ? 107 + (i + variant) % 3 * 3 : round(118.5 - h * (stage === 1 ? .3 : .7));
+    if (!stage) {
+      b += path(`M ${x - 2} 118.5 L ${x - 2} ${top} L ${x + 2} ${top} L ${x + 2} 118.5 Z`, C('moss'), 'stroke-width="2"') + ellipse(x, top, 2, 1, C('paper'), 'stroke="none"');
+    } else {
+      b += line(`M ${59 + (i - 1) * 7} 118 Q ${x} 102 ${x} ${top + 4}`, 'moss', 2);
+      if (stage === 2 || i === 1) b += `<rect x="${x - (stage === 1 ? 2 : 3)}" y="${top}" width="${stage === 1 ? 4 : 6}" height="${stage === 1 ? 7 : 19}" rx="3" fill="${C('clay')}" stroke-width="2"/>` + line(`M ${x - 1} ${top + 3} V ${top + (stage === 1 ? 5 : 9)}`, 'sand', 1);
+    }
+  }
+  if (stage) b += path(stage === 1 ? 'M 62 118 Q 49 113 45 104 Q 57 106 62 118 M 69 118 Q 75 104 84 103 Q 80 115 69 118' : 'M 61 118 Q 45 109 40 94 Q 55 99 61 118 M 69 118 Q 80 96 93 92 Q 88 111 69 118', C('moss'), 'stroke-width="2"');
+  return b;
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
 if (fullProps.length !== 24) throw new Error(`Expected 24 full props, found ${fullProps.length}`);
