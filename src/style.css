@@ -9,6 +9,8 @@
   --warn: #ffb35c;
   --bad: #ff6b6b;
   --radius: 14px;
+  /* Height of the bottom panel; it folds down to its title row. */
+  --panel-h: 42dvh;
   color-scheme: dark;
 }
 
@@ -85,12 +87,46 @@ button:not(:disabled):active { transform: scale(0.96); }
   bottom: 0;
   /* Fixed height so the planet does not jump when the panel content changes. */
   height: 42vh;
-  height: 42dvh;
+  height: var(--panel-h);
   overflow-y: auto;
   background: var(--surface);
   border-radius: 20px 20px 0 0;
-  padding: 14px 14px calc(env(safe-area-inset-bottom) + 12px);
+  padding: 0 14px calc(env(safe-area-inset-bottom) + 12px);
   box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35);
+}
+/* Grab handle on top of the panel: tap to fold it down to the title row and back. */
+#panel-grip {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: block;
+  width: calc(100% + 28px);
+  margin: 0 -14px 2px;
+  padding: 8px 0 6px;
+  border-radius: 20px 20px 0 0;
+  background: transparent;
+  cursor: pointer;
+}
+#panel-grip span { display: block; width: 44px; height: 5px; margin: 0 auto; border-radius: 3px; background: var(--muted); opacity: 0.6; }
+body.panel-collapsed {
+  /* Title row plus room for the Online/Chat buttons below it. */
+  --panel-h: calc(env(safe-area-inset-bottom) + 108px);
+}
+body.panel-collapsed #panel { overflow: hidden; cursor: pointer; }
+body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
+
+/* Close-up / whole-planet switch, opposite the music button. */
+#zoom-toggle {
+  position: fixed;
+  left: 12px;
+  bottom: calc(var(--panel-h) + 10px);
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 17px;
 }
 #panel h2 { margin: 0 0 8px; font-size: 18px; }
 #panel h2 small, .muted { color: var(--muted); font-weight: 400; }
@@ -182,7 +218,7 @@ ul.owned small { color: var(--muted); }
   position: fixed;
   right: 12px;
   bottom: calc(42vh + 10px);
-  bottom: calc(42dvh + 10px);
+  bottom: calc(var(--panel-h) + 10px);
   z-index: 5;
   display: flex;
   flex-direction: column;

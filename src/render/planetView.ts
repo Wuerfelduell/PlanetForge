@@ -130,6 +130,9 @@ export class PlanetView {
   private cx = 0;
   private cy = 0;
   private radius = 100;
+  private goal = { cx: 0, cy: 0, radius: 100 };
+  private insets = { top: 0, bottom: 0 };
+  private zoom = true;
   private rotation = 0;
   private targetRotation = 0;
   private selected = 0;
@@ -172,6 +175,7 @@ export class PlanetView {
         this.sprites.push({ icon, mystery });
       }
       this.segmentCount = segmentCount;
+      this.fit(true);
     }
     this.selected = 0;
     this.effects.clear();
@@ -288,13 +292,58 @@ export class PlanetView {
 
   /** Area left free between the HUD (top) and the panel (bottom). */
   layout(width: number, height: number, topInset: number, bottomInset: number): void {
-    const free = Math.max(120, height - topInset - bottomInset);
-    this.radius = Math.min(width * 0.4, free * 0.4);
+    const first = this.width === 0;
     this.width = width;
     this.height = height;
-    this.cx = width / 2;
-    this.cy = topInset + free / 2 + this.radius * 0.06;
+    this.insets = { top: topInset, bottom: bottomInset };
     this.drawStars(width, height);
+    this.fit(first);
+  }
+
+  /** Close-up: only the top arc of a bigger planet is shown, so the fields are large enough to tap. */
+  setZoom(zoomed: boolean): void {
+    if (zoomed === this.zoom) return;
+    this.zoom = zoomed;
+    this.fit(false);
+  }
+
+  /** Target radius and center for the current zoom; `snap` jumps there instead of easing. */
+  private fit(snap: boolean): void {
+    const { width, insets } = this;
+    if (!width) return;
+    const free = Math.max(120, this.height - insets.top - insets.bottom);
+    const whole = Math.min(width * 0.4, free * 0.4);
+    let radius = whole;
+    let cy = insets.top + free / 2 + whole * 0.06;
+    if (this.zoom && this.segmentCount) {
+      // About five fields across the screen, but never smaller than the whole planet.
+      const field = Math.min(width, 560) / 5;
+      radius = Math.max(whole, (field * this.segmentCount) / (Math.PI * 2));
+      if (radius > whole * 1.05) {
+        const step = (Math.PI * 2 * radius) / this.segmentCount;
+        // Room above the surface for buildings and the marker; the rest of the planet sinks below.
+        cy = insets.top + step * 1.35 + radius;
+      }
+    }
+    this.goal = { cx: width / 2, cy, radius };
+    if (snap) ({ cx: this.cx, cy: this.cy, radius: this.radius } = this.goal);
+    this.dirty = true;
+  }
+
+  /** Eases radius and center towards the goal (zoom, panel opening/closing). */
+  private ease(deltaMs: number): void {
+    const g = this.goal;
+    if (Math.abs(g.radius - this.radius) < 0.5 && Math.abs(g.cy - this.cy) < 0.5 && Math.abs(g.cx - this.cx) < 0.5) {
+      if (this.radius !== g.radius || this.cy !== g.cy || this.cx !== g.cx) {
+        ({ cx: this.cx, cy: this.cy, radius: this.radius } = g);
+        this.dirty = true;
+      }
+      return;
+    }
+    const k = Math.min(1, deltaMs / 90);
+    this.cx += (g.cx - this.cx) * k;
+    this.cy += (g.cy - this.cy) * k;
+    this.radius += (g.radius - this.radius) * k;
     this.dirty = true;
   }
 
@@ -314,6 +363,7 @@ export class PlanetView {
       const k = Math.min(1, deltaMs / 80);
       this.rotation += (this.targetRotation - this.rotation) * k;
     }
+    this.ease(deltaMs);
     this.wheel.position.set(this.cx, this.cy);
     this.wheel.rotation = this.rotation;
     this.updateRockets(deltaMs);
@@ -482,10 +532,12 @@ export class PlanetView {
     if (!inv || !shown) return;
     const R = this.radius;
     const near = inv.sieging;
-    const bob = Math.sin(state.tick / 6) * R * 0.02;
-    const x = this.cx + R * (near ? 0.75 : 1.05);
-    const y = this.cy - R * (near ? 1.05 : 1.3) + bob;
-    const size = Math.max(20, R * (near ? 0.32 : 0.18));
+    // Sized and placed by what is on screen, so the zoomed-in planet keeps the fleet in view.
+    const s = Math.min(R, this.width * 0.4);
+    const bob = Math.sin(state.tick / 6) * s * 0.02;
+    const x = this.cx + s * (near ? 0.75 : 1.05);
+    const y = this.cy - R - s * (near ? 0.05 : 0.3) + bob;
+    const size = Math.max(20, s * (near ? 0.32 : 0.18));
     // Mothership art once it exists (asset list for Codex), the emoji until then.
     const idle = artFrames("invader.mothership.idle");
     const texture = inv.hp < inv.maxHp / 2 ? (artTexture("invader.mothership.damaged") ?? idle[0]) : idle[Math.floor(state.tick / 5) % Math.max(1, idle.length)];
@@ -498,9 +550,9 @@ export class PlanetView {
     ship.position.set(x, y);
     ship.alpha = near ? 1 : 0.6;
     if (!near) return;
-    const w = R * 0.5;
-    const h = Math.max(4, R * 0.035);
-    const top = y + R * 0.2;
+    const w = s * 0.5;
+    const h = Math.max(4, s * 0.035);
+    const top = y + s * 0.2;
     bar.rect(x - w / 2, top, w, h).fill({ color: 0x000000, alpha: 0.5 });
     bar.rect(x - w / 2, top, (w * inv.hp) / inv.maxHp, h).fill(0xff5c5c);
   }
@@ -691,8 +743,9 @@ export class PlanetView {
     const R = this.radius;
     const m = this.marker;
     m.clear();
-    const tipY = this.cy - R - R * 0.2;
-    const size = Math.max(8, R * 0.06);
+    const field = this.segmentWidth();
+    const tipY = this.cy - R - field * 0.8;
+    const size = Math.max(8, field * 0.24);
     m.poly([this.cx, tipY + size, this.cx - size, tipY - size * 0.4, this.cx + size, tipY - size * 0.4]).fill(0xffd166);
   }
 
