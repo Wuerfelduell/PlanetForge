@@ -48,7 +48,7 @@ export const RESOURCES = {
 } as const satisfies Record<ResourceId, ResourceDef>;
 
 /** Biome ids match the asset brief (art/src/biomes/). */
-export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "swamp", "desert", "tundra", "crystal"] as const;
+export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "swamp", "desert", "tundra", "crystal", "glacier", "lava", "ash"] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export const BIOMES = {
@@ -135,6 +135,37 @@ export const BIOMES = {
       { resource: "aetherite", max: 30, requires: "crystal-lore" },
     ],
   },
+  // Ice and lava worlds. Glacier thaws to tundra, lava cools to ash, ash can be planted (src/sim/terraform.ts).
+  glacier: {
+    name: "Gletscher",
+    art: "glacier",
+    buildable: false,
+    deposits: [
+      { resource: "water", max: 100, byHand: true },
+      { resource: "stone", max: 20, byHand: true },
+    ],
+  },
+  lava: {
+    name: "Lavafeld",
+    art: "lava",
+    // Only mine, foundry, watchtower and battery stand the heat (the sim's allowedBiomes).
+    buildable: true,
+    deposits: [
+      { resource: "stone", max: 60, byHand: true },
+      { resource: "iron", max: 45 },
+      { resource: "gold", max: 20, tier: 2 },
+    ],
+  },
+  ash: {
+    name: "Aschefeld",
+    art: "ash",
+    buildable: true,
+    deposits: [
+      { resource: "sand", max: 50, byHand: true },
+      { resource: "stone", max: 30, byHand: true },
+      { resource: "coal", max: 25 },
+    ],
+  },
 } as const satisfies Record<BiomeId, BiomeDef<ResourceId>>;
 
 /**
@@ -153,21 +184,21 @@ export const PLANET_TYPES = {
     name: "Trocken",
     art: "planet-arid",
     segments: 24,
-    biomeWeights: { desert: 5, savanna: 3, mountains: 2, crystal: 1 },
+    biomeWeights: { desert: 5, savanna: 3, mountains: 2, crystal: 1, ash: 0.5 },
     depositMul: 1.1,
   },
   ice: {
     name: "Eis",
     art: "planet-ice",
     segments: 24,
-    biomeWeights: { tundra: 6, mountains: 2, ocean: 2, crystal: 1 },
+    biomeWeights: { tundra: 5, glacier: 3, mountains: 2, ocean: 1, crystal: 1 },
     depositMul: 1.1,
   },
   lava: {
     name: "Lava",
     art: "planet-lava",
     segments: 16,
-    biomeWeights: { mountains: 5, desert: 2, crystal: 3 },
+    biomeWeights: { lava: 4, ash: 3, mountains: 3, crystal: 2 },
     depositMul: 1.4,
   },
   toxic: {

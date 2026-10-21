@@ -17,9 +17,12 @@ export interface TerraformDef {
  * New land and fresh trees start with a small deposit that regrows like any untouched one.
  */
 export const TERRAFORM: Record<TerraformKind, TerraformDef> = {
-  plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna"], to: "forest", cost: { food: 5 } },
+  plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna", "ash"], to: "forest", cost: { food: 5 } },
   fillSand: { name: "Mit Sand aufschütten", icon: "🏜️", from: ["ocean"], to: "desert", cost: { sand: 30 } },
   fillClay: { name: "Mit Erde aufschütten", icon: "🟫", from: ["ocean"], to: "savanna", cost: { clay: 30 } },
+  // Ice and lava worlds open up step by step: the glacier thaws to tundra, lava cools to ash.
+  thawGlacier: { name: "Abtauen", icon: "🔥", from: ["glacier"], to: "tundra", cost: { wood: 30 } },
+  coolLava: { name: "Abkühlen", icon: "💧", from: ["lava"], to: "ash", cost: { water: 30 } },
 };
 
 /** Share of max a planted or newly filled deposit starts with. */

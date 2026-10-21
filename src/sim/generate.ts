@@ -251,7 +251,9 @@ function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: Resource
   const eligible = segments.filter((s) => !keepStartArea || ringDistance(s.index, 0, n) > RULES.startRevealRadius);
   let candidates = eligible.filter((s) => allowed.includes(s.biome));
   if (candidates.length === 0) {
-    const land = eligible.filter((s) => s.biome !== "ocean");
+    // Somewhere a mine can reach it, without wiping out another rare deposit placed before.
+    const own = (s: SegmentState) => s.deposits.every((d) => BIOMES[s.biome].deposits.some((b) => b.resource === d.resource));
+    const land = eligible.filter((s) => BIOMES[s.biome].buildable && own(s));
     const target = rng.pick(land.length ? land : eligible);
     const fresh = createSegment(target.index, allowed[0]!, rng);
     segments[target.index] = fresh;

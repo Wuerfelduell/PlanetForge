@@ -9,6 +9,9 @@ const PROP_RESOURCE: Partial<Record<string, ResourceId>> = {
   swamp: "clay",
   tundra: "stone",
   crystal: "aetherite",
+  glacier: "water",
+  lava: "stone",
+  ash: "sand",
 };
 
 /** How full the deposit behind a segment's prop is: 1 full (or no such deposit), 0 used up. */

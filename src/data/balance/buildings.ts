@@ -45,7 +45,7 @@ export const BUILDINGS = {
     description:
       "Baut Pflaumbeeren an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Savanne, +20 % je Nachbar-Pumpe (Bewässerung), −25 % je Nachbar-Mine (Staub), −20 % je Nachbar-Kohlekraftwerk.",
     art: "farm",
-    biomes: ["forest", "savanna", "swamp"],
+    biomes: ["forest", "savanna", "swamp", "ash"],
     adjacency: [
       { biome: "savanna", bonus: 0.25 },
       { building: "pump", bonus: 0.2 },
@@ -88,7 +88,7 @@ export const BUILDINGS = {
     description:
       "Fördert die festen Bodenschätze des Feldes. Nur auf einem Feld mit Vorkommen. +20 % je Nachbar-Gebirge. Verbraucht Werkzeug, Gold erst ab Stufe 2.",
     art: "mine",
-    biomes: ["mountains", "desert", "savanna", "swamp", "tundra", "crystal"],
+    biomes: ["mountains", "desert", "savanna", "swamp", "tundra", "crystal", "lava", "ash"],
     needsDeposit: true,
     adjacency: [{ biome: "mountains", bonus: 0.2 }],
     tiers: [

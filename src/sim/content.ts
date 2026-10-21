@@ -40,7 +40,7 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   gold: { name: "Gold", icon: "🪙" },
 };
 
-export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal"] as const;
+export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export interface DepositDef {
@@ -139,6 +139,37 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "aetherite", max: 40 },
     ],
   },
+  // Ice and lava worlds (Seb: "mehr Terrainfelder wie Eis, Lava"). Glacier and lava are hard
+  // ground: little to build, but terraforming opens them up (thaw → tundra, cool → ash → forest).
+  glacier: {
+    name: "Gletscher",
+    color: 0xb8e2f2,
+    buildable: false,
+    deposits: [
+      { resource: "water", max: 100, byHand: true },
+      { resource: "stone", max: 20, byHand: true },
+    ],
+  },
+  lava: {
+    name: "Lavafeld",
+    color: 0xd4502a,
+    buildable: true,
+    deposits: [
+      { resource: "stone", max: 60, byHand: true },
+      { resource: "iron", max: 45 },
+      { resource: "gold", max: 20, tier: 2 },
+    ],
+  },
+  ash: {
+    name: "Aschefeld",
+    color: 0x6e6670,
+    buildable: true,
+    deposits: [
+      { resource: "sand", max: 50, byHand: true },
+      { resource: "stone", max: 30, byHand: true },
+      { resource: "coal", max: 25 },
+    ],
+  },
 };
 
 export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "lab", "foundry", "launchpad", "watchtower", "battery"] as const;
@@ -200,19 +231,21 @@ const NOISY: readonly AdjacencyDef[] = [
   { building: "foundry", bonus: -0.25 },
 ];
 
-const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"];
+/** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
+const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal", "ash"];
+const HOT_GROUND: readonly BiomeId[] = [...LAND, "lava"];
 
 export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   housing: {
     name: "Hütte",
     icon: "🛖",
-    description: "Platz für 2 weitere Einwohner. Je Nachbar-Mine wird es enger (Lärm), Nachbar-Wälder geben etwas mehr Platz.",
+    description: "Platz für 2 weitere Einwohner. Je Nachbar-Mine wird es enger (Lärm), ebenso neben Lava (Hitze). Nachbar-Wälder geben etwas mehr Platz.",
     cost: { wood: 15 },
     unlockLevel: 0,
     allowedBiomes: LAND,
     workers: 0,
     housing: 2,
-    adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }],
+    adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }, { biome: "lava", bonus: -0.25 }],
     upgrades: [
       { cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
       { cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
@@ -221,14 +254,15 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   farm: {
     name: "Farm",
     icon: "🌾",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. +25 % je Nachbar-Savanne, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
     cost: { wood: 12 },
     unlockLevel: 0,
-    allowedBiomes: ["savanna", "forest", "swamp"],
+    allowedBiomes: ["savanna", "forest", "swamp", "ash"],
     workers: 2,
     produces: { resource: "food", perWorker: 0.5 },
     adjacency: [
       { biome: "savanna", bonus: 0.25 },
+      { biome: "ash", bonus: 0.15 },
       { building: "pump", bonus: 0.2 },
       { building: "mine", bonus: -0.25 },
     ],
@@ -264,7 +298,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
-    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest"],
+    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "lava", "ash"],
     workers: 3,
     extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "oil", "uranium", "aetherite"], perWorker: 0.6 },
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
@@ -282,13 +316,16 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   pump: {
     name: "Pumpe",
     icon: "🪣",
-    description: "Pumpt Wasser. Braucht Wasser im Feld oder ein Nachbar-Meer. +50 % je Nachbar-Meer.",
+    description: "Pumpt Wasser. Braucht Wasser im Feld oder ein Nachbar-Meer oder einen Nachbar-Gletscher. +50 % je Nachbar-Meer, +30 % je Nachbar-Gletscher.",
     cost: { stone: 12 },
     unlockLevel: 1,
     allowedBiomes: LAND,
     workers: 1,
     produces: { resource: "water", perWorker: 0.5 },
-    adjacency: [{ biome: "ocean", bonus: 0.5 }],
+    adjacency: [
+      { biome: "ocean", bonus: 0.5 },
+      { biome: "glacier", bonus: 0.3 },
+    ],
     needsDeposit: true,
   },
   workshop: {
@@ -321,13 +358,16 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   foundry: {
     name: "Gießerei",
     icon: "🏭",
-    description: "Brennt Ziegel oder Holzkohle. +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+    description: "Brennt Ziegel oder Holzkohle. Darf auf Lava stehen. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
     cost: { stone: 25, clay: 15, planks: 10 },
     unlockLevel: 3,
-    allowedBiomes: LAND,
+    allowedBiomes: HOT_GROUND,
     workers: 2,
     crafts: { recipes: ["bricks", "charcoal"], speed: 1 },
-    adjacency: [{ building: "mine", bonus: 0.1 }],
+    adjacency: [
+      { building: "mine", bonus: 0.1 },
+      { biome: "lava", bonus: 0.3 },
+    ],
   },
   launchpad: {
     name: "Startrampe",
@@ -344,7 +384,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "+1 auf die Würfe der Verteidiger dieses Planeten.",
     cost: { planks: 10, stone: 20 },
     unlockLevel: 2,
-    allowedBiomes: LAND,
+    allowedBiomes: HOT_GROUND,
     workers: 0,
     defense: 1,
   },
@@ -354,7 +394,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Schießt auf Invasoren über dem Planeten: je Arbeiter 1 Treffer pro Umlauf.",
     cost: { iron: 25, stone: 25, wood: 10 },
     unlockLevel: 5,
-    allowedBiomes: LAND,
+    allowedBiomes: HOT_GROUND,
     workers: 2,
     battery: 1,
   },
@@ -503,10 +543,10 @@ export interface PlanetTypeDef {
 
 export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
   temperate: { name: "Gemäßigt", biomeWeights: { forest: 3, savanna: 3, mountains: 2, ocean: 2, swamp: 1, desert: 1 } },
-  arid: { name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ocean: 0.5 } },
-  ice: { name: "Eis", biomeWeights: { tundra: 4, mountains: 2, ocean: 2 } },
+  arid: { name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ash: 0.5, ocean: 0.5 } },
+  ice: { name: "Eis", biomeWeights: { tundra: 4, glacier: 3, mountains: 2, ocean: 1 } },
   ocean: { name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
-  lava: { name: "Lava", biomeWeights: { mountains: 3, desert: 2, crystal: 1.5 } },
+  lava: { name: "Lava", biomeWeights: { lava: 3, ash: 2.5, mountains: 2, crystal: 1 } },
   toxic: { name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
   asteroid: { name: "Asteroid", biomeWeights: { mountains: 3, crystal: 2 } },
 };
@@ -517,9 +557,9 @@ export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
  * biomes a deposit may sit on.
  */
 export const RARE_RESOURCES: Partial<Record<ResourceId, readonly BiomeId[]>> = {
-  coal: ["mountains", "forest", "swamp"],
+  coal: ["mountains", "forest", "swamp", "ash"],
   oil: ["desert", "swamp"],
-  uranium: ["mountains", "desert"],
+  uranium: ["mountains", "desert", "lava"],
   aetherite: ["crystal", "mountains"],
 };
 

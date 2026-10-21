@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
@@ -139,13 +139,16 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
   return Math.max(0, mult);
 }
 
+/** Pumps also draw from a neighboring sea or glacier. */
+const WATER_NEIGHBORS: readonly BiomeId[] = ["ocean", "glacier"];
+
 /** Whether a building that needs a deposit (mine, pump) has something to work on this segment. */
 export function hasWorkableDeposit(planet: PlanetState, segment: SegmentState, building: BuildingId): boolean {
   const def = BUILDINGS[building];
   if (def.extracts) return segment.deposits.some((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
   if (def.produces) {
     const r = def.produces.resource;
-    return segment.deposits.some((d) => d.resource === r) || neighbors(planet, segment.index).some((n) => n.biome === "ocean");
+    return segment.deposits.some((d) => d.resource === r) || neighbors(planet, segment.index).some((n) => WATER_NEIGHBORS.includes(n.biome));
   }
   return true;
 }
@@ -197,7 +200,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
     return `Muss neben ${def.needsNeighbor.map((b) => BIOMES[b].name).join(" oder ")} stehen`;
   }
   if (def.needsDeposit && !hasWorkableDeposit(planet, segment, building)) {
-    return def.extracts ? "Hier gibt es nichts abzubauen" : "Braucht Wasser im Feld oder ein Nachbar-Meer";
+    return def.extracts ? "Hier gibt es nichts abzubauen" : "Braucht Wasser im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher";
   }
   if (!canAfford(economy, building)) return NOT_AFFORDABLE;
   return null;
