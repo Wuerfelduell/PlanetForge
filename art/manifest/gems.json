@@ -1,0 +1,130 @@
+{
+  "assets": [
+    {
+      "id": "resource.diamond",
+      "category": "resources",
+      "src": "art/src/resources/diamond.svg",
+      "out": "public/assets/sprites/resources/diamond.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "diamond"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.diamond.mini",
+      "category": "resources",
+      "src": "art/src/resources/diamond-mini.svg",
+      "out": "public/assets/sprites/resources/diamond-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "diamond-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.emerald",
+      "category": "resources",
+      "src": "art/src/resources/emerald.svg",
+      "out": "public/assets/sprites/resources/emerald.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "emerald"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.emerald.mini",
+      "category": "resources",
+      "src": "art/src/resources/emerald-mini.svg",
+      "out": "public/assets/sprites/resources/emerald-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "emerald-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ruby",
+      "category": "resources",
+      "src": "art/src/resources/ruby.svg",
+      "out": "public/assets/sprites/resources/ruby.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "ruby"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ruby.mini",
+      "category": "resources",
+      "src": "art/src/resources/ruby-mini.svg",
+      "out": "public/assets/sprites/resources/ruby-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "gems",
+        "ruby-mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
