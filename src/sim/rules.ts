@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
@@ -71,6 +71,44 @@ export function idleUnits(state: GameState, planet: PlanetState, owner?: string)
   return unitsOn(state, planet.id, owner).filter((u) => u.segment === null);
 }
 
+/** The building on a segment with the values of its current stage, or null. */
+export function buildingStats(segment: SegmentState): BuildingDef | null {
+  if (!segment.building) return null;
+  const def = BUILDINGS[segment.building];
+  const tier = segment.tier ?? 1;
+  if (tier <= 1 || !def.upgrades) return def;
+  let stats: BuildingDef = def;
+  for (const u of def.upgrades.slice(0, tier - 1)) stats = { ...stats, ...u, cost: def.cost };
+  return stats;
+}
+
+/** Everything paid for a segment's building so far: build cost plus every upgrade. */
+export function paidFor(segment: SegmentState): Partial<Record<ResourceId, number>> {
+  if (!segment.building) return {};
+  const def = BUILDINGS[segment.building];
+  const total: Partial<Record<ResourceId, number>> = { ...def.cost };
+  for (const u of def.upgrades?.slice(0, (segment.tier ?? 1) - 1) ?? []) {
+    for (const [r, v] of Object.entries(u.cost) as [ResourceId, number][]) total[r] = (total[r] ?? 0) + v;
+  }
+  return total;
+}
+
+/** The next stage of a segment's building, or undefined at the top. */
+export function nextUpgrade(segment: SegmentState): BuildingUpgrade | undefined {
+  return segment.building ? BUILDINGS[segment.building].upgrades?.[(segment.tier ?? 1) - 1] : undefined;
+}
+
+/** Why the building on a segment cannot be upgraded right now, or null. */
+export function upgradeBlocker(state: GameState, planet: PlanetState, segment: SegmentState): string | null {
+  const economy = economyOf(state, planet);
+  if (!economy) return "Unbewohnter Planet";
+  const next = nextUpgrade(segment);
+  if (!next) return "Höchste Stufe erreicht";
+  if (economy.ascension.level < next.unlockLevel) return `Ab Aufstiegsstufe ${next.unlockLevel}`;
+  if (!canPay(economy, next.cost)) return NOT_AFFORDABLE;
+  return null;
+}
+
 export function housing(state: GameState, planet: PlanetState): number {
   if (planet.economyId === null) return 0;
   // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
@@ -78,23 +116,93 @@ export function housing(state: GameState, planet: PlanetState): number {
   let total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation;
   const economy = economyOf(state, planet);
   for (const s of planet.segments) {
-    const h = s.building ? BUILDINGS[s.building].housing : undefined;
-    if (h) total += modified(economy, "housing", h, { building: s.building! });
+    const h = buildingStats(s)?.housing;
+    // Noisy neighbors take living space, forests add a little.
+    if (h) total += modified(economy, "housing", h, { building: s.building! }) * adjacencyMultiplier(planet, s) * powerFactor(planet, s);
   }
-  return total;
+  return Math.floor(total + 1e-9);
 }
 
 export function workerCapacity(segment: SegmentState): number {
-  if (segment.building) return BUILDINGS[segment.building].workers;
-  return segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
+  if (segment.building) return buildingStats(segment)!.workers;
+  return !segment.scorched && segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
 }
 
 export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState): number {
   if (!segment.building) return 1;
   const adj = BUILDINGS[segment.building].adjacency;
   if (!adj) return 1;
-  const count = neighbors(planet, segment.index).filter((n) => n.biome === adj.biome).length;
-  return 1 + count * adj.bonus;
+  let mult = 1;
+  for (const n of neighbors(planet, segment.index)) {
+    for (const a of adj) if ((a.biome && n.biome === a.biome) || (a.building && n.building === a.building)) mult += a.bonus;
+  }
+  return Math.max(0, mult);
+}
+
+/** Power a segment feeds into the planet's grid with `workers` on it (manned plants also need their fuel). */
+export function energySupply(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): number {
+  const def = buildingStats(segment);
+  if (!def?.energy || def.energy <= 0) return 0;
+  if (def.burns && !(economy && economy.resources[def.burns.resource] > 0)) return 0;
+  const crew = def.workers > 0 ? Math.min(1, workers / def.workers) : 1;
+  return def.energy * adjacencyMultiplier(planet, segment) * crew;
+}
+
+/** Power a segment draws: always for unmanned consumers (housing), else only while somebody works there. */
+export function energyDemand(segment: SegmentState, workers: number): number {
+  const def = buildingStats(segment);
+  if (!def?.energy || def.energy >= 0 || (def.workers > 0 && workers <= 0)) return 0;
+  return -def.energy;
+}
+
+/** Speed factor of a power consumer: supply ÷ demand when short, never below RULES.energy.unpoweredMul (docs/balancing.md). */
+export function powerFactor(planet: PlanetState, segment: SegmentState): number {
+  if (!((buildingStats(segment)?.energy ?? 0) < 0)) return 1;
+  const p = planet.power;
+  if (!p || p.demand <= p.supply) return 1;
+  return Math.max(RULES.energy.unpoweredMul, p.supply / p.demand);
+}
+
+/** Pumps also draw from a neighboring sea or glacier. */
+const WATER_NEIGHBORS: readonly BiomeId[] = ["ocean", "glacier"];
+
+/** Whether a building that needs a deposit (mine, pump) has something to work on this segment. */
+export function hasWorkableDeposit(planet: PlanetState, segment: SegmentState, building: BuildingId): boolean {
+  const def = BUILDINGS[building];
+  const extractable = !!def.extracts && segment.deposits.some((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
+  if (extractable) return true;
+  if (def.produces) {
+    const r = def.produces.resource;
+    return segment.deposits.some((d) => d.resource === r) || neighbors(planet, segment.index).some((n) => WATER_NEIGHBORS.includes(n.biome));
+  }
+  return !def.extracts;
+}
+
+/** The recipe a crafting segment runs: its chosen one, else the building's first. */
+export function segmentRecipe(segment: SegmentState): RecipeId | null {
+  const crafts = buildingStats(segment)?.crafts;
+  if (!crafts) return null;
+  return crafts.recipes.find((r) => r === segment.gather) ?? crafts.recipes[0]!;
+}
+
+/** Whether tools wear out for this economy yet (from the workshop's level on). */
+export function toolsWear(economy: EconomyState | undefined): boolean {
+  return !!economy && economy.ascension.level >= RULES.tools.fromLevel;
+}
+
+/** Speed factor of a tool-using building: slower once tools wear out and none are in stock. */
+export function toolFactor(segment: SegmentState, economy: EconomyState | undefined): number {
+  const def = segment.building ? BUILDINGS[segment.building] : null;
+  if (!def?.usesTools || !toolsWear(economy) || economy!.resources.tools > 0) return 1;
+  return RULES.tools.withoutToolsMul;
+}
+
+/** Crafts per second of a crafting segment at full input supply. */
+export function craftRate(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): number {
+  const recipe = segmentRecipe(segment);
+  if (!recipe || workers <= 0) return 0;
+  const speed = buildingStats(segment)!.crafts!.speed;
+  return (workers * speed * adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment)) / RECIPES[recipe].seconds;
 }
 
 export function canAfford(economy: EconomyState, building: BuildingId): boolean {
@@ -110,9 +218,17 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!economy) return "Unbewohnter Planet";
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
+  if (def.unique && hasBuilding(planet, building)) return "Nur eins pro Planet";
+  if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
+  if (def.needsNeighbor && !neighbors(planet, segment.index).some((n) => def.needsNeighbor!.includes(n.biome))) {
+    return `Muss neben ${def.needsNeighbor.map((b) => BIOMES[b].name).join(" oder ")} stehen`;
+  }
+  if (def.needsDeposit && !hasWorkableDeposit(planet, segment, building)) {
+    return !def.produces ? "Hier gibt es nichts abzubauen" : "Braucht Wasser im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher";
+  }
   if (!canAfford(economy, building)) return NOT_AFFORDABLE;
   return null;
 }
@@ -121,17 +237,24 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
 export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
-  const mult = adjacencyMultiplier(planet, segment);
-  const def = segment.building ? BUILDINGS[segment.building] : null;
+  const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment);
+  const def = buildingStats(segment);
   const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource });
   if (def?.produces) {
     const r = def.produces.resource;
     out[r] = def.produces.perWorker * workers * mult * bonus(r);
-  } else if (def?.extracts) {
+  }
+  if (def?.extracts) {
     const available = segment.deposits.filter((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
     // Workers split evenly over everything the building can reach.
     for (const d of available) out[d.resource] = ((def.extracts.perWorker * workers * mult) / available.length) * bonus(d.resource);
-  } else if (!def) {
+  }
+  if (def?.crafts) {
+    const recipe = RECIPES[segmentRecipe(segment)!];
+    const rate = craftRate(planet, segment, workers, economy);
+    for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) out[r] = v * rate * bonus(r);
+  }
+  if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
     if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
   }
@@ -167,7 +290,7 @@ export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId,
   const def = ROCKETS[rocket];
   const distance = planetDistance(from, to);
   const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
-  const fuel = Math.ceil(modified(economy, "rocketFuel", distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
+  const fuel = Math.ceil(modified(economy, "rocketFuel", def.fuel.takeoff + distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
   cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
   return { distance, cost, seconds: Math.max(1, Math.round(distance * def.secondsPerDistance)) };
 }
@@ -281,7 +404,7 @@ export function rocketUnlockLevel(economy: EconomyState | undefined, rocket: Roc
 /** Bonus on the defenders' rolls on a planet. */
 export function planetDefense(state: GameState, planet: PlanetState): number {
   let towers = 0;
-  for (const s of planet.segments) if (s.building) towers += BUILDINGS[s.building].defense ?? 0;
+  for (const s of planet.segments) towers += buildingStats(s)?.defense ?? 0;
   const economy = economyOf(state, planet);
   const general = modified(economy, "battleRoll", 0);
   const towerExtra = towers > 0 ? modified(economy, "battleRoll", 0, { building: "watchtower" }) - general : 0;

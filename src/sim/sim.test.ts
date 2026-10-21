@@ -96,7 +96,8 @@ describe("world generation", () => {
   });
 
   it("versus: one start planet and economy per player, rare resources split so players complement each other", () => {
-    const rare = Object.keys(RARE_RESOURCES);
+    // Oil is on every start planet (rocket fuel), so it is not part of the split.
+    const rare = Object.keys(RARE_RESOURCES).filter((r) => r !== "oil");
     for (let seed = 0; seed < 100; seed++) {
       const g = createGame(String(seed), [P1, MO], { mode: "versus" });
       expect(g.planets.filter((p) => p.startSlot !== null)).toHaveLength(SYSTEM.maxPlayers);

@@ -2,8 +2,11 @@ import {
   adjacencyMultiplier,
   BIOMES,
   buildBlocker,
+  BUILDING_CATEGORIES,
+  BUILDING_CATEGORY_IDS,
   BUILDING_IDS,
   BUILDINGS,
+  type BuildingCategory,
   cycleOf,
   housing,
   discoveryCost,
@@ -30,7 +33,15 @@ import {
   RESOURCE_IDS,
   RESOURCES,
   RULES,
+  RECIPES,
   segmentOutput,
+  segmentRecipe,
+  buildingStats,
+  energySupply,
+  powerFactor,
+  nextUpgrade,
+  upgradeBlocker,
+  toolFactor,
   ticksPerCycle,
   workerCapacity,
   type Command,
@@ -39,9 +50,13 @@ import {
   type BuildingId,
   type GameEvent,
   type PlanetState,
+  TERRAFORM,
+  terraformBlocker,
+  NOT_SCORCHED,
+  type TerraformKind,
 } from "../sim";
 import { currentHint } from "./hints";
-import { buildingIconUrl, resourceIconUrl } from "../render/art";
+import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
 
 export interface UiActions {
   send(cmd: Command): void;
@@ -59,13 +74,16 @@ export class Ui {
   private readonly hud = el("hud");
   private readonly panel = el("panel-body");
   private readonly toasts = el("toasts");
-  private lastHud = "";
+  private lastHud = NO_HUD;
+  private hudParts: { chips: HTMLElement; controls: HTMLElement; rest: HTMLElement } | null = null;
   private lastPanel = "";
   private selected = 0;
   private state: GameState | null = null;
   /** Planet currently shown (the player's home planet until there is a star map). */
   private planetId = "";
   private speed = 1;
+  /** Speed to resume with after a pause. */
+  private lastSpeed = 1;
 
   constructor(private readonly actions: UiActions) {
     // pointerup instead of click: the panel re-renders while the player taps, and a click needs
@@ -78,6 +96,8 @@ export class Ui {
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
   private showDiscoveries = false;
+  /** Open tab of the build menu; kept while the player taps from field to field. */
+  private buildTab: BuildingCategory | "terrain" = "housing";
   /** Star map open, and the planet (or "sun") picked on it. */
   private mapOpen = false;
   /** Read by the star map to highlight the same planet. */
@@ -99,11 +119,18 @@ export class Ui {
   }
 
   private res(resource: ResourceId): string {
-    return this.art ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
+    // The name as tooltip: planks and bricks look like gold and copper bars (Seb, 2026-10-21).
+    const { name, icon } = RESOURCES[resource];
+    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${name}" title="${name}">` : `<span title="${name}">${icon}</span>`;
+  }
+
+  /** Icon of a field action: Codex art where it exists, else the emoji. */
+  private ticon(kind: TerraformKind, emoji = TERRAFORM[kind].icon): string {
+    return this.art && kind === "clearScorched" && artTexture("ui.icon-clear-scorched") ? `<img class="bi" src="assets/sprites/ui/icon-clear-scorched.png" alt="${emoji}">` : emoji;
   }
 
   private bicon(building: BuildingId): string {
-    return this.art ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
+    return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
   }
 
   /** The local player, whose people the +/- buttons move. */
@@ -122,7 +149,16 @@ export class Ui {
     const planet = state.planets.find((p) => p.id === this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
-    if (hud !== this.lastHud) this.hud.innerHTML = this.lastHud = hud;
+    // Three parts, so the resource strip stays the same element and keeps its scroll position
+    // (and an ongoing swipe) while the numbers tick.
+    if (!this.hudParts) {
+      this.hud.innerHTML = `<div class="row resources"><div class="res-scroll"></div><span class="spacer"></span><div class="hud-controls"></div></div><div class="hud-rest"></div>`;
+      this.hudParts = { chips: this.hud.querySelector(".res-scroll")!, controls: this.hud.querySelector(".hud-controls")!, rest: this.hud.querySelector(".hud-rest")! };
+    }
+    if (hud.chips !== this.lastHud.chips) this.hudParts.chips.innerHTML = hud.chips;
+    if (hud.controls !== this.lastHud.controls) this.hudParts.controls.innerHTML = hud.controls;
+    if (hud.rest !== this.lastHud.rest) this.hudParts.rest.innerHTML = hud.rest;
+    this.lastHud = hud;
     const panel = this.renderPanel(state, planet);
     if (panel !== this.lastPanel) this.panel.innerHTML = this.lastPanel = panel;
   }
@@ -199,14 +235,15 @@ export class Ui {
           this.toast(`👾 Invasoren belagern ${this.targetName(e.target)}. Freie Einwohner und Abwehrbatterien kämpfen.`, "bad");
           break;
         case "siege":
-          if (e.destroyed) this.toast(`💥 Invasoren zerstören ${BUILDINGS[e.destroyed].name} auf ${this.targetName(e.target)}`, "bad");
+          if (e.scorched?.length) this.toast(`🔥 Niemand wehrt sich: Invasoren verbrennen ${e.scorched.length} Felder auf ${this.targetName(e.target)}${e.destroyed ? ` und zerstören ${BUILDINGS[e.destroyed].name}` : ""}`, "bad");
+          else if (e.destroyed) this.toast(`💥 Invasoren zerstören ${BUILDINGS[e.destroyed].name} auf ${this.targetName(e.target)}`, "bad");
           else if (e.shieldSegment !== null) this.toast(`💥 Hüllensegment ${e.shieldSegment + 1} beschädigt`, "bad");
           break;
         case "invasionDefeated":
           this.toast(`🏆 Mutterschiff über ${this.targetName(e.target)} zerstört! Wrackteile geborgen.`, "good");
           break;
-        case "invasionLeft":
-          this.toast(e.plundered ? `👾 Die Invasoren ziehen ab und nehmen ein Fünftel der Vorräte mit` : "👾 Die Invasoren ziehen von der Hülle ab", "warn");
+        case "invasionMoved":
+          this.toast(`👾 Die Invasoren ziehen von ${this.targetName(e.from)} weiter nach ${this.targetName(e.target)}! Ankunft in ${this.secondsUntil(e.arrivalTick)} s`, "bad");
           break;
         case "sunWarning":
           this.toast(`☀️ Die Sonne wird unruhig: Supernova in etwa ${e.cyclesLeft} Umläufen. Baut die Schutzhülle!`, "bad");
@@ -220,9 +257,13 @@ export class Ui {
         case "gameOver":
           this.toast(this.resultText(e.result), "supernova" in e.result ? "bad" : "good");
           break;
+        case "upgraded":
+          if (e.playerId === this.playerId) this.toast(`⬆️ ${BUILDINGS[e.building].name} auf Stufe ${e.tier} ausgebaut`, "good");
+          break;
         case "cycle":
         case "built":
         case "demolished":
+        case "terraformed":
         case "joined":
         case "lobby":
           break;
@@ -261,6 +302,12 @@ export class Ui {
       case "demolish":
         this.actions.send({ type: "demolish", ...at });
         break;
+      case "upgrade":
+        this.actions.send({ type: "upgrade", ...at });
+        break;
+      case "terraform":
+        this.actions.send({ type: "terraform", ...at, kind: value as TerraformKind });
+        break;
       case "launch": {
         const [to, rocket, count, from] = value!.split(":");
         this.actions.send({ type: "launch", planetId: from || this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
@@ -277,6 +324,10 @@ export class Ui {
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
         break;
       }
+      case "buildTab":
+        this.buildTab = value as BuildingCategory | "terrain";
+        this.lastPanel = "";
+        break;
       case "discoveries":
         this.showDiscoveries = !this.showDiscoveries;
         this.lastPanel = "";
@@ -299,14 +350,16 @@ export class Ui {
         this.actions.send({ type: "setGather", ...at, resource: value as ResourceId });
         break;
       case "speed":
+        if (this.speed > 0) this.lastSpeed = this.speed;
         this.speed = Number(value);
         this.actions.setSpeed(this.speed);
-        this.lastHud = "";
+        this.lastHud = NO_HUD;
         break;
       case "map":
         this.mapOpen = !this.mapOpen;
         this.showDiscoveries = false;
-        this.lastPanel = this.lastHud = "";
+        this.lastPanel = "";
+        this.lastHud = NO_HUD;
         this.actions.showMap(this.mapOpen);
         break;
       case "mapTarget":
@@ -315,7 +368,8 @@ export class Ui {
         break;
       case "view":
         this.mapOpen = false;
-        this.lastPanel = this.lastHud = "";
+        this.lastPanel = "";
+        this.lastHud = NO_HUD;
         this.actions.showMap(false);
         this.actions.showPlanet(value!);
         break;
@@ -330,10 +384,10 @@ export class Ui {
     }
   }
 
-  private renderHud(state: GameState, planet: PlanetState): string {
+  private renderHud(state: GameState, planet: PlanetState): HudHtml {
     // Always the viewer's own stock, also while looking at someone else's planet.
     const economy = this.myEconomy(state) ?? economyOf(state, planet);
-    if (!economy) return "";
+    if (!economy) return NO_HUD;
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
     const chips = shown
       .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${this.res(r)} ${Math.floor(economy.resources[r])}</span>`)
@@ -344,29 +398,34 @@ export class Ui {
     const next = nextLevelThreshold(lvl);
     const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
     const cycleProgress = (state.tick % ticksPerCycle(state)) / ticksPerCycle(state);
-    const speeds = [0, 1, 3]
-      .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
-      .join("");
+    // Pause plus one 1×/3× toggle instead of three buttons, to keep the bar to one line on phones.
+    const paused = this.speed === 0;
+    const pace = paused ? this.lastSpeed : this.speed;
+    const speeds =
+      `<button class="speed${paused ? " on" : ""}" data-action="speed" data-value="${paused ? pace : 0}" title="${paused ? "Weiter" : "Pause"}">${paused ? "▶" : "⏸"}</button>` +
+      `<button class="speed${pace === 3 ? " on" : ""}" data-action="speed" data-value="${pace === 3 ? 1 : 3}" title="Tempo">${pace}×</button>`;
     const own = this.ownPlanets();
     const planetChip = !own.some((p) => p.id === planet.id)
-      ? `<span class="chip" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
+      ? `<span class="chip name" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
       : own.length > 1
-        ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
-        : `<span class="chip" title="Planet">🪐 ${planet.name}</span>`;
+        ? `<button class="chip name" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
+        : `<span class="chip name" title="Planet">🪐 ${planet.name}</span>`;
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button></div>
-      <div class="row status">
+    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
+    const rest = `
+      <div class="row status main">
         ${planetChip}
-        <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="Sternkarte">${this.mapOpen ? "🪐 Planet" : "🌌 Karte"}</button>
-        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(state, planet)}/${housing(state, planet)} <small>(${idleUnits(state, planet, this.playerId).length} frei)</small></span>
+        <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
+        <span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>
+        ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>${this.renderFlights(state)}`;
+    return { chips, controls, rest };
   }
 
   /** Own rockets and attacks on own planets, with time to arrival. */
@@ -593,6 +652,21 @@ export class Ui {
     return html;
   }
 
+  /** Power line of a plant or consumer: what it feeds in or needs, and how the grid stands. */
+  private renderPower(state: GameState, planet: PlanetState, s: PlanetState["segments"][number]): string {
+    const def = buildingStats(s);
+    if (!def?.energy) return "";
+    const grid = planet.power ?? { supply: 0, demand: 0 };
+    const net = `Netz ${fmt(grid.supply)}/${fmt(grid.demand)}`;
+    if (def.energy > 0) {
+      const now = energySupply(planet, s, workerCount(state, planet, s.index), economyOf(state, planet));
+      const fuel = def.burns && now === 0 && workerCount(state, planet, s.index) > 0 ? ` · ohne ${RESOURCES[def.burns.resource].name} kein Strom` : "";
+      return `<p class="power">⚡ liefert ${fmt(now)} Strom <small>(${net})${fuel}</small></p>`;
+    }
+    const factor = powerFactor(planet, s);
+    return `<p class="power${factor < 1 ? " short" : ""}">⚡ braucht ${-def.energy} Strom <small>(${net})${factor < 1 ? ` · zu wenig Strom: ${Math.round(factor * 100)} %` : ""}</small></p>`;
+  }
+
   private renderPanel(state: GameState, planet: PlanetState): string {
     if (this.mapOpen) return this.renderMap(state);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
@@ -605,8 +679,9 @@ export class Ui {
       return `<h2>❔ Unerforschtes Feld</h2><p class="muted">Bau ein Gebäude in der Nähe, um es aufzudecken.</p>${hint}`;
     }
     const biome = BIOMES[s.biome];
-    const def = s.building ? BUILDINGS[s.building] : null;
-    const title = def ? `${this.bicon(s.building!)} ${def.name} <small>auf ${biome.name}</small>` : biome.name;
+    const def = buildingStats(s);
+    const stage = def?.upgrades ? ` <small>Stufe ${s.tier ?? 1}</small>` : "";
+    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : s.scorched ? `${this.ticon("clearScorched", "🔥")} Verbrannte Erde <small>${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
@@ -615,7 +690,8 @@ export class Ui {
         const empty = !d.infinite && d.amount <= 0;
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
-        const tag = d.byHand ? "" : `<small>Mine</small>`;
+        const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
+        const tag = d.byHand ? "" : `<small>Mine${deep ? ` ${deep}` : ""}</small>`;
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
       })
@@ -631,8 +707,18 @@ export class Ui {
           <button class="round" data-action="assign" data-value="-1" ${workerCount(state, planet, s.index, this.playerId) > 0 ? "" : "disabled"}>－</button>
           <span>👤 ${workerCount(state, planet, s.index)}/${cap}${workerCount(state, planet, s.index) !== workerCount(state, planet, s.index, this.playerId) ? ` <small>(${workerCount(state, planet, s.index, this.playerId)} von dir)</small>` : ""}</span>
           <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, planet, this.playerId).length > 0 ? "" : "disabled"}>＋</button>
-          <span class="rate">${rate}${mult > 1 ? ` <small>Nachbarbonus ×${mult.toFixed(2)}</small>` : ""}</span>
+          <span class="rate">${rate}${mult !== 1 ? ` <small>Nachbarn ×${mult.toFixed(2)}</small>` : ""}${toolFactor(s, economy) < 1 ? ` <small>🔧 ohne Werkzeug langsamer</small>` : ""}</span>
         </div>`
+      : "";
+    const recipe = segmentRecipe(s);
+    const recipes = def?.crafts
+      ? `<div class="deposits">${def.crafts.recipes
+          .map((id) => {
+            const r = RECIPES[id];
+            const list = (c: Partial<Record<ResourceId, number>>) => Object.entries(c).map(([k, v]) => `${v}${this.res(k as ResourceId)}`).join(" ");
+            return `<button class="deposit${id === recipe ? " on" : ""}" data-action="gather" data-value="${id}" title="${r.name}">${list(r.inputs)} → ${list(r.outputs)}</button>`;
+          })
+          .join("")}</div>`
       : "";
 
     const queue = state.queues[planet.id] ?? [];
@@ -640,13 +726,59 @@ export class Ui {
     const queuedNote = queued
       ? `<p class="muted">⏳ Geplant: ${BUILDINGS[queued.building].icon} ${BUILDINGS[queued.building].name}, wird gebaut, sobald genug da ist. <button data-action="dequeue" data-value="${queue.indexOf(queued)}">Abbrechen</button></p>`
       : "";
+    // Planting trees and filling in water (only offered where it does something).
+    const terraforms = def
+      ? ""
+      : (Object.keys(TERRAFORM) as TerraformKind[])
+          .filter((k) => TERRAFORM[k].from.includes(s.biome))
+          .map((k) => {
+            const t = TERRAFORM[k];
+            const blocker = terraformBlocker(state, planet, s, k);
+            if (blocker === "Hier stehen genug Bäume" || blocker === NOT_SCORCHED) return "";
+            const cost = Object.entries(t.cost)
+              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+              .join(" ");
+            const result = t.to && t.to !== s.biome ? `wird ${BIOMES[t.to].name}` : "wächst nach";
+            return `<button class="build" data-action="terraform" data-value="${k}" ${blocker ? `disabled title="${blocker}"` : ""}>
+              <span class="icon">${this.ticon(k)}</span><span class="name">${t.name}</span><span class="cost">${cost}<br><small>${result}</small></span>
+            </button>`;
+          })
+          .join("");
     let actions = "";
     if (def) {
-      const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>`;
-      actions = `${info}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
+      const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}`;
+      const next = nextUpgrade(s);
+      let upgrade = "";
+      if (next) {
+        const blocker = upgradeBlocker(state, planet, s);
+        const locked = economy.ascension.level < next.unlockLevel;
+        const cost = Object.entries(next.cost)
+          .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+          .join(" ");
+        const short = Object.entries(next.cost)
+          .filter(([r, v]) => economy.resources[r as ResourceId] < (v as number))
+          .map(([r]) => RESOURCES[r as ResourceId].name);
+        const missing = !locked && short.length ? `<br>Fehlt: ${short.join(", ")}` : "";
+        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
+      }
+      actions = `${info}${upgrade}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
-      actions = `<div class="builds">${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
-        .map((b) => {
+      const buildable = BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome));
+      const tabs: (BuildingCategory | "terrain")[] = [...(terraforms ? ["terrain" as const] : []), ...BUILDING_CATEGORY_IDS.filter((c) => buildable.some((b) => BUILDINGS[b].category === c))];
+      const tab = tabs.includes(this.buildTab) ? this.buildTab : tabs.find((t) => t !== "terrain") ?? tabs[0];
+      const tabBar = tabs
+        .map((t) => {
+          const { icon, name } = t === "terrain" ? { icon: "🌱", name: "Gelände" } : BUILDING_CATEGORIES[t];
+          // A dot marks tabs with something that can be built right now.
+          const ready = t !== "terrain" && buildable.some((b) => BUILDINGS[b].category === t && !buildBlocker(state, planet, s, b));
+          return `<button class="tab${t === tab ? " on" : ""}" data-action="buildTab" data-value="${t}" title="${name}" aria-label="${name}">${icon}${ready ? `<i class="dot"></i>` : ""}</button>`;
+        })
+        .join("");
+      const items = tab === "terrain"
+        ? terraforms
+        : buildable
+            .filter((b) => BUILDINGS[b].category === tab)
+            .map((b) => {
           const bd = BUILDINGS[b];
           const blocker = buildBlocker(state, planet, s, b);
           const locked = economy.ascension.level < bd.unlockLevel;
@@ -655,18 +787,32 @@ export class Ui {
             .join(" ");
           // Missing resources only: offer to queue the build instead of greying it out.
           const queueable = blocker === NOT_AFFORDABLE && !queued;
-          return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${bd.description}">
+          return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${blocker && !queueable && !locked ? `${blocker}. ` : ""}${bd.description}">
               <span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
-        .join("")}</div>`;
+        .join("");
+      const tabName = tab === "terrain" ? "Gelände" : tab ? BUILDING_CATEGORIES[tab].name : "";
+      actions = `<div class="tabs">${tabBar}</div><p class="tab-name">${tabName}</p><div class="builds">${items}</div>`;
     } else {
-      actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>`;
+      actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>${terraforms ? `<div class="builds">${terraforms}</div>` : ""}`;
     }
 
-    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${workers}${queuedNote}${actions}${hint}`;
+    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${recipes}${workers}${queuedNote}${actions}${hint}`;
   }
 }
+
+/** Power values: whole numbers stay whole, the rest gets one decimal. */
+function fmt(v: number): string {
+  return Number.isInteger(Math.round(v * 10) / 10) ? String(Math.round(v)) : v.toFixed(1);
+}
+
+interface HudHtml {
+  chips: string;
+  controls: string;
+  rest: string;
+}
+const NO_HUD: HudHtml = { chips: "", controls: "", rest: "" };
 
 function el(id: string): HTMLElement {
   const node = document.getElementById(id);

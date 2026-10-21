@@ -22,7 +22,19 @@ Die Zahlen sind ein **erster Wurf aus Rechnung, nicht aus Playtests**. Sie sind 
 
 10 Ticks pro Sekunde wie im Prototyp. Ein Planetenumlauf (Zyklus) dauert im gemeinsamen Modus 60 Sekunden wie im Original und gegeneinander 20 Sekunden. Damit die Wirtschaft in beiden Modi gleich rechnet, sind Erträge **pro Arbeiter und Sekunde** angegeben, Nahrung und Aufstiegspunkte pro Minute. Zählwerte wie „Ruine hält 2 Umläufe“ sind absichtlich in Umläufen. Der Gastgeber wählt beim Erstellen ein Tempo (`TEMPO`: Gemütlich 0,75×, Normal, Schnell 1,5× auf die ganze Spieluhr) und eine Schwierigkeit (`DIFFICULTY`: KI-Aggression, Ultimaten, Monsterstärke; Gemütlich entspricht dem friedlichen Modus). Die Uhr läuft nur bei offener Lobby, eine offene Lobby ohne Spieler schließt nach 10 Minuten. Energie ist kein Vorrat, sondern eine laufende Bilanz pro Planet. Verschmutzung ist ein Planetenwert von 0 bis 100.
 
-IDs folgen der Asset-Liste aus dem Codex-Prompt: Biome `forest`, `savanna`, `mountains`, `ocean`, `swamp`, `desert`, `tundra`, `crystal`; Gebäude `housing`, `pump` usw.; Sprite-ID `building.<id>.t<n>` (Helfer `buildingSprite()`). Der Prototyp nutzt noch `meadow`, `mountain`, `sea`, `hut`, `well`. Zuordnung beim Umstellen: meadow → savanna, mountain → mountains, sea → ocean, hut → housing, well → pump.
+IDs folgen der Asset-Liste aus dem Codex-Prompt: Biome `forest`, `savanna`, `mountains`, `ocean`, `swamp`, `desert`, `tundra`, `crystal`, `glacier`, `lava`, `ash` (siehe „Eis- und Lavafelder“); Gebäude `housing`, `pump` usw.; Sprite-ID `building.<id>.t<n>` (Helfer `buildingSprite()`). Der Prototyp nutzt noch `meadow`, `mountain`, `sea`, `hut`, `well`. Zuordnung beim Umstellen: meadow → savanna, mountain → mountains, sea → ocean, hut → housing, well → pump.
+
+## Eis- und Lavafelder
+
+Eis- und Lavaplaneten haben eigene Felder, damit sie sich anders spielen als die Heimat:
+
+| Feld | Bauen | Vorkommen | Besonderheit | Terraforming |
+| --- | --- | --- | --- | --- |
+| Gletscher (`glacier`) | nein | Wasser 100 (Hand), Stein 20 (Hand) | Pumpen daneben gehen auch ohne Wasser im Feld, +30 % je Nachbar-Gletscher | Abtauen (30 Holz) → Tundra |
+| Lavafeld (`lava`) | nur Mine, Gießerei, Wachturm, Abwehrbatterie | Stein 60 (Hand), Eisen 45, Gold 20 (Stufe 2) | Gießerei +30 % je Nachbar-Lava, Hütten −25 % je Nachbar-Lava (Hitze) | Abkühlen (30 Wasser) → Aschefeld |
+| Aschefeld (`ash`) | ja | Sand 50 (Hand), Stein 30 (Hand), Kohle 25 | Fruchtbar: Farm darf drauf, +15 % je Nachbar-Asche | Bäume pflanzen (5 Nahrung) → Wald |
+
+Ein Lavaplanet wird so Schritt für Schritt bewohnbar: Lava abkühlen, auf der Asche Wald pflanzen. Eisplaneten liefern viel Wasser, aber wenig Bauplatz, bis man die Gletscher abtaut. Die Heimat bleibt gemäßigt, die neuen Felder kommen nur auf Eis-, Lava- und (selten Asche) Trockenplaneten vor. Seltenes Uran kann auch auf Lava liegen, seltene Kohle auf Asche.
 
 ## Grundgedanke
 
@@ -45,17 +57,63 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | Stufe | Neu |
 |---|---|
 | 0 | Wohnhaus, Farm |
-| 1 | Mine, Pumpe (auch Öl, damit Raketen früh fliegen können) |
-| 2 | Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
-| 3 | Gießerei (Holzkohle, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
-| 4 | Stahl, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
-| 5 | Wohnhaus 3, Labor 2, Mine 2, Pumpe 2, Luftfilter (mit Ökologie), Biogas |
-| 6 | Gießerei 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
+| 1 | Mine (auch Kupfer), Pumpe (auch Öl), Sägewerk (Bretter), Förster |
+| 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Raffinerie (Treibstoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
+| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
+| 4 | Siedlerrakete (erste Kolonie), Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
+| 5 | Wohnhaus 3, Labor 2, Werkstatt 2, Mine 2 (auch Gold), Pumpe 2, Luftfilter (mit Ökologie), Biogas |
+| 6 | Gießerei 2, Raffinerie 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
 | 7 | Elektronik, Solarfeld |
 | 8 | Computer, Monument |
 | 9 | Große Rakete, Atomkraftwerk (mit Kernkraft) |
 
 Der Test `homeAvailability` rechnet nach, dass jede Gebäudekosten auf dem Heimatplaneten bis zur Freischaltstufe herstellbar sind. Dafür hat der Heimatplanet immer mindestens ein Feld Wald, Savanne, Gebirge, Meer, Sumpf und Wüste (`RULES.homeGuaranteedBiomes`, muss der Generator einhalten). **Ätherit und Uran liegen nicht in den Heimat-Biomen.** Sie kommen als seltene Vorkommen, die der Generator verteilt (`RARE_RESOURCES` in `src/sim/content.ts`), meist auf anderen Planeten, und werden erst mit Tiefbohrung bzw. Kristallkunde abbaubar. Computer, Monument, große Rakete und Atomkraft ziehen den Spieler deshalb ab Stufe 7 bis 8 in den Weltraum. Ausnahme sind die Echoflatterer, die Ätherit von Anfang an abbauen können.
+
+## Tüfteln: Ketten, Nachbarn und Werkzeug
+
+Nach Sebs Playtest (21.10.2026) sollen die Gebäude kniffliger werden, damit man mehr tüftelt. Der Kern bleibt der Arbeitermangel. Dazu kommen vier Stellschrauben:
+
+**Neue Rohstoffe und Zwischenprodukte.** Kupfer (Gebirge, Wüste), Gold (tief im Gebirge, erst mit Mine 2) und Fasern (Savanne, Sumpf, von Hand) sind neu. Daraus entstehen Zwischenprodukte, die spätere Gebäude brauchen:
+
+| Ware | Rezept | Wo | Ab Stufe | Gebraucht für |
+|---|---|---|---|---|
+| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad, Markt |
+| Werkzeug | 1 Eisen + 1 Brett → 2 | Werkstatt | 2 | Verschleiß in Minen und Sägewerken, Mine 2 |
+| Kupferdraht | 1 Kupfer | Werkstatt | 2 | Windrad, Kohlekraftwerk, Labor 2, Elektronik |
+| Stoff | 3 Fasern | Werkstatt | 2 | Markt, Wohnhaus 3, Transportrakete (Fallschirm) |
+| Treibstoff | 2 Öl | Raffinerie | 2 | jeder Raketenflug |
+| Ziegel | 2 Lehm + 1 Kohle → 2 | Gießerei | 3 | Wohnhaus 3, Kohlekraftwerk, Sägewerk 2, Werkstatt 2 |
+
+Elektronik braucht jetzt Kupferdraht statt Stahl, Computer Gold statt Ätherit. Damit gehen Computer auch auf dem Heimatplaneten. Ätherit bleibt für Monument und große Rakete das Ziel im All.
+
+**Nachbarn helfen oder stören.** Jeder Nachbar kann Boni und Mali geben, die sich addieren (nie unter 0):
+- Laut sind Mine, Gießerei und Kohlekraftwerk. Sie kosten Wohnhäusern und Laboren je 25 %. Wald neben dem Wohnhaus gibt +10 %.
+- Bei der Farm bringt Savanne +25 % und eine Pumpe als Bewässerung +20 %. Eine Mine kostet sie durch Staub 25 %, ein Kohlekraftwerk 20 %.
+- Ein Windrad neben einem Windrad verliert 40 % (Windschatten), Gebirge bringt +25 %. Solar verliert 30 % neben Kohle (Smog).
+- Das Sägewerk bekommt +30 % je Wald, die Werkstatt +15 % je Sägewerk oder Mine, die Pumpe +50 % je Meer.
+
+Ein Planet ist ein Ring, jedes Feld hat also genau zwei Nachbarn. Industrie und Wohnen wollen deshalb in getrennte Viertel, und Farmen wollen Pumpen, aber keine Minen nebeneinander.
+
+**Bauregeln.** Das Sägewerk muss neben einem Wald stehen. Mine und Pumpe gehen nur auf ein Feld mit passendem Vorkommen, die Pumpe alternativ neben ein Meer. Der Förster lässt benachbarte Wälder dreimal so schnell nachwachsen und bepflanzt abgeholzte Nachbarfelder neu, das passt zum Bäumepflanzen des Visuals-Threads.
+
+**Werkzeug nutzt sich ab.** Ab Stufe 2 verbraucht jeder Arbeiter in Mine und Sägewerk 0,1 Werkzeug pro Minute. Ohne Werkzeug im Lager arbeiten sie nur mit 60 %. Eine Werkstatt mit 2 Arbeitern macht 12 Werkzeug pro Minute und versorgt damit etwa 120 Arbeiter. Sie läuft also nebenher, aber man muss an sie denken.
+
+Bäume pflanzen und Meer mit Sand oder Lehm (als Erde) auffüllen baut der Thread „Ressourcen-Anzeige und Visuals“ als Befehl `terraform`, mit eigenen Kosten in `src/sim/content.ts`.
+
+## Baumenü und neue Gebäude
+
+Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, Energie, Verteidigung, Raumfahrt (dazu Gelände für Bäume pflanzen und Aufschütten). Ein grüner Punkt zeigt, wo gerade etwas baubar ist.
+
+| Reiter | Gebäude (ab Stufe) |
+|---|---|
+| Wohnraum | Hütte 0 → Holzhaus 2 → Steinhaus 5 → Wohnturm 7 (12 Plätze, Strom), Park 2 (+20 % Platz für Nachbar-Hütten), Monument 8 (+10 Aufstiegspunkte je Umlauf, eins pro Planet) |
+| Nahrung | Farm 0, Fischerei 1 (neben Meer, Stufe 2 Fischereihafen ab 3), Gewächshaus 4 (Wasser → Nahrung auf jedem Boden, Strom) |
+| Rohstoffe | Förster 1, Mine 1, Pumpe 1 |
+| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas) |
+| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom) |
+| Energie | Windrad 3, Kohlekraftwerk 4, Solarfeld 6, Atomkraftwerk 8 |
+| Verteidigung | Wachturm 2 (Stufe 2 Festungsturm ab 5, +2), Abwehrbatterie 5 |
+| Raumfahrt | Startrampe 2, Raffinerie 2 |
 
 ## Spielmodi und Pacing
 
@@ -109,6 +167,8 @@ Jedes Volk bekommt +30 % auf seinem Lieblingsbiom und +25 % auf seine Lieblingsr
 
 ## Energie und Verschmutzung
 
+Im Spiel (src/sim/content.ts) gibt es bisher den Strom, noch keine Verschmutzung. Jeder Planet hat sein eigenes Netz. Windrad (+2, ab Stufe 3, Windschatten −40 % je Nachbar-Windrad), Kohlekraftwerk (+6 mit 1 Arbeiter, 0,1 Kohle/s, ab 4), Solarfeld (+3, ab 6) und Atomkraftwerk (+15 mit 2 Arbeitern, 0,02 Uran/s, ab 8) liefern. Strom brauchen nur neue Dinge: Wohnturm (Hütte Stufe 4), Gewächshaus, Sternwarte und Stahlwerk (Gießerei Stufe 2), je 1. Die älteren Stufe-2-Gebäude laufen ohne Strom weiter, damit laufende Spiele nicht plötzlich langsamer werden.
+
 Bei Energiemangel laufen alle Verbraucher mit Angebot ÷ Nachfrage, aber nie unter 25 %. Ein kleines Defizit ist also eine kleine Strafe und blockiert nichts. Verschmutzung baut sich mit 0,3 % des aktuellen Werts pro Sekunde ab und pendelt sich so bei Ausstoß ÷ 0,003 ein. Verschmutzung bremst den Nachwuchs (Koop-Design 2.5): über 30 dauert eine Geburt 25 % länger, über 60 dauert sie 60 % länger, über 85 gibt es keinen Nachwuchs mehr. Ein Kohlekraftwerk allein landet bei 20, mit einer Gießerei, die Stahl kocht, bei etwa 37 und damit über der ersten Schwelle. Ein Luftfilter (−0,12) holt das fast auf 0 zurück.
 
 ## Kampf und Monster
@@ -117,11 +177,20 @@ Einwohner hinschicken, jeder würfelt 1W6, dazu kommt die Verteidigung (Wachturm
 
 ## Raumfahrt
 
-Treibstoff pro Flug = ⌈Entfernung × (2 + 1,5 × Passagiere)⌉ Öl bei der kleinen Rakete (3 Plätze). Das belohnt wie im Original, wenige Einwohner pro Flug zu schicken. Die große Rakete fliegt mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie.
+Nach Sebs Playtest (21.10.2026) war Fliegen zu leicht, man war zu schnell durch. Deshalb gilt jetzt:
+
+- **Raketen fliegen mit Treibstoff, nicht mit Holz.** Treibstoff macht die Raffinerie (ab Stufe 2) aus 2 Öl. Öl kommt aus der Pumpe auf einem Öl-Vorkommen (Sumpf, Wüste). Die Raffinerie bekommt +25 % je Nachbar-Pumpe, stinkt aber wie die lauten Gebäude (−25 % für Wohnhaus und Labor daneben) und verbraucht Werkzeug.
+- **Jeder Start kostet extra.** Treibstoff pro Flug = ⌈Startkosten + Entfernung × (je Feld + je Passagier × Passagiere)⌉. Die Siedlerrakete (3 Plätze) braucht 6 + Entfernung × (1,5 + 1 × Passagiere), zum Nachbarplaneten mit 3 Einwohnern also 24 Treibstoff = 48 Öl.
+- **Öl ist knapp.** Leere Vorkommen wachsen nicht nach. Das Öl auf dem Heimatplaneten (je ein Sumpf- und Wüstenfeld, etwa 90) reicht für knapp zwei Kolonieflüge. Wer weiter will, braucht eine Kolonie mit Öl oder Handel. Plastik braucht ebenfalls Öl, man muss also abwägen. Der Test „flying is hard“ hält das bei 1,5 bis 3 Flügen.
+- **Kolonisieren erst ab Stufe 4.** Die Siedlerrakete kostet 20 Bretter, 15 Eisen, 5 Werkzeug und 3 Stoff. Gegeneinander bleiben Sabotage (Stufe 2, 12 Treibstoff für einen Saboteur) und Angriff (Stufe 3) früh, kosten aber auch Treibstoff.
+
+Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie. Die Werte stehen in `SPACE.rockets` in `progression.ts`, die Kurzformel in `rocketFuel()`.
 
 ## Was zuerst im Playtest prüfen
 
-1. Ob Stufe 1 bis 3 sich flott genug anfühlt (Ziel gemeinsam: erste Mine nach 3 Minuten, Gießerei nach 15). Falls zu zäh, zuerst `birthBase` senken.
-2. Ob die Nahrung mit 3 pro Einwohner zu streng ist. Falls ja, zuerst `foodPerInhabitantPerCycle` auf 2,5 senken.
-3. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
-4. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
+1. Ob die Nachbar-Mali Spaß machen oder nerven. Stellschraube: `NOISY` in `buildings.ts` und die `adjacency`-Listen.
+2. Ob Stufe 1 bis 3 sich flott genug anfühlt (Ziel gemeinsam: erste Mine nach 3 Minuten, Gießerei nach 15). Falls zu zäh, zuerst `birthBase` senken.
+3. Ob die Nahrung mit 3 pro Einwohner zu streng ist. Falls ja, zuerst `foodPerInhabitantPerMinute` auf 5 senken.
+4. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
+5. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
+6. Ob Fliegen jetzt schwer genug ist, aber nicht festfährt. Stellschrauben: `takeoffFuel` und `fuelPerPassenger` in `SPACE.rockets`, das Öl-Verhältnis im Rezept `fuel`.

@@ -3,7 +3,9 @@ import type { BiomeDef, PlanetTypeDef, ResourceDef } from "./types";
 export const RESOURCE_IDS = [
   // raw
   "food", "wood", "stone", "sand", "clay", "iron", "coal", "water", "oil", "biogas", "uranium", "aetherite",
-  // refined
+  "copper", "gold", "fiber",
+  // refined (first tier: sawmill and workshop; second tier: foundry)
+  "planks", "tools", "wire", "cloth", "bricks", "fuel",
   "glass", "concrete", "steel", "plastic", "electronics", "computer",
   // special (no storage cap; energy is a live balance, not a stock)
   "science", "energy",
@@ -27,6 +29,15 @@ export const RESOURCES = {
   biogas: { name: "Biogas", category: "raw", icon: "resource.biogas", baseCap: 60, value: 5 },
   uranium: { name: "Uran", category: "raw", icon: "resource.uranium", baseCap: 40, value: 12 },
   aetherite: { name: "Ätherit", category: "raw", icon: "resource.aetherite", baseCap: 40, value: 15 },
+  copper: { name: "Kupfer", category: "raw", icon: "resource.copper", baseCap: 80, value: 4 },
+  gold: { name: "Gold", category: "raw", icon: "resource.gold", baseCap: 30, value: 15 },
+  fiber: { name: "Fasern", category: "raw", icon: "resource.fiber", baseCap: 100, value: 3 },
+  planks: { name: "Bretter", category: "refined", icon: "resource.planks", baseCap: 80, value: 10 },
+  tools: { name: "Werkzeug", category: "refined", icon: "resource.tools", baseCap: 40, value: 12 },
+  wire: { name: "Kupferdraht", category: "refined", icon: "resource.wire", baseCap: 60, value: 9 },
+  cloth: { name: "Stoff", category: "refined", icon: "resource.cloth", baseCap: 60, value: 18 },
+  bricks: { name: "Ziegel", category: "refined", icon: "resource.bricks", baseCap: 80, value: 9 },
+  fuel: { name: "Treibstoff", category: "refined", icon: "resource.fuel", baseCap: 60, value: 12 },
   glass: { name: "Glas", category: "refined", icon: "resource.glass", baseCap: 60, value: 18 },
   concrete: { name: "Beton", category: "refined", icon: "resource.concrete", baseCap: 60, value: 18 },
   steel: { name: "Stahl", category: "refined", icon: "resource.steel", baseCap: 60, value: 22 },
@@ -38,7 +49,7 @@ export const RESOURCES = {
 } as const satisfies Record<ResourceId, ResourceDef>;
 
 /** Biome ids match the asset brief (art/src/biomes/). */
-export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "swamp", "desert", "tundra", "crystal"] as const;
+export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "swamp", "desert", "tundra", "crystal", "glacier", "lava", "ash"] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export const BIOMES = {
@@ -57,6 +68,7 @@ export const BIOMES = {
     buildable: true,
     deposits: [
       { resource: "food", max: 60, byHand: true },
+      { resource: "fiber", max: 50, byHand: true },
       { resource: "wood", max: 20, byHand: true },
       { resource: "clay", max: 20 },
     ],
@@ -68,7 +80,9 @@ export const BIOMES = {
     deposits: [
       { resource: "stone", max: 90, byHand: true },
       { resource: "iron", max: 60 },
+      { resource: "copper", max: 45 },
       { resource: "coal", max: 40 },
+      { resource: "gold", max: 15, tier: 2 },
     ],
   },
   ocean: {
@@ -85,6 +99,7 @@ export const BIOMES = {
     art: "swamp",
     buildable: true,
     deposits: [
+      { resource: "fiber", max: 30, byHand: true },
       { resource: "clay", max: 70, byHand: true },
       { resource: "water", max: 40, byHand: true },
       { resource: "biogas", max: 40 },
@@ -98,6 +113,7 @@ export const BIOMES = {
     deposits: [
       { resource: "sand", max: 90, byHand: true },
       { resource: "stone", max: 30, byHand: true },
+      { resource: "copper", max: 30 },
       { resource: "oil", max: 60 },
     ],
   },
@@ -120,6 +136,37 @@ export const BIOMES = {
       { resource: "aetherite", max: 30, requires: "crystal-lore" },
     ],
   },
+  // Ice and lava worlds. Glacier thaws to tundra, lava cools to ash, ash can be planted (src/sim/terraform.ts).
+  glacier: {
+    name: "Gletscher",
+    art: "glacier",
+    buildable: false,
+    deposits: [
+      { resource: "water", max: 100, byHand: true },
+      { resource: "stone", max: 20, byHand: true },
+    ],
+  },
+  lava: {
+    name: "Lavafeld",
+    art: "lava",
+    // Only mine, foundry, watchtower and battery stand the heat (the sim's allowedBiomes).
+    buildable: true,
+    deposits: [
+      { resource: "stone", max: 60, byHand: true },
+      { resource: "iron", max: 45 },
+      { resource: "gold", max: 20, tier: 2 },
+    ],
+  },
+  ash: {
+    name: "Aschefeld",
+    art: "ash",
+    buildable: true,
+    deposits: [
+      { resource: "sand", max: 50, byHand: true },
+      { resource: "stone", max: 30, byHand: true },
+      { resource: "coal", max: 25 },
+    ],
+  },
 } as const satisfies Record<BiomeId, BiomeDef<ResourceId>>;
 
 /**
@@ -138,21 +185,21 @@ export const PLANET_TYPES = {
     name: "Trocken",
     art: "planet-arid",
     segments: 24,
-    biomeWeights: { desert: 5, savanna: 3, mountains: 2, crystal: 1 },
+    biomeWeights: { desert: 5, savanna: 3, mountains: 2, crystal: 1, ash: 0.5 },
     depositMul: 1.1,
   },
   ice: {
     name: "Eis",
     art: "planet-ice",
     segments: 24,
-    biomeWeights: { tundra: 6, mountains: 2, ocean: 2, crystal: 1 },
+    biomeWeights: { tundra: 5, glacier: 3, mountains: 2, ocean: 1, crystal: 1 },
     depositMul: 1.1,
   },
   lava: {
     name: "Lava",
     art: "planet-lava",
     segments: 16,
-    biomeWeights: { mountains: 5, desert: 2, crystal: 3 },
+    biomeWeights: { lava: 4, ash: 3, mountains: 3, crystal: 2 },
     depositMul: 1.4,
   },
   toxic: {

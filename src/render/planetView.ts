@@ -1,5 +1,5 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, BUILDINGS, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
+import { BIOMES, buildingStats, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
@@ -59,6 +59,8 @@ const MOTIONS: Record<string, Motion> = {
   "building.mine.t2": { kind: "slide", dist: 14, speed: 1.3 },
   "building.market": { kind: "rock", amp: 0.06, speed: 3 },
   "building.battery": { kind: "rock", amp: 0.25, speed: 1.5 },
+  "building.sawmill.t1": { kind: "spin", speed: 6 },
+  "building.sawmill.t2": { kind: "spin", speed: 7 },
 };
 
 /** Chimney tops (256 canvas) that puff smoke while the building is staffed. */
@@ -407,6 +409,10 @@ export class PlanetView {
         const p = this.surface(e.segment, 1);
         this.effects.dust(p.x, p.y, p.angle, this.segmentWidth() * 1.1);
         sfx.play(e.type === "built" ? "build.complete" : "build.demolish");
+      } else if (e.type === "terraformed" && e.planetId === this.planetId) {
+        const p = this.surface(e.segment, 1);
+        this.effects.dust(p.x, p.y, p.angle, this.segmentWidth() * 1.1);
+        sfx.play(e.kind === "plantTrees" ? "build.place" : "build.hammer");
       } else if (e.type === "revealed" && e.planetId === this.planetId) {
         for (const i of e.segments) {
           const p = this.surface(i, 0.95);
@@ -594,13 +600,24 @@ export class PlanetView {
         wedge("overlay.fog", i);
         return;
       }
-      wedge(`biome.${s.biome}.wedge`, i);
-      if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
+      // Biomes the art does not have yet keep their placeholder color.
+      if (artTexture(`biome.${s.biome}.wedge.${n}`)) wedge(`biome.${s.biome}.wedge`, i);
+      else g.poly(sector(ART_BODY * k, R, mid - step / 2, mid + step / 2)).fill(BIOMES[s.biome].color);
+      // Burnt by invaders: own art once it exists, the pollution overlay until then.
+      if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
+      else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
-      if (s.building) {
-        const empty = BUILDINGS[s.building].workers > 0 && workerCount(state, planet, i) === 0;
-        const anim = empty ? undefined : buildingAnim(s.building);
-        const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined);
+      const ruin = !s.building && s.ruin ? artTexture("building.ruin") : undefined;
+      if (ruin) {
+        // Rubble where invaders wrecked a building, until something new is built or the field is cleared.
+        const sprite = l.buildings.take(ruin);
+        sprite.position.set(surface.x, surface.y);
+        sprite.rotation = mid + Math.PI / 2;
+        sprite.scale.set((k * segWidth) / ART_FOOTPRINT);
+      } else if (s.building) {
+        const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
+        const anim = empty ? undefined : buildingAnim(s.building, s.tier);
+        const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined, s.tier);
         const rotation = mid + Math.PI / 2;
         const scale = (k * segWidth) / ART_FOOTPRINT;
         if (texture) {
@@ -611,7 +628,8 @@ export class PlanetView {
         } else {
           // Buildings the art does not have yet keep their emoji.
           const sp = this.sprites[i]!;
-          if (sp.icon.text !== BUILDINGS[s.building].icon) sp.icon.text = BUILDINGS[s.building].icon;
+          const icon = buildingStats(s)!.icon;
+          if (sp.icon.text !== icon) sp.icon.text = icon;
           setFontSize(sp.icon, Math.max(16, R * 0.17));
           sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
           sp.icon.rotation = mid + Math.PI / 2;
@@ -641,7 +659,8 @@ export class PlanetView {
         if (chimney && !empty) this.chimneys.push({ ...at(chimney[0], chimney[1]), angle: mid, size: segWidth * k * 0.35, key: smokeKey });
       } else {
         const props = PROPS[s.biome] ?? [];
-        const prop = props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
+        // Nothing grows on scorched earth, not even a stump.
+        const prop = !s.scorched && props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
         const fill = propFill(s);
         // The prop is what the field holds: it shrinks while it is harvested, grows back while it
         // regrows and is a stump (or gone, without that art) when the deposit is used up.
@@ -721,7 +740,7 @@ export class PlanetView {
       }
 
       const sp = this.sprites[i]!;
-      const iconText = s.revealed && s.building ? BUILDINGS[s.building].icon : "";
+      const iconText = s.revealed && s.building ? buildingStats(s)!.icon : "";
       if (sp.icon.text !== iconText) sp.icon.text = iconText;
       setFontSize(sp.icon, Math.max(16, R * 0.17));
       sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
@@ -849,6 +868,9 @@ const PROPS: Partial<Record<string, string[]>> = {
   swamp: ["reed-a", "mushroom", "reed-b"],
   tundra: ["pine-snow-a", "ice-rock", "pine-snow-b"],
   crystal: ["crystal-a", "crystal-b", "crystal-c"],
+  glacier: ["serac-a", "ice-floe", "serac-b"],
+  lava: ["vent-a", "basalt", "vent-b"],
+  ash: ["ash-cone", "dead-tree", "ash-rock"],
 };
 
 function sector(r0: number, r1: number, a0: number, a1: number): number[] {

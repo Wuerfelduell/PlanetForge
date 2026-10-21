@@ -58,9 +58,14 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   };
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
+  // Rockets burn fuel from oil: every start planet gets oil, from its own stream so worlds stay the same.
+  const oilRng = new Rng(seedFromString(`${seed}:oil`));
+  for (const p of planets) {
+    if (p.startSlot !== null && !p.segments.some((x) => x.deposits.some((d) => d.resource === "oil"))) placeRareDeposit(oilRng, p.segments, "oil", true);
+  }
 
   let state: GameState = {
-    version: 11,
+    version: 12,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -251,7 +256,9 @@ function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: Resource
   const eligible = segments.filter((s) => !keepStartArea || ringDistance(s.index, 0, n) > RULES.startRevealRadius);
   let candidates = eligible.filter((s) => allowed.includes(s.biome));
   if (candidates.length === 0) {
-    const land = eligible.filter((s) => s.biome !== "ocean");
+    // Somewhere a mine can reach it, without wiping out another rare deposit placed before.
+    const own = (s: SegmentState) => s.deposits.every((d) => BIOMES[s.biome].deposits.some((b) => b.resource === d.resource));
+    const land = eligible.filter((s) => BIOMES[s.biome].buildable && own(s));
     const target = rng.pick(land.length ? land : eligible);
     const fresh = createSegment(target.index, allowed[0]!, rng);
     segments[target.index] = fresh;
@@ -304,10 +311,14 @@ function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] 
   return out;
 }
 
+const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold"]);
+
 function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
+  // Tinkering deposits vary from a side stream so worlds of older seeds stay the same.
+  const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
     // ±25 % variation per segment.
-    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + rng.next() * 0.5));
+    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) ? side : rng).next() * 0.5));
     return { resource: d.resource, amount: max, max, infinite: !!d.infinite, byHand: !!d.byHand };
   });
   return {
@@ -341,4 +352,19 @@ function shuffle<T>(items: T[], rng: Rng): void {
     const j = rng.int(0, i);
     [items[i], items[j]] = [items[j]!, items[i]!];
   }
+}
+
+/**
+ * Brings a saved state from an older version up to date, or null if that is not possible.
+ * 11 → 12: the tinkering resources start at 0 (new deposits only appear on new planets).
+ * Resources that are new since a state was saved start at 0 too.
+ */
+export function upgradeState(state: unknown): GameState | null {
+  const s = state as GameState | null;
+  if (!s || typeof s !== "object") return null;
+  if ((s.version as number) !== 11 && s.version !== 12) return null;
+  // Resources added later (bricks, gold) are also filled into version 12 states.
+  for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
+  (s as { version: number }).version = 12;
+  return s;
 }

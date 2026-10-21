@@ -36,7 +36,7 @@ function prepare(g: GameState, playerId = P1.id): GameState {
   const next = JSON.parse(JSON.stringify(g)) as GameState;
   const economy = economyOfPlayer(next, playerId)!;
   for (const r of RESOURCE_IDS) economy.resources[r] = 500;
-  economy.ascension.level = 3;
+  economy.ascension.level = 4;
   const home = homePlanet(next, playerId)!;
   const pad = home.segments.find((s) => s.revealed && s.biome !== "ocean" && !s.building)!;
   pad.building = "launchpad";
@@ -63,14 +63,14 @@ function setIdle(g: GameState, playerId: string, idle: boolean): GameState {
 }
 
 describe("rockets and colonies", () => {
-  it("needs a launch pad and ascension level 2", () => {
+  it("needs a launch pad and ascension level 4", () => {
     const g = createGame("pad", [P1], { now: 0 });
     const home = homePlanet(g, P1.id)!;
     const cmd: Command = { type: "launch", planetId: home.id, to: freePlanet(g).id, rocket: "colony", count: 1 };
     expect(applyCommand(g, P1.id, cmd, 0)).toEqual({ ok: false, error: "Dafür braucht es eine Startrampe" });
     const low = prepare(g);
     economyOfPlayer(low, P1.id)!.ascension.level = 1;
-    expect(applyCommand(low, P1.id, cmd, 0)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 2" });
+    expect(applyCommand(low, P1.id, cmd, 0)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 4" });
   });
 
   it("flies idle inhabitants to a free planet and founds a colony there", () => {
@@ -78,7 +78,7 @@ describe("rockets and colonies", () => {
     const home = homePlanet(g, P1.id)!;
     const target = freePlanet(g);
     const plan = flightPlan(home, target, "colony", 2);
-    const before = economyOfPlayer(g, P1.id)!.resources.wood;
+    const before = economyOfPlayer(g, P1.id)!.resources.fuel;
 
     const launched = exec(g, { type: "launch", planetId: home.id, to: target.id, rocket: "colony", count: 2 });
     g = launched.state;
@@ -86,7 +86,7 @@ describe("rockets and colonies", () => {
     expect(g.flights).toHaveLength(1);
     expect(unitsOn(g, home.id)).toHaveLength(RULES.startPopulation - 2);
     expect(peopleOf(g, P1.id)).toBe(RULES.startPopulation);
-    expect(economyOfPlayer(g, P1.id)!.resources.wood).toBe(before - plan.cost.wood!);
+    expect(economyOfPlayer(g, P1.id)!.resources.fuel).toBe(before - plan.cost.fuel!);
 
     const { state, events } = run(g, plan.seconds * RULES.ticksPerSecond + 1);
     expect(events).toContainEqual(expect.objectContaining({ type: "landed", planetId: target.id, colonized: true, count: 2 }));
@@ -233,5 +233,14 @@ describe("asteroids", () => {
     g = run(g, 2000).state;
     expect(planetById(g, target.id)!.economyId).toBe(economyOfPlayer(g, P1.id)!.id);
     expect(unitsOn(g, target.id).length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("fuel", () => {
+  it("every start planet has oil, also in versus", () => {
+    for (let seed = 0; seed < 60; seed++) {
+      const g = createGame(String(seed), [P1, MO], { mode: "versus" });
+      for (const p of g.planets.filter((x) => x.startSlot !== null)) expect(p.segments.some((s) => s.deposits.some((d) => d.resource === "oil"))).toBe(true);
+    }
   });
 });

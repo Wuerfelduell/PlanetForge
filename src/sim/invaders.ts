@@ -1,7 +1,7 @@
-import { BUILDINGS, INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { BIOMES, INVADERS, RULES, SUPERNOVA } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
-import { planetById, planetDefense, ticksPerCycle } from "./rules";
+import { buildingStats, planetById, planetDefense, ticksPerCycle } from "./rules";
 import type { EconomyState, Flight, GameEvent, GameState, Invasion, PlanetState } from "./state";
 
 /**
@@ -94,6 +94,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
   let destroyed: PlanetState["segments"][number]["building"] = null;
   let killed = 0;
   let shieldSegment: number | null = null;
+  const scorched: number[] = [];
 
   if (inv.target === "sun") {
     const standing = state.sun.shield.map((s, i) => ({ s, i })).filter(({ s }) => s.built && s.hp > 0);
@@ -106,7 +107,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     const planet = planetById(state, inv.target)!;
     const residents = Object.values(state.units).filter((u) => u.planetId === planet.id);
     for (const s of planet.segments) {
-      const per = s.building ? BUILDINGS[s.building].battery : undefined;
+      const per = buildingStats(s)?.battery;
       if (per) damage += per * residents.filter((u) => u.segment === s.index).length;
     }
     const defenders = residents.filter((u) => u.segment === null).slice(0, 10);
@@ -122,6 +123,8 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
       }
     }
     if (inv.hp - damage > 0) {
+      // Nobody fought back: the surface burns along with the building.
+      const undefended = damage === 0 && defenders.length === 0;
       const built = planet.segments.filter((s) => s.building);
       if (built.length) {
         const s = rng.pick(built);
@@ -129,6 +132,19 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         for (const u of residents) if (u.segment === s.index && state.units[u.id]) u.segment = null;
         s.building = null;
         s.builtBy = null;
+        delete s.tier;
+        s.ruin = true;
+        if (undefended) scorched.push(s.index);
+      }
+      if (undefended) {
+        const land = planet.segments.filter((s) => s.revealed && !s.scorched && !s.building && BIOMES[s.biome].buildable && !scorched.includes(s.index));
+        for (let i = 0; i < INVADERS.scorchPerUndefendedRound && land.length; i++) scorched.push(land.splice(rng.int(0, land.length - 1), 1)[0]!.index);
+      }
+      for (const index of scorched) {
+        const s = planet.segments[index]!;
+        s.scorched = true;
+        for (const d of s.deposits) if (!d.infinite) d.amount = 0;
+        for (const u of residents) if (u.segment === index && state.units[u.id]) u.segment = null;
       }
       // Without anyone fighting back they take lives too.
       const alive = residents.filter((u) => state.units[u.id]);
@@ -139,18 +155,31 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     }
   }
   inv.hp = Math.max(0, inv.hp - damage);
-  events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment });
+  events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment, ...(scorched.length ? { scorched } : {}) });
 
   if (inv.hp <= 0) {
     for (const [r, v] of Object.entries(INVADERS.reward)) economy.resources[r as keyof typeof economy.resources] += v * inv.wave;
     events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave });
     endInvasion(state, rng);
-  } else if (state.tick >= inv.siegeEndTick) {
-    const plundered = inv.target !== "sun";
-    if (plundered) for (const r of RESOURCE_IDS) economy.resources[r] = Math.floor(economy.resources[r] * (1 - INVADERS.plunderShare));
-    events.push({ type: "invasionLeft", target: inv.target, wave: inv.wave, plundered });
-    endInvasion(state, rng);
+  } else if (inv.target === "sun" ? state.tick >= inv.siegeEndTick : !hasResidents(state, inv.target)) {
+    // The fleet never gives up on its own (Seb): it can't be fought at the sun, so after a while
+    // it moves on to a populated planet; an emptied planet is left for the next populated one.
+    moveOn(state, economy, inv, rng, events);
   }
+}
+
+function hasResidents(state: GameState, planetId: string): boolean {
+  return Object.values(state.units).some((u) => u.planetId === planetId);
+}
+
+function moveOn(state: GameState, economy: EconomyState, inv: Invasion, rng: Rng, events: GameEvent[]): void {
+  const planets = state.planets.filter((p) => p.economyId === economy.id && p.id !== inv.target && hasResidents(state, p.id));
+  if (!planets.length) return;
+  const from = inv.target;
+  inv.target = rng.pick(planets).id;
+  inv.sieging = false;
+  inv.arrivalTick = state.tick + cycles(state, INVADERS.moveOnCycles);
+  events.push({ type: "invasionMoved", from, target: inv.target, wave: inv.wave, arrivalTick: inv.arrivalTick });
 }
 
 function endInvasion(state: GameState, rng: Rng): void {

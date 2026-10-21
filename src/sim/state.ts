@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 11;
+  version: 12;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -175,6 +175,8 @@ export interface PlanetState {
   /** Seconds of progress toward the next birth. */
   birthProgress: number;
   segments: SegmentState[];
+  /** Power grid of the last tick; missing while nothing on the planet makes or uses power. */
+  power?: { supply: number; demand: number };
 }
 
 export interface SegmentState {
@@ -185,8 +187,14 @@ export interface SegmentState {
   building: BuildingId | null;
   /** playerId of whoever built the building, null without building. */
   builtBy: string | null;
-  /** Which deposit hand-gatherers collect when there is no building. */
+  /** Which deposit hand-gatherers collect when there is no building (crafting buildings: the recipe). */
   gather: ResourceId | null;
+  /** Upgrade stage of the building, 1 when missing. */
+  tier?: number;
+  /** Burnt by invaders: no building, no gathering, no regrowth until cleared. */
+  scorched?: true;
+  /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
+  ruin?: true;
 }
 
 export interface DepositState {
@@ -197,15 +205,21 @@ export interface DepositState {
   byHand: boolean;
 }
 
+export type TerraformKind = "plantTrees" | "fillSand" | "fillClay" | "drainSwamp" | "clearScorched" | "thawGlacier" | "coolLava";
+
 /** Player intents. The only way anything outside the simulation changes the state. */
 export type Command =
   | { type: "build"; planetId: string; segment: number; building: BuildingId }
   | { type: "demolish"; planetId: string; segment: number }
+  /** Upgrades the building on a segment to its next stage. */
+  | { type: "upgrade"; planetId: string; segment: number }
   /** Moves `delta` of the sender's units onto (+) or off (−) a segment. */
   | { type: "assign"; planetId: string; segment: number; delta: number }
   /** Moves one specific unit; segment null makes it idle. */
   | { type: "assignUnit"; unitId: string; segment: number | null }
   | { type: "setGather"; planetId: string; segment: number; resource: ResourceId }
+  /** Plants trees or fills in water with sand or earth (see sim/terraform.ts). */
+  | { type: "terraform"; planetId: string; segment: number; kind: TerraformKind }
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
@@ -236,6 +250,8 @@ export type GameEvent =
   | { type: "revealed"; planetId: string; segments: number[] }
   | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
   | { type: "demolished"; planetId: string; segment: number; playerId: string }
+  | { type: "upgraded"; planetId: string; segment: number; building: BuildingId; tier: number; playerId: string }
+  | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
   | { type: "removed"; playerId: string; by: string }
   | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }
@@ -251,9 +267,9 @@ export type GameEvent =
   | { type: "discovered"; economyId: string; discovery: string }
   | { type: "invasionSpotted"; target: string; wave: number; arrivalTick: number }
   | { type: "invasionArrived"; target: string; wave: number }
-  | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null }
+  | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
   | { type: "invasionDefeated"; target: string; wave: number }
-  | { type: "invasionLeft"; target: string; wave: number; plundered: boolean }
+  | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
   | { type: "sunWarning"; cyclesLeft: number }
   | { type: "shieldBuilt"; segment: number; repaired: boolean }
   | { type: "shieldComplete" }

@@ -3,8 +3,8 @@ import { C, svg, round, write } from './common.mjs';
 // All geometry is in reference pixels; no random input or external artwork.
 const assets = [];
 const sizes = [12, 16, 24, 32];
-const biomes = ['forest', 'mountains', 'ocean', 'swamp', 'savanna', 'desert', 'tundra', 'crystal'];
-const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'savanna', desert: 'sand', tundra: 'snow', crystal: 'crystal' };
+const biomes = ['forest', 'mountains', 'ocean', 'swamp', 'savanna', 'desert', 'tundra', 'crystal', 'glacier', 'lava', 'ash'];
+const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'savanna', desert: 'sand', tundra: 'snow', crystal: 'crystal', glacier: 'glacier', lava: 'lava', ash: 'ash' };
 const path = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
 const ellipse = (x, y, rx, ry, fill, extra = '') => `<ellipse cx="${round(x)}" cy="${round(y)}" rx="${round(rx)}" ry="${round(ry)}" fill="${fill}" ${extra}/>`;
@@ -37,7 +37,8 @@ export function wedge(biome, segments) {
   const half = Math.PI / segments, a = half + 2 / 400, token = ground[biome];
   let body = path(sector(398, 462, -a, a), C(token), 'stroke="none"');
   body += path(sector(398, 411, -a, a), C(token, -.18), 'stroke="none"');
-  body += path(sector(451, 462, -a, a), C(token, .18), 'stroke="none"');
+  body += path(sector(451, 462, -a, a), biome === 'glacier' ? C('snow') : C(token, .18), 'stroke="none"');
+  if (biome === 'lava') body += path(sector(411, 451, -a, a), C('coal'), 'stroke="none"');
   // Marks remain inside the wedge, leaving continuous undisturbed edge bands.
   for (let i = -1; i <= 1; i++) {
     const angle = i * half * .56, x = round(512 + 435 * Math.sin(angle)), y = round(512 - 435 * Math.cos(angle));
@@ -49,6 +50,9 @@ export function wedge(biome, segments) {
     if (biome === 'desert') mark = path('M -12 4 Q -2 -4 11 1 M -4 9 L 5 8', 'none', `stroke="${C('sand', -.18)}" stroke-width="3"`);
     if (biome === 'tundra') mark = path('M -10 1 Q 0 -5 10 1 M -4 5 L 4 5', 'none', `stroke="${C('snow', -.18)}" stroke-width="3"`);
     if (biome === 'crystal') mark = path('M -6 5 L -3 -5 Q 0 -8 2 -4 L 6 4 Z', C('crystal', .18), `stroke="${C('crystal', -.18)}" stroke-width="2"`);
+    if (biome === 'glacier') mark = path('M -9 -9 L -3 -3 L -6 4 L 2 10 M -3 -3 L 7 -5 L 11 0', 'none', `stroke="${C('science')}" stroke-width="2.5"`) + path('M -11 -8 L -5 -2 M -7 6 L 0 12', 'none', `stroke="${C('snow')}" stroke-width="1.5"`);
+    if (biome === 'lava') mark = path('M -10 -13 L -4 -5 L -7 3 L 3 12 M -4 -5 L 8 -8 L 12 -3', 'none', `stroke="${C('lava')}" stroke-width="5"`) + path('M -10 -13 L -4 -5 L -7 3 L 3 12 M -4 -5 L 8 -8', 'none', `stroke="${C('ascension')}" stroke-width="2"`) + path('M 6 3 Q 14 1 13 8 Q 10 13 5 10 Z', C('lava'), 'stroke="none"') + path('M -13 7 L -9 9 L -12 13 Z', C('rock-dark'), 'stroke="none"');
+    if (biome === 'ash') mark = path('M -13 6 Q -7 -5 1 -1 Q 6 2 12 5', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`) + ellipse(-7, 10, 2.5, 1.5, C('coal'), 'stroke="none"') + ellipse(4, 8, 1.5, 1, C('coal'), 'stroke="none"') + path('M 8 -2 Q 1 -2 2 -8 Q 7 -8 8 -2 Q 8 -8 14 -8 Q 15 -3 8 -2 Z', C('moss'), 'stroke="none" opacity="0.6"');
     body += `<g transform="translate(${x} ${y}) rotate(${round(angle * 180 / Math.PI)})">${mark}</g>`;
   }
   return `<defs>${edgeMask(segments)}</defs>${group('ground', body, 'mask="url(#edge)"')}`;
@@ -61,6 +65,82 @@ function treetop(x, y, rx, ry, token = 'leaf') {
 }
 function crystal(x, base, height, width) {
   return path(`M ${x - width / 2} ${base - 6} L ${x - width / 2} ${base - height + 14} Q ${x - width / 2} ${base - height + 10} ${x} ${base - height} L ${x + width / 2} ${base - height + 15} L ${x + width / 2} ${base - 6} L ${x} ${base} Z`, C('crystal')) + path(`M ${x} ${base - height + 3} L ${x} ${base - 3} L ${x + width / 2 - 2} ${base - 7} L ${x + width / 2 - 2} ${base - height + 16} Z`, C('crystal', -.18), 'stroke="none"') + path(`M ${x - width / 2 + 5} ${base - height + 19} L ${x - width / 2 + 5} ${base - 16}`, 'none', `stroke="${C('crystal', .18)}"`);
+}
+// Broad, bevelled ice caps distinguish seracs from pointed crystal shards and
+// the existing low snow-covered tundra rock. All feet finish at y=118.5 + stroke.
+function glacierBlock(x, height, width, lean = 0) {
+  const top = round(118.5 - height), left = round(x - width / 2), right = round(x + width / 2);
+  return path(`M ${left} 118.5 L ${left + lean} ${top + 8} L ${left + lean + 7} ${top} H ${right + lean - 5} L ${right + lean} ${top + 8} L ${right} 118.5 Z`, C('glacier'))
+    + path(`M ${x + lean + 2} ${top + 13} L ${right + lean - 1} ${top + 9} L ${right - 1} 117 H ${x + 2} Z`, C('glacier', -.18), 'stroke="none"')
+    + path(`M ${left + lean} ${top + 8} L ${left + lean + 7} ${top} H ${right + lean - 5} L ${right + lean} ${top + 8} L ${x + lean + 2} ${top + 13} Z`, C('snow'), 'stroke-width="1.5"')
+    + path(`M ${left + lean + 6} ${top + 18} L ${left + 6} 107`, 'none', `stroke="${C('snow')}" stroke-width="3"`)
+    + (height > 40 ? path(`M ${x - 2} ${top + 22} L ${x + 2} ${top + 33} L ${x - 4} ${top + 43}`, 'none', `stroke="${C('science')}" stroke-width="1.5"`) : '');
+}
+function glacierFloe() {
+  return ellipse(64, 115, 45, 4, C('water'), 'stroke="none" opacity="0.3"')
+    + path('M 22 101 L 36 90.5 H 82 L 107 102 L 101 118.5 H 28 Z', C('glacier'))
+    + path('M 67 108 L 106 102 L 100 117 H 67 Z', C('glacier', -.18), 'stroke="none"')
+    + path('M 22 101 L 36 90.5 H 82 L 107 102 L 67 108 L 41 105 Z', C('snow'), 'stroke-width="1.5"')
+    + path('M 63 91 L 58 97 L 68 101 L 65 107 L 66 116', 'none', `stroke="${C('science')}" stroke-width="2"`)
+    + path('M 32 105 L 35 112', 'none', `stroke="${C('snow')}" stroke-width="3"`);
+}
+function basaltColumn(x, height, width) {
+  const top = 118.5 - height, left = x - width / 2, right = x + width / 2;
+  return path(`M ${left} ${top + 7} L ${x - 4} ${top} L ${right} ${top + 6} V 113 L ${x + 3} 118.5 L ${left} 114 Z`, C('coal'))
+    + path(`M ${x + 3} ${top + 13} L ${right - 1} ${top + 7} V 112 L ${x + 3} 117 Z`, C('coal', -.18), 'stroke="none"')
+    + path(`M ${left} ${top + 7} L ${x - 4} ${top} L ${right} ${top + 6} L ${x + 3} ${top + 13} Z`, C('rock-dark'), 'stroke-width="2"')
+    + path(`M ${left + 4} ${top + 17} V 106 M ${x - 5} ${top + 29} L ${x} ${top + 37} L ${x - 4} ${top + 47}`, 'none', `stroke="${C('rock-dark')}" stroke-width="1.5"`);
+}
+function ventSmoke(x, y) {
+  return group('smoke', path(`M ${x - 5} ${y + 22} Q ${x + 9} ${y + 13} ${x + 2} ${y + 5} Q ${x - 6} ${y - 4} ${x + 1} ${y - 13} Q ${x + 10} ${y - 21} ${x + 13} ${y - 10} Q ${x + 4} ${y - 8} ${x + 10} ${y + 2} Q ${x + 21} ${y + 17} ${x - 5} ${y + 22} Z`, C('rock-dark'), 'stroke="none" opacity="0.6"') + circle(x - 2, y - 23, 4, C('rock'), 'stroke="none" opacity="0.3"'));
+}
+function lavaProp(variant) {
+  if (variant === 2) return basaltColumn(42, 58, 28) + basaltColumn(85, 75, 27) + basaltColumn(62, 95, 30);
+  if (variant === 0) {
+    return ventSmoke(64, 34) + path('M 24 118.5 Q 17 116 25 105 L 43 69 Q 48 59 64 60 Q 81 59 86 70 L 106 107 Q 113 118.5 103 118.5 Z', C('coal'))
+      + path('M 78 68 L 105 107 Q 113 118.5 103 118.5 H 65 Q 89 103 78 68 Z', C('coal', -.18), 'stroke="none"')
+      + ellipse(64, 66, 23, 9, C('rock-dark')) + ellipse(64, 66, 16, 5, C('lava'), 'stroke-width="1.5"')
+      + path('M 53 66 Q 62 62 74 66', 'none', `stroke="${C('ascension')}" stroke-width="3"`)
+      + path('M 69 77 L 64 90 L 73 98 L 65 112 L 74 117', 'none', `stroke="${C('lava')}" stroke-width="6"`)
+      + path('M 69 77 L 64 90 L 73 98 L 65 112', 'none', `stroke="${C('ascension')}" stroke-width="2"`)
+      + path('M 39 91 L 44 81', 'none', `stroke="${C('rock-dark')}" stroke-width="3"`);
+  }
+  return ventSmoke(79, 32) + path('M 23 118.5 L 27 83 Q 33 72 47 74 L 59 82 L 62 56 Q 68 48 82 51 L 96 58 L 104 118.5 Z', C('coal'))
+    + path('M 82 63 L 95 59 L 103 117 H 84 Z M 46 88 L 59 83 L 57 117 H 45 Z', C('coal', -.18), 'stroke="none"')
+    + ellipse(79, 56, 17, 7, C('rock-dark')) + ellipse(79, 56, 11, 3.5, C('lava'), 'stroke-width="1.5"')
+    + ellipse(43, 80, 16, 7, C('rock-dark')) + ellipse(43, 80, 10, 3.5, C('ascension'), 'stroke-width="1.5"')
+    + path('M 72 56 H 85 M 37 80 H 47', 'none', `stroke="${C('energy')}" stroke-width="2"`)
+    + path('M 74 69 L 71 85 L 78 94 L 72 109 M 36 93 L 34 108', 'none', `stroke="${C('lava')}" stroke-width="3"`)
+    + path('M 65 68 V 86 M 30 92 V 106', 'none', `stroke="${C('rock-dark')}" stroke-width="2"`);
+}
+function ashSprout(x, y) {
+  return path(`M ${x} ${y} V ${y - 6}`, 'none', `stroke="${C('moss')}" stroke-width="2" opacity="0.7"`)
+    + path(`M ${x} ${y - 5} Q ${x - 10} ${y - 3} ${x - 10} ${y - 12} Q ${x - 2} ${y - 14} ${x} ${y - 5} Q ${x + 2} ${y - 15} ${x + 10} ${y - 12} Q ${x + 11} ${y - 4} ${x} ${y - 5} Z`, C('moss'), 'stroke-width="1.5" opacity="0.7"');
+}
+function ashProp(variant) {
+  let b = '';
+  if (variant === 0) {
+    b += path('M 24 118.5 Q 17 116 26 108 Q 42 91 47 72 Q 53 62 66 64 Q 80 64 84 78 Q 89 98 107 110 Q 114 118.5 103 118.5 Z', C('ash'));
+    b += path('M 73 69 Q 85 73 85 84 Q 92 104 107 110 Q 114 118.5 103 118.5 H 57 Q 79 109 73 69 Z', C('ash', -.18), 'stroke="none"');
+    b += ellipse(65, 71, 17, 6, C('ash', .18), 'stroke-width="2"') + ellipse(65, 71, 10, 3, C('coal'), 'stroke="none"');
+    b += path('M 40 101 Q 46 94 49 84 M 51 108 Q 57 104 61 94', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`);
+    b += ellipse(90, 109, 3, 2, C('coal'), 'stroke="none"') + ashSprout(27, 115);
+  }
+  if (variant === 1) {
+    b += path('M 27 118.5 Q 25 115 37 111 Q 64 99 91 112 Q 106 117 99 118.5 Z', C('ash'));
+    b += path('M 51 117 Q 57 101 56 81 L 35 64 L 28 39 L 34 35 L 40 43 L 43 58 L 57 65 L 58 28 L 64 18 L 70 27 L 68 57 L 84 47 L 88 29 L 95 25 L 99 32 L 92 55 L 70 72 L 72 101 L 84 118 Z', C('coal'));
+    b += path('M 66 31 L 68 29 L 66 62 L 69 72 L 71 103 L 82 117 H 67 Q 62 91 66 31 Z', C('coal', -.18), 'stroke="none"');
+    b += path('M 61 38 L 60 61 M 39 49 L 42 60 L 51 67 M 61 85 L 64 98 M 81 53 L 88 47', 'none', `stroke="${C('ash', .18)}" stroke-width="2"`);
+    b += ashSprout(32, 114) + ellipse(94, 114, 4, 2, C('coal'), 'stroke="none"');
+  }
+  if (variant === 2) {
+    b += path('M 29 118.5 Q 23 114 25 103 L 27 83 Q 29 62 49 59 L 69 50 Q 88 47 99 69 L 110 103 Q 115 118.5 101 118.5 Z', C('ash'));
+    b += path('M 86 55 Q 98 68 100 81 L 110 103 Q 115 118.5 101 118.5 H 48 Q 96 105 86 55 Z', C('ash', -.18), 'stroke="none"');
+    b += ellipse(49, 83, 8, 6, C('coal'), 'stroke-width="1.5"') + ellipse(78, 96, 11, 7, C('coal'), 'stroke-width="1.5"') + ellipse(72, 69, 4, 3, C('coal'), 'stroke="none"');
+    b += path('M 41 71 Q 46 65 55 65 M 43 88 Q 49 92 55 87', 'none', `stroke="${C('ash', .18)}" stroke-width="3"`);
+    b += ashSprout(24, 116);
+  }
+  return b;
 }
 function prop(biome, variant) {
   let b = shadow();
@@ -149,11 +229,21 @@ function prop(biome, variant) {
     if (variant === 2) b += crystal(62, 116, 98, 43) + crystal(91, 117, 36, 21);
     b += path('M 25 48 L 25 58 M 20 53 L 30 53 M 99 31 L 99 41 M 94 36 L 104 36', 'none', `stroke="${C('crystal', .18)}" stroke-width="3"`);
   }
+  if (biome === 'glacier') {
+    if (variant === 0) b += glacierBlock(60, 96, 43, 4) + glacierBlock(89, 49, 24, -2);
+    if (variant === 1) b += glacierBlock(43, 62, 35, -7) + glacierBlock(78, 90, 34, 6);
+    if (variant === 2) b += glacierFloe();
+  }
+  if (biome === 'lava') b += lavaProp(variant);
+  if (biome === 'ash') b += ashProp(variant);
   return group('prop', b);
 }
 const propNames = {
   forest: ['tree-a', 'tree-b', 'tree-c'], mountains: ['peak-a', 'peak-b', 'peak-c'], ocean: ['wave-a', 'wave-b', 'buoy'], swamp: ['reed-a', 'reed-b', 'mushroom'],
   savanna: ['bush-a', 'bush-b', 'acacia'], desert: ['cactus-a', 'cactus-b', 'dune'], tundra: ['pine-snow-a', 'pine-snow-b', 'ice-rock'], crystal: ['crystal-a', 'crystal-b', 'crystal-c'],
+  glacier: ['serac-a', 'serac-b', 'ice-floe'],
+  lava: ['vent-a', 'vent-b', 'basalt'],
+  ash: ['ash-cone', 'dead-tree', 'ash-rock'],
 };
 
 function overlay(kind, segments) {
@@ -195,7 +285,8 @@ const worlds = {
   lava: ['coal', 'clay', 'ascension'], toxic: ['moss', 'oil', 'toxic'], ocean: ['deep-water', 'water', 'science'],
 };
 function planet(type) {
-  const [base, crust] = worlds[type];
+  // Body-only materials: keeping worlds unchanged preserves every mini and halo.
+  const [base, crust] = type === 'ice' ? ['glacier', 'science'] : type === 'lava' ? ['lava', 'coal'] : worlds[type];
   const gradient = `<radialGradient id="body-light" cx="32%" cy="28%" r="74%"><stop stop-color="${C(base, .18)}"/><stop offset="0.6" stop-color="${C(base)}"/><stop offset="1" stop-color="${C(base, -.18)}"/></radialGradient>`;
   let b = circle(512, 512, 400, 'url(#body-light)');
   b += circle(512, 512, 364, 'none', `stroke="${C(crust)}" stroke-width="25" opacity="0.2"`);
@@ -204,8 +295,17 @@ function planet(type) {
   // Crust accents stay at the perimeter so UI remains legible over the core.
   if (type === 'temperate') b += path('M 232 345 Q 247 276 316 244 M 696 779 Q 755 751 783 707', 'none', `stroke="${C('iron')}" stroke-width="15" opacity="0.2"`);
   if (type === 'arid') b += path('M 267 338 Q 348 286 410 315 M 665 737 Q 742 710 760 650', 'none', `stroke="${C('clay')}" stroke-width="16" opacity="0.2"`);
-  if (type === 'ice') b += path('M 311 225 L 333 285 L 299 334 M 333 285 L 386 299 M 746 686 L 708 723 L 718 787', 'none', `stroke="${C('water')}" stroke-width="12" opacity="0.2"`);
-  if (type === 'lava') b += path('M 246 300 L 288 332 L 270 392 L 319 424 M 288 332 L 347 322 M 802 615 L 743 639 L 720 703 L 675 739', 'none', `stroke="${C('ascension')}" stroke-width="12" opacity="0.5"`);
+  if (type === 'ice') {
+    b += path('M 234 348 L 284 249 L 369 199 L 452 227 L 415 313 L 329 365 Z M 608 749 L 657 675 L 763 644 L 810 708 L 747 791 L 659 833 Z', C('snow'), `stroke="${C('science')}" stroke-width="6" opacity="0.3"`);
+    b += path('M 311 225 L 333 285 L 299 334 M 333 285 L 386 299 L 406 267 M 746 686 L 708 723 L 718 787 M 708 723 L 664 711 L 647 736', 'none', `stroke="${C('science')}" stroke-width="12" opacity="0.5"`);
+    b += path('M 297 231 L 319 286 L 288 329 M 732 687 L 694 722 L 704 780', 'none', `stroke="${C('snow')}" stroke-width="8" opacity="0.7"`);
+  }
+  if (type === 'lava') {
+    b += path('M 218 352 L 267 261 L 360 214 L 454 244 L 470 322 L 403 359 L 354 433 L 271 418 Z M 627 695 L 697 606 L 799 602 L 839 694 L 762 798 L 665 829 L 603 770 Z M 226 616 L 283 569 L 362 609 L 408 706 L 345 758 L 259 702 Z M 651 251 L 744 287 L 803 379 L 777 450 L 687 427 L 624 333 Z', C('coal'), `stroke="${C('lava', -.18)}" stroke-width="9" opacity="0.8"`);
+    const cracks = 'M 246 300 L 288 332 L 270 392 L 319 424 M 288 332 L 347 322 L 381 254 M 802 615 L 743 639 L 720 703 L 675 739 L 684 795 M 720 703 L 783 738';
+    b += path(cracks, 'none', `stroke="${C('ascension')}" stroke-width="16"`) + path(cracks, 'none', `stroke="${C('energy')}" stroke-width="5" opacity="0.7"`);
+    b += path('M 279 617 L 302 658 L 282 684 M 698 306 L 723 346 L 710 384', 'none', `stroke="${C('lava')}" stroke-width="11"`);
+  }
   if (type === 'toxic') b += ellipse(304, 310, 55, 30, C('toxic'), 'stroke="none" opacity="0.3"') + ellipse(733, 700, 40, 23, C('toxic'), 'stroke="none" opacity="0.3"');
   if (type === 'ocean') b += path('M 244 336 Q 285 314 333 336 Q 371 354 401 330 M 654 730 Q 706 753 753 724', 'none', `stroke="${C('water')}" stroke-width="16" opacity="0.3"`);
   return `<defs>${gradient}</defs>${group('body', b)}`;

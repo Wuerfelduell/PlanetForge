@@ -65,15 +65,17 @@ export function artTexture(id: string): Texture | undefined {
   return textures.get(id);
 }
 
-/** Sprite id of a building without tiers in the simulation yet: first tier, or the single-tier name. */
-export function buildingArt(building: string, state?: "off" | "construction"): Texture | undefined {
+/** Sprite of a building at its stage, falling back to the first stage or the single-stage name. */
+export function buildingArt(building: string, state?: "off" | "construction", tier = 1): Texture | undefined {
   const suffix = state ? `.${state}` : "";
-  return textures.get(`building.${building}.t1${suffix}`) ?? textures.get(`building.${building}${suffix}`);
+  return textures.get(`building.${building}.t${tier}${suffix}`) ?? textures.get(`building.${building}.t1${suffix}`) ?? textures.get(`building.${building}${suffix}`);
 }
 
 /** Split sprites of a building with a moving part (scripts/assets/gen-parts.mjs), if it has one. */
-export function buildingAnim(building: string): { key: string; back: Texture; part: Texture; front: Texture } | undefined {
-  for (const key of [`building.${building}.t1`, `building.${building}`]) {
+export function buildingAnim(building: string, tier = 1): { key: string; back: Texture; part: Texture; front: Texture } | undefined {
+  // A drawn higher stage wins over the first stage's animation.
+  const keys = tier > 1 && textures.has(`building.${building}.t${tier}`) ? [`building.${building}.t${tier}`] : [`building.${building}.t1`, `building.${building}`];
+  for (const key of keys) {
     const back = textures.get(`${key}.anim.back`);
     const part = textures.get(`${key}.anim.part`);
     const front = textures.get(`${key}.anim.front`);

@@ -1,11 +1,12 @@
-import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { placeBuilding } from "./build";
-import { shieldBlocker, shieldFlightPlan } from "./rules";
+import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, upgradeBlocker } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
+import { terraform, terraformBlocker } from "./terraform";
 
 /**
  * Simulates up to `now`, then validates and applies one command from `playerId`.
@@ -176,12 +177,24 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       // On a shared planet nobody tears down a teammate's work (unless the builder left the game).
       if (segment.builtBy && segment.builtBy !== playerId && playerById(state, segment.builtBy)) return "Das hat ein Mitspieler gebaut";
       const economy = state.economies[planet.economyId!]!;
-      const def = BUILDINGS[segment.building];
-      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((def.cost[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
+      const paid = paidFor(segment);
+      for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((paid[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
       for (const u of workersOn(state, planet, segment.index)) u.segment = null;
       segment.building = null;
       segment.builtBy = null;
+      delete segment.tier;
       events.push({ type: "demolished", planetId: planet.id, segment: segment.index, playerId });
+      return null;
+    }
+    case "upgrade": {
+      if (!segment.building) return "Hier steht nichts";
+      const blocker = upgradeBlocker(state, planet, segment);
+      if (blocker) return blocker;
+      const economy = state.economies[planet.economyId!]!;
+      const next = nextUpgrade(segment)!;
+      for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+      segment.tier = (segment.tier ?? 1) + 1;
+      events.push({ type: "upgraded", planetId: planet.id, segment: segment.index, building: segment.building, tier: segment.tier, playerId });
       return null;
     }
     case "assign": {
@@ -199,10 +212,23 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       return null;
     }
     case "setGather": {
+      const crafts = buildingStats(segment)?.crafts;
+      if (crafts) {
+        // Crafting buildings: `gather` picks the recipe.
+        if (!crafts.recipes.includes(cmd.resource as RecipeId)) return "Das stellt dieses Gebäude nicht her";
+        segment.gather = cmd.resource;
+        return null;
+      }
       if (segment.building) return "Gebäude bestimmt, was abgebaut wird";
       const deposit = segment.deposits.find((d) => d.resource === cmd.resource && d.byHand);
       if (!deposit) return "Kann man hier nicht von Hand sammeln";
       segment.gather = cmd.resource;
+      return null;
+    }
+    case "terraform": {
+      const blocker = terraformBlocker(state, planet, segment, cmd.kind);
+      if (blocker) return blocker;
+      terraform(state, planet, segment, cmd.kind, playerId, events);
       return null;
     }
     default: {
