@@ -15,6 +15,8 @@ import {
   shieldFlightPlan,
   SUPERNOVA,
   INVADERS,
+  PLANET_TYPES,
+  hasBuilding,
   rocketCapacity,
   idleUnits,
   launchBlocker,
@@ -45,6 +47,8 @@ export interface UiActions {
   send(cmd: Command): void;
   /** Shows another planet on the wheel. */
   showPlanet(planetId: string): void;
+  /** Switches between the planet wheel and the star map. */
+  showMap(open: boolean): void;
   setSpeed(speed: number): void;
   newGame(options: NewGameOptions): void;
 }
@@ -80,6 +84,16 @@ export class Ui {
   private showDiscoveries = false;
   /** New-game panel open, with the choices so far. */
   private newGameChoice: NewGameOptions | null = null;
+  /** Star map open, and the planet (or "sun") picked on it. */
+  private mapOpen = false;
+  /** Read by the star map to highlight the same planet. */
+  mapTarget: string | null = null;
+
+  /** A planet or the sun was tapped on the star map. */
+  selectMapTarget(id: string): void {
+    this.mapTarget = id;
+    this.lastPanel = "";
+  }
 
   private dicon(id: string): string {
     return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="">` : "📜";
@@ -254,8 +268,8 @@ export class Ui {
         this.actions.send({ type: "demolish", ...at });
         break;
       case "launch": {
-        const [to, rocket, count] = value!.split(":");
-        this.actions.send({ type: "launch", planetId: this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
+        const [to, rocket, count, from] = value!.split(":");
+        this.actions.send({ type: "launch", planetId: from || this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
         break;
       }
       case "planet": {
@@ -277,8 +291,8 @@ export class Ui {
         this.actions.send({ type: "voteDiscovery", discovery: value! });
         break;
       case "shield": {
-        const [segment, repair] = value!.split(":");
-        this.actions.send({ type: "shieldFlight", planetId: this.planetId, segment: Number(segment), repair: repair === "1" });
+        const [segment, repair, from] = value!.split(":");
+        this.actions.send({ type: "shieldFlight", planetId: from || this.planetId, segment: Number(segment), repair: repair === "1" });
         break;
       }
       case "openLobby":
@@ -294,6 +308,23 @@ export class Ui {
         this.speed = Number(value);
         this.actions.setSpeed(this.speed);
         this.lastHud = "";
+        break;
+      case "map":
+        this.mapOpen = !this.mapOpen;
+        this.showDiscoveries = false;
+        this.newGameChoice = null;
+        this.lastPanel = this.lastHud = "";
+        this.actions.showMap(this.mapOpen);
+        break;
+      case "mapTarget":
+        this.selectMapTarget(value!);
+        this.actions.showMap(true);
+        break;
+      case "view":
+        this.mapOpen = false;
+        this.lastPanel = this.lastHud = "";
+        this.actions.showMap(false);
+        this.actions.showPlanet(value!);
         break;
       case "new":
         this.newGameChoice = this.newGameChoice ? null : { goal: "supernova", invaders: "normal" };
@@ -348,6 +379,7 @@ export class Ui {
       <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
       <div class="row status">
         ${planetChip}
+        <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="Sternkarte">${this.mapOpen ? "🪐 Planet" : "🌌 Karte"}</button>
         <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(state, planet)}/${housing(state, planet)} <small>(${idleUnits(state, planet, this.playerId).length} frei)</small></span>
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
@@ -430,36 +462,78 @@ export class Ui {
     return this.state?.players.find((p) => p.id === playerId)?.name ?? "Mitspieler";
   }
 
+  /** Rocket buttons from one own planet to a target (colony to free or own planets, attacks elsewhere). */
+  private launchButtons(state: GameState, planet: PlanetState, to: PlanetState, from = ""): string {
+    const me = state.players.find((p) => p.id === this.playerId);
+    const idle = idleUnits(state, planet, this.playerId).length;
+    const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
+    return rockets
+      .map((rocket) => {
+        const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
+        const plan = flightPlan(planet, to, rocket, count, economyOf(state, planet));
+        const blocker = launchBlocker(state, this.playerId, planet, to, rocket, count);
+        const economy = economyOf(state, planet)!;
+        const cost = Object.entries(plan.cost)
+          .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+          .join(" ");
+        const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
+        return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}${from ? `:${from}` : ""}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
+      })
+      .join("");
+  }
+
+  private planetStatus(state: GameState, to: PlanetState): string {
+    const me = state.players.find((p) => p.id === this.playerId);
+    return to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
+  }
+
   /** Launch pad: one row per reachable planet with the rockets that can go there. */
   private renderLaunches(state: GameState, planet: PlanetState): string {
     const idle = idleUnits(state, planet, this.playerId).length;
-    const me = state.players.find((p) => p.id === this.playerId);
     const rows = state.planets
       .filter((p) => p.id !== planet.id)
-      .map((to) => {
-        const status = to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
-        const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
-        const buttons = rockets
-          .map((rocket) => {
-            const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
-            const plan = flightPlan(planet, to, rocket, count, economyOf(state, planet));
-            const blocker = launchBlocker(state, this.playerId, planet, to, rocket, count);
-            const economy = economyOf(state, planet)!;
-            const cost = Object.entries(plan.cost)
-              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
-              .join(" ");
-            const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
-            return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
-          })
-          .join("");
-        return `<div class="target"><span>🪐 ${to.name} <small>${status} · ${to.segments.length} Felder</small></span>${buttons}</div>`;
-      })
+      .map((to) => `<div class="target"><span>🪐 ${to.name} <small>${this.planetStatus(state, to)} · ${to.segments.length} Felder</small></span>${this.launchButtons(state, planet, to)}</div>`)
       .join("");
     return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>${this.renderShield(state, planet)}`;
   }
 
+  /** Star map panel: what was tapped, and the flights that can go there from own launch pads. */
+  private renderMap(state: GameState): string {
+    const pads = this.ownPlanets().filter((p) => hasBuilding(p, "launchpad"));
+    let html = `<h2>🌌 Sternsystem <button class="speed" data-action="map" title="Zurück zum Planeten">✕</button></h2>`;
+    const target = this.mapTarget;
+    if (target === "sun") {
+      const nova = novaTickNow(state);
+      const built = state.sun.shield.filter((x) => x.built).length;
+      html += `<p><b>☀️ Die Sonne</b></p>`;
+      if (state.sun.saved) html += `<p class="muted">Die Schutzhülle ist geschlossen. Die Sonne ist gerettet.</p>`;
+      else if (nova === null) html += `<p class="muted">In diesem Spiel droht keine Supernova.</p>`;
+      else {
+        html += `<p class="muted">Hülle ${built}/${SUPERNOVA.segments}${cycleOf(state) >= SUPERNOVA.firstHintCycle || built > 0 ? `, Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen` : ". Noch ist die Sonne ruhig."}</p>`;
+        html += pads.length ? this.renderShield(state, pads[0]!, pads[0]!.id) : `<p class="muted">Für Bauflüge zur Sonne braucht es eine Startrampe.</p>`;
+      }
+      return html;
+    }
+    const planet = state.planets.find((p) => p.id === target);
+    if (!planet) {
+      const list = state.planets
+        .map((p) => `<button class="chip" data-action="mapTarget" data-value="${p.id}">🪐 ${p.name} <small>${this.planetStatus(state, p)}</small></button>`)
+        .join("");
+      return `${html}<p class="muted">Tippe auf einen Planeten oder die Sonne.</p><div class="choices">${list}</div>`;
+    }
+    const people = Object.values(state.units).filter((u) => u.planetId === planet.id).length;
+    html += `<div class="target"><span>🪐 <b>${planet.name}</b> <small>${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder · ${this.planetStatus(state, planet)}${people ? ` · ${people} Einwohner` : ""}</small></span><button class="build" data-action="view" data-value="${planet.id}">🔍 Ansehen</button></div>`;
+    const from = pads.filter((p) => p.id !== planet.id);
+    if (from.length) {
+      html += `<div class="targets">${from.map((p) => `<div class="target"><span>von ${p.name} <small>${idleUnits(state, p, this.playerId).length} frei</small></span>${this.launchButtons(state, p, planet, p.id)}</div>`).join("")}</div>`;
+    } else if (!this.isMine(planet.id)) {
+      html += `<p class="muted">Bau eine Startrampe, um hierhin zu fliegen.</p>`;
+    }
+    return html;
+  }
+
   /** Shield around the sun (coop goal "supernova"): build missing segments, repair damaged ones. */
-  private renderShield(state: GameState, planet: PlanetState): string {
+  private renderShield(state: GameState, planet: PlanetState, from = ""): string {
     if (state.sun.novaTick === null || state.sun.saved) return "";
     const economy = economyOf(state, planet)!;
     const build = shieldFlightPlan(planet, false, economy);
@@ -468,7 +542,7 @@ export class Ui {
         const repair = seg.built && seg.hp < 100;
         if (seg.built && !repair) return `<button class="seg ok" disabled title="Segment ${i + 1}: ${seg.hp} %">🌞</button>`;
         const blocker = shieldBlocker(state, this.playerId, planet, i, repair);
-        return `<button class="seg${repair ? " hurt" : ""}" data-action="shield" data-value="${i}:${repair ? 1 : 0}" ${blocker ? `disabled title="${blocker}"` : `title="${repair ? `Reparieren (${seg.hp} %)` : "Bauen"}"`}>${repair ? "🛠️" : "＋"}</button>`;
+        return `<button class="seg${repair ? " hurt" : ""}" data-action="shield" data-value="${i}:${repair ? 1 : 0}${from ? `:${from}` : ""}" ${blocker ? `disabled title="${blocker}"` : `title="${repair ? `Reparieren (${seg.hp} %)` : "Bauen"}"`}>${repair ? "🛠️" : "＋"}</button>`;
       })
       .join("");
     const cost = Object.entries(build.cost)
@@ -527,6 +601,7 @@ export class Ui {
 
   private renderPanel(state: GameState, planet: PlanetState): string {
     if (this.newGameChoice) return this.renderNewGame(this.newGameChoice);
+    if (this.mapOpen) return this.renderMap(state);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
     const economy = economyOf(state, planet);
     if (!economy) return "";

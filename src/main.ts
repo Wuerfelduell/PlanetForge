@@ -6,6 +6,7 @@ import { ChatPanel } from "./net/chat";
 import { OnlineMenu } from "./net/menu";
 import { NetworkSession } from "./net/netSession";
 import { PlanetView } from "./render/planetView";
+import { SystemView } from "./render/systemView";
 import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
@@ -42,6 +43,14 @@ async function boot(): Promise<void> {
       ui.render(session.state);
     },
     showPlanet,
+    showMap(open) {
+      view.stage.visible = !open;
+      map.stage.visible = open;
+      map.playerId = session.playerId;
+      if (!open) map.selected = null;
+      relayout();
+      ui.render(session.state);
+    },
     setSpeed(speed) {
       session.speed = speed;
     },
@@ -126,13 +135,19 @@ async function boot(): Promise<void> {
     ui.setPlanet(home().id);
     view.setPlanet(home().id, home().segments.length);
   };
+  const map = new SystemView(app, (id) => {
+    map.selected = id;
+    ui.selectMapTarget(id);
+    ui.render(session.state);
+  });
   showHome();
-  app.stage.addChild(view.stage);
+  app.stage.addChild(view.stage, map.stage);
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
     const panel = document.getElementById("panel")!.getBoundingClientRect();
     view.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top);
+    map.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top, session.state);
   };
   const resize = new ResizeObserver(relayout);
   resize.observe(document.body);
@@ -160,6 +175,8 @@ async function boot(): Promise<void> {
     }
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
+    map.selected = ui.mapTarget;
+    map.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
     if (uiTimer > 200) {
       uiTimer = 0;

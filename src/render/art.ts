@@ -10,7 +10,7 @@ interface AtlasIndex {
 }
 
 /** Atlas categories the planet view needs. */
-const CATEGORIES = ["biomes", "buildings", "peoples", "planets", "resources", "fx", "invaders", "space", "ui"];
+const CATEGORIES = ["biomes", "buildings", "peoples", "planets", "resources", "fx", "invaders", "space", "ui", "ships"];
 
 const textures = new Map<string, Texture>();
 let animations: NonNullable<AtlasIndex["animations"]> = {};

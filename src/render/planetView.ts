@@ -706,7 +706,8 @@ export class PlanetView {
     };
 
     canvas.addEventListener("pointerdown", (e) => {
-      if (this.drag) return;
+      // The star map uses the same canvas while it is open.
+      if (this.drag || !this.stage.visible) return;
       canvas.setPointerCapture(e.pointerId);
       const angle = angleOf(e);
       this.drag = { pointerId: e.pointerId, startAngle: angle, startRotation: this.rotation, startX: e.clientX, startY: e.clientY, moved: false, lastAngle: angle, lastTime: performance.now(), velocity: 0 };
