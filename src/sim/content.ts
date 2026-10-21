@@ -959,6 +959,9 @@ export const SYSTEM = {
   sunTypes: ["yellow", "red", "blue", "white"],
   /** Small rocks between the orbits, reachable with the discovery "Weltraumbergbau". */
   asteroids: { min: 2, max: 4, segments: 12, rare: { min: 1, max: 2 } },
+  /** Systems with more planets than this share orbits, so the star map stays readable on a phone. */
+  compactFrom: 7,
+  maxOrbit: 7,
 } as const;
 
 /**

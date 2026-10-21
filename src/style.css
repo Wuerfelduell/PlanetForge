@@ -235,6 +235,11 @@ img.bi { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
 [hidden] { display: none !important; }
 
 .chip.glow { box-shadow: 0 0 0 2px var(--accent, #ffd166); }
+.chip.on { outline: 2px solid var(--accent, #ffd166); }
+.faction-card { padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.faction-card .choices { margin-top: 6px; }
+.offer { margin: 6px 0; padding: 6px 8px; border-radius: 8px; background: rgba(255, 209, 102, 0.12); }
+.offer small { color: var(--muted); display: block; }
 .target .build.on { outline: 2px solid var(--accent, #ffd166); }
 ul.owned { list-style: none; padding: 0; margin: 4px 0; display: flex; flex-direction: column; gap: 4px; }
 ul.owned small { color: var(--muted); }

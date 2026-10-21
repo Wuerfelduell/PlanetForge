@@ -26,6 +26,7 @@ import { grantPick, modified, resolveOffer } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
 import { goalsCycle } from "./invaders";
+import { factionsCycle } from "./factions";
 import type { EconomyState, GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -257,4 +258,5 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
 
   cycleChecks(state, events);
   goalsCycle(state, events);
+  factionsCycle(state, events);
 }
