@@ -9,5 +9,6 @@
   "ascension":"#FF9F1C", "danger":"#EF476F", "ok":"#06D6A0",
   "player-1":"#FF6B6B", "player-2":"#4D96FF", "player-3":"#FFD93D", "player-4":"#6BCB77",
   "tint-white":"#FFFFFF",
-  "glacier":"#B8E2F2", "lava":"#D4502A", "ash":"#6E6670"
+  "glacier":"#B8E2F2", "lava":"#D4502A", "ash":"#6E6670",
+  "wood":"#98633F"
 }

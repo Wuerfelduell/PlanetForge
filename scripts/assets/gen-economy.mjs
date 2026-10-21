@@ -54,13 +54,19 @@ function resource(name,mini=false) {
       (mini?'':line('M36 29 L44 63 M57 24 L59 62 M84 26 L73 63 M96 39 L85 65','iron',2))+
       p('M39 64 Q65 73 88 64 L91 80 Q65 88 39 80Z','clay')+p('M61 71 L71 68 L77 77 L68 84 L59 79Z','iron')+
       (mini?'':line('M66 84 L58 101 M72 83 L82 98','iron',3))+shine('M44 70 L54 72',3);
-    case 'planks':return p('M17 83 L78 57 L111 67 V87 L48 114 L17 102Z','sand')+
-      p('M17 83 L48 95 L111 67 M48 95 V114',null)+shadow('M49 97 L110 71 V86 L49 112Z','sand')+
-      p('M18 58 L81 32 L110 42 V61 L48 88 L18 77Z','paper')+
-      p('M18 58 L48 69 L110 42 M48 69 V88',null)+shadow('M49 71 L109 46 V60 L49 86Z','paper')+
-      p('M19 35 L79 13 L107 24 V40 L47 63 L19 52Z','sand')+
-      p('M19 35 L47 46 L107 24 M47 46 V63',null)+shadow('M48 48 L106 28 V39 L48 61Z','sand')+
-      (mini?'':line('M35 34 L77 20 M30 60 L43 64 M61 81 L96 66 M61 106 L94 92','iron',2))+shine('M27 35 L39 39',3);
+    case 'planks':{
+      // Thin, staggered boards: matte brown faces and grain, without metal glints.
+      const board=(x,y,knot=false)=>g(
+        p('M0 24L73 1L96 10L96 20L23 44L2 35Z','wood')+
+        `<path d="M0 24L73 1L96 10L23 35L13 30L10 32Z" fill="${paint('wood',.18)}"/>`+
+        shadow('M24 36L95 12V19L24 43Z','wood')+
+        line('M24 35V43','ink',mini?3:1.5)+
+        line('M14 23Q28 22 41 16M62 12L77 7','wood',mini?3:2)+
+        (knot?ellipse(52,17,8,3,'wood',`transform="rotate(-18 52 17)" stroke-width="${mini?3:1.5}"`)+
+          (mini?'':line('M38 18Q48 10 61 13M43 23Q55 24 68 17','wood',2)):'')+
+        (mini?'':line('M35 36L77 22M6 29L17 34','ink',1.5)),`translate(${x} ${y})`);
+      return board(16,65)+board(11,42)+board(19,18,true);
+    }
     case 'tools':return g(pliers(mini),'translate(-8 0)')+g(hammer(),'translate(8 2)');
     case 'wire':return ellipse(87,59,20,39,'paper')+rect(27,29,61,64,9,'clay')+
       shadow('M28 73 Q61 85 87 73 V91 H28Z','clay')+
@@ -74,10 +80,17 @@ function resource(name,mini=false) {
       line('M61 78 L100 66 M61 95 L100 83','deep-water',mini?4:2)+
       (mini?'':line('M29 63 V85 M58 108 L101 96','science',2))+shine('M34 44 L73 28',3);
     case 'bricks':{
-      const brick=(x,y)=>g(p('M0 11 L21 1 Q24 0 28 2 L49 9 V29 L26 40 L0 29Z','clay')+
-        p('M0 11 L26 21 L49 9 M26 21 V40',null)+shadow('M27 23 L48 12 V28 L27 38Z','clay')+
-        (mini?'':line('M7 13 L22 7','sand',2)),`translate(${x} ${y})`);
-      return brick(14,68)+brick(64,68)+brick(39,35);
+      // Running bond and broad pale mortar joints read as masonry at 20 px.
+      const brick=(x,y,w=32)=>g(
+        `<path d="M0 8L12 0H${w+12}V24L${w} 32H0Z" fill="${paint('danger',-.18)}"/>`+
+        p(`M0 8L12 0H${w+12}L${w} 8Z`,'danger')+
+        line(`M${w} 9V30`,'ink',mini?3:1.5)+
+        (mini?'':line('M6 15H15M8 23H12','danger',2)),`translate(${x} ${y})`);
+      return p('M14 74L26 65H112V102L99 113H14Z','rock')+
+        brick(16,77,38)+brick(60,77,38)+
+        p('M31 52L43 44H99V80L86 89H31Z','snow')+
+        brick(33,47,25)+brick(64,47,25)+
+        line('M18 78H96M57 86V106M61 56V76','snow',mini?5:4);
     }
     default:throw new Error(`Unknown resource ${name}`);
   }
