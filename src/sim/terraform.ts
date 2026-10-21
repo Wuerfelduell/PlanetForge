@@ -20,10 +20,21 @@ export const TERRAFORM: Record<TerraformKind, TerraformDef> = {
   plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna", "ash"], to: "forest", cost: { food: 5 } },
   fillSand: { name: "Mit Sand aufschütten", icon: "🏜️", from: ["ocean"], to: "desert", cost: { sand: 30 } },
   fillClay: { name: "Mit Erde aufschütten", icon: "🟫", from: ["ocean"], to: "savanna", cost: { clay: 30 } },
+  // Seb: draining a swamp works too, but costs more sand than filling in the sea.
+  drainSwamp: { name: "Sumpf trockenlegen", icon: "🏜️", from: ["swamp"], to: "savanna", cost: { sand: 50 } },
+  // Seb: undefended invaders burn the surface; clearing it lets the ground recover.
+  clearScorched: {
+    name: "Verbrannte Erde aufräumen",
+    icon: "🧹",
+    from: ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal", "lava", "ash"],
+    cost: { food: 5, stone: 10 },
+  },
   // Ice and lava worlds open up step by step: the glacier thaws to tundra, lava cools to ash.
   thawGlacier: { name: "Abtauen", icon: "🔥", from: ["glacier"], to: "tundra", cost: { wood: 30 } },
   coolLava: { name: "Abkühlen", icon: "💧", from: ["lava"], to: "ash", cost: { water: 30 } },
 };
+
+export const NOT_SCORCHED = "Hier ist nichts verbrannt";
 
 /** Share of max a planted or newly filled deposit starts with. */
 export const TERRAFORM_START_FILL = 0.15;
@@ -37,6 +48,8 @@ export function terraformBlocker(state: GameState, planet: PlanetState, segment:
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Erst das Gebäude abreißen";
   if (!def.from.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
+  if (kind === "clearScorched" && !segment.scorched) return NOT_SCORCHED;
+  if (kind !== "clearScorched" && segment.scorched) return "Erst die verbrannte Erde aufräumen";
   if (kind === "plantTrees" && segment.biome === "forest") {
     const wood = segment.deposits.find((d) => d.resource === "wood");
     if (wood && wood.amount > wood.max * 0.5) return "Hier stehen genug Bäume";
@@ -51,7 +64,10 @@ export function terraform(state: GameState, planet: PlanetState, segment: Segmen
   const economy = economyOf(state, planet)!;
   for (const r of RESOURCE_IDS) economy.resources[r] -= def.cost[r] ?? 0;
   const to = def.to ?? segment.biome;
-  if (to !== segment.biome) {
+  if (kind === "clearScorched") {
+    delete segment.scorched;
+    for (const d of segment.deposits) if (!d.infinite) d.amount = Math.max(d.amount, d.max * TERRAFORM_START_FILL);
+  } else if (to !== segment.biome) {
     const old = new Set(BIOMES[segment.biome].deposits.map((d) => d.resource));
     // Rare deposits are not tied to the biome and stay.
     const kept = segment.deposits.filter((d) => !old.has(d.resource));

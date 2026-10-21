@@ -189,6 +189,8 @@ export interface SegmentState {
   gather: ResourceId | null;
   /** Upgrade stage of the building, 1 when missing. */
   tier?: number;
+  /** Burnt by invaders: no building, no gathering, no regrowth until cleared. */
+  scorched?: true;
 }
 
 export interface DepositState {
@@ -199,7 +201,7 @@ export interface DepositState {
   byHand: boolean;
 }
 
-export type TerraformKind = "plantTrees" | "fillSand" | "fillClay" | "thawGlacier" | "coolLava";
+export type TerraformKind = "plantTrees" | "fillSand" | "fillClay" | "drainSwamp" | "clearScorched" | "thawGlacier" | "coolLava";
 
 /** Player intents. The only way anything outside the simulation changes the state. */
 export type Command =
@@ -261,7 +263,7 @@ export type GameEvent =
   | { type: "discovered"; economyId: string; discovery: string }
   | { type: "invasionSpotted"; target: string; wave: number; arrivalTick: number }
   | { type: "invasionArrived"; target: string; wave: number }
-  | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null }
+  | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
   | { type: "invasionDefeated"; target: string; wave: number }
   | { type: "invasionLeft"; target: string; wave: number; plundered: boolean }
   | { type: "sunWarning"; cyclesLeft: number }

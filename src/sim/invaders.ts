@@ -1,4 +1,4 @@
-import { INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { BIOMES, INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
 import { buildingStats, planetById, planetDefense, ticksPerCycle } from "./rules";
@@ -94,6 +94,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
   let destroyed: PlanetState["segments"][number]["building"] = null;
   let killed = 0;
   let shieldSegment: number | null = null;
+  const scorched: number[] = [];
 
   if (inv.target === "sun") {
     const standing = state.sun.shield.map((s, i) => ({ s, i })).filter(({ s }) => s.built && s.hp > 0);
@@ -122,6 +123,8 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
       }
     }
     if (inv.hp - damage > 0) {
+      // Nobody fought back: the surface burns along with the building.
+      const undefended = damage === 0 && defenders.length === 0;
       const built = planet.segments.filter((s) => s.building);
       if (built.length) {
         const s = rng.pick(built);
@@ -129,6 +132,18 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         for (const u of residents) if (u.segment === s.index && state.units[u.id]) u.segment = null;
         s.building = null;
         s.builtBy = null;
+        delete s.tier;
+        if (undefended) scorched.push(s.index);
+      }
+      if (undefended) {
+        const land = planet.segments.filter((s) => s.revealed && !s.scorched && !s.building && BIOMES[s.biome].buildable && !scorched.includes(s.index));
+        for (let i = 0; i < INVADERS.scorchPerUndefendedRound && land.length; i++) scorched.push(land.splice(rng.int(0, land.length - 1), 1)[0]!.index);
+      }
+      for (const index of scorched) {
+        const s = planet.segments[index]!;
+        s.scorched = true;
+        for (const d of s.deposits) if (!d.infinite) d.amount = 0;
+        for (const u of residents) if (u.segment === index && state.units[u.id]) u.segment = null;
       }
       // Without anyone fighting back they take lives too.
       const alive = residents.filter((u) => state.units[u.id]);
@@ -139,7 +154,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     }
   }
   inv.hp = Math.max(0, inv.hp - damage);
-  events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment });
+  events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment, ...(scorched.length ? { scorched } : {}) });
 
   if (inv.hp <= 0) {
     for (const [r, v] of Object.entries(INVADERS.reward)) economy.resources[r as keyof typeof economy.resources] += v * inv.wave;

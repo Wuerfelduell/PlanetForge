@@ -114,7 +114,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       for (const d of segment.deposits) {
         // Exhausted deposits stay exhausted; untouched ones regrow.
         const forester = d.resource === "wood" ? forested.get(segment.index) : undefined;
-        if (d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
+        if (segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
         d.amount = Math.min(d.max, d.amount + d.max * modified(economy, "regenRate", RULES.regenPerSecond) * (forester?.mul ?? 1) * DT);
       }
     }

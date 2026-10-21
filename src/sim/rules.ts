@@ -125,7 +125,7 @@ export function housing(state: GameState, planet: PlanetState): number {
 
 export function workerCapacity(segment: SegmentState): number {
   if (segment.building) return buildingStats(segment)!.workers;
-  return segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
+  return !segment.scorched && segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
 }
 
 export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState): number {
@@ -193,6 +193,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!economy) return "Unbewohnter Planet";
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
+  if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
@@ -224,7 +225,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
     const recipe = RECIPES[segmentRecipe(segment)!];
     const rate = craftRate(planet, segment, workers, economy);
     for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) out[r] = v * rate * bonus(r);
-  } else if (!def) {
+  } else if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
     if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
   }

@@ -59,6 +59,8 @@ const MOTIONS: Record<string, Motion> = {
   "building.mine.t2": { kind: "slide", dist: 14, speed: 1.3 },
   "building.market": { kind: "rock", amp: 0.06, speed: 3 },
   "building.battery": { kind: "rock", amp: 0.25, speed: 1.5 },
+  "building.sawmill.t1": { kind: "spin", speed: 6 },
+  "building.sawmill.t2": { kind: "spin", speed: 7 },
 };
 
 /** Chimney tops (256 canvas) that puff smoke while the building is staffed. */
@@ -601,7 +603,9 @@ export class PlanetView {
       // Biomes the art does not have yet keep their placeholder color.
       if (artTexture(`biome.${s.biome}.wedge.${n}`)) wedge(`biome.${s.biome}.wedge`, i);
       else g.poly(sector(ART_BODY * k, R, mid - step / 2, mid + step / 2)).fill(BIOMES[s.biome].color);
-      if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
+      // Burnt by invaders: own art once it exists, the pollution overlay until then.
+      if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
+      else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
       if (s.building) {
         const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
@@ -647,7 +651,8 @@ export class PlanetView {
         if (chimney && !empty) this.chimneys.push({ ...at(chimney[0], chimney[1]), angle: mid, size: segWidth * k * 0.35, key: smokeKey });
       } else {
         const props = PROPS[s.biome] ?? [];
-        const prop = props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
+        // Nothing grows on scorched earth, not even a stump.
+        const prop = !s.scorched && props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
         const fill = propFill(s);
         // The prop is what the field holds: it shrinks while it is harvested, grows back while it
         // regrows and is a stump (or gone, without that art) when the deposit is used up.
