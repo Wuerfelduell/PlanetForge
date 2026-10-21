@@ -31,7 +31,7 @@ export function worldOptions(world: WorldChoice): WorldOptions {
 }
 
 const SUN_NAMES: Record<string, string> = { yellow: "🟡 Gelb", red: "🔴 Rot", blue: "🔵 Blau", white: "⚪ Weiß" };
-const PLANET_COUNTS = [1, 2, 3, 4, 6, 8].filter((n) => n >= WORLD_LIMITS.planets.min && n <= WORLD_LIMITS.planets.max);
+const PLANET_COUNTS = [1, 2, 3, 4, 6, 8, 10, 12, 16].filter((n) => n >= WORLD_LIMITS.planets.min && n <= WORLD_LIMITS.planets.max);
 const DEFAULT_WORLD: WorldChoice = { planets: "random", start: "temperate", sun: "random", size: "normal" };
 
 export type Where = "local" | "online";
