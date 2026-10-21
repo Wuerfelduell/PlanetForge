@@ -1,6 +1,138 @@
 {
   "assets": [
     {
+      "id": "building.prism-dome.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/prism-dome-back.svg",
+      "out": "public/assets/sprites/buildings/anim/prism-dome-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.prism-dome.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/prism-dome-part.svg",
+      "out": "public/assets/sprites/buildings/anim/prism-dome-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5273
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.prism-dome.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/prism-dome-front.svg",
+      "out": "public/assets/sprites/buildings/anim/prism-dome-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruby-laser.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/ruby-laser-back.svg",
+      "out": "public/assets/sprites/buildings/anim/ruby-laser-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruby-laser.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/ruby-laser-part.svg",
+      "out": "public/assets/sprites/buildings/anim/ruby-laser-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5859
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.ruby-laser.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/ruby-laser-front.svg",
+      "out": "public/assets/sprites/buildings/anim/ruby-laser-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.observatory.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/observatory-back.svg",
