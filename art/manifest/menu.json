@@ -70,6 +70,93 @@
         "transparent"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.button-menu",
+      "category": "ui",
+      "src": "art/src/ui/ui-button-menu.svg",
+      "out": "public/assets/sprites/ui/ui-button-menu.png",
+      "viewBox": [
+        640,
+        160
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu",
+        "button",
+        "normal"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-menu-pressed",
+      "category": "ui",
+      "src": "art/src/ui/ui-button-menu-pressed.svg",
+      "out": "public/assets/sprites/ui/ui-button-menu-pressed.png",
+      "viewBox": [
+        640,
+        160
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu",
+        "button",
+        "pressed"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "id": "ui.button-menu-disabled",
+      "category": "ui",
+      "src": "art/src/ui/ui-button-menu-disabled.svg",
+      "out": "public/assets/sprites/ui/ui-button-menu-disabled.png",
+      "viewBox": [
+        640,
+        160
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu",
+        "button",
+        "disabled"
+      ],
+      "phase": "P1",
+      "sliceInsets": [
+        48,
+        48,
+        48,
+        48
+      ]
     }
   ]
 }

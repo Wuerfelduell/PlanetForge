@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each release checkpoint remains independently reproducible.
-const RELEASE = 1;
+const RELEASE = 2;
 const assets = [];
 const p = (d, token, extra = '') => `<path d="${d}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
 const circle = (x,y,r,token,extra='') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -98,6 +98,15 @@ function parallaxStars() {
 emit('menu.bg','brand',menuScene(),1080,1920,{stroke:6,tags:['menu','background','portrait','quiet-upper-middle']});
 emit('menu.bg-landscape','brand',menuScene(true),1920,1080,{stroke:6,tags:['menu','background','landscape','quiet-upper-middle']});
 emit('menu.bg-parallax-stars','brand',parallaxStars(),1024,1024,{parts:['stars'],tags:['menu','parallax','tileable','transparent']});
+
+function menuButton(state) {
+  const pressed=state==='pressed',token=state==='disabled'?'rock':'ascension',top=pressed?20:8;
+  return rect(8,20,624,132,36,token)+
+    `<rect x="8" y="20" width="624" height="132" rx="36" fill="${C(token,-.18)}"/>`+
+    rect(8,top,624,132,36,token)+
+    p(`M44 ${top+12} H596`,null,`stroke="${C(token,.18)}" stroke-width="4"`);
+}
+if(RELEASE>=2)for(const state of ['normal','pressed','disabled'])emit(`ui.button-menu${state==='normal'?'':'-'+state}`,'ui',menuButton(state),640,160,{stroke:6,sliceInsets:[48,48,48,48],tags:['ui','menu','button',state]});
 
 write('art/manifest/menu.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Menu art: ${assets.length} ids generated (release ${RELEASE}).`);
