@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceWithEvents, createGame, homePlanet, needsSuits, RECIPES, RULES, TICK_MS, ticksPerCycle, type GameEvent, type GameState } from "./index";
+import { advanceWithEvents, BUILDINGS, createGame, homePlanet, needsSuits, RECIPES, RULES, TICK_MS, ticksPerCycle, type GameEvent, type GameState } from "./index";
 
 const P1 = { id: "p1", name: "Seb" };
 const clone = (g: GameState) => JSON.parse(JSON.stringify(g)) as GameState;
@@ -56,7 +56,9 @@ describe("space suits", () => {
     expect(Object.values(g.units).filter((u) => u.planetId === homePlanet(g, P1.id)!.id).length).toBeGreaterThan(0);
   });
 
-  it("are sewn from cloth, glass and steel", () => {
-    expect(RECIPES.suits.inputs).toEqual({ cloth: 2, glass: 1, steel: 1 });
+  it("are cheap: cloth and iron, sewn in the plain workshop", () => {
+    // Seb: almost every planet but the start needs them, so they must not wait for level 5.
+    expect(RECIPES.suits.inputs).toEqual({ cloth: 2, iron: 1 });
+    expect(BUILDINGS.workshop.crafts?.recipes).toContain("suits");
   });
 });
