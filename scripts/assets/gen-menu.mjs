@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each release checkpoint remains independently reproducible.
-const RELEASE = 3;
+const RELEASE = 4;
 const assets = [];
 const p = (d, token, extra = '') => `<path d="${d}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
 const circle = (x,y,r,token,extra='') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -158,6 +158,40 @@ function menuIcon(name) {
   }
 }
 if(RELEASE>=3)for(const name of ['new-game','continue','load','join','mode-coop','mode-versus','slot-empty','trash','copy','profile','credits','quit'])emit(`ui.icon-${name}`,'ui',menuIcon(name));
+
+function exhaust(frame,base=28) {
+  const tip=frame===1?12:6;
+  return g(p(`M${base} 54 Q${base-14} 51 ${tip} 64 Q${base-13} 78 ${base} 74Z`,'ascension')+
+    p(`M${base} 58 Q${base-9} 57 ${tip+7} 64 Q${base-8} 71 ${base} 70Z`,'energy','stroke="none"')+
+    p(`M${base} 61 L${base-9} 64 L${base} 67Z`,'cream','stroke="none"'),'','id="exhaust"');
+}
+function flightRocket(big,frame) {
+  // Preserve the project's building.rocket-* geometry and proportions. Rotate
+  // only the hull; repaint highlights in screen coordinates for top-left light.
+  const token=big?'crystal':'clay';
+  const fins=big?p('M91 123 Q48 151 41 224 Q60 222 86 203Z',token)+p('M165 123 Q208 151 215 224 Q196 222 170 203Z',token):
+    p('M91 157 Q62 171 59 231 L92 212Z',token)+p('M165 157 Q194 171 197 231 L164 212Z',token);
+  const hull=fins+p('M102 205 H154 L161 236 Q128 238 95 236Z','rock-dark')+
+    p(`M88 201 V${big?91:106} Q88 59 128 ${big?18:34} Q168 59 168 ${big?91:106} V201 Q128 220 88 201Z`,'cream')+
+    p(`M128 ${big?18:34} Q151 40 161 ${big?67:80} Q128 95 95 ${big?67:80} Q105 44 128 ${big?18:34}Z`,token)+
+    p('M157 104 V192 Q153 201 142 203',null,`stroke="${C('paper')}" stroke-width="11"`)+
+    circle(128,121,24,'rock-dark')+circle(128,121,17,'science')+
+    (big?p('M128 159 L144 180 L128 210 L112 180Z','crystal'):rect(115,178,26,24,9,'clay'));
+  return exhaust(frame)+g(g(hull,'translate(70 64) scale(0.4) rotate(90) translate(-128 -128)','stroke-width="7.5"')+
+    shine('M53 52 H64',2)+shine('M70 61 Q72 58 75 59',1.5),'','id="hull"')+
+    '<g id="engine-anchor" transform="translate(26.8 64)"/>';
+}
+function cargoShip(frame) {
+  const b=p('M40 47 L43 27 Q48 23 54 29 L66 42 M40 81 L43 101 Q48 105 54 99 L66 86','clay')+
+    rect(25,52,20,24,5,'rock-dark')+rect(36,34,67,60,25,'paper')+
+    shade('M39 76 Q69 93 101 76 V79 Q98 94 79 94 H60 Q40 94 39 76Z','paper')+
+    p('M91 42 Q116 45 117 64 Q116 83 91 86Z','cream')+
+    p('M101 49 Q111 52 112 63 Q109 67 100 67Z','science')+
+    rect(44,45,39,38,9,'sand')+p('M57 45 V83 M70 45 V83',null,`stroke="${C('iron')}" stroke-width="5"`)+
+    circle(88,72,3,'energy')+shine('M48 39 H77',2)+shine('M104 53 L107 56',1.5);
+  return exhaust(frame)+g(b,'','id="hull"')+'<g id="engine-anchor" transform="translate(26.8 64)"/>';
+}
+if(RELEASE>=4)for(const kind of ['rocket-small','rocket-big','cargo'])emit(`ship.${kind}`,'space',frame=>kind==='cargo'?cargoShip(frame):flightRocket(kind==='rocket-big',frame),128,128,{frames:2,fps:6,parts:['hull','exhaust','engine-anchor'],tags:['star-map','ship','nose-right','flight','loop']});
 
 write('art/manifest/menu.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Menu art: ${assets.length} ids generated (release ${RELEASE}).`);
