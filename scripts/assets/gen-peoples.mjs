@@ -34,7 +34,7 @@ function tail(p){
  if(p.tail==='quills')return group('tail',path('M29 103 Q12 92 19 82 L12 72 Q11 69 16 68 L24 65 L17 53 Q16 49 22 50 L34 53 L32 40 Q32 35 37 39 L48 46 L55 35 Q58 32 60 38 L63 51 Q85 63 82 91Z',C('iron'))+path('M21 72L36 76L29 61M29 88L43 86L39 72',C('savanna'),flat));
  if(p.tail==='fin')return group('tail',path('M46 107Q12 108 18 77Q26 63 30 75Q27 92 51 90Z',C(p.fur))+path('M22 78Q20 96 38 99','none',`stroke="${C(p.fur,.18)}" stroke-width="3"`));
  if(p.tail==='shell')return group('tail',ellipse(39,80,26,30,C(p.color))+path('M20 76Q26 53 45 56Q64 61 60 82Q55 104 36 96',C(p.color,-.18),flat)+line('M23 65Q43 61 58 76M18 77Q40 72 61 87M19 90Q38 84 57 98'));
- if(p.tail==='long')return group('tail',path('M49 106Q9 113 12 83Q11 75 19 74','none',`stroke="${C('ink')}" stroke-width="9"`)+path('M49 106Q9 113 12 83Q11 75 19 74','none',`stroke="${C(p.fur)}" stroke-width="6"`)+ellipse(19,72,5,7,C('cream')));
+ if(p.tail==='long')return group('tail',path('M49 100C17 125 5 106 12 87Q22 68 13 57','none',`stroke="${C('ink')}" stroke-width="5"`)+path('M49 100C17 125 5 106 12 87Q22 68 13 57','none',`stroke="${C(p.fur)}" stroke-width="2"`)+ellipse(12,54,5,7,C('tint-white'),'transform="rotate(-22 12 54)"'));
  if(p.tail==='taper')return group('tail',path('M47 103Q25 119 12 100Q37 100 37 82Z',C(p.fur)));
  if(p.tail==='striped')return group('tail',path('M44 109Q9 113 12 85Q14 71 24 77Q27 93 48 93Z',C('rock'))+path('M12 88L28 87L32 97L16 99M26 108L29 98L39 99L40 109Z',C('coal'),flat));
  if(p.tail==='spiral')return group('tail',circle(39,84,28,C('toxic'))+path('M16 83Q16 58 39 58Q62 61 64 83Q61 107 40 110Q61 99 54 78Q50 64 36 68Z',C('toxic',-.18),flat)+path('M36 102Q17 94 23 78Q30 65 44 73Q57 86 43 94Q34 98 32 87Q30 82 38 81', 'none',`stroke="${C('ink')}" stroke-width="3"`)+ellipse(29,65,7,3,C('toxic',.18),flat));
@@ -48,7 +48,7 @@ function ears(p){
   return ellipse(49,47,r,r,fur)+ellipse(79,42,r,r,fur)+circle(48,46,r/2,C('clay'),flat)+circle(78,41,r/2,C('clay'),flat);
  }
  if(p.ears==='gills')return [-1,1].map(sign=>`<g transform="translate(${sign===1?126:0} 0) scale(${sign===1?-1:1} 1)">${path('M45 61L27 42Q24 35 29 36L45 49L28 52Q20 51 23 58L42 64L29 70Q21 73 28 77L47 70Z',C('crystal'))}</g>`).join('');
- if(p.ears==='tall')return ellipse(49,42,7,14,fur,'transform="rotate(-16 49 42)"')+ellipse(76,39,7,14,fur,'transform="rotate(12 76 39)"')+ellipse(49,41,3,9,C('clay'),flat)+ellipse(76,38,3,9,C('clay'),flat);
+ if(p.ears==='tall')return ellipse(48,38,11,16,fur,'transform="rotate(-18 48 38)"')+ellipse(77,35,12,17,fur,'transform="rotate(12 77 35)"')+ellipse(48,37,7,11,C('cream'),flat)+ellipse(77,34,8,12,C('cream'),flat);
  if(p.ears==='tufts')return path('M41 59L37 36Q37 32 42 35L59 44L77 42L90 33Q94 31 92 38L88 61Z',fur);
  if(p.ears==='horn')return path('M69 51Q83 41 78 27L85 32L91 27Q101 48 85 60Z',C('iron'));
  if(p.ears==='antennae')return path('M60 52L53 34M82 51L89 30','none',`stroke="${C('ink')}" stroke-width="8"`)+path('M60 52L53 34M82 51L89 30','none',`stroke="${C(p.fur)}" stroke-width="5"`)+circle(53,32,6,C(p.fur))+circle(89,29,6,C(p.fur));
@@ -73,6 +73,7 @@ function face(p,expression,portrait){
  return result;
 }
 function head(p,expression='neutral',portrait=false){
+ if(bodyVariants[p.body]?.head)return group('head',bodyVariants[p.body].head(p,expression,portrait));
  const fur=C(p.fur);
  return group('head',ears(p)+path(p.animal==='hedgehog'?'M45 51Q59 37 77 47Q88 53 92 64L102 69Q106 77 97 82Q83 91 59 85Q37 80 40 63Z':'M43 49Q58 37 78 44Q96 48 96 65Q108 73 96 82Q77 94 55 84Q37 77 41 61Z',fur)+path('M44 65Q43 83 69 85Q87 88 97 78Q84 86 70 80Q51 80 49 65Z',C(p.fur,-.18),flat)+ellipse(57,52,8,4,C(p.fur,.18),flat)+face(p,expression,portrait));
 }
@@ -93,8 +94,32 @@ function clothing(p,portrait=false){
  if(p.gear==='crystal-miner')gear=path('M43 86Q64 95 83 84L83 92L66 102L44 94Z',C('science'))+path('M64 95L70 88L77 96L70 107Z',C('crystal'));
  return group('clothing',gear)+group('headwear','');
 }
+// Optional anatomy hooks keep the shared animation, palette, gear and part ids.
+// They replace only body geometry; the default rig remains byte-for-byte stable.
+function roundEyes(expression,positions,y,r=4.5){
+ return positions.map(x=>(expression==='happy'?path(`M${x-r} ${y}Q${x} ${y-6} ${x+r} ${y}`):circle(x,y,r,C('ink'),flat)+circle(x-1.5,y-1.5,1.3,C('cream'),flat))+(expression==='angry'?line(`M${x-r} ${y-r-3}L${x+r} ${y-r}`):'')).join('');
+}
+function heldTool(){
+ return group('tool',rect(89,65,5,33,2,C('iron'))+rect(82,64,22,10,3,C('rock'))+path('M85 65H99','none',`stroke="${C('rock',.18)}" stroke-width="2"`));
+}
+const bodyVariants={
+ hopper:{
+  bounce:({state,frame,bob})=>state==='walk'?[1,-6,-8,-2][frame]:bob,
+  head:(p,expression,portrait)=>ears(p)+ellipse(69,65,24,22,C(p.fur))+path('M48 70Q54 91 78 84L91 75Q78 85 61 77Z',C('savanna'),flat)+ellipse(60,52,8,4,C('sand',.18),flat)+ellipse(portrait?77:88,75,10,8,C('cream'),flat)+roundEyes(expression,portrait?[62,81]:[81],62)+ellipse(portrait?79:96,72,2.5,2,C('ink'),flat)+line(portrait?'M79 75V78M72 78Q79 84 86 78':'M91 77Q95 82 100 77')+line(portrait?'M67 74L56 71M67 78L56 80M90 74L100 71M90 78L101 80':'M88 74L102 70M89 78L104 79'),
+  body:p=>ellipse(59,88,19,18,C(p.fur))+ellipse(65,90,11,14,C('cream'),flat),
+  feet:(p,{state,frame})=>{
+   const lift=state==='walk'?[0,5,8,0][frame]:0;
+   const leg=(x,near)=>ellipse(x,94,near?10:9,12,C(near?'sand':'savanna'))+path(`M${x+2} 98L${x+17} 108L${x+3} 115`,'none',`stroke="${C('ink')}" stroke-width="8"`)+path(`M${x+2} 98L${x+17} 108L${x+3} 115`,'none',`stroke="${C(near?'sand':'savanna')}" stroke-width="5"`)+ellipse(x+14,115,18,3.5,C(near?'sand':'savanna'));
+   return `<g transform="translate(0 ${-lift})">${leg(40,false)}${leg(63,true)}</g>`;
+  },
+  arms:(p,{state,angle})=>group('arm',path('M69 87Q75 81 81 86M70 93Q77 87 84 91','none',`stroke="${C('ink')}" stroke-width="5"`)+path('M69 87Q75 81 81 86M70 93Q77 87 84 91','none',`stroke="${C(p.fur)}" stroke-width="2"`)+(state==='work'?heldTool():'')+ellipse(state==='work'?88:81,86,3.5,3,C('sand'))+ellipse(state==='work'?90:84,93,3.5,3,C('sand')),state==='work'?`rotate(${angle} 78 91)`:''),
+  portraitBody:p=>tail(p)+group('bust',group('body',bodyVariants.hopper.body(p))+group('feet',bodyVariants.hopper.feet(p,{state:'idle',frame:0}))),
+ },
+};
 function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
- const bob=state==='idle'?frame:state==='walk'?[0,-2,0,-2][frame]:frame?-1:1;
+ let bob=state==='idle'?frame:state==='walk'?[0,-2,0,-2][frame]:frame?-1:1;
+ const variant=bodyVariants[p.body];
+ if(variant?.bounce)bob=variant.bounce({state,frame,bob});
  const step=state==='walk'?[-5,0,5,0][frame]:0;
  const lift=state==='walk'&&frame===1?3:0;
  const frontLift=state==='walk'&&frame===3?3:0;
@@ -102,15 +127,19 @@ function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
  if(p.body==='flipper')feet=group('feet',ellipse(43-step,114.5-lift,16,4,C(p.fur))+ellipse(80+step,114.5-frontLift,16,4,C(p.fur)));
  if(p.body==='hopper')feet=group('feet',ellipse(49-step,114.5-lift,17,4,C(p.fur))+ellipse(78+step,114.5-frontLift,18,4,C(p.fur)));
  if(p.body==='slug')feet=group('feet',path(`M21 113Q32 ${state==='walk'?[103,105,107,104][frame]:103} 55 108Q82 107 99 112Q104 118.5 91 118.5H27Q18 118.5 21 113Z`,C(p.fur)));
- const body=group('body',ellipse(p.body==='slug'?76:61,93,['round','flipper'].includes(p.body)?27:21,22,C(p.fur))+path('M51 79Q70 76 76 93Q77 109 64 112Q45 113 44 98Z',C('cream'),flat));
+ if(variant?.feet)feet=group('feet',variant.feet(p,{state,frame,step}));
+ const body=group('body',variant?.body?variant.body(p):ellipse(p.body==='slug'?76:61,93,['round','flipper'].includes(p.body)?27:21,22,C(p.fur))+path('M51 79Q70 76 76 93Q77 109 64 112Q45 113 44 98Z',C('cream'),flat));
  const angle=state==='work'?(frame===0?-40:22):state==='walk'?-step*3:0;
  let arm=group('arm',ellipse(80,94,8,6,C(p.fur)),`rotate(${angle} 77 89)`);
  if(state==='work')arm=group('arm',ellipse(82,92,8,6,C(p.fur))+group('tool',rect(89,65,5,33,2,C('iron'))+rect(82,64,22,10,3,C('rock'))+path('M85 65H99', 'none',`stroke="${C('rock',.18)}" stroke-width="2"`)),`rotate(${angle} 78 91)`);
+ if(variant?.arms)arm=variant.arms(p,{state,frame,angle});
  const upper=tail(p)+body+head(p,expression,portrait)+clothing(p,portrait)+arm;
  return feet+group('pose',upper,`translate(0 ${bob})`);
 }
 function portrait(p,expression){
  // A 3/4 face with two eyes; bust expands toward the bottom, without a background tile.
+ const variant=bodyVariants[p.body];
+ if(variant?.portraitBody)return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${variant.portraitBody(p)}${head(p,expression,true)}${clothing(p,true)}${variant.arms(p,{state:'idle',frame:0,angle:0})}</g>`;
  return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${['quills','shell','spiral','wings','striped'].includes(p.tail)?tail(p):''}${group('bust',path('M35 113Q37 84 65 83Q92 80 102 113Q69 124 35 113Z',C(p.color)))}${head(p,expression,true)}${clothing(p,true)}</g>`;
 }
 function symbol(p){
@@ -118,7 +147,7 @@ function symbol(p){
  const shapes={
  axolotl:path('M38 73L24 53L44 61L41 38L58 55Q64 48 72 55L87 38L84 61L104 53L90 76Q66 96 38 73Z',C('crystal'))+path('M59 61Q49 53 46 63Q44 72 65 83Q87 67 78 60Q70 54 65 62Z',C('cream')),
  armadillo:path('M28 76Q26 37 64 33Q101 39 100 77L90 93H38Z',C('rock'))+line('M38 53Q64 43 91 54M32 68Q65 56 98 69M34 82Q65 71 94 82'),
- jerboa:ellipse(47,49,9,23,gold,'transform="rotate(-20 47 49)"')+ellipse(79,49,9,23,gold,'transform="rotate(20 79 49)"')+ellipse(45,90,21,9,C('clay'))+ellipse(83,90,21,9,C('clay')),
+ jerboa:path('M54 85Q20 109 24 70Q26 60 21 53','none',`stroke="${C('ink')}" stroke-width="4"`)+ellipse(20,51,4,6,C('tint-white'))+ellipse(59,76,16,17,gold)+ellipse(51,44,10,14,gold)+ellipse(77,40,11,15,gold)+ellipse(68,63,22,19,gold)+ellipse(76,70,11,7,C('cream'),flat)+circle(78,59,4,C('ink'),flat)+ellipse(87,67,2,2,C('ink'),flat)+line('M82 71L98 69M82 74L98 77')+path('M55 85L69 94L57 102','none',`stroke="${C('ink')}" stroke-width="7"`)+ellipse(74,102,19,4,C('clay')),
  owl:circle(64,66,31,C('science'))+circle(51,64,16,C('cream'))+circle(78,64,16,C('cream'))+circle(53,64,5,C('ink'),flat)+circle(76,64,5,C('ink'),flat)+path('M58 78L70 78L64 87Z',gold),
  otter:circle(64,65,32,C('ascension'))+circle(64,65,16,C('water'))+path('M29 62H45M83 62H99M61 31V47M61 83V99','none',`stroke="${C('cream')}" stroke-width="9"`),
  beetle:ellipse(64,77,25,27,C('iron'))+path('M54 53Q69 43 61 25L69 31L78 26Q88 46 73 59Z',C('iron'))+line('M64 62V101'),
