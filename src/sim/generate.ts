@@ -40,7 +40,7 @@ export type WorldSize = "small" | "normal" | "large";
 
 /** Every field is optional; a missing field (or "random") keeps the seed's choice. */
 export interface WorldOptions {
-  /** Free planets besides the start planet(s), WORLD_LIMITS.planets. Missing: SYSTEM.freePlanets drawn from the seed. */
+  /** Free planets besides the start planet(s), WORLD_LIMITS.planets (1-16). Missing: SYSTEM.freePlanets drawn from the seed. */
   planets?: number;
   /** Biome mix of the start planet(s). Missing: temperate; "random": one of PLANET_TYPE_IDS. */
   start?: (typeof PLANET_TYPE_IDS)[number] | "random";
@@ -51,7 +51,7 @@ export interface WorldOptions {
 }
 
 export const WORLD_LIMITS = {
-  planets: { min: 1, max: 8 },
+  planets: { min: 1, max: 16 },
   sizeMul: { small: 0.75, normal: 1, large: 1.25 } as Record<WorldSize, number>,
 } as const;
 
