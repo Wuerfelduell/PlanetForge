@@ -192,7 +192,7 @@ export class Ui {
         case "launched": {
           const to = this.planetName(e.to);
           if (e.playerId === this.playerId) this.toast(`${ROCKETS[e.rocket].icon} Rakete nach ${to} gestartet`);
-          else if (this.isMine(e.to)) this.toast(`⚠️ ${this.playerName(e.playerId)} greift ${to} an! Freie Einwohner verteidigen.`, "bad");
+          else if (this.isMine(e.to)) this.toast(`⚠️ ${this.playerName(e.playerId)} greift ${to} an! Alle Einwohner verteidigen, freie am besten.`, "bad");
           break;
         }
         case "landed":

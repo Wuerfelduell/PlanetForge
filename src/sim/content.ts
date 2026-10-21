@@ -856,6 +856,8 @@ export const RULES = {
   /** A fresh colony reveals this far around its landing site. */
   colonyRevealRadius: 1,
   battleDie: 6,
+  /** Workers pulled from their jobs to defend against an attack roll this much lower. */
+  workerDefensePenalty: 1,
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
   homeAdvantage: 1,
   maxTowerBonus: 2,
