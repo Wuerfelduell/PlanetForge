@@ -343,7 +343,8 @@ export const PEOPLES: Record<PeopleId, { name: string; icon: string }> = {
 };
 
 export const PLANET_TYPE_IDS = ["temperate", "arid", "ice", "ocean", "lava", "toxic"] as const;
-export type PlanetTypeId = (typeof PLANET_TYPE_IDS)[number];
+/** Asteroids are not drawn for free planets; they come in their own belt (SYSTEM.asteroids). */
+export type PlanetTypeId = (typeof PLANET_TYPE_IDS)[number] | "asteroid";
 
 export interface PlanetTypeDef {
   name: string;
@@ -358,6 +359,7 @@ export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
   ocean: { name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
   lava: { name: "Lava", biomeWeights: { mountains: 3, desert: 2, crystal: 1.5 } },
   toxic: { name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
+  asteroid: { name: "Asteroid", biomeWeights: { mountains: 3, crystal: 2 } },
 };
 
 /**
@@ -386,6 +388,8 @@ export const SYSTEM = {
   rarePerFreePlanet: { min: 2, max: 4 },
   rareDepositMax: 60,
   sunTypes: ["yellow", "red", "blue", "white"],
+  /** Small rocks between the orbits, reachable with the discovery "Weltraumbergbau". */
+  asteroids: { min: 2, max: 4, segments: 12, rare: { min: 1, max: 2 } },
 } as const;
 
 /** Simulation constants. */

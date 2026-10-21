@@ -191,6 +191,7 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
   if (from.id === to.id) return "Ziel ist der Startplanet";
   if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
+  if (to.type === "asteroid" && !asteroidsVisible(state.economies[player.economyId])) return "Dafür braucht es die Entdeckung Weltraumbergbau";
   if (blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
   const unlockLevel = rocketUnlockLevel(economy, rocket);
@@ -222,6 +223,11 @@ export function peopleOf(state: GameState, playerId: string): number {
 
 export function activePlayers(state: GameState): PlayerState[] {
   return state.players.filter((p) => !p.eliminated);
+}
+
+/** Asteroids show up on the map and can be flown to with the discovery "Weltraumbergbau". */
+export function asteroidsVisible(economy: EconomyState | undefined): boolean {
+  return hasUnlock(economy, "colonize-asteroid");
 }
 
 export const BLOCKADED = "Invasoren blockieren diesen Planeten";

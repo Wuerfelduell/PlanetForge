@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 10;
+  version: 11;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;

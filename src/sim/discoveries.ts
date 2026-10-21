@@ -23,6 +23,8 @@ export const SUPPORTED_STATS = [
   "sightRadius",
 ] as const;
 export type StatId = (typeof SUPPORTED_STATS)[number];
+/** Unlocked actions the simulation implements. */
+const SUPPORTED_ACTIONS = ["rocket-combat-early", "colonize-asteroid"] as const;
 
 interface Modifier {
   stat: string;
@@ -38,7 +40,7 @@ export const OFFERABLE: DiscoveryId[] = (Object.keys(DISCOVERIES) as DiscoveryId
   const def = defOf(id)!;
   const mods = def.modifiers ?? [];
   const actions = def.unlocks?.actions ?? [];
-  return mods.length > 0 && mods.every((m) => (SUPPORTED_STATS as readonly string[]).includes(m.stat)) && actions.every((a) => a === "rocket-combat-early");
+  return mods.length + actions.length > 0 && mods.every((m) => (SUPPORTED_STATS as readonly string[]).includes(m.stat)) && actions.every((a) => (SUPPORTED_ACTIONS as readonly string[]).includes(a));
 });
 
 /**

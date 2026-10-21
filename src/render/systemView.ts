@@ -1,5 +1,5 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { INVADERS, SUPERNOVA, ticksPerCycle, type GameState } from "../sim";
+import { asteroidsVisible, INVADERS, SUPERNOVA, ticksPerCycle, type GameState } from "../sim";
 import { artFrames, artTexture, hasArt } from "./art";
 
 const TAP_SLOP_PX = 10;
@@ -123,7 +123,7 @@ export class SystemView {
     const font = Math.max(11, Math.min(15, k * 0.28));
 
     // Orbits.
-    for (const p of state.planets) g.circle(this.cx, this.cy, p.orbit.radius * k).stroke({ width: 1.5, color: 0x8890b8, alpha: 0.25 });
+    for (const p of state.planets) if (p.type !== "asteroid") g.circle(this.cx, this.cy, p.orbit.radius * k).stroke({ width: 1.5, color: 0x8890b8, alpha: 0.25 });
 
     // Sun and its shield shell.
     const sunPx = SUN_SIZE * k * 2;
@@ -139,11 +139,15 @@ export class SystemView {
     this.hits.push({ id: "sun", x: this.cx, y: this.cy, r: sunPx * 0.6 });
     if (this.selected === "sun") front.circle(this.cx, this.cy, sunPx * 0.9).stroke({ width: 2.5, color: 0xffffff, alpha: 0.9 });
 
-    // Planets: size by segment count, a ring in the owner's color.
+    // Planets: size by segment count, a ring in the owner's color. Asteroids need "Weltraumbergbau".
+    const seeAsteroids = asteroidsVisible(me ? state.economies[me.economyId] : undefined);
     for (const p of state.planets) {
+      if (p.type === "asteroid" && !seeAsteroids && p.economyId === null) continue;
       const { x, y } = this.at(state, p.id);
       const r = Math.max(9, k * (0.16 + p.segments.length / 160));
-      const texture = art ? artTexture(`planet.planet-${p.type}`) : undefined;
+      const asteroid = p.type === "asteroid";
+      const rich = p.segments.some((s) => s.deposits.some((d) => d.resource === "aetherite"));
+      const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : artTexture(`planet.planet-${p.type}`);
       if (texture) this.sprite(texture, x, y, r * 2.3);
       else g.circle(x, y, r).fill(PLANET_COLORS[p.type] ?? 0x9aa0b5).stroke({ width: 2, color: 0x1a1d2e });
       const owners = state.players.filter((pl) => pl.economyId && pl.economyId === p.economyId);

@@ -202,3 +202,36 @@ describe("versus battles", () => {
     expect(applyCommand(g, P1.id, { type: "surrender" }, 0)).toEqual({ ok: false, error: "Nur im Gegeneinander-Modus" });
   });
 });
+
+describe("asteroids", () => {
+  const asteroid = (g: GameState) => g.planets.find((p) => p.type === "asteroid")!;
+
+  it("every system has a small belt between the planet orbits, the planets stay as they were", () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const g = createGame(`belt${seed}`, [P1], { now: 0 });
+      const rocks = g.planets.filter((p) => p.type === "asteroid");
+      expect(rocks.length).toBeGreaterThanOrEqual(2);
+      expect(rocks.length).toBeLessThanOrEqual(4);
+      for (const a of rocks) {
+        expect(a.segments).toHaveLength(12);
+        expect(Number.isInteger(a.orbit.radius)).toBe(false);
+        expect(a.segments.some((s) => s.deposits.some((d) => !d.byHand))).toBe(true);
+      }
+      const planets = g.planets.filter((p) => p.type !== "asteroid");
+      expect(planets.map((p) => p.orbit.radius)).toEqual(planets.map((_, i) => i + 1));
+    }
+  });
+
+  it("need the discovery Weltraumbergbau, then can be colonized", () => {
+    let g = prepare(createGame("rocks", [P1], { now: 0 }));
+    const home = homePlanet(g, P1.id)!;
+    const target = asteroid(g);
+    const launch: Command = { type: "launch", planetId: home.id, to: target.id, rocket: "colony", count: 1 };
+    expect(applyCommand(g, P1.id, launch, g.simTime)).toEqual({ ok: false, error: "Dafür braucht es die Entdeckung Weltraumbergbau" });
+    economyOfPlayer(g, P1.id)!.discoveries.push("space-mining");
+    g = exec(g, launch).state;
+    g = run(g, 2000).state;
+    expect(planetById(g, target.id)!.economyId).toBe(economyOfPlayer(g, P1.id)!.id);
+    expect(unitsOn(g, target.id).length).toBeGreaterThanOrEqual(1);
+  });
+});

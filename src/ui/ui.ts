@@ -16,6 +16,7 @@ import {
   SUPERNOVA,
   PLANET_TYPES,
   hasBuilding,
+  asteroidsVisible,
   rocketCapacity,
   idleUnits,
   launchBlocker,
@@ -457,6 +458,13 @@ export class Ui {
       .join("");
   }
 
+  /** Planets the player knows of: asteroids only with "Weltraumbergbau" (or once someone lives there). */
+  private visiblePlanets(state: GameState): PlanetState[] {
+    const me = state.players.find((p) => p.id === this.playerId);
+    const see = asteroidsVisible(me ? state.economies[me.economyId] : undefined);
+    return state.planets.filter((p) => p.type !== "asteroid" || see || p.economyId !== null);
+  }
+
   private planetStatus(state: GameState, to: PlanetState): string {
     const me = state.players.find((p) => p.id === this.playerId);
     return to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
@@ -465,7 +473,7 @@ export class Ui {
   /** Launch pad: one row per reachable planet with the rockets that can go there. */
   private renderLaunches(state: GameState, planet: PlanetState): string {
     const idle = idleUnits(state, planet, this.playerId).length;
-    const rows = state.planets
+    const rows = this.visiblePlanets(state)
       .filter((p) => p.id !== planet.id)
       .map((to) => `<div class="target"><span>🪐 ${to.name} <small>${this.planetStatus(state, to)} · ${to.segments.length} Felder</small></span>${this.launchButtons(state, planet, to)}</div>`)
       .join("");
@@ -491,13 +499,13 @@ export class Ui {
     }
     const planet = state.planets.find((p) => p.id === target);
     if (!planet) {
-      const list = state.planets
-        .map((p) => `<button class="chip" data-action="mapTarget" data-value="${p.id}">🪐 ${p.name} <small>${this.planetStatus(state, p)}</small></button>`)
+      const list = this.visiblePlanets(state)
+        .map((p) => `<button class="chip" data-action="mapTarget" data-value="${p.id}">${p.type === "asteroid" ? "🪨" : "🪐"} ${p.name} <small>${this.planetStatus(state, p)}</small></button>`)
         .join("");
       return `${html}<p class="muted">Tippe auf einen Planeten oder die Sonne.</p><div class="choices">${list}</div>`;
     }
     const people = Object.values(state.units).filter((u) => u.planetId === planet.id).length;
-    html += `<div class="target"><span>🪐 <b>${planet.name}</b> <small>${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder · ${this.planetStatus(state, planet)}${people ? ` · ${people} Einwohner` : ""}</small></span><button class="build" data-action="view" data-value="${planet.id}">🔍 Ansehen</button></div>`;
+    html += `<div class="target"><span>${planet.type === "asteroid" ? "🪨" : "🪐"} <b>${planet.name}</b> <small>${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder · ${this.planetStatus(state, planet)}${people ? ` · ${people} Einwohner` : ""}</small></span><button class="build" data-action="view" data-value="${planet.id}">🔍 Ansehen</button></div>`;
     const from = pads.filter((p) => p.id !== planet.id);
     if (from.length) {
       html += `<div class="targets">${from.map((p) => `<div class="target"><span>von ${p.name} <small>${idleUnits(state, p, this.playerId).length} frei</small></span>${this.launchButtons(state, p, planet, p.id)}</div>`).join("")}</div>`;
