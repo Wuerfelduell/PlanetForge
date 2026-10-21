@@ -93,13 +93,13 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {
         economy.resources.tools = Math.max(0, economy.resources.tools - (working * RULES.tools.perWorkerPerMinute * DT) / 60);
       }
-      const producer = !!def?.produces;
+      const made = def?.produces?.resource;
       const output = economy && !def?.crafts ? segmentOutput(planet, segment, working, economy) : {};
       const drawn = new Set<ResourceId>();
       for (const [resource, perSecond] of Object.entries(output) as [ResourceId, number][]) {
         let amount = perSecond * DT * rateFactor;
         // Producers (farm, pump, lab) create from nothing; everything else draws from the ground.
-        const deposit = producer ? undefined : segment.deposits.find((d) => d.resource === resource);
+        const deposit = resource === made ? undefined : segment.deposits.find((d) => d.resource === resource);
         if (deposit && !deposit.infinite) {
           amount = Math.min(amount, deposit.amount);
           deposit.amount -= amount;

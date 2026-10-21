@@ -145,12 +145,13 @@ const WATER_NEIGHBORS: readonly BiomeId[] = ["ocean", "glacier"];
 /** Whether a building that needs a deposit (mine, pump) has something to work on this segment. */
 export function hasWorkableDeposit(planet: PlanetState, segment: SegmentState, building: BuildingId): boolean {
   const def = BUILDINGS[building];
-  if (def.extracts) return segment.deposits.some((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
+  const extractable = !!def.extracts && segment.deposits.some((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
+  if (extractable) return true;
   if (def.produces) {
     const r = def.produces.resource;
     return segment.deposits.some((d) => d.resource === r) || neighbors(planet, segment.index).some((n) => WATER_NEIGHBORS.includes(n.biome));
   }
-  return true;
+  return !def.extracts;
 }
 
 /** The recipe a crafting segment runs: its chosen one, else the building's first. */
@@ -201,7 +202,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
     return `Muss neben ${def.needsNeighbor.map((b) => BIOMES[b].name).join(" oder ")} stehen`;
   }
   if (def.needsDeposit && !hasWorkableDeposit(planet, segment, building)) {
-    return def.extracts ? "Hier gibt es nichts abzubauen" : "Braucht Wasser im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher";
+    return !def.produces ? "Hier gibt es nichts abzubauen" : "Braucht Wasser im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher";
   }
   if (!canAfford(economy, building)) return NOT_AFFORDABLE;
   return null;
@@ -217,15 +218,18 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   if (def?.produces) {
     const r = def.produces.resource;
     out[r] = def.produces.perWorker * workers * mult * bonus(r);
-  } else if (def?.extracts) {
+  }
+  if (def?.extracts) {
     const available = segment.deposits.filter((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
     // Workers split evenly over everything the building can reach.
     for (const d of available) out[d.resource] = ((def.extracts.perWorker * workers * mult) / available.length) * bonus(d.resource);
-  } else if (def?.crafts) {
+  }
+  if (def?.crafts) {
     const recipe = RECIPES[segmentRecipe(segment)!];
     const rate = craftRate(planet, segment, workers, economy);
     for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) out[r] = v * rate * bonus(r);
-  } else if (!def && !segment.scorched) {
+  }
+  if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
     if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
   }
@@ -261,7 +265,7 @@ export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId,
   const def = ROCKETS[rocket];
   const distance = planetDistance(from, to);
   const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
-  const fuel = Math.ceil(modified(economy, "rocketFuel", distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
+  const fuel = Math.ceil(modified(economy, "rocketFuel", def.fuel.takeoff + distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
   cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
   return { distance, cost, seconds: Math.max(1, Math.round(distance * def.secondsPerDistance)) };
 }

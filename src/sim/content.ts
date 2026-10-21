@@ -9,6 +9,8 @@ export const RESOURCE_IDS = [
   "fiber", "copper", "planks", "tools", "wire", "cloth",
   // Foundry goods and deep deposits (stage 2 buildings).
   "bricks", "gold",
+  // Rocket fuel from the refinery (Seb: flying should be harder and need oil).
+  "fuel",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -38,6 +40,7 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   cloth: { name: "Stoff", icon: "🧶" },
   bricks: { name: "Ziegel", icon: "🧱" },
   gold: { name: "Gold", icon: "🪙" },
+  fuel: { name: "Treibstoff", icon: "⛽" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -172,7 +175,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "lab", "foundry", "launchpad", "watchtower", "battery"] as const;
+export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "refinery", "lab", "foundry", "launchpad", "watchtower", "battery"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -229,6 +232,7 @@ export interface AdjacencyDef {
 const NOISY: readonly AdjacencyDef[] = [
   { building: "mine", bonus: -0.25 },
   { building: "foundry", bonus: -0.25 },
+  { building: "refinery", bonus: -0.25 },
 ];
 
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
@@ -300,7 +304,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     unlockLevel: 1,
     allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "lava", "ash"],
     workers: 3,
-    extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "oil", "uranium", "aetherite"], perWorker: 0.6 },
+    extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite"], perWorker: 0.6 },
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
     needsDeposit: true,
     usesTools: true,
@@ -309,24 +313,37 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
         cost: { iron: 15, bricks: 10, tools: 5 },
         unlockLevel: 5,
         workers: 5,
-        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "oil", "uranium", "aetherite", "gold"], perWorker: 0.8 },
+        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold"], perWorker: 0.8 },
       },
     ],
   },
   pump: {
     name: "Pumpe",
     icon: "🪣",
-    description: "Pumpt Wasser. Braucht Wasser im Feld oder ein Nachbar-Meer oder einen Nachbar-Gletscher. +50 % je Nachbar-Meer, +30 % je Nachbar-Gletscher.",
+    description: "Pumpt Wasser und das Öl des Feldes. Braucht Wasser oder Öl im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher. +50 % je Nachbar-Meer, +30 % je Nachbar-Gletscher.",
     cost: { stone: 12 },
     unlockLevel: 1,
     allowedBiomes: LAND,
     workers: 1,
     produces: { resource: "water", perWorker: 0.5 },
+    extracts: { resources: ["oil"], perWorker: 0.4 },
     adjacency: [
       { biome: "ocean", bonus: 0.5 },
       { biome: "glacier", bonus: 0.3 },
     ],
     needsDeposit: true,
+  },
+  refinery: {
+    name: "Raffinerie",
+    icon: "🛢️",
+    description: "Macht aus Öl Treibstoff für Raketen. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore. Verbraucht Werkzeug.",
+    cost: { planks: 15, stone: 20, iron: 10 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["fuel"], speed: 1 },
+    adjacency: [{ building: "pump", bonus: 0.25 }],
+    usesTools: true,
   },
   workshop: {
     name: "Werkstatt",
@@ -400,7 +417,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
-export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal";
+export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel";
 
 export interface RecipeDef {
   name: string;
@@ -418,6 +435,7 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   cloth: { name: "Stoff", inputs: { fiber: 3 }, outputs: { cloth: 1 }, seconds: 8 },
   bricks: { name: "Ziegel", inputs: { clay: 2, coal: 1 }, outputs: { bricks: 2 }, seconds: 6 },
   charcoal: { name: "Holzkohle", inputs: { wood: 3 }, outputs: { coal: 1 }, seconds: 6 },
+  fuel: { name: "Treibstoff", inputs: { oil: 2 }, outputs: { fuel: 1 }, seconds: 8 },
 };
 
 /**
@@ -479,16 +497,17 @@ export interface RocketDef {
   cost: Partial<Record<ResourceId, number>>;
   unlockLevel: number;
   capacity: number;
-  /** Fuel = ceil(distance × (perDistance + perPassenger × passengers)). */
-  fuel: { resource: ResourceId; perDistance: number; perPassenger: number };
+  /** Fuel = ceil(takeoff + distance × (perDistance + perPassenger × passengers)). */
+  fuel: { resource: ResourceId; takeoff: number; perDistance: number; perPassenger: number };
   secondsPerDistance: number;
   maxRange: number;
   versusOnly?: boolean;
 }
 
 /**
- * Rockets (numbers after src/data/balance SPACE). Fuel is wood for now: oil is not on every
- * versus start planet and there is no trade yet, and nobody may be locked out of flying.
+ * Rockets (numbers after src/data/balance SPACE). Seb: flying should be harder and need oil, so
+ * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
+ * locked out of flying.
  */
 export const ROCKET_IDS = ["colony", "combat"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
@@ -497,20 +516,20 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
   colony: {
     name: "Siedlerrakete",
     icon: "🚀",
-    cost: { wood: 15, stone: 10 },
-    unlockLevel: 2,
+    cost: { planks: 20, iron: 15, tools: 5, cloth: 3 },
+    unlockLevel: 4,
     capacity: 3,
-    fuel: { resource: "wood", perDistance: 1.5, perPassenger: 1 },
+    fuel: { resource: "fuel", takeoff: 6, perDistance: 1.5, perPassenger: 1 },
     secondsPerDistance: 3,
     maxRange: 16,
   },
   combat: {
     name: "Kampfrakete",
     icon: "⚔️",
-    cost: { iron: 20, wood: 20, stone: 15 },
+    cost: { iron: 20, planks: 15, tools: 5 },
     unlockLevel: 3,
     capacity: 4,
-    fuel: { resource: "wood", perDistance: 2, perPassenger: 1.5 },
+    fuel: { resource: "fuel", takeoff: 6, perDistance: 1.5, perPassenger: 0.75 },
     secondsPerDistance: 4,
     maxRange: 16,
     versusOnly: true,
