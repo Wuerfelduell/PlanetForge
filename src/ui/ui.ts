@@ -359,7 +359,7 @@ export class Ui {
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
     return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button></div>
+      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button></div>
       <div class="row status">
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="Sternkarte">${this.mapOpen ? "🪐 Planet" : "🌌 Karte"}</button>

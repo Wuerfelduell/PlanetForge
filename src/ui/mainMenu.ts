@@ -21,6 +21,8 @@ export interface MainMenuActions {
   openOnline(): void;
   /** Called when the menu opens or closes, so the game can pause behind it. */
   onToggle(open: boolean): void;
+  /** Saves the running game now; returns what to tell the player. */
+  save(): { ok: boolean; text: string };
 }
 
 type Screen = "home" | "new" | "settings" | "credits";
@@ -65,6 +67,8 @@ export class MainMenu {
     if (this.isOpen) this.render();
   }
   private hasArt = false;
+  /** Result of the last save, shown on the home screen. */
+  private saved: { ok: boolean; text: string } | null = null;
 
   private icon(name: string, emoji: string): string {
     return this.hasArt ? `<img class="menu-icon" src="assets/sprites/ui/ui-icon-${name}.png" alt="">` : emoji;
@@ -81,6 +85,8 @@ export class MainMenu {
     this.error = "";
     this.root.hidden = false;
     document.body.classList.add("menu-open");
+    // Coming back to the menu from a game always saves it first.
+    if (!wasOpen && this.actions.current()) this.saved = this.actions.save();
     this.render();
     if (!wasOpen) this.actions.onToggle(true);
   }
@@ -113,12 +119,14 @@ export class MainMenu {
         <h1>PlanetForge</h1>
         <p>Baue deinen Planeten, rette dein Sonnensystem.</p>
       </header>
+      ${current && this.saved ? `<p class="menu-saved${this.saved.ok ? "" : " bad"}">${this.saved.ok ? "💾" : "⚠️"} ${escape(this.saved.text)}</p>` : ""}
       <nav class="menu-list">
         ${current ? `<button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiter</span><small>${escape(current)}</small></button>` : ""}
         <button class="menu-item${current ? "" : " primary"}" data-go="new"><span>${this.icon("new-game", "✨")} Neues Spiel</span><small>Allein oder mit Freunden</small></button>
         <button class="menu-item" data-go="online"><span>${this.icon("load", "☁️")} Online-Spiele</span><small>Spielstände, mit Code beitreten, einladen</small></button>
         <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
         <button class="menu-item" data-go="credits"><span>${this.icon("credits", "📜")} Credits</span></button>
+        ${current ? `<button class="menu-item" data-go="save"><span>💾 Speichern</span><small>Jetzt noch einmal sichern</small></button>` : ""}
       </nav>`;
   }
 
@@ -220,6 +228,10 @@ export class MainMenu {
     switch (go) {
       case "continue":
         this.close();
+        break;
+      case "save":
+        this.saved = this.actions.save();
+        this.render();
         break;
       case "online":
         this.actions.openOnline();

@@ -169,6 +169,13 @@ async function boot(): Promise<void> {
         else await online.create(options, slot);
       },
       openOnline: () => void online.open(),
+      save() {
+        const time = new Date().toLocaleTimeString("de", { hour: "2-digit", minute: "2-digit" });
+        if (session instanceof NetworkSession) return { ok: true, text: `Online-Spiel, wird laufend auf dem Server gespeichert (${time})` };
+        return saveGame(session.state)
+          ? { ok: true, text: `Gespeichert auf diesem Gerät um ${time}` }
+          : { ok: false, text: "Speichern nicht möglich: der Browser erlaubt keinen Speicher (privater Modus?)" };
+      },
       onToggle(open) {
         if (!(session instanceof LocalSession)) return;
         if (open) {

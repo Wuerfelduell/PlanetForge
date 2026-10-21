@@ -146,3 +146,7 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
 /* Leave the planet of the background picture visible below the card. */
 #main-menu.art { align-items: flex-start; }
 @media (min-aspect-ratio: 4/3) { #main-menu.art { align-items: center; justify-content: flex-start; padding-left: max(5vw, 16px); } }
+#main-menu .menu-saved { text-align: center; color: var(--good); font-size: 14px; }
+#main-menu .menu-saved.bad { color: var(--bad); }
+/* Easy to find in the top bar: back to the menu (saves the game). */
+#menu-button { outline: 2px solid var(--accent); outline-offset: -2px; font-weight: 700; }
