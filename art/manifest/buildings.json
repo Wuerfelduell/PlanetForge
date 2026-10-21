@@ -1,6 +1,477 @@
 {
   "assets": [
     {
+      "id": "building.park",
+      "category": "buildings",
+      "src": "art/src/buildings/park.svg",
+      "out": "public/assets/sprites/buildings/park.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "park",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.park.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/park-construction.svg",
+      "out": "public/assets/sprites/buildings/park-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "park",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.park.off",
+      "category": "buildings",
+      "src": "art/src/buildings/park-off.svg",
+      "out": "public/assets/sprites/buildings/park-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "park",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t1.svg",
+      "out": "public/assets/sprites/buildings/fishery-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "fishery",
+        "tier1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/fishery-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "fishery",
+        "tier1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t1-off.svg",
+      "out": "public/assets/sprites/buildings/fishery-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "fishery",
+        "tier1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t2.svg",
+      "out": "public/assets/sprites/buildings/fishery-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "fishery",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/fishery-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "fishery",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.fishery.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/fishery-t2-off.svg",
+      "out": "public/assets/sprites/buildings/fishery-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "fishery",
+        "tier2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.glassworks",
+      "category": "buildings",
+      "src": "art/src/buildings/glassworks.svg",
+      "out": "public/assets/sprites/buildings/glassworks.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "glassworks",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.glassworks.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/glassworks-construction.svg",
+      "out": "public/assets/sprites/buildings/glassworks-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "glassworks",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.glassworks.off",
+      "category": "buildings",
+      "src": "art/src/buildings/glassworks-off.svg",
+      "out": "public/assets/sprites/buildings/glassworks-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "glassworks",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.library",
+      "category": "buildings",
+      "src": "art/src/buildings/library.svg",
+      "out": "public/assets/sprites/buildings/library.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "library",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.library.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/library-construction.svg",
+      "out": "public/assets/sprites/buildings/library-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "library",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.library.off",
+      "category": "buildings",
+      "src": "art/src/buildings/library-off.svg",
+      "out": "public/assets/sprites/buildings/library-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "library",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.refinery",
+      "category": "buildings",
+      "src": "art/src/buildings/refinery.svg",
+      "out": "public/assets/sprites/buildings/refinery.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "refinery",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.refinery.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/refinery-construction.svg",
+      "out": "public/assets/sprites/buildings/refinery-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "refinery",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.refinery.off",
+      "category": "buildings",
+      "src": "art/src/buildings/refinery-off.svg",
+      "out": "public/assets/sprites/buildings/refinery-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "refinery",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.observatory",
+      "category": "buildings",
+      "src": "art/src/buildings/observatory.svg",
+      "out": "public/assets/sprites/buildings/observatory.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome"
+      ],
+      "tags": [
+        "observatory",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.observatory.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/observatory-construction.svg",
+      "out": "public/assets/sprites/buildings/observatory-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome",
+        "scaffolding"
+      ],
+      "tags": [
+        "observatory",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.observatory.off",
+      "category": "buildings",
+      "src": "art/src/buildings/observatory-off.svg",
+      "out": "public/assets/sprites/buildings/observatory-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "dome"
+      ],
+      "tags": [
+        "observatory",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.housing.t1",
       "category": "buildings",
       "src": "art/src/buildings/housing-t1.svg",
