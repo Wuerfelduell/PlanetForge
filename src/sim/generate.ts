@@ -365,6 +365,16 @@ export function upgradeState(state: unknown): GameState | null {
   if ((s.version as number) !== 11 && s.version !== 12) return null;
   // Resources added later (bricks, gold) are also filled into version 12 states.
   for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
+  // Ground deposits added later (Seb: a mine works under a forest too) appear on existing fields.
+  for (const planet of s.planets) {
+    for (const segment of planet.segments) {
+      if (segment.scorched) continue;
+      for (const d of BIOMES[segment.biome].deposits) {
+        if (d.byHand || segment.deposits.some((x) => x.resource === d.resource)) continue;
+        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: false });
+      }
+    }
+  }
   (s as { version: number }).version = 12;
   return s;
 }

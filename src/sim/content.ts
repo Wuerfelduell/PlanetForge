@@ -78,6 +78,9 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "wood", max: 80, byHand: true },
       { resource: "food", max: 25, byHand: true },
+      // Seb: under the trees there is ground too; a mine reaches it.
+      { resource: "stone", max: 30 },
+      { resource: "clay", max: 25 },
     ],
   },
   savanna: {
@@ -87,6 +90,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "food", max: 50, byHand: true },
       { resource: "fiber", max: 50, byHand: true },
+      { resource: "stone", max: 25 },
+      { resource: "clay", max: 30 },
     ],
   },
   mountains: {
@@ -136,6 +141,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "stone", max: 50, byHand: true },
       { resource: "water", max: 60, byHand: true },
+      { resource: "iron", max: 30 },
     ],
   },
   crystal: {
@@ -403,7 +409,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
-    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "lava", "ash"],
+    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
     workers: 3,
     extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite"], perWorker: 0.6 },
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
