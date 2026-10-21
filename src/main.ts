@@ -194,8 +194,12 @@ async function boot(): Promise<void> {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
     document.documentElement.style.setProperty("--hud-h", `${Math.round(hud.bottom)}px`);
     const panel = document.getElementById("panel")!.getBoundingClientRect();
-    view.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top);
-    map.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top, session.state);
+    // In landscape on phones the panel is a column on the right instead of a sheet at the bottom.
+    const side = panel.height > app.screen.height * 0.6 && panel.left > 0;
+    const bottom = side ? 0 : app.screen.height - panel.top;
+    const right = side ? app.screen.width - panel.left : 0;
+    view.layout(app.screen.width, app.screen.height, hud.bottom, bottom, right);
+    map.layout(app.screen.width - right, app.screen.height, hud.bottom, bottom, session.state);
   };
   const resize = new ResizeObserver(relayout);
   resize.observe(document.body);

@@ -288,8 +288,8 @@ ul.owned small { color: var(--muted); }
 .shield-ring { position: relative; width: min(180px, 50vw); aspect-ratio: 1; margin: 6px auto 0; }
 .shield-ring img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-/* Phones: a slimmer top bar so the planet keeps the room. */
-@media (max-width: 699px) {
+/* Phones (also in landscape): a slimmer top bar so the planet keeps the room. */
+@media (max-width: 699px), (orientation: landscape) and (max-height: 500px) {
   #hud { padding: calc(env(safe-area-inset-top) + 6px) 8px 4px; gap: 4px; }
   #hud .row { gap: 4px; }
   #hud .row.main, #hud .row.resources, #hud .row.extra { flex-wrap: nowrap; }
@@ -325,4 +325,25 @@ ul.owned small { color: var(--muted); }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
   #hud .cycle { flex: none; width: 18px; height: 18px; }
+}
+
+/* Phones in landscape: the panel becomes a column on the right, the planet keeps the left. */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root { --side-w: min(40vw, 420px); }
+  /* The top bar stays left of the panel column, so the column can use the full height. */
+  #hud { right: var(--side-w); }
+  body.panel-collapsed #hud { right: 0; }
+  #panel {
+    top: 0;
+    left: auto;
+    right: 0;
+    width: var(--side-w);
+    height: auto;
+    transform: none;
+    border-radius: 20px 0 0 20px;
+  }
+  body.panel-collapsed #panel { top: auto; height: var(--panel-h); }
+  #zoom-toggle { bottom: 10px; }
+  #music-control { right: calc(var(--side-w) + 12px); bottom: 10px; }
+  body.panel-collapsed #music-control { right: 12px; bottom: calc(var(--panel-h) + 10px); }
 }
