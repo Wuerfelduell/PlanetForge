@@ -185,10 +185,82 @@ function crystals(variant, stage) {
   return b;
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals };
+function glacierIce(x, height, width, lean = 0) {
+  const top = round(118.5 - height), left = round(x - width / 2), right = round(x + width / 2);
+  const bevel = Math.min(7, round(width / 4)), cap = Math.min(8, round(height / 3));
+  const b = path(`M ${left} 118.5 L ${left + lean} ${top + cap} L ${left + lean + bevel} ${top} H ${right + lean - bevel} L ${right + lean} ${top + cap} L ${right} 118.5 Z`, C('glacier'))
+    + path(`M ${x + lean + 2} ${top + cap + 3} L ${right + lean - 1} ${top + cap} L ${right - 1} 117 H ${x + 2} Z`, C('glacier', -.18), flat)
+    + path(`M ${left + lean} ${top + cap} L ${left + lean + bevel} ${top} H ${right + lean - bevel} L ${right + lean} ${top + cap} L ${x + lean + 2} ${top + cap + 3} Z`, C('snow'), 'stroke-width="1.5"')
+    + (height > 22 ? line(`M ${left + lean + 5} ${top + cap + 7} L ${left + 5} 111`, 'snow', 2) : '')
+    + (height > 45 ? line(`M ${x - 2} ${top + 22} L ${x + 2} ${top + 32} L ${x - 3} ${top + 39}`, 'science', 1.5) : '');
+  // Arithmetic on tenths can produce floating-point tails in SVG path strings.
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+function glacier(variant, stage) {
+  let b = ellipse(64, 114, 43, 4.5, C('water'), 'stroke-width="2"') + line('M 28 114 Q 36 111 44 113 M 90 115 H 99', 'snow', 1.5);
+  if (!stage) return b + glacierIce(60 + variant * 4, variant === 2 ? 8 : 12, variant === 2 ? 28 : 20, variant === 1 ? 2 : 0);
+  const scale = stage === 1 ? .3 : .7, spread = stage === 1 ? .5 : .8;
+  if (variant < 2) {
+    const blocks = variant === 0 ? [[60, 96, 43, 4], [89, 49, 24, -2]] : [[43, 62, 35, -7], [78, 90, 34, 6]];
+    for (const [x, h, w, lean] of blocks) b += glacierIce(round(64 + (x - 64) * spread), round(h * scale), round(w * spread), round(lean * scale));
+  } else {
+    const top = round(118.5 - 28 * scale), left = stage === 1 ? 43 : 30, right = stage === 1 ? 87 : 100, cap = stage === 1 ? 3 : 6;
+    b += path(`M ${left} ${top + cap} L ${left + 8} ${top} H ${right - 16} L ${right} ${top + cap + 1} L ${right - 4} 118.5 H ${left + 4} Z`, C('glacier'));
+    b += path(`M 67 ${top + cap + 4} L ${right - 1} ${top + cap + 1} L ${right - 4} 117 H 67 Z`, C('glacier', -.18), flat);
+    b += path(`M ${left} ${top + cap} L ${left + 8} ${top} H ${right - 16} L ${right} ${top + cap + 1} L 67 ${top + cap + 4} Z`, C('snow'), 'stroke-width="1.5"');
+    if (stage === 2) b += line(`M 63 ${top + 1} L 58 ${top + 5} L 67 ${top + 9} L 66 116`, 'science', 1.5);
+  }
+  return b;
+}
+
+function basaltGrowth(x, height, width) {
+  const top = round(118.5 - height), left = round(x - width / 2), right = round(x + width / 2), cap = Math.min(7, round(height / 4));
+  const b = path(`M ${left} ${top + cap} L ${x - 3} ${top} L ${right} ${top + cap} V 115 L ${x + 2} 118.5 L ${left} 115 Z`, C('coal'))
+    + path(`M ${x + 2} ${top + cap + 4} L ${right - 1} ${top + cap + 1} V 114 L ${x + 2} 117 Z`, C('coal', -.18), flat)
+    + path(`M ${left} ${top + cap} L ${x - 3} ${top} L ${right} ${top + cap} L ${x + 2} ${top + cap + 4} Z`, C('rock-dark'), 'stroke-width="1.5"')
+    + (height > 24 ? line(`M ${left + 4} ${top + cap + 8} V 111`, 'rock-dark', 1.5) : '');
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+function lava(variant, stage) {
+  if (!stage) return path('M 23 118.5 L 27 110 L 44 106 L 59 110 L 75 105 L 96 109 L 105 118.5 Z', C('coal'))
+    + path('M 45 108 L 52 114 L 47 118 M 75 107 L 69 113 L 79 117', 'none', `stroke="${C('lava', -.18)}" stroke-width="2"`)
+    + path(`M ${30 + variant * 4} 111 L ${39 + variant * 4} 108 L ${44 + variant * 4} 111`, 'none', `stroke="${C('rock-dark')}" stroke-width="2"`);
+  const s = stage === 1 ? .3 : .7, spread = stage === 1 ? .5 : .8;
+  if (variant === 0) {
+    const top = round(118.5 - 58.5 * s), half = stage === 1 ? 24 : 36, lip = stage === 1 ? 10 : 17;
+    return path(`M ${64 - half} 118.5 L ${64 - lip} ${top + 4} Q 64 ${top - 4} ${64 + lip} ${top + 4} L ${64 + half} 118.5 Z`, C('coal'))
+      + path(`M 71 ${top + 5} L ${64 + half - 2} 117 H 64 Q 79 105 71 ${top + 5} Z`, C('coal', -.18), flat)
+      + ellipse(64, top + 3, lip, stage === 1 ? 3 : 5, C('rock-dark'), 'stroke-width="2"')
+      + line(`M ${64 - lip + 4} ${top + 2} H 67`, 'rock', 1.5)
+      + (stage === 2 ? line(`M 67 ${top + 13} L 64 ${top + 22} L 70 ${top + 29} L 66 114`, 'lava', 2) : '');
+  }
+  const columns = variant === 1 ? [[43, 44, 32], [79, 64, 34]] : [[42, 58, 28], [85, 75, 27], [62, 95, 30]];
+  return columns.map(([x, h, w]) => basaltGrowth(round(64 + (x - 64) * spread), round(h * s), round(w * spread))).join('');
+}
+
+function ash(variant, stage) {
+  if (!stage) return ellipse(64, 115, 42, 3.5, C('ash'), 'stroke-width="2"')
+    + path(`M ${39 + variant * 4} 114 L ${44 + variant * 4} 110 L ${48 + variant * 4} 115 Z`, C('coal'), 'stroke-width="1.5"')
+    + ellipse(82, 115, 5, 1.5, C('ash', -.18), flat) + line('M 52 115 H 68', 'ash', 1.5);
+  // The renewable resource is the ash deposit: even the dead-tree variant
+  // rebuilds a mound, with a charred splinter identifying its former prop.
+  const height = round([54, 46, 68][variant] * (stage === 1 ? .3 : .7)), top = round(118.5 - height);
+  const left = stage === 1 ? 39 : 26, right = stage === 1 ? 91 : 104;
+  let b = path(`M ${left} 118.5 Q ${left - 5} 115 ${left + 3} 110 Q 51 ${top + 9} 58 ${top + 2} Q 67 ${top - 3} 76 ${top + 6} Q 87 111 ${right} 115 Q ${right + 3} 118.5 ${right - 5} 118.5 Z`, C('ash'));
+  b += path(`M 69 ${top + 2} Q 78 ${top + 6} 81 ${Math.min(116, top + 17)} Q 91 112 ${right - 1} 116 L ${right - 5} 117 H 55 Q 75 111 69 ${top + 2} Z`, C('ash', -.18), flat);
+  b += path(`M ${stage === 1 ? 50 : 42} 110 Q 51 ${top + 11} 59 ${top + 7}`, 'none', `stroke="${C('ash', .18)}" stroke-width="2"`);
+  if (variant === 0) b += ellipse(65, top + 5, stage === 1 ? 6 : 11, stage === 1 ? 2 : 3.5, C('coal'), 'stroke-width="1.5"');
+  if (variant === 1) b += path(`M 59 ${Math.min(117, top + 14)} L 60 ${top + 3} L 64 ${top - 4} L 69 ${top + 4} L 67 ${Math.min(117, top + 17)} Z`, C('coal'), 'stroke-width="2"') + line(`M 64 ${top + 4} V ${top + 12}`, 'rock-dark', 1.5);
+  if (variant === 2) b += ellipse(62, top + 14, stage === 1 ? 3 : 5, stage === 1 ? 2 : 3.5, C('coal'), 'stroke-width="1.5"');
+  b += ellipse(82, 114, 3, 1.5, C('coal'), flat);
+  if (stage === 2) b += line('M 34 116 V 110', 'moss', 1.5, 'opacity="0.7"') + path('M 34 111 Q 25 111 26 105 Q 33 104 34 111 Q 36 104 42 106 Q 42 112 34 111 Z', C('moss'), 'stroke-width="1.5" opacity="0.7"');
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier, lava, ash };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
-if (fullProps.length !== 24) throw new Error(`Expected 24 full props, found ${fullProps.length}`);
+if (fullProps.length !== Object.keys(renderers).length * 3) throw new Error(`Expected three full props per renderer, found ${fullProps.length}`);
 const assets = [];
 for (const [biome, render] of Object.entries(renderers)) {
   const props = fullProps.filter(a => a.id.split('.')[1] === biome);

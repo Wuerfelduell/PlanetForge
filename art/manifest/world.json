@@ -769,6 +769,294 @@
       "phase": "P0"
     },
     {
+      "id": "biome.glacier.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.wedge.12",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-12.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.wedge.16",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-16.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-16"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.wedge.24",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-24.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-24"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.wedge.32",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-32.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.forest.prop.tree-a",
       "category": "biomes",
       "src": "art/src/biomes/forest-tree-a.svg",
@@ -1316,6 +1604,213 @@
       ],
       "tags": [
         "crystal",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-a",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-a.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-b",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-b.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.basalt",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-basalt.svg",
+      "out": "public/assets/sprites/biomes/lava-basalt.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-cone",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-cone.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-cone.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.dead-tree",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-dead-tree.svg",
+      "out": "public/assets/sprites/biomes/ash-dead-tree.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-rock",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-rock.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-rock.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
         "prop"
       ],
       "phase": "P0"

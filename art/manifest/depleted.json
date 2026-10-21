@@ -1727,6 +1727,654 @@
         "regrow-2"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.vent-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-vent-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/lava-vent-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.basalt.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-basalt-depleted.svg",
+      "out": "public/assets/sprites/biomes/lava-basalt-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.basalt.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-basalt-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/lava-basalt-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.prop.basalt.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-basalt-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/lava-basalt-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "lava",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-cone.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-cone-depleted.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-cone-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-cone.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-cone-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-cone-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-cone.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-cone-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-cone-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.dead-tree.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-dead-tree-depleted.svg",
+      "out": "public/assets/sprites/biomes/ash-dead-tree-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.dead-tree.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-dead-tree-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ash-dead-tree-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.dead-tree.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-dead-tree-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ash-dead-tree-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-rock.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-rock-depleted.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-rock-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-rock.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-rock-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-rock-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.prop.ash-rock.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-ash-rock-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ash-ash-rock-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ash",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
     }
   ]
 }
