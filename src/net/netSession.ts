@@ -1,6 +1,7 @@
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 import type { GameSession, SendResult } from "../client/session";
 import { advanceWithEvents, applyCommand, type Command, type GameEvent, type GameState } from "../sim";
+import type { ChatMessage } from "./chat";
 import { ensureSignedIn, supabase } from "./supabase";
 
 /** How often the lead client tells the server someone is online, so the live game clock keeps running. */
@@ -30,6 +31,8 @@ export class NetworkSession implements GameSession {
   online: string[] = [];
   onError: (message: string) => void = () => {};
   onPresence: (online: string[]) => void = () => {};
+  /** A chat message arrived on the room (see chat.ts). */
+  onChat: (message: ChatMessage) => void = () => {};
   /** The host removed this player; the session is closed and must not be rendered any more. */
   onRemoved: () => void = () => {};
 
@@ -70,6 +73,7 @@ export class NetworkSession implements GameSession {
       if (msg.by !== session.playerId) session.pendingEvents.push(...(msg.events ?? []));
       session.accept(msg.version, msg.state);
     });
+    channel.on("broadcast", { event: "chat" }, ({ payload }) => session.onChat(payload as ChatMessage));
     channel.on("presence", { event: "sync" }, () => {
       session.online = Object.keys(channel.presenceState()).sort();
       session.onPresence(session.online);

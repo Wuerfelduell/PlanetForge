@@ -14,7 +14,7 @@ export type Difficulty = "cozy" | "normal" | "hard";
  * or diffed as is.
  */
 export interface GameState {
-  version: 9;
+  version: 10;
   seed: string;
   /** Current PRNG state; the simulation draws all randomness from here. */
   rng: number;
@@ -30,7 +30,12 @@ export interface GameState {
   players: PlayerState[];
   /** One economy per side: exactly one in coop, one per player in versus. */
   economies: Record<string, EconomyState>;
-  sun: { type: string };
+  sun: SunState;
+  /** Invaders (coop, design 13.1): at most one fleet at a time. */
+  invasion: Invasion | null;
+  /** Tick the next wave sets out, null until the team reaches INVADERS.minLevel. */
+  nextWaveTick: number | null;
+  wave: number;
   planets: PlanetState[];
   /** Every inhabitant is a unit with an owner; the owner alone moves it. */
   units: Record<string, UnitState>;
@@ -52,6 +57,9 @@ export interface GameState {
 
 export interface GameSettings {
   mode: GameMode;
+  /** coop goal: endless, or save the system from the supernova (design 13.4). */
+  goal: "endless" | "supernova";
+  invaders: "off" | "normal" | "strong";
   /** Seconds per planet cycle (food upkeep, ascension). */
   cycleSeconds: number;
   difficulty: Difficulty;
@@ -81,7 +89,30 @@ export interface PlayerState {
   offersDraw: boolean;
 }
 
-export type GameResult = { winner: string } | { draw: true };
+export type GameResult = { winner: string } | { draw: true } | { supernova: true };
+
+export interface SunState {
+  type: string;
+  /** Tick of the supernova (goal "supernova"), pushed back by working shield segments; null = never. */
+  novaTick: number | null;
+  shield: { built: boolean; hp: number }[];
+  /** The shield was completed once: the coop goal is reached, play goes on. */
+  saved: boolean;
+}
+
+export interface Invasion {
+  wave: number;
+  /** A planet id, or "sun" for the shield. */
+  target: string;
+  arrivalTick: number;
+  /** The team has seen it coming (long-range sight, or shortly before arrival). */
+  spotted: boolean;
+  sieging: boolean;
+  siegeEndTick: number;
+  hp: number;
+  maxHp: number;
+  bonus: number;
+}
 
 export interface Flight {
   id: string;
@@ -93,6 +124,8 @@ export interface Flight {
   units: UnitState[];
   launchTick: number;
   arrivalTick: number;
+  /** Flight to the sun to build or repair a shield segment (to = "sun"). */
+  shield?: { segment: number; repair: boolean };
 }
 
 export interface EconomyState {
@@ -180,6 +213,8 @@ export type Command =
   | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
   /** Votes for one option of the economy's open discovery offer (alone: picks it). */
   | { type: "voteDiscovery"; discovery: string }
+  /** Sends SUPERNOVA.crew idle inhabitants from a launch pad to build (or repair) a shield segment. */
+  | { type: "shieldFlight"; planetId: string; segment: number; repair: boolean }
   /** versus: gives up; the player's units vanish and their planets become free ruins. */
   | { type: "surrender" }
   /** versus: agree to (or withdraw from) a draw; it happens once every remaining player agrees. */
@@ -214,6 +249,14 @@ export type GameEvent =
   | { type: "drawOffer"; playerId: string; offer: boolean }
   | { type: "drawSuggested" }
   | { type: "discovered"; economyId: string; discovery: string }
+  | { type: "invasionSpotted"; target: string; wave: number; arrivalTick: number }
+  | { type: "invasionArrived"; target: string; wave: number }
+  | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null }
+  | { type: "invasionDefeated"; target: string; wave: number }
+  | { type: "invasionLeft"; target: string; wave: number; plundered: boolean }
+  | { type: "sunWarning"; cyclesLeft: number }
+  | { type: "shieldBuilt"; segment: number; repaired: boolean }
+  | { type: "shieldComplete" }
   | { type: "discoveryVote"; playerId: string; discovery: string }
   | { type: "gameOver"; result: GameResult };
 

@@ -1,4 +1,4 @@
-import { addPlayer, advance, applyCommand, createGame, type Command, type GameEvent, type GameState } from "../../../src/sim/index";
+import { addPlayer, advance, applyCommand, createGame, type Command, type GameEvent, type GameOptions, type GameState } from "../../../src/sim/index";
 
 /**
  * Server-side rules around the simulation, kept free of I/O so they can be unit tested.
@@ -31,6 +31,8 @@ export interface StepInput {
   playerId: string;
   request: Request;
   now: number;
+  /** What the host picked when creating the save; used when the state is (re)created. */
+  options?: Pick<GameOptions, "goal" | "invaders" | "maxPlayers">;
 }
 
 export type StepResult =
@@ -61,7 +63,7 @@ export function step(input: StepInput): StepResult {
   let state = input.state?.version === SIM_VERSION ? input.state : null;
   let clockAt = input.clockAt;
   if (!state) {
-    state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { now: 0 });
+    state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { ...input.options, now: 0 });
     clockAt = now;
   }
   const simNow = nextSimTime(state, clockAt, now);

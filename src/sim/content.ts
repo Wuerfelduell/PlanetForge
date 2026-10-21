@@ -118,7 +118,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab", "launchpad", "watchtower"] as const;
+export const BUILDING_IDS = ["housing", "farm", "mine", "pump", "lab", "launchpad", "watchtower", "battery"] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
 export interface BuildingDef {
@@ -140,6 +140,8 @@ export interface BuildingDef {
   adjacency?: { biome: BiomeId; bonus: number };
   /** Added to the defenders' battle rolls on this planet (counted up to RULES.maxTowerBonus). */
   defense?: number;
+  /** Damage to a besieging invader ship per worker and siege round. */
+  battery?: number;
 }
 
 const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"];
@@ -217,7 +219,64 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 0,
     defense: 1,
   },
+  battery: {
+    name: "Abwehrbatterie",
+    icon: "🎯",
+    description: "Schießt auf Invasoren über dem Planeten: je Arbeiter 1 Treffer pro Umlauf.",
+    cost: { iron: 25, stone: 25, wood: 10 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 2,
+    battery: 1,
+  },
 };
+
+/**
+ * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and
+ * time; each one targets a planet (or the sun shield, 13.3), besieges it for a few cycles and
+ * leaves when its mothership is destroyed or after plundering.
+ */
+export const INVADERS = {
+  /** Team ascension level from which waves come. */
+  minLevel: 5,
+  firstWaveCycles: [8, 16] as const,
+  waveIntervalCycles: [20, 35] as const,
+  approachCycles: 6,
+  /** Without long-range sight the team sees the fleet only this many cycles before arrival. */
+  blindWarningCycles: 1,
+  siegeCycles: 5,
+  shipHp: { base: 6, perWave: 4 },
+  /** Escorts add to their roll: floor(wave × escortBonusPerWave). */
+  escortBonusPerWave: 0.5,
+  strongMul: 1.5,
+  /** Share of every stockpile taken when the fleet leaves undefeated. */
+  plunderShare: 0.2,
+  reward: { science: 30, iron: 15 },
+  /** Never kills the last inhabitants of a planet, so it can grow again. */
+  minSurvivors: 2,
+  /** Damage to a shield segment per siege round. */
+  shieldDamage: 25,
+  /** Chance that a wave goes for the shield once a segment stands (design 13.3). */
+  shieldTargetChance: 0.5,
+} as const;
+
+/** The sun turns supernova (design 13.2); a complete shield prevents it. */
+export const SUPERNOVA = {
+  /** Supernova cycle drawn from the seed. */
+  cycles: [400, 600] as const,
+  firstHintCycle: 200,
+  hintEveryCycles: 50,
+  segments: 12,
+  /** Each standing segment pushes the supernova back. */
+  delayPerSegmentCycles: 20,
+  /** A segment below this hp does not count. */
+  workingHp: 50,
+  segmentCost: { iron: 40, stone: 60, aetherite: 10, science: 20 } as Partial<Record<ResourceId, number>>,
+  repairCost: { iron: 15, stone: 15 } as Partial<Record<ResourceId, number>>,
+  /** Inhabitants who fly to the sun to build or repair, then come back. */
+  crew: 2,
+  unlockLevel: 4,
+} as const;
 
 export interface RocketDef {
   name: string;

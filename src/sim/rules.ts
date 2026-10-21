@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, RESOURCE_IDS, ROCKETS, RULES, type BuildingId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
@@ -191,6 +191,7 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
   if (from.id === to.id) return "Ziel ist der Startplanet";
   if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
+  if (blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
   const unlockLevel = rocketUnlockLevel(economy, rocket);
   if (economy.ascension.level < unlockLevel) return `Ab Aufstiegsstufe ${unlockLevel}`;
@@ -221,6 +222,45 @@ export function peopleOf(state: GameState, playerId: string): number {
 
 export function activePlayers(state: GameState): PlayerState[] {
   return state.players.filter((p) => !p.eliminated);
+}
+
+export const BLOCKADED = "Invasoren blockieren diesen Planeten";
+
+/** Invaders besieging a planet block all launches from it. */
+export function blockaded(state: GameState, planet: PlanetState): boolean {
+  return !!state.invasion?.sieging && state.invasion.target === planet.id;
+}
+
+/** The sun as a flight target: the center of the star map. */
+export const SUN_POSITION = { orbit: { radius: 0, angle: 0 } } as PlanetState;
+
+/** Why a shield flight (build or repair a segment) cannot start, or null. */
+export function shieldBlocker(state: GameState, playerId: string, from: PlanetState, segment: number, repair: boolean): string | null {
+  const player = playerById(state, playerId);
+  if (!player) return "Unbekannter Spieler";
+  if (state.sun.novaTick === null) return "In diesem Spiel droht keine Supernova";
+  if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
+  if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
+  if (blockaded(state, from)) return BLOCKADED;
+  const economy = state.economies[player.economyId]!;
+  if (economy.ascension.level < SUPERNOVA.unlockLevel) return `Ab Aufstiegsstufe ${SUPERNOVA.unlockLevel}`;
+  const s = state.sun.shield[segment];
+  if (!Number.isInteger(segment) || !s) return "Unbekanntes Hüllensegment";
+  if (repair ? !s.built || s.hp >= 100 : s.built) return repair ? "Da gibt es nichts zu reparieren" : "Dieses Segment steht schon";
+  if (state.flights.some((f) => f.shield?.segment === segment)) return "Dorthin ist schon eine Mannschaft unterwegs";
+  if (idleUnits(state, from, playerId).length < SUPERNOVA.crew) return `Es braucht ${SUPERNOVA.crew} freie Einwohner`;
+  if (!canPay(economy, shieldFlightPlan(from, repair, economy).cost)) return NOT_AFFORDABLE;
+  return null;
+}
+
+/** Cost (segment or repair plus fuel) and flight time of a shield flight. */
+export function shieldFlightPlan(from: PlanetState, repair: boolean, economy?: EconomyState): FlightPlan {
+  const plan = flightPlan(from, SUN_POSITION, "colony", SUPERNOVA.crew, economy);
+  const cost = { ...plan.cost };
+  for (const [r, v] of Object.entries(repair ? SUPERNOVA.repairCost : SUPERNOVA.segmentCost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) + (v as number);
+  // The colony rocket price is not paid twice: the crew rides a shuttle.
+  for (const [r, v] of Object.entries(ROCKETS.colony.cost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) - (v as number);
+  return { ...plan, cost };
 }
 
 export function rocketCapacity(economy: EconomyState | undefined, rocket: RocketId): number {

@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "./supabase";
 
 /** Every game a player is in (own or joined) takes one of these slots. */
@@ -49,8 +50,14 @@ export function firstFreeSlot(saves: SaveSlot[]): number | null {
   return null;
 }
 
-export async function createSave(slot: number, name: string, displayName: string): Promise<string> {
-  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName });
+/** Coop options the host picks for a new game (design 13.4); the server keeps them with the save. */
+export interface SaveOptions {
+  goal: "endless" | "supernova";
+  invaders: "off" | "normal" | "strong";
+}
+
+export async function createSave(slot: number, name: string, displayName: string, options: SaveOptions): Promise<string> {
+  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName, p_max_players: 4, p_options: options });
   if (error) fail(error.message);
   return data.id;
 }
@@ -71,9 +78,12 @@ export async function removeSave(gameId: string): Promise<void> {
   if (error) fail(error.message);
 }
 
+/** Inside the app the page runs on localhost, so invites point to the published web version. */
+const PUBLIC_URL = "https://wuerfelduell.github.io/PlanetForge/";
+
 /** Link that opens the game and pre-fills the join code. */
 export function inviteLink(code: string): string {
-  const url = new URL(window.location.href);
+  const url = new URL(Capacitor.isNativePlatform() ? PUBLIC_URL : window.location.href);
   url.search = "";
   url.hash = "";
   url.searchParams.set("join", code);

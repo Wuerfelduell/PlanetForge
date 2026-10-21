@@ -1,6 +1,7 @@
 import { RESOURCE_IDS, RULES } from "./content";
 import { Rng } from "./rng";
 import { modified } from "./discoveries";
+import { landAtSun } from "./invaders";
 import { activePlayers, countsFor, flightPlan, peopleOf, planetById, planetDefense, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
 import type { Flight, GameEvent, GameState, PlanetState, PlayerState, UnitState } from "./state";
 import type { RocketId } from "./content";
@@ -34,6 +35,10 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
   if (due.length === 0) return;
   state.flights = state.flights.filter((f) => f.arrivalTick > state.tick);
   for (const flight of due) {
+    if (flight.to === "sun") {
+      landAtSun(state, flight, events);
+      continue;
+    }
     const planet = planetById(state, flight.to)!;
     const player = playerById(state, flight.owner);
     // A removed player's rocket simply vanishes with its passengers.

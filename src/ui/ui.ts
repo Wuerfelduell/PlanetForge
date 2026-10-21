@@ -10,6 +10,11 @@ import {
   discoveryDescription,
   discoveryName,
   flightPlan,
+  novaTickNow,
+  shieldBlocker,
+  shieldFlightPlan,
+  SUPERNOVA,
+  INVADERS,
   rocketCapacity,
   idleUnits,
   launchBlocker,
@@ -41,7 +46,12 @@ export interface UiActions {
   /** Shows another planet on the wheel. */
   showPlanet(planetId: string): void;
   setSpeed(speed: number): void;
-  newGame(): void;
+  newGame(options: NewGameOptions): void;
+}
+
+export interface NewGameOptions {
+  goal: "endless" | "supernova";
+  invaders: "off" | "normal" | "strong";
 }
 
 /** HTML overlay: resource bar on top, segment panel at the bottom, toasts. */
@@ -68,6 +78,8 @@ export class Ui {
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
   private showDiscoveries = false;
+  /** New-game panel open, with the choices so far. */
+  private newGameChoice: NewGameOptions | null = null;
 
   private dicon(id: string): string {
     return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="">` : "📜";
@@ -167,8 +179,33 @@ export class Ui {
         case "discoveryVote":
           if (e.playerId !== this.playerId) this.toast(`🗳️ ${this.playerName(e.playerId)} stimmt für ${discoveryName(e.discovery)}`);
           break;
+        case "invasionSpotted":
+          this.toast(`👾 Invasoren (Welle ${e.wave}) im Anflug auf ${this.targetName(e.target)}! Ankunft in ${this.secondsUntil(e.arrivalTick)} s`, "bad");
+          break;
+        case "invasionArrived":
+          this.toast(`👾 Invasoren belagern ${this.targetName(e.target)}. Freie Einwohner und Abwehrbatterien kämpfen.`, "bad");
+          break;
+        case "siege":
+          if (e.destroyed) this.toast(`💥 Invasoren zerstören ${BUILDINGS[e.destroyed].name} auf ${this.targetName(e.target)}`, "bad");
+          else if (e.shieldSegment !== null) this.toast(`💥 Hüllensegment ${e.shieldSegment + 1} beschädigt`, "bad");
+          break;
+        case "invasionDefeated":
+          this.toast(`🏆 Mutterschiff über ${this.targetName(e.target)} zerstört! Wrackteile geborgen.`, "good");
+          break;
+        case "invasionLeft":
+          this.toast(e.plundered ? `👾 Die Invasoren ziehen ab und nehmen ein Fünftel der Vorräte mit` : "👾 Die Invasoren ziehen von der Hülle ab", "warn");
+          break;
+        case "sunWarning":
+          this.toast(`☀️ Die Sonne wird unruhig: Supernova in etwa ${e.cyclesLeft} Umläufen. Baut die Schutzhülle!`, "bad");
+          break;
+        case "shieldBuilt":
+          this.toast(e.repaired ? `🛠️ Hüllensegment ${e.segment + 1} repariert` : `🌞 Hüllensegment ${e.segment + 1} steht`, "good");
+          break;
+        case "shieldComplete":
+          this.toast("🌞 Die Schutzhülle ist geschlossen. Das System ist gerettet!", "good");
+          break;
         case "gameOver":
-          this.toast("draw" in e.result ? "🤝 Unentschieden" : e.result.winner === this.playerId ? "🏆 Du hast gewonnen!" : `🏁 ${this.playerName(e.result.winner)} hat gewonnen`, "good");
+          this.toast(this.resultText(e.result), "supernova" in e.result ? "bad" : "good");
           break;
         case "cycle":
         case "built":
@@ -234,6 +271,11 @@ export class Ui {
       case "vote":
         this.actions.send({ type: "voteDiscovery", discovery: value! });
         break;
+      case "shield": {
+        const [segment, repair] = value!.split(":");
+        this.actions.send({ type: "shieldFlight", planetId: this.planetId, segment: Number(segment), repair: repair === "1" });
+        break;
+      }
       case "openLobby":
         this.actions.send({ type: "openLobby" });
         break;
@@ -249,7 +291,24 @@ export class Ui {
         this.lastHud = "";
         break;
       case "new":
-        if (confirm("Neues Spiel starten? Der aktuelle Planet geht verloren.")) this.actions.newGame();
+        this.newGameChoice = this.newGameChoice ? null : { goal: "supernova", invaders: "normal" };
+        this.showDiscoveries = false;
+        this.lastPanel = "";
+        break;
+      case "newGoal":
+      case "newInvaders":
+        if (!this.newGameChoice) break;
+        if (action === "newGoal") this.newGameChoice.goal = value as NewGameOptions["goal"];
+        else this.newGameChoice.invaders = value as NewGameOptions["invaders"];
+        this.lastPanel = "";
+        break;
+      case "startNew":
+        if (this.newGameChoice && confirm("Neues Spiel starten? Der aktuelle Planet geht verloren.")) {
+          const choice = this.newGameChoice;
+          this.newGameChoice = null;
+          this.lastPanel = "";
+          this.actions.newGame(choice);
+        }
         break;
     }
   }
@@ -308,10 +367,23 @@ export class Ui {
     }
     const result = state.result;
     if (result) {
-      const text = "draw" in result ? "🤝 Unentschieden" : result.winner === this.playerId ? "🏆 Gewonnen!" : `🏁 ${this.playerName(result.winner)} hat gewonnen`;
-      chips.push(`<span class="chip">${text}</span>`);
+      chips.push(`<span class="chip">${this.resultText(result)}</span>`);
     } else if (state.players.find((p) => p.id === this.playerId)?.eliminated) {
       chips.push(`<span class="chip bad">💀 Ausgeschieden</span>`);
+    }
+    const inv = state.invasion;
+    if (inv && (inv.spotted || inv.sieging)) {
+      chips.push(
+        inv.sieging
+          ? `<span class="chip bad">👾 Belagerung: ${this.targetName(inv.target)} <small>Schiff ${inv.hp}/${inv.maxHp}</small></span>`
+          : `<span class="chip bad">👾 Welle ${inv.wave} → ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
+      );
+    }
+    const nova = novaTickNow(state);
+    const built = state.sun.shield.filter((x) => x.built).length;
+    if (state.sun.saved) chips.push(`<span class="chip">🌞 Hülle geschlossen</span>`);
+    else if (nova !== null && (built > 0 || cycleOf(state) >= SUPERNOVA.firstHintCycle)) {
+      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}">☀️ Hülle ${built}/${SUPERNOVA.segments} <small>Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen</small></span>`);
     }
     for (const f of state.flights) {
       const seconds = Math.ceil((f.arrivalTick - state.tick) / RULES.ticksPerSecond);
@@ -319,6 +391,20 @@ export class Ui {
       else if (this.isMine(f.to)) chips.push(`<span class="chip bad">⚠️ ${this.planetName(f.to)} <small>${f.units.length} Angreifer ${seconds} s</small></span>`);
     }
     return chips.length ? `<div class="row status">${chips.join("")}</div>` : "";
+  }
+
+  private resultText(result: NonNullable<GameState["result"]>): string {
+    if ("draw" in result) return "🤝 Unentschieden";
+    if ("supernova" in result) return "💥 Die Sonne ist zur Supernova geworden. Spiel verloren.";
+    return result.winner === this.playerId ? "🏆 Du hast gewonnen!" : `🏁 ${this.playerName(result.winner)} hat gewonnen`;
+  }
+
+  private targetName(target: string): string {
+    return target === "sun" ? "die Schutzhülle" : this.planetName(target);
+  }
+
+  private secondsUntil(tick: number): number {
+    return Math.max(0, Math.ceil((tick - (this.state?.tick ?? 0)) / RULES.ticksPerSecond));
   }
 
   private ownPlanets(): PlanetState[] {
@@ -364,7 +450,27 @@ export class Ui {
         return `<div class="target"><span>🪐 ${to.name} <small>${status} · ${to.segments.length} Felder</small></span>${buttons}</div>`;
       })
       .join("");
-    return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>`;
+    return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>${this.renderShield(state, planet)}`;
+  }
+
+  /** Shield around the sun (coop goal "supernova"): build missing segments, repair damaged ones. */
+  private renderShield(state: GameState, planet: PlanetState): string {
+    if (state.sun.novaTick === null || state.sun.saved) return "";
+    const economy = economyOf(state, planet)!;
+    const build = shieldFlightPlan(planet, false, economy);
+    const segments = state.sun.shield
+      .map((seg, i) => {
+        const repair = seg.built && seg.hp < 100;
+        if (seg.built && !repair) return `<button class="seg ok" disabled title="Segment ${i + 1}: ${seg.hp} %">🌞</button>`;
+        const blocker = shieldBlocker(state, this.playerId, planet, i, repair);
+        return `<button class="seg${repair ? " hurt" : ""}" data-action="shield" data-value="${i}:${repair ? 1 : 0}" ${blocker ? `disabled title="${blocker}"` : `title="${repair ? `Reparieren (${seg.hp} %)` : "Bauen"}"`}>${repair ? "🛠️" : "＋"}</button>`;
+      })
+      .join("");
+    const cost = Object.entries(build.cost)
+      .filter(([, v]) => (v as number) > 0)
+      .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+      .join(" ");
+    return `<h2>☀️ Schutzhülle</h2><p class="muted">Jedes Segment verschiebt die Supernova, alle ${SUPERNOVA.segments} verhindern sie. Bau: ${SUPERNOVA.crew} Einwohner fliegen hin (${build.seconds} s) und kommen zurück. Kosten: ${cost}</p><div class="shield">${segments}</div>`;
   }
 
   /** Discovery choice (coop: everyone votes, most votes win, a tie decides nothing) and what the team owns. */
@@ -396,7 +502,17 @@ export class Ui {
     return html;
   }
 
+  /** Settings for a new local game: the coop goal and how hard the invaders hit. */
+  private renderNewGame(choice: NewGameOptions): string {
+    const option = (action: string, value: string, label: string, on: boolean) => `<button class="build${on ? " on" : ""}" data-action="${action}" data-value="${value}">${label}</button>`;
+    return `<h2>✨ Neues Spiel <button class="speed" data-action="new" title="Zurück">✕</button></h2>
+      <p class="muted">Ziel</p><div class="choices">${option("newGoal", "supernova", "☀️ Supernova abwenden", choice.goal === "supernova")}${option("newGoal", "endless", "♾️ Endlos", choice.goal === "endless")}</div>
+      <p class="muted">Invasoren (ab Aufstiegsstufe ${INVADERS.minLevel})</p><div class="choices">${option("newInvaders", "off", "Aus", choice.invaders === "off")}${option("newInvaders", "normal", "Normal", choice.invaders === "normal")}${option("newInvaders", "strong", "Stark", choice.invaders === "strong")}</div>
+      <button class="wide primary" data-action="startNew">Los geht's</button>`;
+  }
+
   private renderPanel(state: GameState, planet: PlanetState): string {
+    if (this.newGameChoice) return this.renderNewGame(this.newGameChoice);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
     const economy = economyOf(state, planet);
     if (!economy) return "";
