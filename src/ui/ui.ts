@@ -415,7 +415,7 @@ export class Ui {
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button>`;
+    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
     const rest = `
       <div class="row status main">
         ${planetChip}

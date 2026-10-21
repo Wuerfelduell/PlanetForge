@@ -14,11 +14,13 @@ export function loadGame(): GameState | null {
   }
 }
 
-export function saveGame(state: GameState): void {
+/** False when the browser refused (private mode, full storage); the game still runs. */
+export function saveGame(state: GameState): boolean {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
+    return true;
   } catch {
-    // Private mode or full storage: the game still runs, it just does not persist.
+    return false;
   }
 }
 
