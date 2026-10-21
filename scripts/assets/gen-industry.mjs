@@ -78,10 +78,44 @@ function plastics(){
     glint('M44 215H48M68 212H72')+base();
 }
 
+function electronicsWorkshop(){
+  return rect(46,127,164,99,'paper',24)+shade('M196 145V205Q196 215 180 215H66','paper',9)+
+    path('M37 134Q29 127 40 117L91 76Q100 68 111 73L215 115Q227 119 220 133Z','clay')+
+    glint('M52 119L97 83')+
+    line('M153 103V68M193 116V68','rock-dark',6)+rect(134,30,77,48,'sand',13)+
+    line('M147 64L161 50','rock-dark',7)+path('M155 50L170 36Q175 33 179 39L185 45L168 61Z','clay','stroke-width="4"')+
+    line('M182 45Q196 46 196 57Q196 67 186 66','coal',4)+
+    rect(65,149,81,55,'rock-dark',12)+rect(73,157,65,39,active('leaf'),8)+
+    group('circuit-glow',line('M81 176H92L98 169H113M105 186V180H126M121 164V173H129',active('uranium'),4)+
+      rect(96,168,20,16,active('toxic'),5,'stroke-width="3"'))+
+    glint('M79 163H88')+rect(159,170,34,54,'iron',11)+circle(183,195,3,'sand','stroke="none"')+
+    pipe('M56 174H40V209Q40 217 51 217H75','coal',5)+
+    line('M83 210Q87 221 109 215Q129 209 144 221','deep-water',5)+
+    rect(119,213,16,10,'rock',4,'stroke-width="3"')+base();
+}
+
+function chipFactory(){
+  const pins=[100,118,136,154].map(x=>line(`M${x} 49V61M${x} 99V111`,'rock',7)).join('')+
+    [70,88].map(y=>line(`M81 ${y}H93M161 ${y}H173`,'rock',7)).join('');
+  return rect(45,124,168,102,'snow',24)+shade('M198 144V208H64','snow',10)+
+    rect(164,89,39,40,'paper',10)+rect(159,84,49,13,'snow',6)+
+    line('M173 101H194M173 111H194','rock-dark',4)+
+    rect(38,115,181,24,'paper',11)+glint('M51 122H92')+
+    pins+rect(91,58,72,45,'deep-water',10)+rect(105,68,43,24,'science',7)+
+    path('M115 78H129V89H139','none',`stroke="${paint('snow')}" stroke-width="4"`)+
+    rect(59,150,140,66,'deep-water',13)+rect(66,156,126,53,'science',9)+
+    path('M69 177L89 156H111L69 198ZM146 209L190 165V186L167 209Z','snow','stroke="none" opacity="0.5"')+
+    line('M104 155V210M151 155V210','snow',6)+
+    rect(113,175,29,49,'snow',9)+rect(120,183,15,25,'deep-water',5,'stroke-width="3"')+
+    line('M75 222H93M163 222H183','rock',4)+base();
+}
+
 const buildings = [
   {id:'biogas-plant',draw:biogas,parts:['gas-flame']},
   {id:'power-gas',draw:gasPower,parts:['steam']},
   {id:'plastics',draw:plastics},
+  {id:'electronics.t1',draw:electronicsWorkshop,parts:['circuit-glow']},
+  {id:'electronics.t2',draw:chipFactory},
 ];
 const assets=[];
 function emit(id,category,stem,body,size,anchor,parts=[],tags=[]){
