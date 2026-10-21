@@ -185,10 +185,38 @@ function crystals(variant, stage) {
   return b;
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals };
+function glacierIce(x, height, width, lean = 0) {
+  const top = round(118.5 - height), left = round(x - width / 2), right = round(x + width / 2);
+  const bevel = Math.min(7, round(width / 4)), cap = Math.min(8, round(height / 3));
+  const b = path(`M ${left} 118.5 L ${left + lean} ${top + cap} L ${left + lean + bevel} ${top} H ${right + lean - bevel} L ${right + lean} ${top + cap} L ${right} 118.5 Z`, C('glacier'))
+    + path(`M ${x + lean + 2} ${top + cap + 3} L ${right + lean - 1} ${top + cap} L ${right - 1} 117 H ${x + 2} Z`, C('glacier', -.18), flat)
+    + path(`M ${left + lean} ${top + cap} L ${left + lean + bevel} ${top} H ${right + lean - bevel} L ${right + lean} ${top + cap} L ${x + lean + 2} ${top + cap + 3} Z`, C('snow'), 'stroke-width="1.5"')
+    + (height > 22 ? line(`M ${left + lean + 5} ${top + cap + 7} L ${left + 5} 111`, 'snow', 2) : '')
+    + (height > 45 ? line(`M ${x - 2} ${top + 22} L ${x + 2} ${top + 32} L ${x - 3} ${top + 39}`, 'science', 1.5) : '');
+  // Arithmetic on tenths can produce floating-point tails in SVG path strings.
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+function glacier(variant, stage) {
+  let b = ellipse(64, 114, 43, 4.5, C('water'), 'stroke-width="2"') + line('M 28 114 Q 36 111 44 113 M 90 115 H 99', 'snow', 1.5);
+  if (!stage) return b + glacierIce(60 + variant * 4, variant === 2 ? 8 : 12, variant === 2 ? 28 : 20, variant === 1 ? 2 : 0);
+  const scale = stage === 1 ? .3 : .7, spread = stage === 1 ? .5 : .8;
+  if (variant < 2) {
+    const blocks = variant === 0 ? [[60, 96, 43, 4], [89, 49, 24, -2]] : [[43, 62, 35, -7], [78, 90, 34, 6]];
+    for (const [x, h, w, lean] of blocks) b += glacierIce(round(64 + (x - 64) * spread), round(h * scale), round(w * spread), round(lean * scale));
+  } else {
+    const top = round(118.5 - 28 * scale), left = stage === 1 ? 43 : 30, right = stage === 1 ? 87 : 100, cap = stage === 1 ? 3 : 6;
+    b += path(`M ${left} ${top + cap} L ${left + 8} ${top} H ${right - 16} L ${right} ${top + cap + 1} L ${right - 4} 118.5 H ${left + 4} Z`, C('glacier'));
+    b += path(`M 67 ${top + cap + 4} L ${right - 1} ${top + cap + 1} L ${right - 4} 117 H 67 Z`, C('glacier', -.18), flat);
+    b += path(`M ${left} ${top + cap} L ${left + 8} ${top} H ${right - 16} L ${right} ${top + cap + 1} L 67 ${top + cap + 4} Z`, C('snow'), 'stroke-width="1.5"');
+    if (stage === 2) b += line(`M 63 ${top + 1} L 58 ${top + 5} L 67 ${top + 9} L 66 116`, 'science', 1.5);
+  }
+  return b;
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
-if (fullProps.length !== 24) throw new Error(`Expected 24 full props, found ${fullProps.length}`);
+if (fullProps.length !== Object.keys(renderers).length * 3) throw new Error(`Expected three full props per renderer, found ${fullProps.length}`);
 const assets = [];
 for (const [biome, render] of Object.entries(renderers)) {
   const props = fullProps.filter(a => a.id.split('.')[1] === biome);

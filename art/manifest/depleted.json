@@ -1727,6 +1727,222 @@
         "regrow-2"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.serac-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-serac-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-serac-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-depleted.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.prop.ice-floe.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-ice-floe-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/glacier-ice-floe-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "glacier",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
     }
   ]
 }
