@@ -2270,10 +2270,10 @@
       "phase": "P1"
     },
     {
-      "id": "building.watchtower",
+      "id": "building.watchtower.t1",
       "category": "buildings",
-      "src": "art/src/buildings/watchtower.svg",
-      "out": "public/assets/sprites/buildings/watchtower.png",
+      "src": "art/src/buildings/watchtower-t1.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t1.png",
       "viewBox": [
         256,
         256
@@ -2288,15 +2288,16 @@
       ],
       "tags": [
         "watchtower",
+        "tier1",
         "idle"
       ],
       "phase": "P1"
     },
     {
-      "id": "building.watchtower.construction",
+      "id": "building.watchtower.t1.construction",
       "category": "buildings",
-      "src": "art/src/buildings/watchtower-construction.svg",
-      "out": "public/assets/sprites/buildings/watchtower-construction.png",
+      "src": "art/src/buildings/watchtower-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t1-construction.png",
       "viewBox": [
         256,
         256
@@ -2312,15 +2313,16 @@
       ],
       "tags": [
         "watchtower",
+        "tier1",
         "construction"
       ],
       "phase": "P1"
     },
     {
-      "id": "building.watchtower.off",
+      "id": "building.watchtower.t1.off",
       "category": "buildings",
-      "src": "art/src/buildings/watchtower-off.svg",
-      "out": "public/assets/sprites/buildings/watchtower-off.png",
+      "src": "art/src/buildings/watchtower-t1-off.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t1-off.png",
       "viewBox": [
         256,
         256
@@ -2335,6 +2337,80 @@
       ],
       "tags": [
         "watchtower",
+        "tier1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-t2.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "tier2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner",
+        "scaffolding"
+      ],
+      "tags": [
+        "watchtower",
+        "tier2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.watchtower.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/watchtower-t2-off.svg",
+      "out": "public/assets/sprites/buildings/watchtower-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "banner"
+      ],
+      "tags": [
+        "watchtower",
+        "tier2",
         "off"
       ],
       "phase": "P1"

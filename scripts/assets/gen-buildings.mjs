@@ -93,6 +93,22 @@ function farm(tier){
 }
 
 function foundry(tier){
+  if(tier===2)return foot(
+    rect(58,46,32,83,'rock-dark',8)+rect(51,39,46,16,'rock',6)+
+    rect(170,32,32,97,'rock-dark',8)+rect(163,25,46,16,'rock',6)+anchor('smoke-anchor',186,25)+
+    line('M64 64H84M64 87H84M176 52H196M176 76H196','iron',4)+glint('M66 57V72M178 43V58')+
+    rect(42,119,172,107,'rock',17)+path('M35 121L52 98H201L221 121Z','rock-dark')+glint('M54 107H91')+
+    rect(54,161,65,64,'coal',10)+line('M64 171H101M64 185H91','rock-dark',5)+
+    [60,89,118].map(x=>windowPane(x,130,21,19)).join('')+
+    line('M181 115V131L196 139','ink',12)+line('M181 115V131L196 139','iron',6)+
+    path('M152 141L202 154L190 180Q174 185 152 164Z','rock-dark')+
+    ellipse(177,147,26,8,'coal','transform="rotate(16 177 147)"')+glint('M159 156L169 169')+
+    path('M103 200H177L165 225H115Z','coal')+
+    group('glow',ellipse(177,146,19,4,state==='idle'?'ascension':'coal','transform="rotate(16 177 146)"')+
+      path('M158 145Q142 153 147 164L140 199H132L137 164Q132 151 150 143Z',state==='idle'?'ascension':'coal','stroke="none"')+
+      ellipse(140,201,30,7,state==='idle'?'ascension':'coal')+
+      line('M151 150Q139 157 142 165L137 197',lit(),4)+line('M119 200H153',lit(),4))+
+    line('M122 215H157','rock-dark',4));
   const y=tier===1?82:51;
   return foot(rect(158,y,37,130,'iron',9)+rect(150,y-8,53,19,'clay',7)+anchor('smoke-anchor',177,y-8)+
     (tier===2?rect(57,100,34,119,'rock',9)+rect(51,93,46,17,'rock-dark',7):'')+
@@ -177,7 +193,20 @@ function market(){return foot(post(49,117,109)+post(196,117,109)+
   path('M30 137H225V145Q210 162 195 145Q180 162 164 145Q148 162 132 145Q115 162 99 145Q82 162 65 145Q47 161 30 145Z','cream')+
   [74,117,160].map(x=>sprout(x,192)).join('')+rect(37,195,180,30,'sand',9)+line('M61 208H100M154 208H195','iron',3));}
 
-function watchtower(){return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
+function watchtower(tier){
+  if(tier===2)return foot(
+    group('banner',line('M128 87V25','rock-dark',5)+path('M131 28Q152 18 176 32L165 46L177 60Q154 47 131 60Z','danger')+circle(149,40,5,'sand'))+
+    path('M65 223L73 119H183L191 223Z','rock')+
+    path('M167 123H183L191 223H170Z','rock-dark','stroke="none"')+
+    line('M75 151H179M70 185H185M100 127V151M144 151V184M96 185V218','paper',4)+
+    path('M61 119V80Q61 76 66 76H84V94H105V76H150V94H171V76H189Q195 76 195 82V119Z','paper')+
+    rect(57,115,142,14,'rock-dark',6)+glint('M67 82H77M111 82H137')+
+    path('M109 225V195Q109 176 128 176Q147 176 147 195V225Z','coal')+
+    line('M122 190V222M134 190V222M113 204H143','iron',4)+
+    rect(93,142,39,21,'coal',8)+
+    path('M119 144L172 132Q180 132 182 143L183 151L125 165Z','rock-dark')+
+    ellipse(179,143,8,14,'coal','transform="rotate(-12 179 143)"')+glint('M131 146L162 139'));
+  return foot(path('M71 225L90 116H165L184 225H160L144 141H111L94 225Z','iron')+
   line('M101 171L157 208M153 171L99 208','sand',6)+rect(64,95,128,51,'paper',12)+
   [83,117,151].map(x=>rect(x,110,22,25,'coal',7)).join('')+roof(76,'leaf')+
   group('banner',path('M142 145H177V188L160 201L142 188Z','danger')+circle(160,163,7,'sand'))+glint('M79 102H113'));}
@@ -309,7 +338,7 @@ const buildings = [
   {id:'storage',tiers:2,phase:'P1',draw:storage},
   {id:'market',tiers:1,phase:'P1',parts:['flag'],draw:market},
   {id:'rocket-big',tiers:1,phase:'P1',parts:['flame-anchor'],draw:(t,v)=>rocket(t,v,true)},
-  {id:'watchtower',tiers:1,phase:'P1',parts:['banner'],draw:watchtower},
+  {id:'watchtower',tiers:2,phase:'P1',parts:['banner'],draw:watchtower},
   {id:'ruin',tiers:1,phase:'P1',draw:ruin},
   {id:'escape-pod',tiers:1,phase:'P1',variants:['closed','open'],draw:escapePod},
   {id:'power-atomic',tiers:1,phase:'P2',parts:['glow'],draw:atomic},
