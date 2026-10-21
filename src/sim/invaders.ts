@@ -29,7 +29,7 @@ function cycles(state: GameState, n: number): number {
 function invadersCycle(state: GameState, economy: EconomyState, events: GameEvent[]): void {
   const rng = new Rng(state.rng);
   try {
-    if (!state.invasion && state.nextWaveTick === null && economy.ascension.level >= INVADERS.minLevel) {
+    if (!state.invasion && state.nextWaveTick === null && economy.ascension.level >= INVADERS.minLevel && Object.keys(state.units).length >= INVADERS.minPeople) {
       state.nextWaveTick = state.tick + cycles(state, rng.int(...INVADERS.firstWaveCycles));
     }
     if (!state.invasion && state.nextWaveTick !== null && state.tick >= state.nextWaveTick) {
@@ -60,7 +60,9 @@ function spawn(state: GameState, economy: EconomyState, rng: Rng, events: GameEv
   state.wave += 1;
   state.nextWaveTick = null;
   const strength = state.settings.invaders === "strong" ? INVADERS.strongMul : 1;
-  const maxHp = Math.round((INVADERS.shipHp.base + INVADERS.shipHp.perWave * state.wave) * strength);
+  const { perPeople, min, max } = INVADERS.hpTeamScale;
+  const team = Math.min(max, Math.max(min, Object.keys(state.units).length / perPeople));
+  const maxHp = Math.round((INVADERS.shipHp.base + INVADERS.shipHp.perWave * state.wave) * strength * team);
   const inv: Invasion = {
     wave: state.wave,
     target,
