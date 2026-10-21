@@ -31,6 +31,8 @@ export interface DepositDef<R extends string = string> {
   byHand?: boolean;
   /** Hidden until this discovery is owned (e.g. aetherite, uranium). */
   requires?: string;
+  /** Deep deposit: only a tier-2 mine reaches it (gold). */
+  tier?: 2;
 }
 
 export interface BiomeDef<R extends string = string> {
@@ -68,8 +70,10 @@ export interface BuildingTier<R extends string = string, B extends string = stri
   produces?: { resource: R; perWorker: number };
   /** Pulls resources out of the segment's deposits. */
   extracts?: { resources: readonly R[]; perWorker: number; fromNeighbors?: readonly B[] };
-  /** Runs foundry recipes; speed multiplier on recipe time. */
+  /** Runs recipes whose `building` is this one; speed multiplier on recipe time. */
   crafts?: { speed: number };
+  /** Workers use up tools (RULES.tools); without tools the building runs slower. */
+  usesTools?: boolean;
   /** Flat output without workers (wind, solar), per second. */
   flat?: Cost<R>;
   /** Consumed per second while running. Energy is a balance, not a stock. */
@@ -84,12 +88,17 @@ export interface BuildingTier<R extends string = string, B extends string = stri
   ascension?: number;
   /** Added to battle rolls on this planet. */
   defense?: number;
+  /** Forester: neighbor forests regrow faster, and empty forest neighbors are replanted. */
+  forester?: { neighborRegenMul: number; replantsDepleted: boolean };
 }
 
 export interface AdjacencyDef<B extends string = string> {
   biome?: B;
   building?: string;
-  /** +multiplier per matching neighbor (2 neighbors max on the ring). */
+  /**
+   * Multiplier change per matching neighbor (2 neighbors max on the ring). Negative = penalty,
+   * e.g. dust from a mine on a farm. All entries add up, the total never goes below 0.
+   */
   bonus: number;
 }
 
@@ -100,8 +109,10 @@ export interface BuildingDef<R extends string = string, B extends string = strin
   art: string;
   /** "any-land" = every buildable biome. */
   biomes: readonly B[] | "any-land";
-  /** Needs a free neighbor of this biome (pumps next to the ocean). */
-  needsNeighbor?: B;
+  /** Needs at least one neighbor of one of these biomes (sawmill next to forest). */
+  needsNeighbor?: readonly B[];
+  /** Only on a segment that still has a deposit this building can extract. */
+  needsDeposit?: boolean;
   /** Needs this discovery as well as the ascension level. */
   requires?: string;
   adjacency?: AdjacencyDef<B>[];
@@ -119,7 +130,8 @@ export interface RecipeDef<R extends string = string> {
   /** Seconds per craft with one worker at foundry speed 1. */
   seconds: number;
   unlockLevel: number;
-  /** Minimum foundry tier. */
+  /** Which building crafts it (default foundry) and its minimum tier. */
+  building?: string;
   tier: 1 | 2;
   energy?: number;
   pollution?: number;

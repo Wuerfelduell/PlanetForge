@@ -45,17 +45,47 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | Stufe | Neu |
 |---|---|
 | 0 | Wohnhaus, Farm |
-| 1 | Mine, Pumpe (auch Öl, damit Raketen früh fliegen können) |
-| 2 | Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
-| 3 | Gießerei (Holzkohle, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
-| 4 | Stahl, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
-| 5 | Wohnhaus 3, Labor 2, Mine 2, Pumpe 2, Luftfilter (mit Ökologie), Biogas |
+| 1 | Mine (auch Kupfer), Pumpe (auch Öl, damit Raketen früh fliegen können), Sägewerk (Bretter), Förster |
+| 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
+| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
+| 4 | Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
+| 5 | Wohnhaus 3, Labor 2, Werkstatt 2, Mine 2 (auch Gold), Pumpe 2, Luftfilter (mit Ökologie), Biogas |
 | 6 | Gießerei 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
 | 7 | Elektronik, Solarfeld |
 | 8 | Computer, Monument |
 | 9 | Große Rakete, Atomkraftwerk (mit Kernkraft) |
 
 Der Test `homeAvailability` rechnet nach, dass jede Gebäudekosten auf dem Heimatplaneten bis zur Freischaltstufe herstellbar sind. Dafür hat der Heimatplanet immer mindestens ein Feld Wald, Savanne, Gebirge, Meer, Sumpf und Wüste (`RULES.homeGuaranteedBiomes`, muss der Generator einhalten). **Ätherit und Uran liegen nicht in den Heimat-Biomen.** Sie kommen als seltene Vorkommen, die der Generator verteilt (`RARE_RESOURCES` in `src/sim/content.ts`), meist auf anderen Planeten, und werden erst mit Tiefbohrung bzw. Kristallkunde abbaubar. Computer, Monument, große Rakete und Atomkraft ziehen den Spieler deshalb ab Stufe 7 bis 8 in den Weltraum. Ausnahme sind die Echoflatterer, die Ätherit von Anfang an abbauen können.
+
+## Tüfteln: Ketten, Nachbarn und Werkzeug
+
+Nach Sebs Playtest (21.10.2026) sollen die Gebäude kniffliger werden, damit man mehr tüftelt. Der Kern bleibt der Arbeitermangel. Dazu kommen vier Stellschrauben:
+
+**Neue Rohstoffe und Zwischenprodukte.** Kupfer (Gebirge, Wüste), Gold (tief im Gebirge, erst mit Mine 2) und Fasern (Savanne, Sumpf, von Hand) sind neu. Daraus entstehen Zwischenprodukte, die spätere Gebäude brauchen:
+
+| Ware | Rezept | Wo | Ab Stufe | Gebraucht für |
+|---|---|---|---|---|
+| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad, Markt |
+| Werkzeug | 1 Eisen + 1 Brett → 2 | Werkstatt | 2 | Verschleiß in Minen und Sägewerken, Mine 2 |
+| Kupferdraht | 1 Kupfer | Werkstatt | 2 | Windrad, Kohlekraftwerk, Labor 2, Elektronik |
+| Stoff | 3 Fasern | Werkstatt | 2 | Markt, Wohnhaus 3, Transportrakete (Fallschirm) |
+| Ziegel | 2 Lehm + 1 Kohle → 2 | Gießerei | 3 | Wohnhaus 3, Kohlekraftwerk, Sägewerk 2, Werkstatt 2 |
+
+Elektronik braucht jetzt Kupferdraht statt Stahl, Computer Gold statt Ätherit. Damit gehen Computer auch auf dem Heimatplaneten. Ätherit bleibt für Monument und große Rakete das Ziel im All.
+
+**Nachbarn helfen oder stören.** Jeder Nachbar kann Boni und Mali geben, die sich addieren (nie unter 0):
+- Laut sind Mine, Gießerei und Kohlekraftwerk. Sie kosten Wohnhäusern und Laboren je 25 %. Wald neben dem Wohnhaus gibt +10 %.
+- Bei der Farm bringt Savanne +25 % und eine Pumpe als Bewässerung +20 %. Eine Mine kostet sie durch Staub 25 %, ein Kohlekraftwerk 20 %.
+- Ein Windrad neben einem Windrad verliert 40 % (Windschatten), Gebirge bringt +25 %. Solar verliert 30 % neben Kohle (Smog).
+- Das Sägewerk bekommt +30 % je Wald, die Werkstatt +15 % je Sägewerk oder Mine, die Pumpe +50 % je Meer.
+
+Ein Planet ist ein Ring, jedes Feld hat also genau zwei Nachbarn. Industrie und Wohnen wollen deshalb in getrennte Viertel, und Farmen wollen Pumpen, aber keine Minen nebeneinander.
+
+**Bauregeln.** Das Sägewerk muss neben einem Wald stehen. Mine und Pumpe gehen nur auf ein Feld mit passendem Vorkommen, die Pumpe alternativ neben ein Meer. Der Förster lässt benachbarte Wälder dreimal so schnell nachwachsen und bepflanzt abgeholzte Nachbarfelder neu, das passt zum Bäumepflanzen des Visuals-Threads.
+
+**Werkzeug nutzt sich ab.** Ab Stufe 2 verbraucht jeder Arbeiter in Mine und Sägewerk 0,1 Werkzeug pro Minute. Ohne Werkzeug im Lager arbeiten sie nur mit 60 %. Eine Werkstatt mit 2 Arbeitern macht 12 Werkzeug pro Minute und versorgt damit etwa 120 Arbeiter. Sie läuft also nebenher, aber man muss an sie denken.
+
+Bäume pflanzen und Meer mit Sand oder Lehm (als Erde) auffüllen baut der Thread „Ressourcen-Anzeige und Visuals“ als Befehl `terraform`, mit eigenen Kosten in `src/sim/content.ts`.
 
 ## Spielmodi und Pacing
 
@@ -121,7 +151,8 @@ Treibstoff pro Flug = ⌈Entfernung × (2 + 1,5 × Passagiere)⌉ Öl bei der kl
 
 ## Was zuerst im Playtest prüfen
 
-1. Ob Stufe 1 bis 3 sich flott genug anfühlt (Ziel gemeinsam: erste Mine nach 3 Minuten, Gießerei nach 15). Falls zu zäh, zuerst `birthBase` senken.
-2. Ob die Nahrung mit 3 pro Einwohner zu streng ist. Falls ja, zuerst `foodPerInhabitantPerCycle` auf 2,5 senken.
-3. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
-4. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
+1. Ob die Nachbar-Mali Spaß machen oder nerven. Stellschraube: `NOISY` in `buildings.ts` und die `adjacency`-Listen.
+2. Ob Stufe 1 bis 3 sich flott genug anfühlt (Ziel gemeinsam: erste Mine nach 3 Minuten, Gießerei nach 15). Falls zu zäh, zuerst `birthBase` senken.
+3. Ob die Nahrung mit 3 pro Einwohner zu streng ist. Falls ja, zuerst `foodPerInhabitantPerMinute` auf 5 senken.
+4. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
+5. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.

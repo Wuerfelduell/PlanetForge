@@ -70,7 +70,7 @@ export function jobsPerCitizen(): number {
   // Assume a quarter of the planet is ocean (2 hand-gatherer slots each), the rest is land.
   const ocean = Math.floor(RULES.homeSegments / 4);
   const land = RULES.homeSegments - ocean - houses;
-  const production: BuildingId[] = ["farm", "mine", "pump", "lab", "foundry", "hydro-farm"];
+  const production: BuildingId[] = ["farm", "mine", "pump", "lab", "foundry", "hydro-farm", "sawmill", "workshop"];
   const slots: number[] = production.map((id) => BUILDINGS[id].tiers.at(-1)!.workers);
   const avg = slots.reduce((a, b) => a + b, 0) / slots.length;
   return (land * avg + ocean * RULES.handWorkersPerSegment) / maxPop;
@@ -113,12 +113,13 @@ export function homeAvailability(): Record<ResourceId, number> {
       if (p) lower(p.resource, tier.unlockLevel);
     }
   }
-  const foundryLevel = (tier: number) => BUILDINGS.foundry.tiers[tier - 1]!.unlockLevel;
+  const crafterLevel = (building: string | undefined, tier: number) =>
+    BUILDINGS[(building ?? "foundry") as BuildingId].tiers[tier - 1]!.unlockLevel;
   for (let changed = true; changed; ) {
     changed = false;
     for (const recipe of Object.values(RECIPES)) {
       const inputs = Object.keys(recipe.inputs) as ResourceId[];
-      const l = Math.max(recipe.unlockLevel, foundryLevel(recipe.tier), ...inputs.map((r) => level[r]));
+      const l = Math.max(recipe.unlockLevel, crafterLevel((recipe as { building?: string }).building, recipe.tier), ...inputs.map((r) => level[r]));
       for (const out of Object.keys(recipe.outputs) as ResourceId[]) changed = lower(out, l) || changed;
     }
   }

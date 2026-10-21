@@ -3,7 +3,9 @@ import type { BiomeDef, PlanetTypeDef, ResourceDef } from "./types";
 export const RESOURCE_IDS = [
   // raw
   "food", "wood", "stone", "sand", "clay", "iron", "coal", "water", "oil", "biogas", "uranium", "aetherite",
-  // refined
+  "copper", "gold", "fiber",
+  // refined (first tier: sawmill and workshop; second tier: foundry)
+  "planks", "tools", "wire", "cloth", "bricks",
   "glass", "concrete", "steel", "plastic", "electronics", "computer",
   // special (no storage cap; energy is a live balance, not a stock)
   "science", "energy",
@@ -27,6 +29,14 @@ export const RESOURCES = {
   biogas: { name: "Biogas", category: "raw", icon: "resource.biogas", baseCap: 60, value: 5 },
   uranium: { name: "Uran", category: "raw", icon: "resource.uranium", baseCap: 40, value: 12 },
   aetherite: { name: "Ätherit", category: "raw", icon: "resource.aetherite", baseCap: 40, value: 15 },
+  copper: { name: "Kupfer", category: "raw", icon: "resource.copper", baseCap: 80, value: 4 },
+  gold: { name: "Gold", category: "raw", icon: "resource.gold", baseCap: 30, value: 15 },
+  fiber: { name: "Fasern", category: "raw", icon: "resource.fiber", baseCap: 100, value: 3 },
+  planks: { name: "Bretter", category: "refined", icon: "resource.planks", baseCap: 80, value: 10 },
+  tools: { name: "Werkzeug", category: "refined", icon: "resource.tools", baseCap: 40, value: 12 },
+  wire: { name: "Kupferdraht", category: "refined", icon: "resource.wire", baseCap: 60, value: 9 },
+  cloth: { name: "Stoff", category: "refined", icon: "resource.cloth", baseCap: 60, value: 18 },
+  bricks: { name: "Ziegel", category: "refined", icon: "resource.bricks", baseCap: 80, value: 9 },
   glass: { name: "Glas", category: "refined", icon: "resource.glass", baseCap: 60, value: 18 },
   concrete: { name: "Beton", category: "refined", icon: "resource.concrete", baseCap: 60, value: 18 },
   steel: { name: "Stahl", category: "refined", icon: "resource.steel", baseCap: 60, value: 22 },
@@ -57,6 +67,7 @@ export const BIOMES = {
     buildable: true,
     deposits: [
       { resource: "food", max: 60, byHand: true },
+      { resource: "fiber", max: 50, byHand: true },
       { resource: "wood", max: 20, byHand: true },
       { resource: "clay", max: 20 },
     ],
@@ -68,7 +79,9 @@ export const BIOMES = {
     deposits: [
       { resource: "stone", max: 90, byHand: true },
       { resource: "iron", max: 60 },
+      { resource: "copper", max: 45 },
       { resource: "coal", max: 40 },
+      { resource: "gold", max: 15, tier: 2 },
     ],
   },
   ocean: {
@@ -85,6 +98,7 @@ export const BIOMES = {
     art: "swamp",
     buildable: true,
     deposits: [
+      { resource: "fiber", max: 30, byHand: true },
       { resource: "clay", max: 70, byHand: true },
       { resource: "water", max: 40, byHand: true },
       { resource: "biogas", max: 40 },
@@ -98,6 +112,7 @@ export const BIOMES = {
     deposits: [
       { resource: "sand", max: 90, byHand: true },
       { resource: "stone", max: 30, byHand: true },
+      { resource: "copper", max: 30 },
       { resource: "oil", max: 60 },
     ],
   },
