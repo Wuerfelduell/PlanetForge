@@ -65,10 +65,9 @@ async function boot(): Promise<void> {
     clearSave();
     leaveOnline();
     // Factions are a coop extra: the shared planet plus AI neighbors on their own planets.
-    const factions = options.mode === "factions";
     session = LocalSession.newGame(
       undefined,
-      { goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" },
+      { goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: options.factions, difficulty: options.difficulty },
       options.people,
     );
     started = true;
@@ -173,9 +172,9 @@ async function boot(): Promise<void> {
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
         else {
-          const factions = options.mode === "factions";
+          const versus = options.mode === "versus";
           await online.create(
-            { mode: options.mode === "versus" ? "versus" : "coop", goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" },
+            { mode: options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: versus ? 0 : options.factions, difficulty: versus ? "normal" : options.difficulty },
             slot,
             options.people,
           );
