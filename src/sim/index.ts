@@ -17,6 +17,7 @@ export { addPlayer, createGame, upgradeState, type GameOptions } from "./generat
 export { applyCommand } from "./commands";
 export { NOT_SCORCHED, TERRAFORM, TERRAFORM_START_FILL, terraformBlocker, type TerraformDef } from "./terraform";
 export { novaTickNow } from "./invaders";
+export { activeFactions, atWar, attitudeLabel, bundleSize, FACTIONS, factionById, factionEconomy, factionOfEconomy, markup, PERSONALITY_NAMES, sellable, STANCE_NAMES, strength, TEAM_ECONOMY, tradeQuote, type TradeQuote } from "./diplomacy";
 export { discoveryCost, discoveryDescription, discoveryName, modified, OFFERABLE, type DiscoveryId } from "./discoveries";
 export { advance, advanceWithEvents } from "./step";
 export { nextRandom, Rng, seedFromString } from "./rng";

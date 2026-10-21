@@ -2,6 +2,7 @@ import { RESOURCE_IDS, RULES } from "./content";
 import { Rng } from "./rng";
 import { modified } from "./discoveries";
 import { landAtSun } from "./invaders";
+import { checkFactionEliminations, checkTeamWipe, onBattle } from "./diplomacy";
 import { activePlayers, countsFor, flightPlan, peopleOf, planetById, planetDefense, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
 import type { Flight, GameEvent, GameState, PlanetState, PlayerState, UnitState } from "./state";
 import type { RocketId } from "./content";
@@ -54,6 +55,10 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
     }
   }
   checkEliminations(state, events);
+  if (state.settings.factions > 0) {
+    checkFactionEliminations(state, events);
+    checkTeamWipe(state, events);
+  }
 }
 
 function colonize(planet: PlanetState, economyId: string, events: GameEvent[]): void {
@@ -140,6 +145,7 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
     for (const u of flight.units.slice(attackerLosses)) state.units[u.id] = { ...u, planetId: planet.id, segment: null };
   }
   events.push({ type: "battle", planetId: planet.id, attacker: attacker.id, defender: defenderId, attackerLosses, defenderLosses, won, captured });
+  if (state.settings.factions > 0) onBattle(state, attacker, loserEconomy.id, won, events);
 }
 
 function mainOwner(units: UnitState[]): string | undefined {

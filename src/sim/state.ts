@@ -53,6 +53,8 @@ export interface GameState {
   result: GameResult | null;
   /** Recent events for the "since your last visit" view, newest last, at most RULES.logLength. */
   log: LogEntry[];
+  /** AI factions (coop with settings.factions > 0): neighbors in the system to trade, ally or fight with. */
+  factions: FactionState[];
 }
 
 export interface GameSettings {
@@ -64,6 +66,8 @@ export interface GameSettings {
   cycleSeconds: number;
   difficulty: Difficulty;
   maxPlayers: number;
+  /** coop: number of AI factions in the system (0 = none). */
+  factions: number;
 }
 
 export interface PlayerInit {
@@ -87,6 +91,39 @@ export interface PlayerState {
   surrendered: boolean;
   /** versus: agrees to end the game as a draw. */
   offersDraw: boolean;
+  /** An AI faction (see GameState.factions): no human behind it, never counts toward maxPlayers. */
+  ai?: true;
+}
+
+export type FactionPersonality = "trader" | "warlord" | "builder" | "diplomat";
+export type FactionStance = "peace" | "war" | "allied" | "merged";
+export type FactionOfferKind = "alliance" | "peace" | "merge" | "ultimatum";
+
+/** The mind of an AI faction; its units, economy and planets live in the normal state under its player id. */
+export interface FactionState {
+  /** Same as its PlayerState.id. */
+  id: string;
+  name: string;
+  personality: FactionPersonality;
+  /** −100 … 100 toward the human team. */
+  attitude: number;
+  stance: FactionStance;
+  /** No inhabitants left: its planets are free ruins. */
+  eliminated: boolean;
+  /** Tick the stance last changed (truces, "allied for N cycles"). */
+  stanceTick: number;
+  /** Peace holds at least until this tick (after a peace treaty or a paid ultimatum). */
+  truceUntilTick: number;
+  /** Open proposal to the human team, answered with the answerOffer command or expiring. */
+  offer: { kind: FactionOfferKind; resource?: ResourceId; amount?: number; expiresTick: number } | null;
+  /** Earliest tick for the faction's next proposal (so it does not nag). */
+  nextOfferTick: number;
+  /** Earliest tick the team may propose something again after a refusal. */
+  nextProposalTick: number;
+  /** Earliest tick for the next attack (at war). */
+  nextAttackTick: number;
+  /** Trades and gifts of the team so far (for the "known us for a while" bonus). */
+  trades: number;
 }
 
 export type GameResult = { winner: string } | { draw: true } | { supernova: true };
@@ -235,6 +272,14 @@ export type Command =
   | { type: "offerDraw"; offer: boolean }
   /** Host only: removes a player; their units vanish (Seb: no gifting to teammates). */
   | { type: "kickPlayer"; playerId: string }
+  /** Buys `amount` of a resource the faction has in surplus; the faction names its price (tradeQuote). */
+  | { type: "trade"; faction: string; resource: ResourceId; amount: number }
+  /** Gives a faction resources; it remembers that. */
+  | { type: "gift"; faction: string; resource: ResourceId; amount: number }
+  /** Declares war, or proposes peace, an alliance or a merge (the faction may refuse). */
+  | { type: "diplomacy"; faction: string; action: "war" | "peace" | "alliance" | "merge" }
+  /** Answers the faction's open offer. */
+  | { type: "answerOffer"; faction: string; accept: boolean }
   | { type: "openLobby" }
   | { type: "closeLobby" }
   | { type: "pause" }
@@ -274,7 +319,15 @@ export type GameEvent =
   | { type: "shieldBuilt"; segment: number; repaired: boolean }
   | { type: "shieldComplete" }
   | { type: "discoveryVote"; playerId: string; discovery: string }
-  | { type: "gameOver"; result: GameResult };
+  | { type: "gameOver"; result: GameResult }
+  | { type: "factionOffer"; faction: string; kind: FactionOfferKind; resource?: ResourceId; amount?: number; expiresTick: number }
+  | { type: "factionStance"; faction: string; stance: FactionStance; reason: "declaredWar" | "attacked" | "ultimatumRefused" | "peace" | "alliance" | "merged" | "brokenAlliance" }
+  | { type: "factionDeclined"; faction: string; action: "peace" | "alliance" | "merge" }
+  | { type: "factionTrade"; faction: string; playerId: string; got: ResourceId; gotAmount: number; gave: ResourceId; gaveAmount: number }
+  /** `from` is the faction (a present to its ally) or the player who gave. */
+  | { type: "factionGift"; faction: string; from: string; resource: ResourceId; amount: number }
+  | { type: "factionMerged"; faction: string; playerId: string; units: number; planets: number }
+  | { type: "factionEliminated"; faction: string };
 
 export type LogEntry = { tick: number; event: GameEvent };
 

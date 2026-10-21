@@ -17,6 +17,7 @@ import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
 import { ringDistance } from "./rules";
+import { FACTIONS, factionName, pickPersonality } from "./diplomacy";
 import type { DepositState, Difficulty, EconomyState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
 
 export interface GameOptions {
@@ -31,6 +32,8 @@ export interface GameOptions {
   /** coop only (design 13.4); versus has neither. Defaults: supernova, normal. */
   goal?: "endless" | "supernova";
   invaders?: "off" | "normal" | "strong";
+  /** coop only: AI factions that start on own planets at the same time (0 = none, at most FACTIONS.max). */
+  factions?: number;
 }
 
 /**
@@ -56,7 +59,8 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     shield: Array.from({ length: SUPERNOVA.segments }, () => ({ built: false, hp: 0 })),
     saved: false,
   };
-  const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
+  const factions = mode === "coop" ? Math.max(0, Math.min(FACTIONS.max, Math.floor(options.factions ?? 0))) : 0;
+  const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments, factions);
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
   // Rockets burn fuel from oil: every start planet gets oil, from its own stream so worlds stay the same.
   const oilRng = new Rng(seedFromString(`${seed}:oil`));
@@ -77,6 +81,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
       invaders: mode === "coop" ? (options.invaders ?? "normal") : "off",
       difficulty: options.difficulty ?? "normal",
       maxPlayers,
+      factions,
     },
     lobby: { open: true, paused: false },
     hostId: players[0]!.id,
@@ -96,14 +101,53 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     drawSuggested: false,
     result: null,
     log: [],
+    factions: [],
   };
   for (const p of players) {
     const result = addPlayer(state, p.id, p.name, state.simTime, p.people);
     if (!result.ok) throw new Error(result.error);
     state = result.state;
   }
+  // Factions come after the humans, so they take peoples nobody picked. Own stream: the world stays the same.
+  const factionRng = new Rng(seedFromString(`${seed}:factions`));
+  for (let i = 0; i < factions; i++) addFaction(state, i, factionRng);
   state.rng = rng.seed;
   return state;
+}
+
+/** Seats AI faction `index` on start slot index + 1 with its own economy and the start package of a versus player. */
+function addFaction(state: GameState, index: number, rng: Rng): void {
+  const planet = state.planets.find((p) => p.startSlot === index + 1);
+  if (!planet) throw new Error("Kein Startplanet für die Fraktion");
+  const id = `ai${index}`;
+  const economyId = `f${index}`;
+  state.economies[economyId] = newEconomy(economyId);
+  const economy = state.economies[economyId]!;
+  for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
+  planet.economyId = economyId;
+  for (const s of planet.segments) if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
+  const taken = new Set(state.players.map((p) => p.people));
+  const free = PEOPLE_IDS.filter((p) => !taken.has(p));
+  const people = free.length ? rng.pick(free) : PEOPLE_IDS[index % PEOPLE_IDS.length]!;
+  for (let i = 0; i < RULES.startPopulation; i++) createUnit(state, id, people, planet.id);
+  const personality = pickPersonality(rng, state.factions.map((f) => f.personality));
+  // Colors after the four human ones.
+  state.players.push({ id, name: factionName(people), color: SYSTEM.maxPlayers + index, people, economyId, homePlanetId: planet.id, joinedTick: 0, eliminated: false, surrendered: false, offersDraw: false, ai: true });
+  state.factions.push({
+    id,
+    name: factionName(people),
+    personality,
+    attitude: FACTIONS.baseline[personality],
+    stance: "peace",
+    eliminated: false,
+    stanceTick: 0,
+    truceUntilTick: 0,
+    offer: null,
+    nextOfferTick: 0,
+    nextProposalTick: 0,
+    nextAttackTick: 0,
+    trades: 0,
+  });
 }
 
 /**
@@ -113,14 +157,14 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
  */
 export function addPlayer(state: GameState, playerId: string, name: string, now: number, people?: PeopleId): { ok: true; state: GameState } | { ok: false; error: string } {
   if (state.players.some((p) => p.id === playerId)) return { ok: false, error: "Spieler ist schon dabei" };
-  if (state.players.length >= state.settings.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
+  if (state.players.filter((p) => !p.ai).length >= state.settings.maxPlayers) return { ok: false, error: "Das Spiel ist voll" };
   if (state.result) return { ok: false, error: "Das Spiel ist vorbei" };
   const next = JSON.parse(JSON.stringify(state)) as GameState;
   const events = advanceInPlace(next, now);
   const coop = next.settings.mode === "coop";
 
   const planet = next.planets
-    .filter((p) => p.startSlot !== null && (coop || p.economyId === null))
+    .filter((p) => p.startSlot !== null && (coop ? p.startSlot === 0 : p.economyId === null))
     .sort((a, b) => a.startSlot! - b.startSlot!)[0];
   if (!planet) return { ok: false, error: "Kein freier Startplanet mehr" };
 
@@ -167,20 +211,27 @@ function newEconomy(id: string): EconomyState {
   };
 }
 
-function generatePlanets(rng: Rng, startPlanets: number, startSize: number): PlanetState[] {
-  const freeCount = rng.int(SYSTEM.freePlanets.min, SYSTEM.freePlanets.max);
-  const kinds: (number | null)[] = [...Array.from({ length: startPlanets }, (_, i) => i), ...Array<null>(freeCount).fill(null)];
+/**
+ * `factions` > 0 (coop): slot 0 is the shared human planet, slots 1 … n belong to the AI factions
+ * (versus-sized), and the belt gets one more free planet per faction. The rare resources are
+ * split like in versus, so the team has a reason to trade. Big systems share orbits (compact).
+ */
+function generatePlanets(rng: Rng, startPlanets: number, startSize: number, factions = 0): PlanetState[] {
+  const freeCount = rng.int(SYSTEM.freePlanets.min, SYSTEM.freePlanets.max) + factions;
+  const starts = startPlanets + factions;
+  const kinds: (number | null)[] = [...Array.from({ length: starts }, (_, i) => i), ...Array<null>(freeCount).fill(null)];
   shuffle(kinds, rng);
 
-  // A single (coop) start planet gets every rare resource; several (versus) split them.
-  const rarePackages = startPlanets === 1 ? [Object.keys(RARE_RESOURCES) as ResourceId[]] : startRarePackages(rng, startPlanets);
+  // A single (coop) start planet gets every rare resource; several (versus, factions) split them.
+  const rarePackages = starts === 1 ? [Object.keys(RARE_RESOURCES) as ResourceId[]] : startRarePackages(rng, starts);
   const usedNames = new Set<string>();
+  const compact = kinds.length > SYSTEM.compactFrom;
 
   return kinds.map((startSlot, i) => {
     const isStart = startSlot !== null;
     const type: PlanetTypeId = isStart ? "temperate" : rng.pick(PLANET_TYPE_IDS);
-    const size = isStart ? startSize : rng.pick(SYSTEM.freePlanetSegments);
-    const biomes = isStart ? startPlanetBiomes(rng, size) : weightedBiomes(rng, type, size);
+    const size = isStart ? (factions > 0 && startSlot > 0 ? SYSTEM.startPlanetSegments : startSize) : rng.pick(SYSTEM.freePlanetSegments);
+    const biomes = isStart ? startPlanetBiomes(rng, size, factions > 0 && startSlot > 0) : weightedBiomes(rng, type, size);
     const segments = biomes.map((biome, index) => createSegment(index, biome, rng));
 
     const rare = isStart
@@ -196,7 +247,8 @@ function generatePlanets(rng: Rng, startPlanets: number, startSize: number): Pla
       id: `p${i}`,
       name,
       type,
-      orbit: { radius: i + 1, angle: rng.next() * Math.PI * 2 },
+      // Compact: at most SYSTEM.maxOrbit units out, spread around the sun by the golden angle so neighbors never overlap.
+      orbit: compact ? { radius: 1 + (i * (SYSTEM.maxOrbit - 1)) / (kinds.length - 1), angle: (i * 2.399963 + rng.next() * 0.6) % (Math.PI * 2) } : { radius: i + 1, angle: rng.next() * Math.PI * 2 },
       startSlot,
       economyId: null,
       birthProgress: 0,
@@ -275,7 +327,7 @@ function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: Resource
   }
 }
 
-function startPlanetBiomes(rng: Rng, size: number): BiomeId[] {
+function startPlanetBiomes(rng: Rng, size: number, openEdges = false): BiomeId[] {
   const r = RULES.startRevealRadius;
   // The visible start area always offers wood, food and stone, so every seed is playable.
   const start = (["forest", "forest", "savanna", "mountains", rng.pick(["forest", "savanna", "mountains", "ocean", "swamp"])] as BiomeId[]).slice(0, 2 * r + 1);
@@ -287,6 +339,8 @@ function startPlanetBiomes(rng: Rng, size: number): BiomeId[] {
   const out = new Array<BiomeId>(size);
   for (let i = 0; i < start.length; i++) out[(i - r + size) % size] = start[i]!;
   for (let i = 0; i < rest.length; i++) out[r + 1 + i] = rest[i]!;
+  // AI factions cannot think their way around a sea: the fields next to their start window are land.
+  if (openEdges) for (const i of [r + 1, size - r - 1]) if (!BIOMES[out[i]!].buildable) out[i] = "savanna";
   return out;
 }
 
@@ -365,6 +419,9 @@ export function upgradeState(state: unknown): GameState | null {
   if ((s.version as number) !== 11 && s.version !== 12) return null;
   // Resources added later (bricks, gold) are also filled into version 12 states.
   for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
+  // Saves from before AI factions existed simply have none.
+  s.settings.factions ??= 0;
+  s.factions ??= [];
   (s as { version: number }).version = 12;
   return s;
 }

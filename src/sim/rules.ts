@@ -1,5 +1,6 @@
 import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
+import { atWar, factionOfEconomy } from "./diplomacy";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
@@ -319,8 +320,12 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   const economy = state.economies[player.economyId]!;
   const unlockLevel = rocketUnlockLevel(economy, rocket);
   if (economy.ascension.level < unlockLevel) return `Ab Aufstiegsstufe ${unlockLevel}`;
-  if (def.versusOnly && state.settings.mode !== "versus") return "Angriffe gibt es nur im Gegeneinander-Modus";
+  // coop: only a faction at war with the team can be attacked (and attacks).
+  const factionsInvolved = !!(factionOfEconomy(state, to.economyId) ?? factionOfEconomy(state, from.economyId));
+  if (def.versusOnly && state.settings.mode !== "versus" && !factionsInvolved) return "Angriffe gibt es nur im Gegeneinander-Modus";
   if (rocket === "combat" && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
+  if (def.versusOnly && state.settings.mode !== "versus" && !atWar(state, from.economyId, to.economyId)) return "Dafür müsste Krieg herrschen";
+  if (rocket === "colony" && state.settings.mode !== "versus" && to.economyId !== null && to.economyId !== player.economyId) return "Dort lebt schon jemand";
   if (!Number.isInteger(count) || count < 1) return "Mindestens ein Einwohner muss mitfliegen";
   const capacity = rocketCapacity(economy, rocket);
   if (count > capacity) return `Höchstens ${capacity} Einwohner pro Rakete`;
