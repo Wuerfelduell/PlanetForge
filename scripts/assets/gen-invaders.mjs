@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 1;
+const STAGE = 2;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -50,6 +50,31 @@ function battery(mode){
   state='idle';return result;
 }
 if(STAGE>=1)for(const mode of ['idle','off','construction'])emit({id:`building.battery${mode==='idle'?'':'.'+mode}`,category:'buildings',stem:`battery${mode==='idle'?'':'-'+mode}`,anchor:[.5,.9375],parts:mode==='construction'?['barrel','scaffolding']:['barrel'],tags:['battery',mode],meta:{partPivots:{barrel:[128,150]}},draw:()=>battery(mode)});
+
+function mothership(frame=1,damaged=false){
+  const shell=path('M34 133 Q40 161 71 174 Q101 184 115 178 Q127 189 140 178 Q183 182 219 144 L218 129Z','rock-dark')+
+    shadow('M76 166 Q142 179 206 139 L217 145 Q189 183 140 178 Q127 189 115 178 Q94 184 76 166Z','rock-dark')+
+    ellipse(128,133,108,28,'crystal')+shadow('M23 137 Q120 157 232 131 Q226 160 128 161 Q46 160 23 137Z','crystal')+
+    path('M69 119 Q71 70 103 64 Q141 51 171 76 Q187 91 188 118 Q133 139 69 119Z','paper')+
+    shadow('M148 67 Q180 94 170 122 L186 118 Q191 90 166 73Z','paper')+
+    ellipse(128,97,38,27,'coal')+ellipse(128,96,29,21,'toxic')+
+    ellipse(139,97,9,17,'deep-water')+ellipse(116,87,8,4,'cream','stroke="none"')+
+    glint('M80 105 Q83 80 103 74')+glint('M38 128 Q53 120 65 120');
+  const lights=group('lights',[[61,143],[103,151],[151,151],[193,143]].map(([x,y],i)=>{
+    const out=damaged&&i===3, on=!out&&(damaged||i%2===(frame-1));
+    return ellipse(x,y,9,5,on?'uranium':'coal')+(on?ellipse(x-2,y-1,3,1,'cream','stroke="none"'):'');
+  }).join(''));
+  const scars=damaged?group('cracks',line('M166 118 L159 135 L174 142 L163 154','ink',4)+
+    line('M49 149 L63 155 L57 166 M151 78 L157 91 L149 104','ink',3)) : '';
+  const smoke=damaged?group('smoke',
+    circle(195,98,12,'rock-dark','opacity="0.8"')+circle(205,78,15,'rock','opacity="0.6"')+
+    circle(217,57,18,'rock','opacity="0.4"')+circle(230,30,14,'snow','opacity="0.2"')):'';
+  return smoke+group('hull',shell+lights+scars,'transform="rotate(-7 128 128)"');
+}
+if(STAGE>=2){
+  emit({id:'invader.mothership.idle',category:'invaders',stem:'mothership-idle',frames:2,fps:3,parts:['hull','lights'],tags:['mothership','idle','loop'],draw:f=>mothership(f)});
+  emit({id:'invader.mothership.damaged',category:'invaders',stem:'mothership-damaged',parts:['hull','lights','cracks','smoke'],tags:['mothership','damaged'],draw:()=>mothership(1,true)});
+}
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Invader art: stage ${STAGE}, ${assets.length} ids generated.`);

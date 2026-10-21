@@ -90,6 +90,60 @@
           150
         ]
       }
+    },
+    {
+      "id": "invader.mothership.idle",
+      "category": "invaders",
+      "src": "art/src/invaders/mothership-idle-f{f}.svg",
+      "out": "public/assets/sprites/invaders/mothership-idle-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 3,
+      "parts": [
+        "hull",
+        "lights"
+      ],
+      "tags": [
+        "invaders",
+        "mothership",
+        "idle",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "invader.mothership.damaged",
+      "category": "invaders",
+      "src": "art/src/invaders/mothership-damaged.svg",
+      "out": "public/assets/sprites/invaders/mothership-damaged.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "hull",
+        "lights",
+        "cracks",
+        "smoke"
+      ],
+      "tags": [
+        "invaders",
+        "mothership",
+        "damaged"
+      ],
+      "phase": "P1"
     }
   ]
 }
