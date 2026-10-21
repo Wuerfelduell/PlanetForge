@@ -105,6 +105,7 @@ describe("invaders", () => {
     g = run(g, 1, events);
     const siege = events.filter((e) => e.type === "siege").at(-1) as Extract<GameEvent, { type: "siege" }>;
     expect(siege.scorched?.length).toBe(1 + INVADERS.scorchPerUndefendedRound);
+    expect(homePlanet(g, P1.id)!.segments[siege.scorched![0]!]!.ruin).toBe(true);
     const burnt = homePlanet(g, P1.id)!.segments[siege.scorched![1]!]!;
     expect(burnt.scorched).toBe(true);
     expect(burnt.deposits.every((d) => d.infinite || d.amount === 0)).toBe(true);

@@ -114,6 +114,11 @@ export class Ui {
     return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
   }
 
+  /** Icon of a field action: Codex art where it exists, else the emoji. */
+  private ticon(kind: TerraformKind, emoji = TERRAFORM[kind].icon): string {
+    return this.art && kind === "clearScorched" && artTexture("ui.icon-clear-scorched") ? `<img class="bi" src="assets/sprites/ui/icon-clear-scorched.png" alt="${emoji}">` : emoji;
+  }
+
   private bicon(building: BuildingId): string {
     return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
   }
@@ -634,7 +639,7 @@ export class Ui {
     const biome = BIOMES[s.biome];
     const def = buildingStats(s);
     const stage = def?.upgrades ? ` <small>Stufe ${s.tier ?? 1}</small>` : "";
-    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : s.scorched ? `🔥 Verbrannte Erde <small>${biome.name}</small>` : biome.name;
+    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : s.scorched ? `${this.ticon("clearScorched", "🔥")} Verbrannte Erde <small>${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
@@ -693,7 +698,7 @@ export class Ui {
               .join(" ");
             const result = t.to && t.to !== s.biome ? `wird ${BIOMES[t.to].name}` : "wächst nach";
             return `<button class="build" data-action="terraform" data-value="${k}" ${blocker ? `disabled title="${blocker}"` : ""}>
-              <span class="icon">${t.icon}</span><span class="name">${t.name}</span><span class="cost">${cost}<br><small>${result}</small></span>
+              <span class="icon">${this.ticon(k)}</span><span class="name">${t.name}</span><span class="cost">${cost}<br><small>${result}</small></span>
             </button>`;
           })
           .join("");

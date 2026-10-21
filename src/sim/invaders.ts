@@ -133,6 +133,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         s.building = null;
         s.builtBy = null;
         delete s.tier;
+        s.ruin = true;
         if (undefended) scorched.push(s.index);
       }
       if (undefended) {
