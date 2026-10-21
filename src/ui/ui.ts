@@ -542,8 +542,10 @@ export class Ui {
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
       .map((d) => {
-        const amount = d.infinite ? "∞" : `${Math.floor(d.amount)}/${d.max}`;
-        const active = output[d.resource] ? " active" : "";
+        // Only whether something is left, not how much: players read the field, not a counter.
+        const empty = !d.infinite && d.amount <= 0;
+        const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
+        const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const tag = d.byHand ? "" : `<small>Mine</small>`;
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
