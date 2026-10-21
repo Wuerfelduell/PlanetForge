@@ -471,12 +471,12 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Werkstatt",
     icon: "🛠️",
     category: "production",
-    description: "Macht Werkzeug, Kupferdraht oder Stoff, ab Stufe 2 auch Raumanzüge. +15 % je Nachbar-Sägewerk oder -Mine.",
+    description: "Macht Werkzeug, Kupferdraht, Stoff oder Raumanzüge. +15 % je Nachbar-Sägewerk oder -Mine.",
     cost: { planks: 15, stone: 15 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["tools", "wire", "cloth"], speed: 1 },
+    crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1 },
     adjacency: [
       { building: "sawmill", bonus: 0.15 },
       { building: "mine", bonus: 0.15 },
@@ -746,7 +746,7 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
-  suits: { name: "Raumanzug", inputs: { cloth: 2, glass: 1, steel: 1 }, outputs: { suits: 1 }, seconds: 12 },
+  suits: { name: "Raumanzug", inputs: { cloth: 2, iron: 1 }, outputs: { suits: 1 }, seconds: 8 },
 };
 
 /**
@@ -922,12 +922,13 @@ export interface PlanetTypeDef {
 }
 
 export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
+  // Seb: every green planet on the map (habitable zone) has air: temperate, arid, ocean, toxic.
   temperate: { breathable: true, name: "Gemäßigt", biomeWeights: { forest: 3, savanna: 3, mountains: 2, ocean: 2, swamp: 1, desert: 1 } },
   arid: { breathable: true, name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ash: 0.5, ocean: 0.5 } },
   ice: { breathable: false, name: "Eis", biomeWeights: { tundra: 4, glacier: 3, mountains: 2, ocean: 1 } },
   ocean: { breathable: true, name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
   lava: { breathable: false, name: "Lava", biomeWeights: { lava: 3, ash: 2.5, mountains: 2, crystal: 1 } },
-  toxic: { breathable: false, name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
+  toxic: { breathable: true, name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
   asteroid: { breathable: false, name: "Asteroid", biomeWeights: { mountains: 3, crystal: 2 } },
 };
 
@@ -1020,7 +1021,7 @@ export const RULES = {
    * Planets without breathable air: each settler wears out this many suits per cycle; when the
    * stock runs out, one settler there dies per cycle.
    */
-  suits: { perInhabitantPerCycle: 0.2 },
+  suits: { perInhabitantPerCycle: 0.1 },
   /** Workers pulled from their jobs to defend against an attack roll this much lower. */
   workerDefensePenalty: 1,
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
