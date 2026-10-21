@@ -175,6 +175,8 @@ export interface PlanetState {
   /** Seconds of progress toward the next birth. */
   birthProgress: number;
   segments: SegmentState[];
+  /** Power grid of the last tick; missing while nothing on the planet makes or uses power. */
+  power?: { supply: number; demand: number };
 }
 
 export interface SegmentState {

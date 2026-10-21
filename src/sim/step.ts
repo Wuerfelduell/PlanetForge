@@ -4,6 +4,8 @@ import {
   buildingStats,
   cloneState,
   craftRate,
+  energyDemand,
+  energySupply,
   housing,
   neighbors,
   NOT_AFFORDABLE,
@@ -78,6 +80,17 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];
     const rateFactor = economy?.starving ? RULES.starvingRateFactor : 1;
 
+    // Power grid of this tick, read by every consumer below (powerFactor).
+    let supply = 0;
+    let demand = 0;
+    for (const segment of planet.segments) {
+      const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
+      supply += energySupply(planet, segment, working, economy);
+      demand += energyDemand(segment, working);
+    }
+    if (supply > 0 || demand > 0) planet.power = { supply, demand };
+    else delete planet.power;
+
     // Forests next to a worked forester regrow faster, empty ones get replanted.
     const forested = new Map<number, { mul: number; replant: boolean }>();
     for (const segment of planet.segments) {
@@ -92,6 +105,10 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       if (economy && def?.crafts) craft(planet, segment, working, economy, rateFactor);
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {
         economy.resources.tools = Math.max(0, economy.resources.tools - (working * RULES.tools.perWorkerPerMinute * DT) / 60);
+      }
+      if (economy && def?.burns && working > 0) {
+        const r = def.burns.resource;
+        economy.resources[r] = Math.max(0, economy.resources[r] - def.burns.perSecond * Math.min(1, working / def.workers) * DT);
       }
       const made = def?.produces?.resource;
       const output = economy && !def?.crafts ? segmentOutput(planet, segment, working, economy) : {};
@@ -192,7 +209,10 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
     }
 
     const a = economy.ascension;
-    a.points += modified(economy, "ascensionPerCycle", people);
+    // Monuments add their points on top of what the people earn.
+    let monuments = 0;
+    for (const p of state.planets) if (p.economyId === economy.id) for (const s of p.segments) monuments += buildingStats(s)?.ascension ?? 0;
+    a.points += modified(economy, "ascensionPerCycle", people) + monuments;
     for (let t = nextLevelThreshold(a.level); t !== null && a.points >= t; t = nextLevelThreshold(a.level)) {
       a.level += 1;
       events.push({ type: "levelUp", economyId: economy.id, level: a.level });

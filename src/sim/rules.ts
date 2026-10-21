@@ -118,7 +118,7 @@ export function housing(state: GameState, planet: PlanetState): number {
   for (const s of planet.segments) {
     const h = buildingStats(s)?.housing;
     // Noisy neighbors take living space, forests add a little.
-    if (h) total += modified(economy, "housing", h, { building: s.building! }) * adjacencyMultiplier(planet, s);
+    if (h) total += modified(economy, "housing", h, { building: s.building! }) * adjacencyMultiplier(planet, s) * powerFactor(planet, s);
   }
   return Math.floor(total + 1e-9);
 }
@@ -137,6 +137,30 @@ export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState):
     for (const a of adj) if ((a.biome && n.biome === a.biome) || (a.building && n.building === a.building)) mult += a.bonus;
   }
   return Math.max(0, mult);
+}
+
+/** Power a segment feeds into the planet's grid with `workers` on it (manned plants also need their fuel). */
+export function energySupply(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): number {
+  const def = buildingStats(segment);
+  if (!def?.energy || def.energy <= 0) return 0;
+  if (def.burns && !(economy && economy.resources[def.burns.resource] > 0)) return 0;
+  const crew = def.workers > 0 ? Math.min(1, workers / def.workers) : 1;
+  return def.energy * adjacencyMultiplier(planet, segment) * crew;
+}
+
+/** Power a segment draws: always for unmanned consumers (housing), else only while somebody works there. */
+export function energyDemand(segment: SegmentState, workers: number): number {
+  const def = buildingStats(segment);
+  if (!def?.energy || def.energy >= 0 || (def.workers > 0 && workers <= 0)) return 0;
+  return -def.energy;
+}
+
+/** Speed factor of a power consumer: supply ÷ demand when short, never below RULES.energy.unpoweredMul (docs/balancing.md). */
+export function powerFactor(planet: PlanetState, segment: SegmentState): number {
+  if (!((buildingStats(segment)?.energy ?? 0) < 0)) return 1;
+  const p = planet.power;
+  if (!p || p.demand <= p.supply) return 1;
+  return Math.max(RULES.energy.unpoweredMul, p.supply / p.demand);
 }
 
 /** Pumps also draw from a neighboring sea or glacier. */
@@ -178,7 +202,7 @@ export function craftRate(planet: PlanetState, segment: SegmentState, workers: n
   const recipe = segmentRecipe(segment);
   if (!recipe || workers <= 0) return 0;
   const speed = buildingStats(segment)!.crafts!.speed;
-  return (workers * speed * adjacencyMultiplier(planet, segment) * toolFactor(segment, economy)) / RECIPES[recipe].seconds;
+  return (workers * speed * adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment)) / RECIPES[recipe].seconds;
 }
 
 export function canAfford(economy: EconomyState, building: BuildingId): boolean {
@@ -194,6 +218,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!economy) return "Unbewohnter Planet";
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
+  if (def.unique && hasBuilding(planet, building)) return "Nur eins pro Planet";
   if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
@@ -212,7 +237,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
 export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
-  const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy);
+  const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment);
   const def = buildingStats(segment);
   const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource });
   if (def?.produces) {

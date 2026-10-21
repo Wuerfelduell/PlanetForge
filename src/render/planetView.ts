@@ -1,5 +1,5 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, BUILDINGS, buildingStats, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
+import { BIOMES, buildingStats, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
@@ -621,7 +621,8 @@ export class PlanetView {
         } else {
           // Buildings the art does not have yet keep their emoji.
           const sp = this.sprites[i]!;
-          if (sp.icon.text !== BUILDINGS[s.building].icon) sp.icon.text = BUILDINGS[s.building].icon;
+          const icon = buildingStats(s)!.icon;
+          if (sp.icon.text !== icon) sp.icon.text = icon;
           setFontSize(sp.icon, Math.max(16, R * 0.17));
           sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
           sp.icon.rotation = mid + Math.PI / 2;
@@ -732,7 +733,7 @@ export class PlanetView {
       }
 
       const sp = this.sprites[i]!;
-      const iconText = s.revealed && s.building ? BUILDINGS[s.building].icon : "";
+      const iconText = s.revealed && s.building ? buildingStats(s)!.icon : "";
       if (sp.icon.text !== iconText) sp.icon.text = iconText;
       setFontSize(sp.icon, Math.max(16, R * 0.17));
       sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
