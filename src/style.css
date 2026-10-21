@@ -68,6 +68,20 @@ html, body {
 .res-item .res-name { flex: 1; color: var(--muted); }
 .res-item.bad b { color: var(--bad); }
 #hud .chip.more { color: var(--muted); }
+/* "!" on a resource that just ran out on a field. */
+b.alert {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--warn);
+  color: #1a1d2e;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
 #hud .chip.more.on { color: var(--text); box-shadow: 0 0 0 2px var(--accent); }
 #hud button, #hud .chip, #hud .level, #hud .cycle { pointer-events: auto; }
 .spacer { flex: 1; }

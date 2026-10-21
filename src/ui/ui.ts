@@ -124,6 +124,8 @@ export class Ui {
   private tradeWith: string | null = null;
   /** Full resource list open under the top bar. */
   private showResources = false;
+  /** Resources that just ran out on a field, until when their "!" shows. */
+  private readonly depleted = new Map<ResourceId, number>();
   /** Open tab of the build menu; kept while the player taps from field to field. */
   private buildTab: BuildingCategory | "terrain" = "housing";
   /** Market: what the player pays with and what they want. */
@@ -208,7 +210,8 @@ export class Ui {
           break;
         }
         case "depleted":
-          this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft${e.resource === "wood" ? ". Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}`, "warn");
+          // No toast (too big on phones): a "!" on the resource in the top bar for a minute.
+          this.depleted.set(e.resource, performance.now() + DEPLETED_MARK_MS);
           break;
         case "thawed":
           if (this.isMine(e.planetId)) this.toast(`🧊 ${e.count} ${PEOPLES[e.people].name} aufgetaut! Sie wohnen jetzt auf ${this.planetName(e.planetId)}.`, "good");
@@ -524,16 +527,21 @@ export class Ui {
     // Always the viewer's own stock, also while looking at someone else's planet.
     const economy = this.myEconomy(state) ?? economyOf(state, planet);
     if (!economy) return NO_HUD;
-    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
-    const chip = (r: ResourceId) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}: ${Math.floor(economy.resources[r])}">${this.res(r)} ${short(economy.resources[r])}</span>`;
+    const now = performance.now();
+    for (const [r, until] of this.depleted) if (until <= now) this.depleted.delete(r);
+    const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1 || this.depleted.has(r));
+    const mark = (r: ResourceId) => (this.depleted.has(r) ? `<b class="alert">!</b>` : "");
+    const markTitle = (r: ResourceId) =>
+      this.depleted.has(r) ? `. Auf einem Feld aufgebraucht${r === "wood" ? ", Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}` : "";
+    const chip = (r: ResourceId) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}: ${Math.floor(economy.resources[r])}${markTitle(r)}">${this.res(r)} ${short(economy.resources[r])}${mark(r)}</span>`;
     // Only the key resources stay in the bar; the rest open as a list with a tap on "+n".
     const key = shown.filter((r) => KEY_RESOURCES.has(r));
     const more = shown.length - key.length;
     const chips = key.map(chip).join("");
     const moreButton =
-      (more > 0 ? `<button class="chip more${this.showResources ? " on" : ""}" data-action="resources" title="Alle Rohstoffe">+${more} ${this.showResources ? "▴" : "▾"}</button>` : "");
+      (more > 0 ? `<button class="chip more${this.showResources ? " on" : ""}" data-action="resources" title="Alle Rohstoffe">+${more}${shown.some((r) => !KEY_RESOURCES.has(r) && this.depleted.has(r)) ? `<b class="alert">!</b>` : ""} ${this.showResources ? "▴" : "▾"}</button>` : "");
     const list = this.showResources && more > 0
-      ? `<div class="res-list">${shown.map((r) => `<span class="res-item${r === "food" && economy.starving ? " bad" : ""}">${this.res(r)} <span class="res-name">${RESOURCES[r].name}</span> <b>${Math.floor(economy.resources[r])}</b></span>`).join("")}</div>`
+      ? `<div class="res-list">${shown.map((r) => `<span class="res-item${r === "food" && economy.starving ? " bad" : ""}">${this.res(r)} <span class="res-name" title="${markTitle(r).slice(2)}">${RESOURCES[r].name}${mark(r)}</span> <b>${Math.floor(economy.resources[r])}</b></span>`).join("")}</div>`
       : "";
     const ascension = economy.ascension;
     const lvl = ascension.level;
@@ -1092,6 +1100,8 @@ export class Ui {
 function fmt(v: number): string {
   return Number.isInteger(Math.round(v * 10) / 10) ? String(Math.round(v)) : v.toFixed(1);
 }
+
+const DEPLETED_MARK_MS = 60_000;
 
 /** Bar numbers: 12 345 becomes "12k" so more chips fit on a phone. */
 function short(amount: number): string {
