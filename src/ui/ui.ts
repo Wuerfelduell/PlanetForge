@@ -47,6 +47,7 @@ import {
   type PlanetState,
   TERRAFORM,
   terraformBlocker,
+  NOT_SCORCHED,
   type TerraformKind,
 } from "../sim";
 import { currentHint } from "./hints";
@@ -210,7 +211,8 @@ export class Ui {
           this.toast(`👾 Invasoren belagern ${this.targetName(e.target)}. Freie Einwohner und Abwehrbatterien kämpfen.`, "bad");
           break;
         case "siege":
-          if (e.destroyed) this.toast(`💥 Invasoren zerstören ${BUILDINGS[e.destroyed].name} auf ${this.targetName(e.target)}`, "bad");
+          if (e.scorched?.length) this.toast(`🔥 Niemand wehrt sich: Invasoren verbrennen ${e.scorched.length} Felder auf ${this.targetName(e.target)}${e.destroyed ? ` und zerstören ${BUILDINGS[e.destroyed].name}` : ""}`, "bad");
+          else if (e.destroyed) this.toast(`💥 Invasoren zerstören ${BUILDINGS[e.destroyed].name} auf ${this.targetName(e.target)}`, "bad");
           else if (e.shieldSegment !== null) this.toast(`💥 Hüllensegment ${e.shieldSegment + 1} beschädigt`, "bad");
           break;
         case "invasionDefeated":
@@ -632,7 +634,7 @@ export class Ui {
     const biome = BIOMES[s.biome];
     const def = buildingStats(s);
     const stage = def?.upgrades ? ` <small>Stufe ${s.tier ?? 1}</small>` : "";
-    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : biome.name;
+    const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : s.scorched ? `🔥 Verbrannte Erde <small>${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
@@ -685,7 +687,7 @@ export class Ui {
           .map((k) => {
             const t = TERRAFORM[k];
             const blocker = terraformBlocker(state, planet, s, k);
-            if (blocker === "Hier stehen genug Bäume") return "";
+            if (blocker === "Hier stehen genug Bäume" || blocker === NOT_SCORCHED) return "";
             const cost = Object.entries(t.cost)
               .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
               .join(" ");

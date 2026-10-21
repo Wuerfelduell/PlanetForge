@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   advanceWithEvents,
   applyCommand,
+  BIOMES,
+  buildBlocker,
   BLOCKADED,
   createGame,
   economyOfPlayer,
@@ -88,6 +90,39 @@ describe("invaders", () => {
     expect(g.nextWaveTick).not.toBeNull();
     expect(g.economies.e0!.resources.wood).toBeLessThan(before);
     expect(Object.keys(g.units).length).toBeGreaterThanOrEqual(INVADERS.minSurvivors);
+  });
+
+  it("undefended, they burn the ground: no building, no gathering until it is cleared", () => {
+    const events: GameEvent[] = [];
+    let g = clone(untilSiege(lateGame(), events));
+    const home = homePlanet(g, P1.id)!;
+    const fields = home.segments.filter((s) => s.revealed && !s.building && BIOMES[s.biome].buildable);
+    fields[0]!.building = "housing";
+    // Everyone at work, no battery: nobody fights back.
+    Object.values(g.units).forEach((u) => (u.segment = fields[1]!.index));
+    // No births: no fresh idle inhabitant who would fight.
+    home.birthProgress = -1e9;
+    g = run(g, 1, events);
+    const siege = events.filter((e) => e.type === "siege").at(-1) as Extract<GameEvent, { type: "siege" }>;
+    expect(siege.scorched?.length).toBe(1 + INVADERS.scorchPerUndefendedRound);
+    const burnt = homePlanet(g, P1.id)!.segments[siege.scorched![1]!]!;
+    expect(burnt.scorched).toBe(true);
+    expect(burnt.deposits.every((d) => d.infinite || d.amount === 0)).toBe(true);
+    expect(buildBlocker(g, homePlanet(g, P1.id)!, burnt, "housing")).toBe("Verbrannte Erde: erst aufräumen");
+
+    const r = applyCommand(g, P1.id, { type: "terraform", planetId: home.id, segment: burnt.index, kind: "clearScorched" }, g.simTime);
+    if (!r.ok) throw new Error(r.error);
+    const cleared = homePlanet(r.state, P1.id)!.segments[burnt.index]!;
+    expect(cleared.scorched).toBeUndefined();
+    expect(cleared.deposits.some((d) => d.amount > 0)).toBe(true);
+  });
+
+  it("defenders keep the ground from burning even when they lose a building", () => {
+    const events: GameEvent[] = [];
+    const g = run(clone(untilSiege(lateGame(), events)), 1, events);
+    const siege = events.filter((e) => e.type === "siege").at(-1) as Extract<GameEvent, { type: "siege" }>;
+    expect(siege.scorched).toBeUndefined();
+    expect(homePlanet(g, P1.id)!.segments.some((s) => s.scorched)).toBe(false);
   });
 
   it("batteries shoot the mothership down and the team earns a reward", () => {
