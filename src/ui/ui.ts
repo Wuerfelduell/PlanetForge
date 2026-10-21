@@ -415,7 +415,7 @@ export class Ui {
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
+    const controls = `${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
     const rest = `
       <div class="row status main">
         ${planetChip}
@@ -424,24 +424,26 @@ export class Ui {
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>${this.renderFlights(state)}`;
+      </div>${this.renderFlights(state, versusButtons)}`;
     return { chips, controls, rest };
   }
 
   /** Own rockets and attacks on own planets, with time to arrival. */
-  private renderFlights(state: GameState): string {
+  /** One short line of status chips (details in their tooltips); the versus buttons ride along at its end. */
+  private renderFlights(state: GameState, versusButtons = ""): string {
     const chips: string[] = [];
     const economy = state.economies[state.players.find((p) => p.id === this.playerId)?.economyId ?? ""];
     if (economy?.offer || economy?.discoveries.length) {
-      const label = economy.offer ? `🔬 Entdeckung wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length} Entdeckungen`;
-      chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries">${label}</button>`);
+      const label = economy.offer ? `🔬 Wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length}`;
+      const title = economy.offer ? "Entdeckung wählen" : `${economy.discoveries.length} Entdeckungen`;
+      chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries" title="${title}">${label}</button>`);
     }
     // The server closes the lobby after 10 idle minutes; only the host can open it again.
     if (!state.lobby.open) {
       chips.push(
         state.hostId === this.playerId
-          ? `<button class="chip" data-action="openLobby">🔓 Spiel geschlossen. Tippen zum Öffnen</button>`
-          : `<span class="chip">🔒 Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}</span>`,
+          ? `<button class="chip" data-action="openLobby" title="Spiel geschlossen. Tippen zum Öffnen">🔓 Öffnen</button>`
+          : `<span class="chip" title="Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}">🔒 Zu</span>`,
       );
     }
     const result = state.result;
@@ -454,22 +456,23 @@ export class Ui {
     if (inv && (inv.spotted || inv.sieging)) {
       chips.push(
         inv.sieging
-          ? `<span class="chip bad">${this.badge("invasion", "👾")} Belagerung: ${this.targetName(inv.target)} <small>Schiff ${inv.hp}/${inv.maxHp}</small></span>`
-          : `<span class="chip bad">${this.badge("invasion", "👾")} Welle ${inv.wave} → ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
+          ? `<span class="chip bad" title="Belagerung von ${this.targetName(inv.target)}, Mutterschiff ${inv.hp}/${inv.maxHp}">${this.badge("invasion", "👾")} ${this.targetName(inv.target)} <small>${inv.hp}/${inv.maxHp}</small></span>`
+          : `<span class="chip bad" title="Welle ${inv.wave} im Anflug auf ${this.targetName(inv.target)}">${this.badge("invasion", "👾")} ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
       );
     }
     const nova = novaTickNow(state);
     const built = state.sun.shield.filter((x) => x.built).length;
-    if (state.sun.saved) chips.push(`<span class="chip">${this.badge("shield", "🌞")} Hülle geschlossen</span>`);
+    if (state.sun.saved) chips.push(`<span class="chip" title="Schutzhülle geschlossen">${this.badge("shield", "🌞")} ✓</span>`);
     else if (nova !== null && (built > 0 || cycleOf(state) >= SUPERNOVA.firstHintCycle)) {
-      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}">${this.badge("shield", "☀️")} Hülle ${built}/${SUPERNOVA.segments} <small>Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen</small></span>`);
+      const minutes = Math.ceil((nova - state.tick) / RULES.ticksPerSecond / 60);
+      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}" title="Schutzhülle ${built}/${SUPERNOVA.segments}, Supernova in etwa ${minutes} min">${this.badge("shield", "☀️")} ${built}/${SUPERNOVA.segments} <small>~${minutes} min</small></span>`);
     }
     for (const f of state.flights) {
       const seconds = Math.ceil((f.arrivalTick - state.tick) / RULES.ticksPerSecond);
       if (f.owner === this.playerId) chips.push(`<span class="chip">${ROCKETS[f.rocket].icon} ${this.planetName(f.to)} <small>${f.units.length}👤 ${seconds} s</small></span>`);
       else if (this.isMine(f.to)) chips.push(`<span class="chip bad">⚠️ ${this.planetName(f.to)} <small>${f.units.length} Angreifer ${seconds} s</small></span>`);
     }
-    return chips.length ? `<div class="row status">${chips.join("")}</div>` : "";
+    return chips.length || versusButtons ? `<div class="row status extra">${chips.join("")}${versusButtons ? `<span class="spacer"></span>${versusButtons}` : ""}</div>` : "";
   }
 
   private resultText(result: NonNullable<GameState["result"]>): string {

@@ -192,6 +192,7 @@ async function boot(): Promise<void> {
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
+    document.documentElement.style.setProperty("--hud-h", `${Math.round(hud.bottom)}px`);
     const panel = document.getElementById("panel")!.getBoundingClientRect();
     view.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top);
     map.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top, session.state);
