@@ -339,6 +339,76 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.datacenter",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter.svg",
+      "out": "public/assets/sprites/buildings/datacenter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights"
+      ],
+      "tags": [
+        "datacenter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.datacenter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter-construction.svg",
+      "out": "public/assets/sprites/buildings/datacenter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights",
+        "scaffolding"
+      ],
+      "tags": [
+        "datacenter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.datacenter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter-off.svg",
+      "out": "public/assets/sprites/buildings/datacenter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights"
+      ],
+      "tags": [
+        "datacenter",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }

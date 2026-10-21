@@ -110,12 +110,31 @@ function chipFactory(){
     line('M75 222H93M163 222H183','rock',4)+base();
 }
 
+function datacenter(){
+  const fan=(x,y)=>rect(x-23,y-23,46,46,'rock',12)+circle(x,y,17,'coal')+
+    [0,120,240].map(a=>`<g transform="rotate(${a} ${x} ${y})">${path(`M${x-3} ${y-2}Q${x-15} ${y-13} ${x-2} ${y-14}Q${x+7} ${y-12} ${x+3} ${y-3}Z`,'science','stroke-width="3"')}</g>`).join('')+
+    circle(x,y,4,'snow','stroke-width="3"');
+  const racks=[69,111,153];
+  return post(63,75,60,'rock-dark')+
+    path('M38 49Q48 92 83 82Q92 65 84 46Q64 58 38 49Z','paper')+
+    line('M62 70L76 38','rock-dark',5)+circle(77,35,6,'science')+glint('M45 58Q48 69 58 73')+
+    rect(45,126,166,99,'deep-water',22)+shade('M196 144V211H65','deep-water',10)+
+    fan(115,100)+fan(174,100)+rect(39,121,177,21,'water',10)+glint('M51 128H85')+
+    rect(57,151,143,64,'rock-dark',12)+
+    racks.map(x=>rect(x,158,32,49,'coal',7)+[171,187].map(y=>line(`M${x+4} ${y}H${x+28}`,'rock-dark',3)).join('')).join('')+
+    group('lights',racks.map((x,i)=>[165,181,199].map((y,j)=>
+      circle(x+8,y,3,active((i+j)%2?'science':'ok'),'stroke="none"')+
+      rect(x+17,y-2,8,4,active((i+j)%3?'water':'energy'),2,'stroke="none"')).join('')).join(''))+
+    line('M63 217H88M168 217H191','water',4)+base();
+}
+
 const buildings = [
   {id:'biogas-plant',draw:biogas,parts:['gas-flame']},
   {id:'power-gas',draw:gasPower,parts:['steam']},
   {id:'plastics',draw:plastics},
   {id:'electronics.t1',draw:electronicsWorkshop,parts:['circuit-glow']},
   {id:'electronics.t2',draw:chipFactory},
+  {id:'datacenter',draw:datacenter,parts:['lights']},
 ];
 const assets=[];
 function emit(id,category,stem,body,size,anchor,parts=[],tags=[]){
