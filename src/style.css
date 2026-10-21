@@ -169,7 +169,8 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 #toasts {
   position: fixed;
   left: 50%;
-  top: calc(env(safe-area-inset-top) + 86px);
+  /* Just below the top bar (its height is set from main.ts), so toasts never cover the chips. */
+  top: calc(var(--hud-h, 86px) + 6px);
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -267,7 +268,16 @@ ul.owned small { color: var(--muted); }
 @media (max-width: 699px) {
   #hud { padding: calc(env(safe-area-inset-top) + 6px) 8px 4px; gap: 4px; }
   #hud .row { gap: 4px; }
-  #hud .row.main, #hud .row.resources { flex-wrap: nowrap; }
+  #hud .row.main, #hud .row.resources, #hud .row.extra { flex-wrap: nowrap; }
+  /* Status line (invasion, shield, discoveries, flights): one line, swipe for more. */
+  #hud .row.extra { overflow-x: auto; scrollbar-width: none; pointer-events: auto; touch-action: pan-x; }
+  #hud .row.extra::-webkit-scrollbar { display: none; }
+  #hud .row.extra > * { flex: none; }
+  #hud .chip small { font-size: 12px; }
+  /* Thumb-sized targets: 36 px buttons, chips grow their tap area beyond what is drawn. */
+  #hud button { position: relative; }
+  #hud button::after { content: ""; position: absolute; inset: -5px -2px; }
+  #hud .chip, #hud .level { min-height: 28px; display: inline-flex; align-items: center; gap: 4px; }
   #hud .hud-controls { display: flex; flex: none; gap: 4px; }
   #hud .spacer { display: none; }
   /* All resources in one line: swipe sideways for the rest, the edge fades to hint at more. */
@@ -286,7 +296,7 @@ ul.owned small { color: var(--muted); }
   #hud .res-scroll::-webkit-scrollbar { display: none; }
   #hud .res-scroll .chip { flex: none; }
   #hud .chip, #hud .level { padding: 3px 8px; font-size: 13px; }
-  #hud .speed { min-width: 34px; padding: 4px 8px; font-size: 14px; }
+  #hud .speed { min-width: 40px; min-height: 36px; padding: 4px 8px; font-size: 15px; }
   #hud .chip.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
