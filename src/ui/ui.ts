@@ -67,7 +67,6 @@ import {
   factionById,
   factionEconomy,
   factionOfEconomy,
-  PEOPLES,
   PERSONALITY_NAMES,
   sellable,
   STANCE_NAMES,

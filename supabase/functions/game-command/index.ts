@@ -22,7 +22,7 @@ interface LoadedGame {
   clock_at: string | null;
   /** Missing until the options migration ran. */
   max_players?: number;
-  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "world">;
+  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "world" | "factions" | "difficulty">;
   members: { user_id: string; player_id: string; display_name: string; people?: string | null }[];
 }
 
