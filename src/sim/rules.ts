@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, MARKET, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, CRYO, MARKET, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { ASCENSION } from "../data/balance/progression";
 import { ascensionThreshold, foodUpkeepPerSecond, secondsPerBirth as balanceSecondsPerBirth } from "../data/balance/index";
@@ -468,4 +468,13 @@ export function planetDefense(state: GameState, planet: PlanetState): number {
 /** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
 export function needsSuits(planet: PlanetState): boolean {
   return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;
+}
+
+/** Why a cryo pod can't be thawed right now, or null. */
+export function thawBlocker(state: GameState, planet: PlanetState, segment: SegmentState): string | null {
+  if (!segment.cryo) return "Hier liegt keine Kryokapsel";
+  const economy = planet.economyId ? state.economies[planet.economyId] : undefined;
+  if (!economy) return "Dieser Planet gehört niemandem";
+  for (const [r, v] of Object.entries(CRYO.thawCost)) if (economy.resources[r as ResourceId] < (v as number)) return NOT_AFFORDABLE;
+  return null;
 }

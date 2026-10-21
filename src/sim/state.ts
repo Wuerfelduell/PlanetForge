@@ -195,6 +195,8 @@ export interface SegmentState {
   scorched?: true;
   /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
   ruin?: true;
+  /** Cryo pod with frozen members of another people (Planet of Mine), found by exploring; thaw to recruit them. */
+  cryo?: { people: PeopleId; count: number };
 }
 
 export interface DepositState {
@@ -213,6 +215,7 @@ export type Command =
   | { type: "demolish"; planetId: string; segment: number }
   /** Upgrades the building on a segment to its next stage. */
   | { type: "upgrade"; planetId: string; segment: number }
+  | { type: "thaw"; planetId: string; segment: number }
   /** Moves `delta` of the sender's units onto (+) or off (−) a segment. */
   | { type: "assign"; planetId: string; segment: number; delta: number }
   /** Moves one specific unit; segment null makes it idle. */
@@ -273,6 +276,7 @@ export type GameEvent =
   | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
   | { type: "invasionDefeated"; target: string; wave: number }
   | { type: "suffocated"; planetId: string; left: number }
+  | { type: "thawed"; planetId: string; segment: number; people: PeopleId; count: number; playerId: string }
   | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
   | { type: "sunWarning"; cyclesLeft: number }
   | { type: "shieldBuilt"; segment: number; repaired: boolean }

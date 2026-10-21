@@ -257,6 +257,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   depleted: "alert.warning",
   starving: "alert.hungry",
   suffocated: "alert.warning",
+  thawed: "coop.join",
   launched: "rocket.launch",
   landed: "rocket.land",
   battle: "battle.dice",

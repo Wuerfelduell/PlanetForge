@@ -961,6 +961,17 @@ export const SYSTEM = {
   asteroids: { min: 2, max: 4, segments: 12, rare: { min: 1, max: 2 } },
 } as const;
 
+/**
+ * Cryo pods (Planet of Mine): frozen members of other peoples on free planets and asteroids,
+ * hidden until the field is explored. Thawing them adds inhabitants of that people.
+ */
+export const CRYO = {
+  /** Chance per free planet or asteroid to hold one pod. */
+  planetChance: 0.5,
+  count: [2, 3] as const,
+  thawCost: { food: 20, science: 10 } as Partial<Record<ResourceId, number>>,
+} as const;
+
 /** Simulation constants. */
 export const RULES = {
   ticksPerSecond: 10,

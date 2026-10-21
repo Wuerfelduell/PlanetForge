@@ -1,5 +1,6 @@
 import {
   BIOMES,
+  CRYO,
   PEOPLE_IDS,
   PLANET_TYPE_IDS,
   PLANET_TYPES,
@@ -98,6 +99,14 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const oilRng = new Rng(seedFromString(`${seed}:oil`));
   for (const p of planets) {
     if (p.startSlot !== null && !p.segments.some((x) => x.deposits.some((d) => d.resource === "oil"))) placeRareDeposit(oilRng, p.segments, "oil", true);
+  }
+  // Cryo pods with frozen peoples on free planets, from their own stream as well.
+  const cryoRng = new Rng(seedFromString(`${seed}:cryo`));
+  for (const p of planets) {
+    if (p.startSlot !== null || cryoRng.next() >= CRYO.planetChance) continue;
+    const land = p.segments.filter((s) => BIOMES[s.biome].buildable);
+    const s = cryoRng.pick(land.length ? land : p.segments);
+    s.cryo = { people: cryoRng.pick(PEOPLE_IDS), count: cryoRng.int(...CRYO.count) };
   }
 
   let state: GameState = {

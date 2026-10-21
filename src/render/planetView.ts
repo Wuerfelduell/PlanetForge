@@ -675,6 +675,24 @@ export class PlanetView {
           sprite.scale.set(((k * segWidth * 0.7) / PROP_SIZE) * (staged ? 1 : PROP_MIN_SCALE + (1 - PROP_MIN_SCALE) * fill));
         }
       }
+      if (s.cryo && !s.building) {
+        // A cryo pod with a frozen people, beside the prop. Drawn art once it exists.
+        const pod = artTexture("prop.cryo-pod");
+        const side = mid + step * 0.25;
+        const at = { x: Math.cos(side) * R, y: Math.sin(side) * R };
+        if (pod) {
+          const sprite = l.props.take(pod);
+          sprite.position.set(at.x, at.y);
+          sprite.rotation = side + Math.PI / 2;
+          sprite.scale.set((k * segWidth * 0.4) / PROP_SIZE);
+        } else {
+          const w = k * segWidth * 0.18;
+          const up = { x: Math.cos(side), y: Math.sin(side) };
+          const c = { x: at.x + up.x * w * 0.9, y: at.y + up.y * w * 0.9 };
+          g.circle(c.x, c.y, w).fill({ color: 0xbfe9ff, alpha: 0.9 }).stroke({ width: 2, color: 0x3d6f9e });
+          g.circle(c.x, c.y, w * 0.45).fill({ color: 0x6fb7e8, alpha: 0.9 });
+        }
+      }
 
       // Working inhabitants stand in front, each in their people's look.
       const workers = Object.values(state.units).filter((u) => u.planetId === planet.id && u.segment === i);

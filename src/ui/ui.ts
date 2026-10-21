@@ -46,6 +46,9 @@ import {
   powerFactor,
   nextUpgrade,
   upgradeBlocker,
+  thawBlocker,
+  CRYO,
+  PEOPLES,
   toolFactor,
   ticksPerCycle,
   workerCapacity,
@@ -187,6 +190,9 @@ export class Ui {
         case "depleted":
           this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft${e.resource === "wood" ? ". Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}`, "warn");
           break;
+        case "thawed":
+          if (this.isMine(e.planetId)) this.toast(`🧊 ${e.count} ${PEOPLES[e.people].name} aufgetaut! Sie wohnen jetzt auf ${this.planetName(e.planetId)}.`, "good");
+          break;
         case "suffocated":
           if (this.isMine(e.planetId)) this.toast(`🧑‍🚀 Keine Raumanzüge mehr: ein Siedler auf ${this.planetName(e.planetId)} ist erstickt. Eine Werkstatt (Stufe 2) näht neue.`, "bad");
           break;
@@ -320,6 +326,9 @@ export class Ui {
         break;
       case "upgrade":
         this.actions.send({ type: "upgrade", ...at });
+        break;
+      case "thaw":
+        this.actions.send({ type: "thaw", ...at });
         break;
       case "terraform":
         this.actions.send({ type: "terraform", ...at, kind: value as TerraformKind });
@@ -873,7 +882,15 @@ export class Ui {
       actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>${terraforms ? `<div class="builds">${terraforms}</div>` : ""}`;
     }
 
-    return `<h2>${title}</h2>${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
+    const pod = s.cryo;
+    const thawBlock = pod ? thawBlocker(state, planet, s) : null;
+    const thawCost = Object.entries(CRYO.thawCost)
+      .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+      .join(" ");
+    const cryo = pod
+      ? `<p class="muted">🧊 Eine Kryokapsel: ${pod.count} eingefrorene ${PEOPLES[pod.people].icon} ${PEOPLES[pod.people].name} schlafen hier.</p><button class="build" data-action="thaw" ${thawBlock ? `disabled title="${thawBlock}"` : ""}><span class="icon">🧊</span><span class="name">Auftauen: ${pod.count} neue Einwohner</span><span class="cost">${thawCost}</span></button>`
+      : "";
+    return `<h2>${title}</h2>${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
   }
 }
 
