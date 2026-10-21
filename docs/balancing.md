@@ -119,6 +119,10 @@ Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Comput
 
 Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, tauscht ein Händler jede Ware (außer Wissen) gegen jede andere. Preis = Menge × Wert der gewünschten Ware × 1,5 ÷ Wert der gegebenen Ware, aufgerundet; Werte wie in src/data/balance/resources.ts (`MARKET` in content.ts).
 
+## Edelsteine
+
+Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, gibt es teuer am Markt (Wert 50–60).
+
 ## Spielmodi und Pacing
 
 **Playtest 21.10.2026.** Die Simulation lief mit eigenen, viel schnelleren Zahlen (Geburt 12 s flach, 2 Nahrung pro Umlauf, Schwellen 15 bis 3600). Ein Spieler, der nur Hütten und Farmen baut, war nach 37 Minuten auf Stufe 10, schneller als einer mit der ganzen Produktionskette. Jetzt liest `src/sim` Geburten, Nahrung, Schwellen und Startvorrat direkt aus `src/data/balance`, damit die beiden nicht wieder auseinanderlaufen. Dazu kommen drei Änderungen:

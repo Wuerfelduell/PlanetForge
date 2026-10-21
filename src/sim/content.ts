@@ -19,6 +19,8 @@ export const RESOURCE_IDS = [
   "biogas", "plastic", "electronics", "computer",
   // Seb: settlers on planets without breathable air need space suits, or they die off.
   "suits",
+  // Gems (Seb): very rare, a handful per world, needed only for a few special things.
+  "diamond", "emerald", "ruby",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -57,6 +59,9 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   electronics: { name: "Elektronik", icon: "💡" },
   computer: { name: "Computer", icon: "💻" },
   suits: { name: "Raumanzug", icon: "🧑‍🚀" },
+  diamond: { name: "Diamant", icon: "💠" },
+  emerald: { name: "Smaragd", icon: "✳️" },
+  ruby: { name: "Rubin", icon: "♦️" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -207,6 +212,7 @@ export const BUILDING_IDS = [
   "watchtower", "battery",
   "launchpad", "refinery",
   "market",
+  "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -671,6 +677,57 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 15,
     burns: { resource: "uranium", perSecond: 0.02 },
   },
+  "gem-mine": {
+    name: "Edelsteinmine",
+    icon: "💍",
+    category: "resources",
+    description: "Schürft ganz langsam Diamanten, Smaragde und Rubine. Nur auf einem der seltenen Felder mit Edelsteinen. Verbraucht Werkzeug.",
+    cost: { steel: 10, tools: 10, bricks: 10 },
+    unlockLevel: 5,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    extracts: { resources: ["diamond", "emerald", "ruby"], perWorker: 0.03 },
+    needsDeposit: true,
+    usesTools: true,
+  },
+  "crystal-palace": {
+    name: "Kristallpalast",
+    icon: "🏰",
+    category: "housing",
+    description: "Ein Palast aus Edelsteinen: Platz für 20 Einwohner und +5 Aufstiegspunkte pro Umlauf. Braucht Strom. Nur einer pro Planet.",
+    cost: { diamond: 3, emerald: 3, ruby: 3, concrete: 30, glass: 20 },
+    unlockLevel: 9,
+    allowedBiomes: LAND,
+    workers: 0,
+    housing: 20,
+    ascension: 5,
+    energy: -2,
+    unique: true,
+  },
+  "prism-dome": {
+    name: "Prismenkuppel",
+    icon: "🔮",
+    category: "research",
+    description: "Smaragdprismen bündeln Sternenlicht: sehr viel Wissen je Arbeiter. Braucht Strom.",
+    cost: { emerald: 2, diamond: 1, glass: 20, steel: 10 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "science", perWorker: 0.8 },
+    energy: -2,
+  },
+  "ruby-laser": {
+    name: "Rubinlaser",
+    icon: "🔴",
+    category: "defense",
+    description: "Ein Laser mit Rubinkern schießt auf Invasoren: je Arbeiter 3 Treffer pro Umlauf. Braucht Strom.",
+    cost: { ruby: 2, steel: 20, electronics: 3 },
+    unlockLevel: 7,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 3,
+    energy: -2,
+  },
   market: {
     name: "Markt",
     icon: "🏪",
@@ -762,6 +819,7 @@ export const MARKET = {
     uranium: 12, aetherite: 15, gold: 15,
     planks: 10, tools: 12, wire: 9, cloth: 18, bricks: 9, fuel: 12,
     glass: 18, concrete: 18, steel: 22, plastic: 22, electronics: 80, computer: 220,
+    diamond: 60, emerald: 50, ruby: 50,
   } as Partial<Record<ResourceId, number>>,
   /** Units per trade the market offers. */
   lots: [1, 5] as const,
@@ -965,6 +1023,22 @@ export const SYSTEM = {
   /** Systems with more planets than this share orbits, so the star map stays readable on a phone. */
   compactFrom: 7,
   maxOrbit: 7,
+} as const;
+
+/**
+ * Gems (Seb: "ganz selten"): from their own seed stream, so worlds stay the same. Every start
+ * planet hides one gem field outside the start area, other planets and asteroids only sometimes.
+ */
+export const GEMS = {
+  ids: ["diamond", "emerald", "ruby"] as ResourceId[],
+  biomes: {
+    diamond: ["mountains", "lava", "crystal"],
+    emerald: ["crystal", "swamp", "forest"],
+    ruby: ["mountains", "desert", "lava"],
+  } as Partial<Record<ResourceId, readonly BiomeId[]>>,
+  /** Chance per free planet or asteroid to hold one gem field. */
+  planetChance: 0.35,
+  amount: [6, 12] as const,
 } as const;
 
 /**

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BIOMES, BUILDINGS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, SUPERNOVA, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, GEMS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, SUPERNOVA, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
 
 /**
  * Walks the whole build and upgrade graph from a fresh home planet (Seb's playtest, 2026-10-21:
@@ -26,6 +26,8 @@ function earliestLevels() {
     }
   }
   for (const [r, biomes] of Object.entries(RARE_RESOURCES)) if (biomes!.some((b) => homeBiomes.includes(b))) deposits.add(r as ResourceId);
+  // Every start planet hides one gem field (generate.ts); which gem is luck, the market sells the others.
+  for (const g of GEMS.ids) deposits.add(g);
   const costLevel = (cost: Partial<Record<ResourceId, number>>) => Math.max(0, ...Object.keys(cost).map((r) => resource.get(r as ResourceId) ?? Infinity));
 
   for (let changed = true; changed; ) {
