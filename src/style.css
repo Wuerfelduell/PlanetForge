@@ -45,6 +45,30 @@ html, body {
 }
 #hud .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 #hud .res-scroll, #hud .hud-controls, #hud .hud-rest { display: contents; }
+/* All resources, opened from "+n" in the top bar; floats over the planet so nothing jumps. */
+#hud .res-list {
+  position: absolute;
+  top: 100%;
+  left: 8px;
+  right: 8px;
+  max-width: 520px;
+  max-height: 50vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 4px 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  z-index: 6;
+}
+.res-item { display: flex; align-items: center; gap: 6px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.res-item .res-name { flex: 1; color: var(--muted); }
+.res-item.bad b { color: var(--bad); }
+#hud .chip.more { color: var(--muted); }
+#hud .chip.more.on { color: var(--text); box-shadow: 0 0 0 2px var(--accent); }
 #hud button, #hud .chip, #hud .level, #hud .cycle { pointer-events: auto; }
 .spacer { flex: 1; }
 
