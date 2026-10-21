@@ -790,7 +790,7 @@ export class Ui {
     const me = state.players.find((p) => p.id === this.playerId);
     const faction = factionOfEconomy(state, to.economyId);
     const owner = faction ? `${STANCE_NAMES[faction.stance].icon} ${faction.name}` : to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
-    return needsSuits(to) ? `${owner} · keine Atemluft, braucht Raumanzüge` : owner;
+    return needsSuits(to) ? `${owner} · keine Atemluft, draußen braucht man Raumanzüge` : owner;
   }
 
   /** Launch pad: one row per reachable planet with the rockets that can go there. */

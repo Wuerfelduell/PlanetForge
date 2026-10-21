@@ -116,14 +116,20 @@ export function housing(state: GameState, planet: PlanetState): number {
   if (planet.economyId === null) return 0;
   // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
   const peoples = new Set(unitsOn(state, planet.id).map((u) => u.owner)).size;
-  let total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation;
+  const total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation + housedInBuildings(state, planet);
+  return Math.floor(total + 1e-9);
+}
+
+/** Living space in actual houses on the planet, without the base shelter. */
+function housedInBuildings(state: GameState, planet: PlanetState): number {
   const economy = economyOf(state, planet);
+  let total = 0;
   for (const s of planet.segments) {
     const h = buildingStats(s)?.housing;
     // Noisy neighbors take living space, forests add a little.
     if (h) total += modified(economy, "housing", h, { building: s.building! }) * adjacencyMultiplier(planet, s) * powerFactor(planet, s);
   }
-  return Math.floor(total + 1e-9);
+  return total;
 }
 
 export function workerCapacity(segment: SegmentState): number {
@@ -473,6 +479,19 @@ export function planetDefense(state: GameState, planet: PlanetState): number {
 /** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
 export function needsSuits(planet: PlanetState): boolean {
   return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;
+}
+
+/**
+ * Settlers outside on an airless planet, who wear out suits: workers first, then idle settlers
+ * without a bed. Seb: idle residents who fit into the houses there stay inside and need none.
+ */
+export function settlersOutside(state: GameState, planet: PlanetState): UnitState[] {
+  if (!needsSuits(planet)) return [];
+  const settlers = Object.values(state.units).filter((u) => u.planetId === planet.id);
+  const idle = settlers.filter((u) => u.segment === null);
+  // Only real houses keep the air in, not the base shelter every planet has.
+  const indoors = Math.min(idle.length, planet.economyId === null ? 0 : Math.floor(housedInBuildings(state, planet) + 1e-9));
+  return [...settlers.filter((u) => u.segment !== null), ...idle.slice(indoors)];
 }
 
 /** Why a cryo pod can't be thawed right now, or null. */
