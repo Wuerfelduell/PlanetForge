@@ -163,3 +163,10 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
 #main-menu .people-info small { color: var(--muted); }
 #main-menu .people-info p { margin: 4px 0 0; }
 #main-menu .people-note { color: var(--muted); font-size: 13px; }
+
+/* World options: label column + wrapping chips. */
+#main-menu .menu-world { display: flex; flex-direction: column; gap: 4px; }
+#main-menu .menu-world > span { color: var(--muted); font-size: 13px; margin-top: 4px; }
+#main-menu .menu-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+#main-menu .menu-chip { padding: 6px 10px; border-radius: 999px; font-size: 14px; }
+#main-menu .menu-chip.on { outline: 2px solid var(--accent); background: #34385f; }

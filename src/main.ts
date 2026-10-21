@@ -13,7 +13,7 @@ import { Ui } from "./ui/ui";
 import { mountLayoutControls } from "./ui/layoutControls";
 import { music } from "./audio/music";
 import { unlockMusicOnFirstGesture } from "./audio/musicControl";
-import { MainMenu, type NewGameOptions } from "./ui/mainMenu";
+import { MainMenu, worldOptions, type NewGameOptions } from "./ui/mainMenu";
 import "./style.css";
 
 async function boot(): Promise<void> {
@@ -61,10 +61,10 @@ async function boot(): Promise<void> {
   });
 
   /** A fresh game on this device; the old local save is replaced. */
-  const newLocalGame = ({ goal, invaders, people }: NewGameOptions) => {
+  const newLocalGame = ({ goal, invaders, people, world }: NewGameOptions) => {
     clearSave();
     leaveOnline();
-    session = LocalSession.newGame(undefined, { goal, invaders }, people);
+    session = LocalSession.newGame(undefined, { goal, invaders, world: worldOptions(world) }, people);
     started = true;
     saveLocal();
     showHome();
@@ -166,7 +166,7 @@ async function boot(): Promise<void> {
       },
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
-        else await online.create(options, slot, options.people);
+        else await online.create({ mode: options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world) }, slot, options.people);
       },
       openOnline: () => void online.open(),
       save() {
