@@ -213,7 +213,32 @@ function glacier(variant, stage) {
   return b;
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier };
+function basaltGrowth(x, height, width) {
+  const top = round(118.5 - height), left = round(x - width / 2), right = round(x + width / 2), cap = Math.min(7, round(height / 4));
+  const b = path(`M ${left} ${top + cap} L ${x - 3} ${top} L ${right} ${top + cap} V 115 L ${x + 2} 118.5 L ${left} 115 Z`, C('coal'))
+    + path(`M ${x + 2} ${top + cap + 4} L ${right - 1} ${top + cap + 1} V 114 L ${x + 2} 117 Z`, C('coal', -.18), flat)
+    + path(`M ${left} ${top + cap} L ${x - 3} ${top} L ${right} ${top + cap} L ${x + 2} ${top + cap + 4} Z`, C('rock-dark'), 'stroke-width="1.5"')
+    + (height > 24 ? line(`M ${left + 4} ${top + cap + 8} V 111`, 'rock-dark', 1.5) : '');
+  return b.replace(/-?\d+\.\d{2,}/g, n => String(round(Number(n))));
+}
+function lava(variant, stage) {
+  if (!stage) return path('M 23 118.5 L 27 110 L 44 106 L 59 110 L 75 105 L 96 109 L 105 118.5 Z', C('coal'))
+    + path('M 45 108 L 52 114 L 47 118 M 75 107 L 69 113 L 79 117', 'none', `stroke="${C('lava', -.18)}" stroke-width="2"`)
+    + path(`M ${30 + variant * 4} 111 L ${39 + variant * 4} 108 L ${44 + variant * 4} 111`, 'none', `stroke="${C('rock-dark')}" stroke-width="2"`);
+  const s = stage === 1 ? .3 : .7, spread = stage === 1 ? .5 : .8;
+  if (variant === 0) {
+    const top = round(118.5 - 58.5 * s), half = stage === 1 ? 24 : 36, lip = stage === 1 ? 10 : 17;
+    return path(`M ${64 - half} 118.5 L ${64 - lip} ${top + 4} Q 64 ${top - 4} ${64 + lip} ${top + 4} L ${64 + half} 118.5 Z`, C('coal'))
+      + path(`M 71 ${top + 5} L ${64 + half - 2} 117 H 64 Q 79 105 71 ${top + 5} Z`, C('coal', -.18), flat)
+      + ellipse(64, top + 3, lip, stage === 1 ? 3 : 5, C('rock-dark'), 'stroke-width="2"')
+      + line(`M ${64 - lip + 4} ${top + 2} H 67`, 'rock', 1.5)
+      + (stage === 2 ? line(`M 67 ${top + 13} L 64 ${top + 22} L 70 ${top + 29} L 66 114`, 'lava', 2) : '');
+  }
+  const columns = variant === 1 ? [[43, 44, 32], [79, 64, 34]] : [[42, 58, 28], [85, 75, 27], [62, 95, 30]];
+  return columns.map(([x, h, w]) => basaltGrowth(round(64 + (x - 64) * spread), round(h * s), round(w * spread))).join('');
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals, glacier, lava };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
 if (fullProps.length !== Object.keys(renderers).length * 3) throw new Error(`Expected three full props per renderer, found ${fullProps.length}`);
