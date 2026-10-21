@@ -149,16 +149,23 @@ export const BATTLE = {
 export const SPACE = {
   asteroidsPerSystem: { min: 2, max: 4 },
   baseSightRadius: 6,
-  /** Fuel for one flight = ceil(distance × (fuelPerDistance + fuelPerPassenger × passengers)). */
+  /**
+   * Fuel for one flight = ceil(takeoffFuel + distance × (fuelPerDistance + fuelPerPassenger × passengers)).
+   * Seb (2026-10-21): flying was too easy. Rockets burn Treibstoff, refined from oil (2 : 1) in a
+   * refinery, and every launch pays a flat takeoff on top. A first colony flight (distance 4,
+   * 3 passengers) costs 24 fuel = 48 oil. Oil deposits do not refill once empty, so the home
+   * planet's oil (one swamp and one desert field, about 90) carries two flights, not ten.
+   */
   rockets: {
     /** versus: sabotage (design doc 5.3), 1–2 saboteurs, early. */
     "rocket-scout": {
       art: "rocket-small",
-      cost: { wood: 15, iron: 10 },
+      cost: { planks: 15, iron: 10 },
       unlockLevel: 2,
       capacity: 2,
-      fuel: "oil",
-      fuelPerDistance: 1.5,
+      fuel: "fuel",
+      takeoffFuel: 4,
+      fuelPerDistance: 1,
       fuelPerPassenger: 1,
       maxRange: 8,
       secondsPerDistance: 3,
@@ -166,12 +173,26 @@ export const SPACE = {
     /** versus: attack rocket with weapons upgrade (design doc 5.3). */
     "rocket-combat": {
       art: "rocket-small",
-      cost: { iron: 20, wood: 20, stone: 15 },
+      cost: { iron: 20, planks: 15, tools: 5 },
       unlockLevel: 3,
       capacity: 4,
-      fuel: "oil",
-      fuelPerDistance: 2,
-      fuelPerPassenger: 1.5,
+      fuel: "fuel",
+      takeoffFuel: 6,
+      fuelPerDistance: 1.5,
+      fuelPerPassenger: 0.75,
+      maxRange: 8,
+      secondsPerDistance: 4,
+    },
+    /** The first colony ship (sim: ROCKETS.colony). Colonizing starts at level 4 in both modes. */
+    "rocket-colony": {
+      art: "rocket-small",
+      cost: { planks: 20, iron: 15, tools: 5, cloth: 3 },
+      unlockLevel: 4,
+      capacity: 3,
+      fuel: "fuel",
+      takeoffFuel: 6,
+      fuelPerDistance: 1.5,
+      fuelPerPassenger: 1,
       maxRange: 8,
       secondsPerDistance: 4,
     },
@@ -180,11 +201,12 @@ export const SPACE = {
       cost: { plastic: 10, steel: 10, cloth: 5 },
       unlockLevel: 6,
       capacity: 3,
-      fuel: "oil",
-      fuelPerDistance: 2,
-      fuelPerPassenger: 1.5,
-      maxRange: 8,
-      secondsPerDistance: 4,
+      fuel: "fuel",
+      takeoffFuel: 6,
+      fuelPerDistance: 1.5,
+      fuelPerPassenger: 1,
+      maxRange: 12,
+      secondsPerDistance: 3,
     },
     "rocket-big": {
       art: "rocket-big",
@@ -192,6 +214,7 @@ export const SPACE = {
       unlockLevel: 9,
       capacity: 6,
       fuel: "uranium",
+      takeoffFuel: 2,
       fuelPerDistance: 0.3,
       fuelPerPassenger: 0.2,
       maxRange: 20,

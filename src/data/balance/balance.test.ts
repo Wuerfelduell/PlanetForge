@@ -119,6 +119,23 @@ describe("sanity", () => {
     expect(avail.plastic).toBe(6);
   });
 
+  it("flying is hard: rockets burn refined fuel, buildable by their unlock level, and home oil lasts only a few flights", () => {
+    const avail = homeAvailability();
+    for (const [id, r] of Object.entries(BALANCE.space.rockets)) {
+      if (r.fuel === "uranium") continue;
+      expect(r.fuel, id).toBe("fuel");
+      for (const c of [...Object.keys(r.cost), r.fuel]) expect(avail[c as ResourceId], `${id}: ${c}`).toBeLessThanOrEqual(r.unlockLevel);
+    }
+    const oilPerFuel = recipes.fuel.inputs.oil / recipes.fuel.outputs.fuel;
+    const homeOil = BALANCE.rules.homeGuaranteedBiomes
+      .flatMap((b) => biomes[b].deposits as readonly { resource: string; max: number }[])
+      .filter((d) => d.resource === "oil")
+      .reduce((sum, d) => sum + d.max, 0);
+    const flights = homeOil / (rocketFuel("rocket-colony", 4, 3) * oilPerFuel);
+    expect(flights).toBeGreaterThanOrEqual(1.5);
+    expect(flights).toBeLessThanOrEqual(3);
+  });
+
   it("food: a full farm feeds several citizens, a hand gatherer only a few", () => {
     const perCitizen = foodUpkeepPerSecond(10);
     const farm = buildings.farm.tiers[0];
@@ -195,7 +212,8 @@ describe("pacing", () => {
     expect(discoveryCost(1)).toBe(41);
     expect(discoveryCost(0, "versus")).toBe(15);
     expect(secondsPerBirth(10)).toBe(90);
-    expect(rocketFuel("rocket-small", 4, 1)).toBe(14);
-    expect(rocketFuel("rocket-small", 4, 3)).toBe(26);
+    expect(rocketFuel("rocket-small", 4, 1)).toBe(16);
+    expect(rocketFuel("rocket-small", 4, 3)).toBe(24);
+    expect(rocketFuel("rocket-colony", 4, 3)).toBe(24);
   });
 });

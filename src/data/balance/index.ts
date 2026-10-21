@@ -91,7 +91,7 @@ export function foodUpkeepPerSecond(citizens: number, mul = 1): number {
 /** Fuel for one rocket flight. */
 export function rocketFuel(rocket: keyof typeof SPACE.rockets, distance: number, passengers: number, fuelMul = 1): number {
   const r = SPACE.rockets[rocket];
-  return Math.ceil(distance * (r.fuelPerDistance + r.fuelPerPassenger * passengers) * fuelMul);
+  return Math.ceil((r.takeoffFuel + distance * (r.fuelPerDistance + r.fuelPerPassenger * passengers)) * fuelMul);
 }
 
 export function monsterStrength(monster: keyof typeof MONSTERS, mode: ModeId = "coop", players = 1): number {
