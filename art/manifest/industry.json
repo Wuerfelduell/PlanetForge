@@ -1,0 +1,476 @@
+{
+  "assets": [
+    {
+      "id": "building.biogas-plant",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame"
+      ],
+      "tags": [
+        "biogas-plant",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.biogas-plant.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant-construction.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame",
+        "scaffolding"
+      ],
+      "tags": [
+        "biogas-plant",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.biogas-plant.off",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant-off.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame"
+      ],
+      "tags": [
+        "biogas-plant",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-gas",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas.svg",
+      "out": "public/assets/sprites/buildings/power-gas.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam"
+      ],
+      "tags": [
+        "power-gas",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-gas.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas-construction.svg",
+      "out": "public/assets/sprites/buildings/power-gas-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam",
+        "scaffolding"
+      ],
+      "tags": [
+        "power-gas",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-gas.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-gas-off.svg",
+      "out": "public/assets/sprites/buildings/power-gas-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam"
+      ],
+      "tags": [
+        "power-gas",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.plastics",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics.svg",
+      "out": "public/assets/sprites/buildings/plastics.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "plastics",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.plastics.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics-construction.svg",
+      "out": "public/assets/sprites/buildings/plastics-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "plastics",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.plastics.off",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics-off.svg",
+      "out": "public/assets/sprites/buildings/plastics-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "plastics",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t1.svg",
+      "out": "public/assets/sprites/buildings/electronics-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "circuit-glow"
+      ],
+      "tags": [
+        "electronics.t1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/electronics-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "circuit-glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "electronics.t1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t1-off.svg",
+      "out": "public/assets/sprites/buildings/electronics-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "circuit-glow"
+      ],
+      "tags": [
+        "electronics.t1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t2.svg",
+      "out": "public/assets/sprites/buildings/electronics-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "electronics.t2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/electronics-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "electronics.t2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.electronics.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/electronics-t2-off.svg",
+      "out": "public/assets/sprites/buildings/electronics-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "electronics.t2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.datacenter",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter.svg",
+      "out": "public/assets/sprites/buildings/datacenter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights"
+      ],
+      "tags": [
+        "datacenter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.datacenter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter-construction.svg",
+      "out": "public/assets/sprites/buildings/datacenter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights",
+        "scaffolding"
+      ],
+      "tags": [
+        "datacenter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.datacenter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/datacenter-off.svg",
+      "out": "public/assets/sprites/buildings/datacenter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "lights"
+      ],
+      "tags": [
+        "datacenter",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "prop.cryo-pod",
+      "category": "biomes",
+      "src": "art/src/biomes/cryo-pod.svg",
+      "out": "public/assets/sprites/biomes/cryo-pod.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "cryo-pod",
+        "any-biome"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.suits",
+      "category": "resources",
+      "src": "art/src/resources/suits.svg",
+      "out": "public/assets/sprites/resources/suits.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "suits"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.suits.mini",
+      "category": "resources",
+      "src": "art/src/resources/suits-mini.svg",
+      "out": "public/assets/sprites/resources/suits-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "suits",
+        "mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
