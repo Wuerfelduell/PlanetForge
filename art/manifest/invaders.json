@@ -170,6 +170,32 @@
         "loop"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "fx.invader-beam",
+      "category": "fx",
+      "src": "art/src/fx/invader-beam-f{f}.svg",
+      "out": "public/assets/sprites/fx/invader-beam-f{f}.png",
+      "viewBox": [
+        128,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0
+      ],
+      "frames": 4,
+      "fps": 8,
+      "parts": [
+        "beam",
+        "pulse"
+      ],
+      "tags": [
+        "invaders",
+        "beam",
+        "loop"
+      ],
+      "phase": "P1"
     }
   ]
 }

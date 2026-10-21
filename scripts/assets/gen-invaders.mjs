@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 3;
+const STAGE = 4;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -90,6 +90,22 @@ function escort(frame){
   return engine+group('hull',hull);
 }
 if(STAGE>=3)emit({id:'invader.escort',category:'invaders',stem:'escort',size:[64,64],frames:2,fps:5,parts:['hull','engine'],tags:['escort','loop'],draw:escort});
+
+function invaderBeam(frame){
+  const half=[37,45,49,42][frame-1], strength=[.4,.6,.8,.6][frame-1], y=[46,100,154,208][frame-1];
+  const cone=`M57 0 H71 L${64+half} 231 Q64 251 ${64-half} 231Z`;
+  const pulse=round(7+half*y/240);
+  return `<defs><filter id="beam-glow" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur stdDeviation="3"/></filter></defs>`+
+    group('beam',path(cone,'crystal',`stroke="none" opacity="${strength}" filter="url(#beam-glow)"`)+
+      path(cone,'crystal','fill-opacity="0.3"')+
+      path(`M61 0 H67 L${64+round(half*.6)} 232 Q64 245 ${64-round(half*.6)} 232Z`,'toxic','fill-opacity="0.8" stroke="none"')+
+      line('M59 17 L33 208','cream',2,'opacity="0.5"')+
+      line('M68 31 L92 202','toxic',2,'opacity="0.7"'))+
+    group('pulse',ellipse(64,y,pulse,round(4+y/32),'toxic','fill-opacity="0.1" stroke-width="2"')+
+      ellipse(64,231,half,10,'crystal',`fill-opacity="0.2" stroke="${C('toxic')}" stroke-width="3"`)+
+      spark(39,220,frame===2?6:4,'cream')+spark(89,235,frame===3?6:3,'toxic'));
+}
+if(STAGE>=4)emit({id:'fx.invader-beam',category:'fx',stem:'invader-beam',size:[128,256],anchor:[.5,0],frames:4,fps:8,parts:['beam','pulse'],tags:['beam','loop'],draw:invaderBeam});
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Invader art: stage ${STAGE}, ${assets.length} ids generated.`);
