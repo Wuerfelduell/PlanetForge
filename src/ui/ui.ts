@@ -66,6 +66,8 @@ export class Ui {
   /** Planet currently shown (the player's home planet until there is a star map). */
   private planetId = "";
   private speed = 1;
+  /** Speed to resume with after a pause. */
+  private lastSpeed = 1;
 
   constructor(private readonly actions: UiActions) {
     // pointerup instead of click: the panel re-renders while the player taps, and a click needs
@@ -299,6 +301,7 @@ export class Ui {
         this.actions.send({ type: "setGather", ...at, resource: value as ResourceId });
         break;
       case "speed":
+        if (this.speed > 0) this.lastSpeed = this.speed;
         this.speed = Number(value);
         this.actions.setSpeed(this.speed);
         this.lastHud = "";
@@ -344,15 +347,18 @@ export class Ui {
     const next = nextLevelThreshold(lvl);
     const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
     const cycleProgress = (state.tick % ticksPerCycle(state)) / ticksPerCycle(state);
-    const speeds = [0, 1, 3]
-      .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
-      .join("");
+    // Pause plus one 1×/3× toggle instead of three buttons, to keep the bar to one line on phones.
+    const paused = this.speed === 0;
+    const pace = paused ? this.lastSpeed : this.speed;
+    const speeds =
+      `<button class="speed${paused ? " on" : ""}" data-action="speed" data-value="${paused ? pace : 0}" title="${paused ? "Weiter" : "Pause"}">${paused ? "▶" : "⏸"}</button>` +
+      `<button class="speed${pace === 3 ? " on" : ""}" data-action="speed" data-value="${pace === 3 ? 1 : 3}" title="Tempo">${pace}×</button>`;
     const own = this.ownPlanets();
     const planetChip = !own.some((p) => p.id === planet.id)
-      ? `<span class="chip" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
+      ? `<span class="chip name" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
       : own.length > 1
-        ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
-        : `<span class="chip" title="Planet">🪐 ${planet.name}</span>`;
+        ? `<button class="chip name" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
+        : `<span class="chip name" title="Planet">🪐 ${planet.name}</span>`;
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
     const versusButtons = duel
@@ -360,10 +366,10 @@ export class Ui {
       : "";
     return `
       <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button></div>
-      <div class="row status">
+      <div class="row status main">
         ${planetChip}
-        <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="Sternkarte">${this.mapOpen ? "🪐 Planet" : "🌌 Karte"}</button>
-        <span class="chip" title="Einwohner (frei) / Wohnraum">👥 ${population(state, planet)}/${housing(state, planet)} <small>(${idleUnits(state, planet, this.playerId).length} frei)</small></span>
+        <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
+        <span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>${this.renderFlights(state)}`;
