@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { homePlanet, type GameEvent } from "./sim";
+import { cycleOf, homePlanet, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { ChatPanel } from "./net/chat";
@@ -10,7 +10,8 @@ import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
 import { music } from "./audio/music";
-import { mountMusicControl, unlockMusicOnFirstGesture } from "./audio/musicControl";
+import { unlockMusicOnFirstGesture } from "./audio/musicControl";
+import { MainMenu, type NewGameOptions } from "./ui/mainMenu";
 import "./style.css";
 
 async function boot(): Promise<void> {
@@ -25,10 +26,11 @@ async function boot(): Promise<void> {
   });
   host.appendChild(app.canvas);
 
-  mountMusicControl(music);
   unlockMusicOnFirstGesture(music);
 
   const saved = loadGame();
+  // Whether there is a game to continue (a saved one, or one started from the menu).
+  let started = saved !== null;
   let session: GameSession = saved ? new LocalSession(saved) : LocalSession.newGame();
 
   const ui = new Ui({
@@ -45,17 +47,20 @@ async function boot(): Promise<void> {
     setSpeed(speed) {
       session.speed = speed;
     },
-    newGame(options) {
-      clearSave();
-      const speed = session.speed;
-      leaveOnline();
-      session = LocalSession.newGame(undefined, options);
-      session.speed = speed;
-      showHome();
-      view.select(0);
-      ui.render(session.state);
-    },
+    openMenu: () => menu.open(),
   });
+
+  /** A fresh game on this device; the old local save is replaced. */
+  const newLocalGame = (options: NewGameOptions) => {
+    clearSave();
+    leaveOnline();
+    session = LocalSession.newGame(undefined, options);
+    started = true;
+    saveLocal();
+    showHome();
+    view.select(0);
+    ui.render(session.state);
+  };
 
   // What the player is looking at, for chat pins.
   const focus = { planetId: "", segment: 0 };
@@ -79,7 +84,9 @@ async function boot(): Promise<void> {
 
   // Cloud games (coop and solo saves): the server is the authority, nothing is saved locally.
   const online = new OnlineMenu({
+    newGame: (slot) => menu.openNewOnline(slot),
     play(next) {
+      menu.close();
       if (session instanceof LocalSession) saveGame(session.state);
       next.onError = (message) => ui.toast(message, "warn");
       next.onRemoved = () => {
@@ -93,6 +100,7 @@ async function boot(): Promise<void> {
         ui.render(session.state);
       };
       session = next;
+      started = true;
       chat.attach(next);
       showHome();
       view.select(0);
@@ -128,6 +136,36 @@ async function boot(): Promise<void> {
   };
   showHome();
   app.stage.addChild(view.stage);
+
+  // Start screen and pause menu. A local game pauses behind it; a cloud game keeps running.
+  let speedBeforeMenu = 1;
+  const menu = new MainMenu(
+    {
+      current() {
+        if (!started) return null;
+        const state = session.state;
+        const level = state.economies[state.players.find((p) => p.id === session.playerId)?.economyId ?? ""]?.ascension.level ?? 0;
+        const where = session instanceof NetworkSession ? `Online · ${Math.max(1, session.online.length)} online` : "Allein";
+        return `${where} · ⭐ ${level} · Umlauf ${cycleOf(state) + 1}`;
+      },
+      async newGame(options, where, slot) {
+        if (where === "local") newLocalGame(options);
+        else await online.create(options, slot);
+      },
+      openOnline: () => void online.open(),
+      onToggle(open) {
+        if (!(session instanceof LocalSession)) return;
+        if (open) {
+          speedBeforeMenu = session.speed || 1;
+          session.speed = 0;
+        } else session.speed = speedBeforeMenu;
+      },
+    },
+    music,
+    sfx,
+  );
+  // An invite link (?join=CODE) opens the online menu on top of it.
+  menu.open();
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
