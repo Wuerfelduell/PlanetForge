@@ -124,7 +124,15 @@ export interface FactionState {
   nextAttackTick: number;
   /** Trades and gifts of the team so far (for the "known us for a while" bonus). */
   trades: number;
+  /**
+   * Open team vote (coop with several humans): war/peace/alliance/merge to propose, or "offer" =
+   * answer the faction's open offer (yes accepts, no declines). True majority of the yes/no votes
+   * decides as soon as everyone voted, otherwise at the end of the cycle; a tie decides nothing.
+   */
+  vote?: { action: FactionVoteAction; votes: Record<string, boolean>; startedBy: string } | null;
 }
+
+export type FactionVoteAction = "war" | "peace" | "alliance" | "merge" | "offer";
 
 export type GameResult = { winner: string } | { draw: true } | { supernova: true };
 
@@ -269,6 +277,8 @@ export type Command =
   | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
   /** Votes for one option of the economy's open discovery offer (alone: picks it). */
   | { type: "voteDiscovery"; discovery: string }
+  /** Votes yes or no in the open team vote about a faction (see FactionState.vote). */
+  | { type: "voteDiplomacy"; faction: string; yes: boolean }
   /** Sends SUPERNOVA.crew idle inhabitants from a launch pad to build (or repair) a shield segment. */
   | { type: "shieldFlight"; planetId: string; segment: number; repair: boolean }
   /** versus: gives up; the player's units vanish and their planets become free ruins. */
@@ -331,6 +341,9 @@ export type GameEvent =
   | { type: "factionOffer"; faction: string; kind: FactionOfferKind; resource?: ResourceId; amount?: number; expiresTick: number }
   | { type: "factionStance"; faction: string; stance: FactionStance; reason: "declaredWar" | "attacked" | "ultimatumRefused" | "peace" | "alliance" | "merged" | "brokenAlliance" }
   | { type: "factionDeclined"; faction: string; action: "peace" | "alliance" | "merge" }
+  | { type: "factionVote"; faction: string; playerId: string; action: FactionVoteAction; yes: boolean }
+  /** The vote closed: passed = the majority said yes and the action happened; otherwise nothing happened. */
+  | { type: "factionVoteResult"; faction: string; action: FactionVoteAction; passed: boolean }
   | { type: "factionTrade"; faction: string; playerId: string; got: ResourceId; gotAmount: number; gave: ResourceId; gaveAmount: number }
   /** `from` is the faction (a present to its ally) or the player who gave. */
   | { type: "factionGift"; faction: string; from: string; resource: ResourceId; amount: number }

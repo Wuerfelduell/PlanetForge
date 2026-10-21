@@ -2,7 +2,7 @@ import { RESOURCES as RESOURCE_VALUES } from "../data/balance/resources";
 import { PEOPLES, RECIPES, RESOURCE_IDS, RESOURCES, type PeopleId, type ResourceId } from "./content";
 import type { Rng } from "./rng";
 import { buildingStats, peopleOf, playerById, ticksPerCycle } from "./rules";
-import type { EconomyState, FactionOfferKind, FactionPersonality, FactionState, FactionStance, GameEvent, GameState, PlayerState } from "./state";
+import type { EconomyState, FactionOfferKind, FactionPersonality, FactionState, FactionStance, FactionVoteAction, GameEvent, GameState, PlayerState } from "./state";
 
 /**
  * Diplomacy with the AI factions (coop with settings.factions > 0): stances, attitude, trade,
@@ -239,6 +239,82 @@ export function cycles(state: GameState, n: number): number {
 }
 
 /** Team proposals (the faction decides at once). Returns an error message or null. */
+/** What keeps the team from proposing `action` to the faction right now, or null. */
+export function proposalBlocker(state: GameState, faction: FactionState, action: FactionVoteAction): string | null {
+  if (faction.eliminated || faction.stance === "merged") return "Diese Fraktion gibt es nicht mehr";
+  if (action === "offer") return faction.offer && state.tick < faction.offer.expiresTick ? null : "Da liegt kein Angebot vor";
+  if (action === "war") return faction.stance === "war" ? "Ihr seid schon im Krieg" : null;
+  if (state.tick < faction.nextProposalTick) return "Sie wollen gerade nicht verhandeln. Versuch es später";
+  if (action === "peace" && faction.stance !== "war") return "Ihr habt keinen Krieg";
+  if (action === "alliance" && faction.stance === "allied") return "Ihr seid schon verbündet";
+  if (action === "alliance" && faction.stance === "war") return "Erst Frieden schließen";
+  if (action === "merge" && faction.stance !== "allied") return "Nur Verbündete schließen sich an";
+  return null;
+}
+
+export const VOTE_NAMES: Record<FactionVoteAction, string> = {
+  war: "Krieg erklären",
+  peace: "Frieden anbieten",
+  alliance: "Bündnis vorschlagen",
+  merge: "Zusammenschluss",
+  offer: "Angebot annehmen",
+};
+
+/** Humans who have a say in team decisions. */
+export function voters(state: GameState): PlayerState[] {
+  return state.players.filter((p) => !p.ai && !p.eliminated);
+}
+
+/**
+ * The team's answer to a faction: alone it happens at once; with several humans it opens the vote
+ * (or joins the open one) and records this player's yes or no. For "offer", yes accepts and no declines.
+ */
+export function decide(state: GameState, player: PlayerState, faction: FactionState, action: FactionVoteAction, yes: boolean, events: GameEvent[]): string | null {
+  if (player.ai) return "Nur Spieler führen Verhandlungen";
+  const blocker = proposalBlocker(state, faction, action);
+  if (blocker) return blocker;
+  if (voters(state).length <= 1) {
+    if (action === "offer") return answerOffer(state, player, faction, yes, events);
+    return yes ? propose(state, player, faction, action, events) : null;
+  }
+  if (faction.vote && faction.vote.action !== action) return `Erst läuft die Abstimmung „${VOTE_NAMES[faction.vote.action]}“`;
+  faction.vote ??= { action, votes: {}, startedBy: player.id };
+  faction.vote.votes[player.id] = yes;
+  events.push({ type: "factionVote", faction: faction.id, playerId: player.id, action, yes });
+  resolveVote(state, faction, false, events);
+  return null;
+}
+
+/** Votes in the faction's open team vote. */
+export function vote(state: GameState, player: PlayerState, faction: FactionState, yes: boolean, events: GameEvent[]): string | null {
+  if (!faction.vote) return "Gerade läuft keine Abstimmung";
+  return decide(state, player, faction, faction.vote.action, yes, events);
+}
+
+/**
+ * Closes the vote once everyone voted (or, `final`, with the cycle): more yes than no does it, more
+ * no than yes declines an offer, a tie changes nothing. Seb: team decisions need a true majority.
+ */
+export function resolveVote(state: GameState, faction: FactionState, final: boolean, events: GameEvent[]): void {
+  const open = faction.vote;
+  if (!open) return;
+  const members = voters(state);
+  const cast = members.map((p) => open.votes[p.id]).filter((v): v is boolean => v !== undefined);
+  if (!final && cast.length < members.length) return;
+  faction.vote = null;
+  const yes = cast.filter(Boolean).length;
+  const no = cast.length - yes;
+  const by = members.find((p) => p.id === open.startedBy) ?? members[0];
+  let passed = false;
+  if (yes > no && by) {
+    const error = open.action === "offer" ? answerOffer(state, by, faction, true, events) : propose(state, by, faction, open.action, events);
+    passed = error === null;
+  } else if (no > yes && by && open.action === "offer") {
+    answerOffer(state, by, faction, false, events);
+  }
+  events.push({ type: "factionVoteResult", faction: faction.id, action: open.action, passed });
+}
+
 export function propose(state: GameState, player: PlayerState, faction: FactionState, action: "war" | "peace" | "alliance" | "merge", events: GameEvent[]): string | null {
   if (player.ai) return "Nur Spieler führen Verhandlungen";
   if (faction.eliminated || faction.stance === "merged") return "Diese Fraktion gibt es nicht mehr";

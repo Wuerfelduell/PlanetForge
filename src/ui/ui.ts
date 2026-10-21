@@ -66,9 +66,12 @@ import {
   factionById,
   factionEconomy,
   factionOfEconomy,
+  PEOPLES,
   PERSONALITY_NAMES,
   sellable,
   STANCE_NAMES,
+  VOTE_NAMES,
+  voters,
   strength,
   TEAM_ECONOMY,
   tradeQuote,
@@ -315,6 +318,12 @@ export class Ui {
           else if (e.stance === "allied") this.toast(`🤝 Bündnis mit ${name}`, "good");
           break;
         }
+        case "factionVote":
+          if (e.playerId !== this.playerId) this.toast(`🗳️ ${this.playerName(e.playerId)} stimmt ${e.yes ? "für" : "gegen"} „${VOTE_NAMES[e.action]}“ (${this.factionName(e.faction)})`);
+          break;
+        case "factionVoteResult":
+          if (!e.passed) this.toast(`🗳️ Keine Mehrheit für „${VOTE_NAMES[e.action]}“ (${this.factionName(e.faction)})`, "warn");
+          break;
         case "factionDeclined":
           this.toast(`🙅 ${this.factionName(e.faction)} lehnen ${e.action === "peace" ? "Frieden" : e.action === "alliance" ? "das Bündnis" : "den Zusammenschluss"} ab`, "warn");
           break;
@@ -445,13 +454,18 @@ export class Ui {
       }
       case "diplomacy": {
         const [faction, action] = value!.split(":") as [string, "war" | "peace" | "alliance" | "merge"];
-        if (action === "war" && !confirm(`Wirklich ${this.factionName(faction)} den Krieg erklären?`)) break;
+        if (action === "war" && !confirm(this.state && voters(this.state).length > 1 ? `Abstimmung über Krieg mit ${this.factionName(faction)} starten?` : `Wirklich ${this.factionName(faction)} den Krieg erklären?`)) break;
         this.actions.send({ type: "diplomacy", faction, action });
         break;
       }
       case "answerOffer": {
         const [faction, accept] = value!.split(":");
         this.actions.send({ type: "answerOffer", faction: faction!, accept: accept === "1" });
+        break;
+      }
+      case "voteDiplomacy": {
+        const [faction, yes] = value!.split(":");
+        this.actions.send({ type: "voteDiplomacy", faction: faction!, yes: yes === "1" });
         break;
       }
       case "shield": {
@@ -651,14 +665,13 @@ export class Ui {
     const team = me ? state.economies[me.economyId] : undefined;
     let html = `<h2>🏳️ Fraktionen <button class="speed" data-action="factions" title="Zurück">✕</button></h2>`;
     if (!team) return html;
-    const host = state.hostId === this.playerId;
     const order = [...state.factions].sort((a, b) => Number(a.eliminated || a.stance === "merged") - Number(b.eliminated || b.stance === "merged"));
-    for (const f of order) html += this.renderFaction(state, f, team, host);
-    if (!host) html += `<p class="muted">Krieg, Frieden und Bündnisse entscheidet ${this.playerName(state.hostId)}; handeln und schenken kann jeder.</p>`;
+    for (const f of order) html += this.renderFaction(state, f, team);
+    if (voters(state).length > 1) html += `<p class="muted">Krieg, Frieden, Bündnis und Angebote entscheidet ihr per Abstimmung: Mehrheit entscheidet, spätestens am Ende des Zyklus; handeln und schenken kann jeder.</p>`;
     return html;
   }
 
-  private renderFaction(state: GameState, f: FactionState, team: GameState["economies"][string], host: boolean): string {
+  private renderFaction(state: GameState, f: FactionState, team: GameState["economies"][string]): string {
     const player = state.players.find((p) => p.id === f.id);
     const people = PEOPLES[player?.people ?? state.players[0]!.people];
     const icon = `${people.icon}`;
@@ -685,12 +698,22 @@ export class Ui {
               ? "bieten Frieden an."
               : "wollen sich deinem Volk anschließen: ihre Planeten, Einwohner und Vorräte werden deine.";
       html += `<p class="offer">💬 ${f.name} ${text} <small>Noch ${this.secondsUntil(offer.expiresTick)} s</small></p>`;
-      if (host) html += `<div class="choices"><button class="chip glow" data-action="answerOffer" data-value="${f.id}:1">✅ Annehmen</button><button class="chip" data-action="answerOffer" data-value="${f.id}:0">❌ Ablehnen</button></div>`;
+      if (!f.vote) html += `<div class="choices"><button class="chip glow" data-action="answerOffer" data-value="${f.id}:1">✅ Annehmen</button><button class="chip" data-action="answerOffer" data-value="${f.id}:0">❌ Ablehnen</button></div>`;
+    }
+
+    if (f.vote) {
+      const members = voters(state);
+      const yes = members.filter((p) => f.vote!.votes[p.id] === true).length;
+      const no = members.filter((p) => f.vote!.votes[p.id] === false).length;
+      const mine = f.vote.votes[this.playerId];
+      const open = members.filter((p) => f.vote!.votes[p.id] === undefined).map((p) => p.name);
+      html += `<p class="offer">🗳️ Abstimmung „${VOTE_NAMES[f.vote.action]}“: ${yes} dafür · ${no} dagegen${open.length ? ` · es fehlt ${open.join(", ")}` : ""} <small>Mehrheit entscheidet, spätestens am Zyklusende</small></p>`;
+      html += `<div class="choices"><button class="chip${mine === true ? " on" : " glow"}" data-action="voteDiplomacy" data-value="${f.id}:1">👍 Dafür</button><button class="chip${mine === false ? " on" : ""}" data-action="voteDiplomacy" data-value="${f.id}:0">👎 Dagegen</button></div>`;
     }
 
     const chips: string[] = [];
     if (f.stance !== "war") chips.push(`<button class="chip${this.tradeWith === f.id ? " on" : ""}" data-action="tradeWith" data-value="${f.id}">⚖️ Handeln</button>`);
-    if (host) {
+    if (!f.vote) {
       if (f.stance === "war") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:peace">🕊️ Frieden anbieten</button>`);
       if (f.stance === "peace") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:alliance">🤝 Bündnis vorschlagen</button>`);
       if (f.stance === "allied") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:merge">🫂 Zusammenschluss</button>`);

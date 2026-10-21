@@ -326,6 +326,91 @@ describe("alliance and merge", () => {
   });
 });
 
+describe("team votes", () => {
+  const P2 = { id: "p2", name: "Mira" };
+  const P3 = { id: "p3", name: "Ola" };
+  const teamGame = (seed: string, players = [P1, P2]) => createGame(seed, players, { now: 0, factions: 2 });
+  const stance = (g: GameState) => factionById(g, "ai0")!.stance;
+
+  it("with several humans a declaration of war opens a vote instead of happening at once", () => {
+    const g = teamGame("vote-war");
+    const r = applyCommand(g, P1.id, { type: "diplomacy", faction: "ai0", action: "war" }, g.simTime);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(stance(r.state)).toBe("peace");
+    expect(factionById(r.state, "ai0")!.vote).toEqual({ action: "war", votes: { p1: true }, startedBy: "p1" });
+    expect(r.events).toContainEqual({ type: "factionVote", faction: "ai0", playerId: "p1", action: "war", yes: true });
+    // The other player cannot start a different vote meanwhile, but can vote.
+    expect(applyCommand(r.state, P2.id, { type: "diplomacy", faction: "ai0", action: "alliance" }, r.state.simTime)).toMatchObject({ ok: false });
+    const no = applyCommand(r.state, P2.id, { type: "voteDiplomacy", faction: "ai0", yes: false }, r.state.simTime);
+    expect(no.ok).toBe(true);
+    if (!no.ok) return;
+    // 1:1 is a tie: nothing happens and the vote is over.
+    expect(stance(no.state)).toBe("peace");
+    expect(factionById(no.state, "ai0")!.vote).toBeNull();
+    expect(no.events).toContainEqual({ type: "factionVoteResult", faction: "ai0", action: "war", passed: false });
+    const again = applyCommand(no.state, P1.id, { type: "diplomacy", faction: "ai0", action: "war" }, no.state.simTime);
+    const yes = again.ok ? applyCommand(again.state, P2.id, { type: "voteDiplomacy", faction: "ai0", yes: true }, again.state.simTime) : again;
+    expect(yes.ok && stance(yes.state)).toBe("war");
+    expect(yes.ok && yes.events).toContainEqual({ type: "factionVoteResult", faction: "ai0", action: "war", passed: true });
+  });
+
+  it("an unfinished vote closes with the cycle, a true majority decides", () => {
+    const g = teamGame("vote-cycle", [P1, P2, P3]);
+    const r = applyCommand(g, P1.id, { type: "diplomacy", faction: "ai0", action: "war" }, g.simTime);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const one = runCycles(r.state, 1);
+    // 1:0 with one voter missing: war.
+    expect(stance(one.state)).toBe("war");
+    expect(factionById(one.state, "ai0")!.vote).toBeNull();
+    // Peace: p1 for, p2 against, p3 silent -> tie at the end of the cycle, still war.
+    const f = factionById(one.state, "ai0")!;
+    f.attitude = 50;
+    f.nextProposalTick = 0;
+    const p = applyCommand(one.state, P1.id, { type: "diplomacy", faction: "ai0", action: "peace" }, one.state.simTime);
+    const q = p.ok ? applyCommand(p.state, P2.id, { type: "voteDiplomacy", faction: "ai0", yes: false }, p.state.simTime) : p;
+    expect(q.ok).toBe(true);
+    if (!q.ok) return;
+    expect(stance(q.state)).toBe("war");
+    expect(factionById(q.state, "ai0")!.vote).not.toBeNull();
+    const two = runCycles(q.state, 1);
+    expect(factionById(two.state, "ai0")!.vote).toBeNull();
+    expect(stance(two.state)).toBe("war");
+    expect(two.events).toContainEqual({ type: "factionVoteResult", faction: "ai0", action: "peace", passed: false });
+  });
+
+  it("a faction's offer is answered by vote: yes accepts, no declines", () => {
+    const g = teamGame("vote-offer");
+    const f = factionById(g, "ai0")!;
+    f.offer = { kind: "alliance", expiresTick: 100000 };
+    const a = applyCommand(g, P1.id, { type: "answerOffer", faction: "ai0", accept: true }, g.simTime);
+    expect(a.ok && stance(a.state)).toBe("peace");
+    expect(a.ok && factionById(a.state, "ai0")!.vote?.action).toBe("offer");
+    const b = a.ok ? applyCommand(a.state, P2.id, { type: "answerOffer", faction: "ai0", accept: true }, a.state.simTime) : a;
+    expect(b.ok && stance(b.state)).toBe("allied");
+    expect(b.ok && factionById(b.state, "ai0")!.offer).toBeNull();
+
+    const h = teamGame("vote-offer-no");
+    factionById(h, "ai0")!.offer = { kind: "alliance", expiresTick: 100000 };
+    const c = applyCommand(h, P1.id, { type: "answerOffer", faction: "ai0", accept: false }, h.simTime);
+    const d = c.ok ? applyCommand(c.state, P2.id, { type: "voteDiplomacy", faction: "ai0", yes: false }, c.state.simTime) : c;
+    expect(d.ok).toBe(true);
+    if (!d.ok) return;
+    expect(stance(d.state)).toBe("peace");
+    expect(factionById(d.state, "ai0")!.offer).toBeNull();
+    expect(factionById(d.state, "ai0")!.attitude).toBeLessThan(factionById(h, "ai0")!.attitude);
+  });
+
+  it("alone there is no vote and the voting command has nothing to do", () => {
+    const g = newGame("vote-solo");
+    expect(applyCommand(g, P1.id, { type: "voteDiplomacy", faction: "ai0", yes: true }, g.simTime)).toEqual({ ok: false, error: "Gerade läuft keine Abstimmung" });
+    const r = applyCommand(g, P1.id, { type: "diplomacy", faction: "ai0", action: "war" }, g.simTime);
+    expect(r.ok && stance(r.state)).toBe("war");
+    expect(r.ok && factionById(r.state, "ai0")!.vote).toBeFalsy();
+  });
+});
+
 describe("saves", () => {
   it("old saves without factions load with none", () => {
     const g = createGame("alt", [P1], { now: 0 });
