@@ -315,7 +315,10 @@ function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: Resource
 function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId): BiomeId[] {
   const r = RULES.startRevealRadius;
   // The visible start area always offers wood, food and stone, so every seed is playable.
-  const start = (["forest", "forest", "savanna", "mountains", rng.pick(["forest", "savanna", "mountains", "ocean", "swamp"])] as BiomeId[]).slice(0, 2 * r + 1);
+  // Three forests (playtest: two built over meant no wood ever again). The old draw stays so
+  // the rest of the world keeps its seed.
+  rng.pick(["forest", "savanna", "mountains", "ocean", "swamp"]);
+  const start = (["forest", "forest", "savanna", "mountains", "forest"] as BiomeId[]).slice(0, 2 * r + 1);
   shuffle(start, rng);
   // Outside the start area the planet shows its type; the start area stays the same everywhere.
   const rest = weightedBiomes(rng, type, size - start.length);
