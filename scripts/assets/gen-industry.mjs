@@ -136,11 +136,46 @@ const buildings = [
   {id:'electronics.t2',draw:chipFactory},
   {id:'datacenter',draw:datacenter,parts:['lights']},
 ];
+function cryoPod(){
+  return ellipse(64,116,40,4,'rock-dark','stroke="none" opacity="0.3"')+
+    rect(32,14,64,99,'rock',25)+shade('M86 35V97Q86 105 75 105','rock',5)+
+    rect(40,25,48,77,'deep-water',18)+
+    `<g opacity="0.6" stroke-width="2">`+
+    ellipse(79,83,7,15,'iron', 'transform="rotate(-25 79 83)"')+
+    line('M76 78L85 87M76 85L82 90','coal',1)+
+    rect(50,72,28,24,'clay',10)+rect(49,88,12,9,'iron',4)+rect(66,88,12,9,'iron',4)+
+    circle(51,43,6,'iron')+circle(76,43,6,'iron')+ellipse(64,57,19,18,'iron')+
+    ellipse(64,66,12,7,'sand')+line('M53 56Q56 59 59 56M68 56Q71 59 74 56','ink',2)+
+    ellipse(64,63,4,2,'coal')+rect(60,68,8,6,'snow',2)+line('M64 69V73','rock-dark',1)+
+    path('M48 45Q48 32 63 32Q78 32 78 45Z','sand')+rect(46,43,34,5,'sand',2)+
+    line('M54 81L72 84M72 79L56 85','iron',4)+'</g>'+
+    rect(41,26,46,75,'science',17,'stroke="none" fill-opacity="0.3"')+
+    path('M42 44Q41 28 57 28H71L58 35L53 45L49 38ZM42 85L49 91L55 88L59 100H49Q42 96 42 85ZM80 84L86 76V92Q86 101 75 101Z','snow','stroke="none" opacity="0.8"')+
+    line('M46 60L49 53M75 41L80 34M77 69L81 63','snow',2)+
+    glint('M40 40Q40 23 54 22')+
+    rect(44,105,40,9,'paper',4)+circle(80,109,3,'science','stroke-width="1.5"')+
+    rect(27,111,74,7.5,'rock',3)+
+    path('M20 118L17 106L23 98L28 109L25 118Z','science')+
+    path('M100 118L99 108L105 100L111 111L108 118Z','snow')+
+    line('M23 104V115M105 105V115','water',1.5);
+}
+
+function suit(mini=false){
+  const body=path('M45 59Q33 56 27 70L19 88Q17 96 26 98Q34 100 38 91L44 80V99L39 106Q34 114 44 115H56Q62 115 62 106V97H67V106Q67 115 74 115H86Q96 114 90 106L85 99V80L91 91Q95 101 103 98Q111 96 109 88L101 70Q95 56 83 59Z','paper')+
+    (!mini?shade('M78 77V96L84 106','paper',5)+line('M25 87L34 91M94 91L103 87','rock',5):'')+
+    circle(64,mini?39:37,27,'snow')+rect(43,mini?26:24,42,29,'deep-water',13)+
+    (mini?line('M51 32H61','snow',5):path('M47 38Q47 28 57 28H69L49 47Z','science','stroke="none"')+glint('M51 32H60'))+
+    rect(48,65,32,22,'science',7)+
+    (!mini?circle(57,75,3,'energy','stroke="none"')+line('M66 74H73M55 81H73','snow',2)+
+      line('M45 108H55M75 108H86','rock-dark',3):'');
+  return mini?`<g transform="scale(0.5)" stroke-width="8">${body}</g>`:body;
+}
+
 const assets=[];
-function emit(id,category,stem,body,size,anchor,parts=[],tags=[]){
+function emit(id,category,stem,body,size,anchor,parts=[],tags=[],stroke=6*size/256){
   // All geometry stays at one decimal, including coordinates from arithmetic.
   const content=body.replace(/-?\d+\.\d{2,}/g,n=>String(round(Number(n))));
-  write(`art/src/${category}/${stem}.svg`,svg(content,size));
+  write(`art/src/${category}/${stem}.svg`,svg(content,size,size,stroke));
   assets.push({id,category,src:`art/src/${category}/${stem}.svg`,out:`public/assets/sprites/${category}/${stem}.png`,viewBox:[size,size],anchor,frames:1,parts,tags,phase:'P1'});
 }
 for(const def of buildings){
@@ -153,5 +188,8 @@ for(const def of buildings){
   }
 }
 state='idle';
+emit('prop.cryo-pod','biomes','cryo-pod',cryoPod(),128,[.5,.9375],[],['cryo-pod','any-biome']);
+emit('resource.suits','resources','suits',suit(),128,[.5,.5],[],['suits']);
+emit('resource.suits.mini','resources','suits-mini',suit(true),64,[.5,.5],[],['suits','mini'],4);
 write('art/manifest/industry.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Industry: ${assets.length} assets generated.`);

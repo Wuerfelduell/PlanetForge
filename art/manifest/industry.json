@@ -409,6 +409,68 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "prop.cryo-pod",
+      "category": "biomes",
+      "src": "art/src/biomes/cryo-pod.svg",
+      "out": "public/assets/sprites/biomes/cryo-pod.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "cryo-pod",
+        "any-biome"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.suits",
+      "category": "resources",
+      "src": "art/src/resources/suits.svg",
+      "out": "public/assets/sprites/resources/suits.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "suits"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.suits.mini",
+      "category": "resources",
+      "src": "art/src/resources/suits-mini.svg",
+      "out": "public/assets/sprites/resources/suits-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "suits",
+        "mini"
+      ],
+      "phase": "P1"
     }
   ]
 }
