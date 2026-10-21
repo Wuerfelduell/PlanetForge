@@ -34,7 +34,29 @@ export interface GameOptions {
   invaders?: "off" | "normal" | "strong";
   /** coop only: AI factions that start on own planets at the same time (0 = none, at most FACTIONS.max). */
   factions?: number;
+  /** How the star system looks (Seb: like Planet of Mine). Left out = random as before. */
+  world?: WorldOptions;
 }
+
+export type SunType = (typeof SYSTEM.sunTypes)[number];
+export type WorldSize = "small" | "normal" | "large";
+
+/** Every field is optional; a missing field (or "random") keeps the seed's choice. */
+export interface WorldOptions {
+  /** Free planets besides the start planet(s), WORLD_LIMITS.planets (1-16). Missing: SYSTEM.freePlanets drawn from the seed. */
+  planets?: number;
+  /** Biome mix of the start planet(s). Missing: temperate; "random": one of PLANET_TYPE_IDS. */
+  start?: (typeof PLANET_TYPE_IDS)[number] | "random";
+  /** Missing or "random": drawn from the seed. */
+  sun?: SunType | "random";
+  /** Segments of the start planet(s). Missing: normal; "random": drawn from the seed. */
+  size?: WorldSize | "random";
+}
+
+export const WORLD_LIMITS = {
+  planets: { min: 1, max: 16 },
+  sizeMul: { small: 0.75, normal: 1, large: 1.25 } as Record<WorldSize, number>,
+} as const;
 
 /**
  * Builds a whole star system from the seed: same seed, same system, on every client and on the
@@ -48,7 +70,20 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   if (players.length > maxPlayers) throw new Error(`At most ${maxPlayers} players`);
 
   const rng = new Rng(seedFromString(seed));
-  const sunType = rng.pick(SYSTEM.sunTypes);
+  const world = options.world ?? {};
+  // The seed's draw always happens, so a chosen sun leaves the rest of the world as it was.
+  const seedSun = rng.pick(SYSTEM.sunTypes);
+  const sunType = world.sun && world.sun !== "random" && SYSTEM.sunTypes.includes(world.sun) ? world.sun : seedSun;
+  // Own stream for the random choices, so they don't shift the world either.
+  const choice = new Rng(seedFromString(`${seed}:world`));
+  const startType: PlanetTypeId =
+    world.start === "random" ? choice.pick(PLANET_TYPE_IDS) : world.start && PLANET_TYPE_IDS.includes(world.start) ? world.start : "temperate";
+  const sizes = Object.keys(WORLD_LIMITS.sizeMul) as WorldSize[];
+  const size: WorldSize = world.size === "random" ? choice.pick(sizes) : world.size && sizes.includes(world.size) ? world.size : "normal";
+  const freePlanets =
+    typeof world.planets === "number" && Number.isFinite(world.planets)
+      ? Math.min(WORLD_LIMITS.planets.max, Math.max(WORLD_LIMITS.planets.min, Math.round(world.planets)))
+      : undefined;
   const cycleSeconds = options.cycleSeconds ?? RULES.defaultCycleSeconds;
   const goal = mode === "coop" ? (options.goal ?? "supernova") : "endless";
   // Own stream so the world itself stays the same as before the supernova existed.
@@ -59,8 +94,9 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     shield: Array.from({ length: SUPERNOVA.segments }, () => ({ built: false, hp: 0 })),
     saved: false,
   };
+  const startSize = Math.round((mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments) * WORLD_LIMITS.sizeMul[size]);
   const factions = mode === "coop" ? Math.max(0, Math.min(FACTIONS.max, Math.floor(options.factions ?? 0))) : 0;
-  const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments, factions);
+  const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, startSize, startType, freePlanets, factions);
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
   // Rockets burn fuel from oil: every start planet gets oil, from its own stream so worlds stay the same.
   const oilRng = new Rng(seedFromString(`${seed}:oil`));
@@ -216,8 +252,9 @@ function newEconomy(id: string): EconomyState {
  * (versus-sized), and the belt gets one more free planet per faction. The rare resources are
  * split like in versus, so the team has a reason to trade. Big systems share orbits (compact).
  */
-function generatePlanets(rng: Rng, startPlanets: number, startSize: number, factions = 0): PlanetState[] {
-  const freeCount = rng.int(SYSTEM.freePlanets.min, SYSTEM.freePlanets.max) + factions;
+function generatePlanets(rng: Rng, startPlanets: number, startSize: number, startType: PlanetTypeId, chosenFree?: number, factions = 0): PlanetState[] {
+  const drawnFree = rng.int(SYSTEM.freePlanets.min, SYSTEM.freePlanets.max);
+  const freeCount = (chosenFree ?? drawnFree) + factions;
   const starts = startPlanets + factions;
   const kinds: (number | null)[] = [...Array.from({ length: starts }, (_, i) => i), ...Array<null>(freeCount).fill(null)];
   shuffle(kinds, rng);
@@ -229,9 +266,11 @@ function generatePlanets(rng: Rng, startPlanets: number, startSize: number, fact
 
   return kinds.map((startSlot, i) => {
     const isStart = startSlot !== null;
-    const type: PlanetTypeId = isStart ? "temperate" : rng.pick(PLANET_TYPE_IDS);
-    const size = isStart ? (factions > 0 && startSlot > 0 ? SYSTEM.startPlanetSegments : startSize) : rng.pick(SYSTEM.freePlanetSegments);
-    const biomes = isStart ? startPlanetBiomes(rng, size, factions > 0 && startSlot > 0) : weightedBiomes(rng, type, size);
+    const factionPlanet = factions > 0 && startSlot !== null && startSlot > 0;
+    // Faction homes are always temperate and versus-sized, whatever the team picked for its own start.
+    const type: PlanetTypeId = isStart ? (factionPlanet ? "temperate" : startType) : rng.pick(PLANET_TYPE_IDS);
+    const size = isStart ? (factionPlanet ? SYSTEM.startPlanetSegments : startSize) : rng.pick(SYSTEM.freePlanetSegments);
+    const biomes = isStart ? startPlanetBiomes(rng, size, type, factionPlanet) : weightedBiomes(rng, type, size);
     const segments = biomes.map((biome, index) => createSegment(index, biome, rng));
 
     const rare = isStart
@@ -327,12 +366,16 @@ function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: Resource
   }
 }
 
-function startPlanetBiomes(rng: Rng, size: number, openEdges = false): BiomeId[] {
+function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges = false): BiomeId[] {
   const r = RULES.startRevealRadius;
   // The visible start area always offers wood, food and stone, so every seed is playable.
-  const start = (["forest", "forest", "savanna", "mountains", rng.pick(["forest", "savanna", "mountains", "ocean", "swamp"])] as BiomeId[]).slice(0, 2 * r + 1);
+  // Three forests (playtest: two built over meant no wood ever again). The old draw stays so
+  // the rest of the world keeps its seed.
+  rng.pick(["forest", "savanna", "mountains", "ocean", "swamp"]);
+  const start = (["forest", "forest", "savanna", "mountains", "forest"] as BiomeId[]).slice(0, 2 * r + 1);
   shuffle(start, rng);
-  const rest = weightedBiomes(rng, "temperate", size - start.length);
+  // Outside the start area the planet shows its type; the start area stays the same everywhere.
+  const rest = weightedBiomes(rng, type, size - start.length);
   if (!rest.includes("ocean")) rest[Math.floor(rest.length / 2)] = "ocean";
 
   // Segment 0 is the middle of the start window; the window wraps around index 0.
@@ -422,6 +465,16 @@ export function upgradeState(state: unknown): GameState | null {
   // Saves from before AI factions existed simply have none.
   s.settings.factions ??= 0;
   s.factions ??= [];
+  // Ground deposits added later (Seb: a mine works under a forest too) appear on existing fields.
+  for (const planet of s.planets) {
+    for (const segment of planet.segments) {
+      if (segment.scorched) continue;
+      for (const d of BIOMES[segment.biome].deposits) {
+        if (d.byHand || segment.deposits.some((x) => x.resource === d.resource)) continue;
+        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: false });
+      }
+    }
+  }
   (s as { version: number }).version = 12;
   return s;
 }

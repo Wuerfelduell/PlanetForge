@@ -134,7 +134,7 @@ export class PlanetView {
   private cy = 0;
   private radius = 100;
   private goal = { cx: 0, cy: 0, radius: 100 };
-  private insets = { top: 0, bottom: 0 };
+  private insets = { top: 0, bottom: 0, right: 0 };
   private zoom = true;
   private rotation = 0;
   private targetRotation = 0;
@@ -293,12 +293,12 @@ export class PlanetView {
     return this.selected;
   }
 
-  /** Area left free between the HUD (top) and the panel (bottom). */
-  layout(width: number, height: number, topInset: number, bottomInset: number): void {
+  /** Area left free between the HUD (top) and the panel (bottom, or on the right in landscape). */
+  layout(width: number, height: number, topInset: number, bottomInset: number, rightInset = 0): void {
     const first = this.width === 0;
     this.width = width;
     this.height = height;
-    this.insets = { top: topInset, bottom: bottomInset };
+    this.insets = { top: topInset, bottom: bottomInset, right: rightInset };
     this.drawStars(width, height);
     this.fit(first);
   }
@@ -312,8 +312,9 @@ export class PlanetView {
 
   /** Target radius and center for the current zoom; `snap` jumps there instead of easing. */
   private fit(snap: boolean): void {
-    const { width, insets } = this;
-    if (!width) return;
+    const { insets } = this;
+    const width = this.width - insets.right;
+    if (width <= 0) return;
     const free = Math.max(120, this.height - insets.top - insets.bottom);
     const whole = Math.min(width * 0.4, free * 0.4);
     let radius = whole;

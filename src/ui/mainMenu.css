@@ -152,3 +152,21 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
 #menu-button { outline: 2px solid var(--accent); outline-offset: -2px; font-weight: 700; }
 /* If the button art cannot load, the main action still reads as a solid orange button. */
 #main-menu.art button.primary, #main-menu.art .menu-item.primary { background: var(--accent) padding-box; }
+
+/* People picker: 12 portraits, 6 per row on phones. */
+#main-menu .people-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+#main-menu .people-pick { padding: 4px; aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+#main-menu .people-pick img { width: 100%; height: 100%; object-fit: contain; }
+#main-menu .people-pick .people-emoji { font-size: 24px; }
+#main-menu .people-pick.on { outline: 2px solid var(--accent); background: #34385f; }
+#main-menu .people-info { padding: 8px 10px; border-radius: 12px; background: var(--surface); font-size: 14px; }
+#main-menu .people-info small { color: var(--muted); }
+#main-menu .people-info p { margin: 4px 0 0; }
+#main-menu .people-note { color: var(--muted); font-size: 13px; }
+
+/* World options: label column + wrapping chips. */
+#main-menu .menu-world { display: flex; flex-direction: column; gap: 4px; }
+#main-menu .menu-world > span { color: var(--muted); font-size: 13px; margin-top: 4px; }
+#main-menu .menu-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+#main-menu .menu-chip { padding: 6px 10px; border-radius: 999px; font-size: 14px; }
+#main-menu .menu-chip.on { outline: 2px solid var(--accent); background: #34385f; }

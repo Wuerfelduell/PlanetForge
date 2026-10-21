@@ -109,13 +109,25 @@ Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, En
 | Wohnraum | Hütte 0 → Holzhaus 2 → Steinhaus 5 → Wohnturm 7 (12 Plätze, Strom), Park 2 (+20 % Platz für Nachbar-Hütten), Monument 8 (+10 Aufstiegspunkte je Umlauf, eins pro Planet) |
 | Nahrung | Farm 0, Fischerei 1 (neben Meer, Stufe 2 Fischereihafen ab 3), Gewächshaus 4 (Wasser → Nahrung auf jedem Boden, Strom) |
 | Rohstoffe | Förster 1, Mine 1, Pumpe 1 |
-| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas) |
-| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom) |
-| Energie | Windrad 3, Kohlekraftwerk 4, Solarfeld 6, Atomkraftwerk 8 |
+| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas), Biogasanlage 4 (3 Nahrung + 1 Wasser → Biogas), Kunststoffwerk 5 (2 Öl → Plastik), Elektronikwerk 6 (2 Draht + Plastik + Glas → Elektronik, Strom; Stufe 2 Chipfabrik ab 8: 2 Elektronik + Glas + Gold → Computer) |
+| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom), Rechenzentrum 8 (0,6 Wissen je Arbeiter, kostet Computer, 3 Strom) |
+| Energie | Windrad 3, Kohlekraftwerk 4, Gaskraftwerk 5 (+5, 0,08 Biogas/s, kein Lärm), Solarfeld 6, Atomkraftwerk 8 |
 | Verteidigung | Wachturm 2 (Stufe 2 Festungsturm ab 5, +2), Abwehrbatterie 5 |
 | Raumfahrt | Startrampe 2, Raffinerie 2 |
 
+Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Computer, 10 Ätherit, 20 Stahl, 10 Beton, fliegt mit Uran (2 + 0,2 je Distanz + 0,1 je Passagier), 6 Plätze, Reichweite 40, doppelt so schnell.
+
+Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, tauscht ein Händler jede Ware (außer Wissen) gegen jede andere. Preis = Menge × Wert der gewünschten Ware × 1,5 ÷ Wert der gegebenen Ware, aufgerundet; Werte wie in src/data/balance/resources.ts (`MARKET` in content.ts).
+
 ## Spielmodi und Pacing
+
+**Playtest 21.10.2026.** Die Simulation lief mit eigenen, viel schnelleren Zahlen (Geburt 12 s flach, 2 Nahrung pro Umlauf, Schwellen 15 bis 3600). Ein Spieler, der nur Hütten und Farmen baut, war nach 37 Minuten auf Stufe 10, schneller als einer mit der ganzen Produktionskette. Jetzt liest `src/sim` Geburten, Nahrung, Schwellen und Startvorrat direkt aus `src/data/balance`, damit die beiden nicht wieder auseinanderlaufen. Dazu kommen drei Änderungen:
+
+- Ausgebaute Gebäude bringen Aufstiegspunkte (siehe unten), damit die Kette zählt.
+- Nahrung über 120 + 10 je Einwohner verdirbt am Ende des Umlaufs (`RULES.foodStock`), statt sich fünfstellig zu stapeln.
+- Der Start hat 25 statt 15 Holz, damit die erste Hütte sofort geht.
+
+Der Test `src/sim/pacing.test.ts` lässt einen Hütten-Bot 60 Minuten spielen. Er darf nach 40 Minuten höchstens Stufe 5 und nach 60 Minuten höchstens Stufe 6 haben, muss aber mindestens Stufe 4 erreichen. Vorher lag er nach 40 Minuten bei Stufe 8, jetzt bei 4 bis 5.
 
 Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progression.ts`):
 
@@ -128,7 +140,7 @@ Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progress
 | Geburt (Sekunden) | 30 + 6 × Einwohner | 12 + 3 × Einwohner |
 | Entdeckungskosten | 30 × 1,35ⁿ | halb so viel |
 
-Aufstiegspunkte: 2 pro Einwohner und Minute (das entspricht 1 pro Einwohner und 30-Sekunden-Umlauf wie im Prototyp), dazu kommt das Monument. Die Schwellen hat `pacing.ts` aus dem Geburtenmodell abgeleitet. Die Annahme ist, dass Nahrung und Wohnraum mithalten, also ist das die schnellste realistische Kurve.
+Aufstiegspunkte: 2 pro Einwohner und Minute (das entspricht 1 pro Einwohner und 30-Sekunden-Umlauf wie im Prototyp), dazu 2 pro Minute für jede Ausbaustufe über der ersten (Wohnhaus 3 zählt also 2) und das Monument. Die Schwellen hat `pacing.ts` aus dem Geburtenmodell abgeleitet. Die Annahme ist, dass Nahrung und Wohnraum mithalten, also ist das die schnellste realistische Kurve.
 
 | Stufe | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -183,6 +195,8 @@ Nach Sebs Playtest (21.10.2026) war Fliegen zu leicht, man war zu schnell durch.
 - **Jeder Start kostet extra.** Treibstoff pro Flug = ⌈Startkosten + Entfernung × (je Feld + je Passagier × Passagiere)⌉. Die Siedlerrakete (3 Plätze) braucht 6 + Entfernung × (1,5 + 1 × Passagiere), zum Nachbarplaneten mit 3 Einwohnern also 24 Treibstoff = 48 Öl.
 - **Öl ist knapp.** Leere Vorkommen wachsen nicht nach. Das Öl auf dem Heimatplaneten (je ein Sumpf- und Wüstenfeld, etwa 90) reicht für knapp zwei Kolonieflüge. Wer weiter will, braucht eine Kolonie mit Öl oder Handel. Plastik braucht ebenfalls Öl, man muss also abwägen. Der Test „flying is hard“ hält das bei 1,5 bis 3 Flügen.
 - **Kolonisieren erst ab Stufe 4.** Die Siedlerrakete kostet 20 Bretter, 15 Eisen, 5 Werkzeug und 3 Stoff. Gegeneinander bleiben Sabotage (Stufe 2, 12 Treibstoff für einen Saboteur) und Angriff (Stufe 3) früh, kosten aber auch Treibstoff.
+
+**Schutzhülle um die Sonne (Playtest 21.10.2026).** Im Test standen alle 12 Segmente in 6 Minuten. Jetzt geht die Hülle erst ab Stufe 6. Ein Segment kostet 15 Stahl, 15 Beton, 10 Ätherit und 60 Wissen, braucht 3 Einwohner als Crew, und jeder Flug dauert 60 Sekunden länger (`SUPERNOVA` in `src/sim/content.ts`). Damit ist die Hülle ein Großprojekt am Ende der Kette, und das übrige Wissen hat eine Verwendung.
 
 Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie. Die Werte stehen in `SPACE.rockets` in `progression.ts`, die Kurzformel in `rocketFuel()`.
 

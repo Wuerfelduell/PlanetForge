@@ -1,6 +1,7 @@
 import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { placeBuilding } from "./build";
 import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, upgradeBlocker } from "./rules";
+import { tradeBlocker, tradePrice } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
@@ -101,7 +102,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       events.push({ type: "lobby", ...state.lobby, playerId });
       return null;
     }
-    case "trade":
+    case "factionTrade":
     case "gift":
     case "diplomacy":
     case "answerOffer": {
@@ -109,8 +110,8 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       const faction = factionById(state, cmd.faction);
       if (!faction) return "Unbekannte Fraktion";
       // Seb: war, peace and alliances are team decisions; until there is a vote, the host decides.
-      if (cmd.type !== "trade" && cmd.type !== "gift" && playerId !== state.hostId) return "Nur der Gastgeber verhandelt mit Fraktionen";
-      if (cmd.type === "trade") return trade(state, player, faction, cmd.resource, cmd.amount, events);
+      if (cmd.type !== "factionTrade" && cmd.type !== "gift" && playerId !== state.hostId) return "Nur der Gastgeber verhandelt mit Fraktionen";
+      if (cmd.type === "factionTrade") return trade(state, player, faction, cmd.resource, cmd.amount, events);
       if (cmd.type === "gift") return gift(state, player, faction, cmd.resource, cmd.amount, events);
       if (cmd.type === "diplomacy") return propose(state, player, faction, cmd.action, events);
       return answerOffer(state, player, faction, cmd.accept, events);
@@ -137,6 +138,17 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   if (!state.lobby.open) return "Das Spiel ist geschlossen";
   const planet = planetById(state, cmd.planetId);
   if (!planet) return "Unbekannter Planet";
+  if (cmd.type === "trade") {
+    if (planet.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
+    const blocker = tradeBlocker(state, planet, cmd.give, cmd.get, cmd.count);
+    if (blocker) return blocker;
+    const economy = state.economies[planet.economyId!]!;
+    const paid = tradePrice(cmd.give, cmd.get, cmd.count)!;
+    economy.resources[cmd.give] -= paid;
+    economy.resources[cmd.get] += cmd.count;
+    events.push({ type: "traded", planetId: planet.id, give: cmd.give, paid, get: cmd.get, count: cmd.count, playerId });
+    return null;
+  }
   if (cmd.type === "dequeue") {
     if (planet.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
     const queue = state.queues[planet.id] ?? [];

@@ -130,7 +130,7 @@ describe("trade and gifts", () => {
     expect(quote).not.toBeNull();
     expect(quote.affordable).toBe(true);
     expect(quote.giveAmount).toBeGreaterThan(0);
-    const r = applyCommand(g, P1.id, { type: "trade", faction: f.id, resource: "coal", amount: 10 }, g.simTime);
+    const r = applyCommand(g, P1.id, { type: "factionTrade", faction: f.id, resource: "coal", amount: 10 }, g.simTime);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.state.economies[TEAM_ECONOMY]!.resources.coal).toBe(10);
@@ -148,18 +148,19 @@ describe("trade and gifts", () => {
     factionEconomy(g, f)!.resources.coal = 100;
     f.stance = "war";
     expect(tradeQuote(g, f, "coal", 10, g.economies[TEAM_ECONOMY]!)).toBeNull();
-    const r = applyCommand(g, P1.id, { type: "trade", faction: f.id, resource: "coal", amount: 10 }, g.simTime);
+    const r = applyCommand(g, P1.id, { type: "factionTrade", faction: f.id, resource: "coal", amount: 10 }, g.simTime);
     expect(r).toEqual({ ok: false, error: "Im Krieg wird nicht gehandelt" });
   });
 
   it("a gift raises the attitude", () => {
     const g = newGame("geschenk");
     const f = g.factions[0]!;
+    const food = g.economies[TEAM_ECONOMY]!.resources.food;
     const r = applyCommand(g, P1.id, { type: "gift", faction: f.id, resource: "food", amount: 10 }, g.simTime);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.state.factions[0]!.attitude).toBeGreaterThan(f.attitude);
-    expect(r.state.economies[TEAM_ECONOMY]!.resources.food).toBe(10);
+    expect(r.state.economies[TEAM_ECONOMY]!.resources.food).toBe(food - 10);
   });
 });
 
@@ -240,7 +241,7 @@ describe("war and peace", () => {
     const paid = applyCommand(g, P1.id, { type: "answerOffer", faction: "ai0", accept: true }, g.simTime);
     expect(paid.ok).toBe(true);
     if (!paid.ok) return;
-    expect(paid.state.economies[TEAM_ECONOMY]!.resources.food).toBe(10);
+    expect(paid.state.economies[TEAM_ECONOMY]!.resources.food).toBe(g.economies[TEAM_ECONOMY]!.resources.food - 10);
     expect(factionById(paid.state, "ai0")!.stance).toBe("peace");
     expect(factionById(paid.state, "ai0")!.truceUntilTick).toBeGreaterThan(0);
   });

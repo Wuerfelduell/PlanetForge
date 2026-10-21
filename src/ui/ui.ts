@@ -7,9 +7,13 @@ import {
   BUILDING_IDS,
   BUILDINGS,
   type BuildingCategory,
+  MARKET,
+  tradeBlocker,
+  tradePrice,
   cycleOf,
   housing,
   discoveryCost,
+  OFFERABLE,
   discoveryDescription,
   discoveryName,
   flightPlan,
@@ -29,7 +33,7 @@ import {
   population,
   workerCount,
   economyOf,
-  nextLevelThreshold,
+  economyThreshold,
   RESOURCE_IDS,
   RESOURCES,
   RULES,
@@ -112,8 +116,13 @@ export class Ui {
   /** Factions panel open, and the faction whose trade list is unfolded. */
   private showFactions = false;
   private tradeWith: string | null = null;
+  /** Full resource list open under the top bar. */
+  private showResources = false;
   /** Open tab of the build menu; kept while the player taps from field to field. */
   private buildTab: BuildingCategory | "terrain" = "housing";
+  /** Market: what the player pays with and what they want. */
+  private marketGive: ResourceId | null = null;
+  private marketGet: ResourceId | null = null;
   /** Star map open, and the planet (or "sun") picked on it. */
   private mapOpen = false;
   /** Read by the star map to highlight the same planet. */
@@ -191,7 +200,7 @@ export class Ui {
           break;
         }
         case "depleted":
-          this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft`, "warn");
+          this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft${e.resource === "wood" ? ". Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}`, "warn");
           break;
         case "starving":
           this.toast("🍂 Hunger! Ohne Nahrung arbeiten alle nur halb so schnell.", "bad");
@@ -208,7 +217,7 @@ export class Ui {
         case "launched": {
           const to = this.planetName(e.to);
           if (e.playerId === this.playerId) this.toast(`${ROCKETS[e.rocket].icon} Rakete nach ${to} gestartet`);
-          else if (this.isMine(e.to)) this.toast(`⚠️ ${this.playerName(e.playerId)} greift ${to} an! Freie Einwohner verteidigen.`, "bad");
+          else if (this.isMine(e.to)) this.toast(`⚠️ ${this.playerName(e.playerId)} greift ${to} an! Alle Einwohner verteidigen, freie am besten.`, "bad");
           break;
         }
         case "landed":
@@ -311,6 +320,9 @@ export class Ui {
         case "factionEliminated":
           this.toast(`💀 ${this.factionName(e.faction)} sind ausgelöscht`, "warn");
           break;
+        case "traded":
+          if (e.playerId === this.playerId) this.toast(`🏪 ${e.count} ${RESOURCES[e.get].name} für ${e.paid} ${RESOURCES[e.give].name} getauscht`, "good");
+          break;
         case "cycle":
         case "built":
         case "demolished":
@@ -375,9 +387,22 @@ export class Ui {
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
         break;
       }
+      case "marketGive":
+      case "marketGet":
+        this[action] = value as ResourceId;
+        this.lastPanel = "";
+        break;
+      case "trade": {
+        const [count, give, get] = value!.split(":");
+        this.actions.send({ type: "trade", planetId: this.planetId, give: give as ResourceId, get: get as ResourceId, count: Number(count) });
+        break;
+      }
       case "buildTab":
         this.buildTab = value as BuildingCategory | "terrain";
         this.lastPanel = "";
+        break;
+      case "resources":
+        this.showResources = !this.showResources;
         break;
       case "discoveries":
         this.showDiscoveries = !this.showDiscoveries;
@@ -395,9 +420,9 @@ export class Ui {
         this.tradeWith = this.tradeWith === value ? null : value!;
         this.lastPanel = "";
         break;
-      case "trade": {
+      case "factionTrade": {
         const [faction, resource, amount] = value!.split(":");
-        this.actions.send({ type: "trade", faction: faction!, resource: resource as ResourceId, amount: Number(amount) });
+        this.actions.send({ type: "factionTrade", faction: faction!, resource: resource as ResourceId, amount: Number(amount) });
         break;
       }
       case "gift": {
@@ -472,13 +497,20 @@ export class Ui {
     const economy = this.myEconomy(state) ?? economyOf(state, planet);
     if (!economy) return NO_HUD;
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
-    const chips = shown
-      .map((r) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}">${this.res(r)} ${Math.floor(economy.resources[r])}</span>`)
-      .join("");
+    const chip = (r: ResourceId) => `<span class="chip${r === "food" && economy.starving ? " bad" : ""}" title="${RESOURCES[r].name}: ${Math.floor(economy.resources[r])}">${this.res(r)} ${short(economy.resources[r])}</span>`;
+    // Only the key resources stay in the bar; the rest open as a list with a tap on "+n".
+    const key = shown.filter((r) => KEY_RESOURCES.has(r));
+    const more = shown.length - key.length;
+    const chips = key.map(chip).join("");
+    const moreButton =
+      (more > 0 ? `<button class="chip more${this.showResources ? " on" : ""}" data-action="resources" title="Alle Rohstoffe">+${more} ${this.showResources ? "▴" : "▾"}</button>` : "");
+    const list = this.showResources && more > 0
+      ? `<div class="res-list">${shown.map((r) => `<span class="res-item${r === "food" && economy.starving ? " bad" : ""}">${this.res(r)} <span class="res-name">${RESOURCES[r].name}</span> <b>${Math.floor(economy.resources[r])}</b></span>`).join("")}</div>`
+      : "";
     const ascension = economy.ascension;
     const lvl = ascension.level;
-    const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
-    const next = nextLevelThreshold(lvl);
+    const prev = lvl === 0 ? 0 : (economyThreshold(state, economy, lvl - 1) ?? 0);
+    const next = economyThreshold(state, economy, lvl);
     const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
     const cycleProgress = (state.tick % ticksPerCycle(state)) / ticksPerCycle(state);
     // Pause plus one 1×/3× toggle instead of three buttons, to keep the bar to one line on phones.
@@ -498,7 +530,7 @@ export class Ui {
     const versusButtons = duel
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
-    const controls = `${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
+    const controls = `${moreButton}${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
     const rest = `
       <div class="row status main">
         ${planetChip}
@@ -507,17 +539,19 @@ export class Ui {
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>${this.renderFlights(state)}`;
+      </div>${this.renderFlights(state, versusButtons)}${list}`;
     return { chips, controls, rest };
   }
 
   /** Own rockets and attacks on own planets, with time to arrival. */
-  private renderFlights(state: GameState): string {
+  /** One short line of status chips (details in their tooltips); the versus buttons ride along at its end. */
+  private renderFlights(state: GameState, versusButtons = ""): string {
     const chips: string[] = [];
     const economy = state.economies[state.players.find((p) => p.id === this.playerId)?.economyId ?? ""];
     if (economy?.offer || economy?.discoveries.length) {
-      const label = economy.offer ? `🔬 Entdeckung wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length} Entdeckungen`;
-      chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries">${label}</button>`);
+      const label = economy.offer ? `🔬 Wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length}`;
+      const title = economy.offer ? "Entdeckung wählen" : `${economy.discoveries.length} Entdeckungen`;
+      chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries" title="${title}">${label}</button>`);
     }
     if (state.settings.factions > 0) {
       const live = state.factions.filter((f) => !f.eliminated && f.stance !== "merged");
@@ -529,8 +563,8 @@ export class Ui {
     if (!state.lobby.open) {
       chips.push(
         state.hostId === this.playerId
-          ? `<button class="chip" data-action="openLobby">🔓 Spiel geschlossen. Tippen zum Öffnen</button>`
-          : `<span class="chip">🔒 Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}</span>`,
+          ? `<button class="chip" data-action="openLobby" title="Spiel geschlossen. Tippen zum Öffnen">🔓 Öffnen</button>`
+          : `<span class="chip" title="Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}">🔒 Zu</span>`,
       );
     }
     const result = state.result;
@@ -543,22 +577,23 @@ export class Ui {
     if (inv && (inv.spotted || inv.sieging)) {
       chips.push(
         inv.sieging
-          ? `<span class="chip bad">${this.badge("invasion", "👾")} Belagerung: ${this.targetName(inv.target)} <small>Schiff ${inv.hp}/${inv.maxHp}</small></span>`
-          : `<span class="chip bad">${this.badge("invasion", "👾")} Welle ${inv.wave} → ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
+          ? `<span class="chip bad" title="Belagerung von ${this.targetName(inv.target)}, Mutterschiff ${inv.hp}/${inv.maxHp}">${this.badge("invasion", "👾")} ${this.targetName(inv.target)} <small>${inv.hp}/${inv.maxHp}</small></span>`
+          : `<span class="chip bad" title="Welle ${inv.wave} im Anflug auf ${this.targetName(inv.target)}">${this.badge("invasion", "👾")} ${this.targetName(inv.target)} <small>${this.secondsUntil(inv.arrivalTick)} s</small></span>`,
       );
     }
     const nova = novaTickNow(state);
     const built = state.sun.shield.filter((x) => x.built).length;
-    if (state.sun.saved) chips.push(`<span class="chip">${this.badge("shield", "🌞")} Hülle geschlossen</span>`);
+    if (state.sun.saved) chips.push(`<span class="chip" title="Schutzhülle geschlossen">${this.badge("shield", "🌞")} ✓</span>`);
     else if (nova !== null && (built > 0 || cycleOf(state) >= SUPERNOVA.firstHintCycle)) {
-      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}">${this.badge("shield", "☀️")} Hülle ${built}/${SUPERNOVA.segments} <small>Supernova in ~${Math.ceil((nova - state.tick) / ticksPerCycle(state))} Umläufen</small></span>`);
+      const minutes = Math.ceil((nova - state.tick) / RULES.ticksPerSecond / 60);
+      chips.push(`<span class="chip${cycleOf(state) >= SUPERNOVA.firstHintCycle ? " bad" : ""}" title="Schutzhülle ${built}/${SUPERNOVA.segments}, Supernova in etwa ${minutes} min">${this.badge("shield", "☀️")} ${built}/${SUPERNOVA.segments} <small>~${minutes} min</small></span>`);
     }
     for (const f of state.flights) {
       const seconds = Math.ceil((f.arrivalTick - state.tick) / RULES.ticksPerSecond);
       if (f.owner === this.playerId) chips.push(`<span class="chip">${ROCKETS[f.rocket].icon} ${this.planetName(f.to)} <small>${f.units.length}👤 ${seconds} s</small></span>`);
       else if (this.isMine(f.to)) chips.push(`<span class="chip bad">⚠️ ${this.planetName(f.to)} <small>${f.units.length} Angreifer ${seconds} s</small></span>`);
     }
-    return chips.length ? `<div class="row status">${chips.join("")}</div>` : "";
+    return chips.length || versusButtons ? `<div class="row status extra">${chips.join("")}${versusButtons ? `<span class="spacer"></span>${versusButtons}` : ""}</div>` : "";
   }
 
   private resultText(result: NonNullable<GameState["result"]>): string {
@@ -657,7 +692,7 @@ export class Ui {
           const amount = bundleSize(r);
           const quote = tradeQuote(state, f, r, amount, team);
           if (!quote) return "";
-          return `<div class="target"><span>${this.res(r)} ${amount} ${RESOURCES[r].name} <small>für ${this.res(quote.give)} ${quote.giveAmount} ${RESOURCES[quote.give].name}</small></span><button class="build" data-action="trade" data-value="${f.id}:${r}:${amount}" ${quote.affordable ? "" : `disabled title="Zu wenig ${RESOURCES[quote.give].name}"`}>Kaufen</button></div>`;
+          return `<div class="target"><span>${this.res(r)} ${amount} ${RESOURCES[r].name} <small>für ${this.res(quote.give)} ${quote.giveAmount} ${RESOURCES[quote.give].name}</small></span><button class="build" data-action="factionTrade" data-value="${f.id}:${r}:${amount}" ${quote.affordable ? "" : `disabled title="Zu wenig ${RESOURCES[quote.give].name}"`}>Kaufen</button></div>`;
         })
         .join("");
       html += rows ? `<p class="muted">Sie verkaufen, was sie übrig haben${f.stance === "allied" ? "; Verbündete zahlen weniger" : ""}:</p><div class="targets">${rows}</div>` : `<p class="muted">Gerade haben sie nichts übrig.</p>`;
@@ -689,7 +724,10 @@ export class Ui {
   private launchButtons(state: GameState, planet: PlanetState, to: PlanetState, from = ""): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const idle = idleUnits(state, planet, this.playerId).length;
-    const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
+    const level = economyOf(state, planet)?.ascension.level ?? 0;
+    // The starship joins the settler rocket once it is unlocked.
+    const rockets: RocketId[] =
+      to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : level >= ROCKETS.starship.unlockLevel ? ["colony", "starship"] : ["colony"];
     return rockets
       .map((rocket) => {
         const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
@@ -699,7 +737,7 @@ export class Ui {
         const cost = Object.entries(plan.cost)
           .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
           .join(" ");
-        const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
+        const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `${ROCKETS[rocket].icon} ${count} hinschicken`;
         return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}${from ? `:${from}` : ""}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
       })
       .join("");
@@ -720,6 +758,30 @@ export class Ui {
   }
 
   /** Launch pad: one row per reachable planet with the rockets that can go there. */
+  /** Market stand: pick what to pay with, then what to get, then how much. */
+  private renderMarket(state: GameState, planet: PlanetState): string {
+    const economy = economyOf(state, planet);
+    if (!economy) return "";
+    const tradeable = RESOURCE_IDS.filter((r) => MARKET.values[r]);
+    const owned = tradeable.filter((r) => economy.resources[r] >= 1);
+    const give = this.marketGive && owned.includes(this.marketGive) ? this.marketGive : null;
+    const chip = (r: ResourceId, action: string, on: boolean, extra = "") =>
+      `<button class="deposit${on ? " on" : ""}" data-action="${action}" data-value="${r}" title="${RESOURCES[r].name}">${this.res(r)}${extra}</button>`;
+    let html = `<p class="tab-name">Du gibst</p><div class="deposits">${owned.map((r) => chip(r, "marketGive", r === give, ` <small>${Math.floor(economy.resources[r])}</small>`)).join("") || `<small class="muted">Nichts zum Tauschen da</small>`}</div>`;
+    if (!give) return html;
+    const get = this.marketGet && this.marketGet !== give ? this.marketGet : null;
+    html += `<p class="tab-name">Du bekommst</p><div class="deposits">${tradeable.filter((r) => r !== give).map((r) => chip(r, "marketGet", r === get)).join("")}</div>`;
+    if (!get) return html;
+    const offers = MARKET.lots
+      .map((count) => {
+        const price = tradePrice(give, get, count)!;
+        const blocker = tradeBlocker(state, planet, give, get, count);
+        return `<button class="build" data-action="trade" data-value="${count}:${give}:${get}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${count} ${this.res(get)} kaufen</span><span class="cost"><span class="${economy.resources[give] >= price ? "" : "short"}">${price} ${this.res(give)}</span>${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
+      })
+      .join("");
+    return `${html}<div class="choices">${offers}</div>`;
+  }
+
   private renderLaunches(state: GameState, planet: PlanetState): string {
     const idle = idleUnits(state, planet, this.playerId).length;
     const rows = this.visiblePlanets(state)
@@ -814,7 +876,8 @@ export class Ui {
         .join("")}</div>`;
       if (!enough) html += `<p class="muted">Labore erzeugen Wissen. Die Wahl gilt, sobald genug da ist.</p>`;
     } else {
-      html += `<p class="muted">Die nächste Wahl kommt mit der nächsten Aufstiegsstufe.</p>`;
+      const open = OFFERABLE.some((id) => !economy.discoveries.includes(id));
+      html += `<p class="muted">${open ? "Die nächste Wahl kommt mit der nächsten Aufstiegsstufe." : "Alle Entdeckungen sind erforscht."}</p>`;
     }
     if (economy.discoveries.length) {
       html += `<p class="muted">Schon entdeckt:</p><ul class="owned">${economy.discoveries.map((id) => `<li>${this.dicon(id)} <b>${discoveryName(id)}</b> <small>${discoveryDescription(id)}</small></li>`).join("")}</ul>`;
@@ -855,18 +918,22 @@ export class Ui {
     const title = def ? `${this.bicon(s.building!)} ${def.name}${stage} <small>auf ${biome.name}</small>` : s.scorched ? `${this.ticon("clearScorched", "🔥")} Verbrannte Erde <small>${biome.name}</small>` : biome.name;
 
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
-    const deposits = s.deposits
-      .map((d) => {
+    const depositButton = (d: (typeof s.deposits)[number]) => {
         // Only whether something is left, not how much: players read the field, not a counter.
         const empty = !d.infinite && d.amount <= 0;
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
-        const tag = d.byHand ? "" : `<small>Mine${deep ? ` ${deep}` : ""}</small>`;
+        const tag = deep ? `<small>Mine ${deep}</small>` : "";
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
-      })
-      .join("");
+    };
+    // Two layers (Seb): what grows or lies on top, and the ground below that only a mine reaches.
+    const surface = s.deposits.filter((d) => d.byHand).map(depositButton).join("");
+    const ground = s.deposits.filter((d) => !d.byHand).map(depositButton).join("");
+    const deposits =
+      (surface ? `<div class="deposits"><span class="layer">Oberfläche</span>${surface}</div>` : "") +
+      (ground ? `<div class="deposits"><span class="layer">Untergrund</span>${ground}</div>` : "");
 
     const cap = workerCapacity(s);
     const rate = Object.entries(output)
@@ -917,7 +984,10 @@ export class Ui {
           .join("");
     let actions = "";
     if (def) {
-      const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}`;
+      const info =
+        s.building === "launchpad"
+          ? this.renderLaunches(state, planet)
+          : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}${s.building === "market" ? this.renderMarket(state, planet) : ""}`;
       const next = nextUpgrade(s);
       let upgrade = "";
       if (next) {
@@ -969,7 +1039,7 @@ export class Ui {
       actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>${terraforms ? `<div class="builds">${terraforms}</div>` : ""}`;
     }
 
-    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${recipes}${workers}${queuedNote}${actions}${hint}`;
+    return `<h2>${title}</h2>${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
   }
 }
 
@@ -977,6 +1047,15 @@ export class Ui {
 function fmt(v: number): string {
   return Number.isInteger(Math.round(v * 10) / 10) ? String(Math.round(v)) : v.toFixed(1);
 }
+
+/** Bar numbers: 12 345 becomes "12k" so more chips fit on a phone. */
+function short(amount: number): string {
+  const n = Math.floor(amount);
+  return n >= 10000 ? `${Math.floor(n / 1000)}k` : String(n);
+}
+
+/** Resources always shown in the top bar; the others sit behind "+n". */
+const KEY_RESOURCES = new Set<ResourceId>(["food", "wood", "stone", "iron", "science", "fuel"]);
 
 interface HudHtml {
   chips: string;

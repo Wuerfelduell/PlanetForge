@@ -9,6 +9,8 @@ import {
   buildingStats,
   createGame,
   economyOfPlayer,
+  flightPlan,
+  ROCKETS,
   homePlanet,
   housing,
   powerFactor,
@@ -165,5 +167,58 @@ describe("new buildings", () => {
     science = econ(g).resources.science;
     without = run(g, 10);
     expect(econ(without).resources.science - science).toBeCloseTo(base * 1.2, 3);
+  });
+
+  it("leftover food becomes biogas, and the gas plant burns it for power", () => {
+    let g = world(["savanna", "savanna", "savanna"]);
+    g = build(g, 0, "biogas-plant", 1);
+    g = build(g, 2, "power-gas", 1);
+    const biogas = econ(g).resources.biogas;
+    g = run(g, 6);
+    // 1 worker × 1.0 / 6 s per craft makes 1 biogas; the plant burns 0.08/s.
+    expect(econ(g).resources.biogas).toBeCloseTo(biogas + 1 - 6 * 0.08, 1);
+    expect(homePlanet(g, P1.id)!.power!.supply).toBe(5);
+  });
+
+  it("oil becomes plastic, plastic electronics, and the chip factory makes computers", () => {
+    let g = world(["savanna", "savanna", "savanna", "savanna"]);
+    const planetId = homePlanet(g, P1.id)!.id;
+    g = build(g, 0, "plastics", 1);
+    g = build(g, 3, "electronics", 1);
+    g = exec(g, { type: "upgrade", planetId, segment: 3 });
+    g = exec(g, { type: "setGather", planetId, segment: 3, resource: "computer" });
+    const before = { plastic: econ(g).resources.plastic, computer: econ(g).resources.computer };
+    g = run(g, 30);
+    expect(econ(g).resources.plastic).toBeGreaterThan(before.plastic);
+    expect(econ(g).resources.computer).toBeGreaterThan(before.computer);
+  });
+
+  it("the market trader swaps goods with a markup while someone runs the stand", () => {
+    let g = world(["savanna", "savanna"]);
+    const home = homePlanet(g, P1.id)!;
+    const trade = (cmd: Partial<Extract<Command, { type: "trade" }>>) => applyCommand(g, P1.id, { type: "trade", planetId: home.id, give: "wood", get: "iron", count: 5, ...cmd }, g.simTime);
+    expect(trade({})).toMatchObject({ ok: false, error: "Hier steht kein Markt" });
+    g = build(g, 0, "market");
+    expect(trade({})).toMatchObject({ ok: false, error: "Niemand arbeitet am Markt" });
+    g = exec(g, { type: "assign", planetId: home.id, segment: 0, delta: 1 });
+    expect(trade({ get: "science" })).toMatchObject({ ok: false, error: "Das tauscht der Händler nicht" });
+    const before = { wood: econ(g).resources.wood, iron: econ(g).resources.iron };
+    g = exec(g, { type: "trade", planetId: home.id, give: "wood", get: "iron", count: 5 });
+    // 5 iron × 4 × 1.5 / 3 per wood = 10 wood.
+    expect(econ(g).resources.wood).toBe(before.wood - 10);
+    expect(econ(g).resources.iron).toBe(before.iron + 5);
+    expect(buildBlocker(g, homePlanet(g, P1.id)!, seg(g, 1), "market")).toBe("Nur eins pro Planet");
+  });
+
+  it("the starship flies on uranium, carries more and goes further than the settler rocket", () => {
+    const g = world(["savanna"]);
+    const home = homePlanet(g, P1.id)!;
+    const target = g.planets.find((p) => p.id !== home.id)!;
+    const ship = flightPlan(home, target, "starship", 6, econ(g));
+    const rocket = flightPlan(home, target, "colony", 3, econ(g));
+    expect(ship.cost.uranium).toBeGreaterThan(0);
+    expect(ship.cost.fuel).toBeUndefined();
+    expect(ship.seconds).toBeLessThan(rocket.seconds);
+    expect(ROCKETS.starship.capacity).toBeGreaterThan(ROCKETS.colony.capacity);
   });
 });

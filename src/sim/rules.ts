@@ -1,6 +1,8 @@
-import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, MARKET, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { atWar, factionOfEconomy } from "./diplomacy";
+import { ASCENSION } from "../data/balance/progression";
+import { ascensionThreshold, foodUpkeepPerSecond, secondsPerBirth as balanceSecondsPerBirth } from "../data/balance/index";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
 /** Read-only helpers shared by the simulation and the UI (so the UI never re-implements rules). */
@@ -164,6 +166,28 @@ export function powerFactor(planet: PlanetState, segment: SegmentState): number 
   return Math.max(RULES.energy.unpoweredMul, p.supply / p.demand);
 }
 
+/** What the market trader asks in `give` for `count` units of `get`, or null if he does not deal in them. */
+export function tradePrice(give: ResourceId, get: ResourceId, count: number): number | null {
+  const paid = MARKET.values[give];
+  const wanted = MARKET.values[get];
+  if (!paid || !wanted || give === get) return null;
+  return Math.ceil((count * wanted * MARKET.markup) / paid - 1e-9);
+}
+
+/** Why a trade cannot happen on this planet right now, or null. */
+export function tradeBlocker(state: GameState, planet: PlanetState, give: ResourceId, get: ResourceId, count: number): string | null {
+  const economy = economyOf(state, planet);
+  if (!economy) return "Unbewohnter Planet";
+  const market = planet.segments.find((s) => s.building === "market");
+  if (!market) return "Hier steht kein Markt";
+  if (workerCount(state, planet, market.index) === 0) return "Niemand arbeitet am Markt";
+  if (!Number.isInteger(count) || count <= 0 || count > 100) return "Ungültige Menge";
+  const price = tradePrice(give, get, count);
+  if (price === null) return "Das tauscht der Händler nicht";
+  if (economy.resources[give] < price) return NOT_AFFORDABLE;
+  return null;
+}
+
 /** Pumps also draw from a neighboring sea or glacier. */
 const WATER_NEIGHBORS: readonly BiomeId[] = ["ocean", "glacier"];
 
@@ -262,8 +286,38 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   return out;
 }
 
-export function nextLevelThreshold(level: number): number | null {
-  return RULES.ascensionThresholds[level] ?? null;
+/**
+ * Points needed to go from `level` to the next one (cumulative). Coop thresholds grow with the
+ * team: × (0.7 + 0.3 · players), design doc 4.6.
+ */
+export function nextLevelThreshold(level: number, mode: GameState["settings"]["mode"] = "coop", players = 1): number | null {
+  return ascensionThreshold(level + 1, mode, players);
+}
+
+/** Players who share this economy and are still in the game. */
+export function economyPlayers(state: GameState, economy: EconomyState): number {
+  return Math.max(1, state.players.filter((p) => p.economyId === economy.id && !p.eliminated).length);
+}
+
+/** Threshold for the economy's next level, with its mode and team size. */
+export function economyThreshold(state: GameState, economy: EconomyState, level = economy.ascension.level): number | null {
+  return nextLevelThreshold(level, state.settings.mode, economyPlayers(state, economy));
+}
+
+/** Seconds per birth on a planet with `residents` inhabitants: base + perCitizen × residents (per mode). */
+export function secondsPerBirth(state: GameState, residents: number): number {
+  return balanceSecondsPerBirth(residents, state.settings.mode);
+}
+
+/** Food all `people` of an economy eat in one cycle; grows a little faster than the head count. */
+export function foodUpkeepPerCycle(state: GameState, people: number): number {
+  return people * foodUpkeepPerSecond(people) * state.settings.cycleSeconds;
+}
+
+/** Ascension points per cycle: inhabitants plus every building stage above the first. */
+export function ascensionPerCycle(state: GameState, people: number, upgrades: number): { people: number; upgrades: number } {
+  const perMinute = state.settings.cycleSeconds / 60;
+  return { people: people * ASCENSION.pointsPerCitizenPerMinute * perMinute, upgrades: upgrades * ASCENSION.pointsPerUpgradePerMinute * perMinute };
 }
 
 export function ringDistance(a: number, b: number, n: number): number {
@@ -394,7 +448,7 @@ export function shieldFlightPlan(from: PlanetState, repair: boolean, economy?: E
   for (const [r, v] of Object.entries(repair ? SUPERNOVA.repairCost : SUPERNOVA.segmentCost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) + (v as number);
   // The colony rocket price is not paid twice: the crew rides a shuttle.
   for (const [r, v] of Object.entries(ROCKETS.colony.cost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) - (v as number);
-  return { ...plan, cost };
+  return { ...plan, cost, seconds: plan.seconds + SUPERNOVA.flightSeconds };
 }
 
 export function rocketCapacity(economy: EconomyState | undefined, rocket: RocketId): number {

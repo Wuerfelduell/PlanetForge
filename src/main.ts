@@ -13,7 +13,7 @@ import { Ui } from "./ui/ui";
 import { mountLayoutControls } from "./ui/layoutControls";
 import { music } from "./audio/music";
 import { unlockMusicOnFirstGesture } from "./audio/musicControl";
-import { MainMenu, type NewGameOptions } from "./ui/mainMenu";
+import { MainMenu, worldOptions, type NewGameOptions } from "./ui/mainMenu";
 import "./style.css";
 
 async function boot(): Promise<void> {
@@ -66,7 +66,11 @@ async function boot(): Promise<void> {
     leaveOnline();
     // Factions are a coop extra: the shared planet plus AI neighbors on their own planets.
     const factions = options.mode === "factions";
-    session = LocalSession.newGame(undefined, { goal: options.goal, invaders: options.invaders, factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" });
+    session = LocalSession.newGame(
+      undefined,
+      { goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" },
+      options.people,
+    );
     started = true;
     saveLocal();
     showHome();
@@ -168,7 +172,7 @@ async function boot(): Promise<void> {
       },
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
-        else await online.create({ mode: options.mode === "factions" ? "coop" : options.mode, goal: options.goal, invaders: options.invaders }, slot);
+        else await online.create({ mode: options.mode === "factions" ? "coop" : options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world) }, slot, options.people);
       },
       openOnline: () => void online.open(),
       save() {
@@ -194,9 +198,14 @@ async function boot(): Promise<void> {
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
+    document.documentElement.style.setProperty("--hud-h", `${Math.round(hud.bottom)}px`);
     const panel = document.getElementById("panel")!.getBoundingClientRect();
-    view.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top);
-    map.layout(app.screen.width, app.screen.height, hud.bottom, app.screen.height - panel.top, session.state);
+    // In landscape on phones the panel is a column on the right instead of a sheet at the bottom.
+    const side = panel.height > app.screen.height * 0.6 && panel.left > 0;
+    const bottom = side ? 0 : app.screen.height - panel.top;
+    const right = side ? app.screen.width - panel.left : 0;
+    view.layout(app.screen.width, app.screen.height, hud.bottom, bottom, right);
+    map.layout(app.screen.width - right, app.screen.height, hud.bottom, bottom, session.state);
   };
   const resize = new ResizeObserver(relayout);
   resize.observe(document.body);
@@ -248,6 +257,7 @@ window.addEventListener("pointerdown", () => sfx.unlock(), { once: true, capture
 
 /** Sounds for events that are not tied to a spot on the planet (those play in PlanetView). */
 const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
+  traded: "diplomacy.trade",
   born: "citizen.born",
   levelUp: "ascension.levelup",
   depleted: "alert.warning",

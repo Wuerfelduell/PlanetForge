@@ -3,6 +3,8 @@
  * (or later loaded from JSON) without touching the simulation code.
  */
 
+import { RULES as BALANCE_RULES } from "../data/balance/progression";
+
 export const RESOURCE_IDS = [
   "food", "wood", "stone", "iron", "sand", "clay", "water", "coal", "oil", "uranium", "aetherite", "science",
   // Tinkering (src/data/balance, "Tüfteln"): raw goods and what sawmill and workshop make of them.
@@ -13,6 +15,8 @@ export const RESOURCE_IDS = [
   "fuel",
   // Glassworks and foundry goods for the later buildings (greenhouse, observatory, power plants).
   "glass", "steel", "concrete",
+  // Late chains after Planet of Mine: biogas from swamps or food, plastic from oil, then electronics and computers.
+  "biogas", "plastic", "electronics", "computer",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -46,6 +50,10 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   glass: { name: "Glas", icon: "🪟" },
   steel: { name: "Stahl", icon: "🔩" },
   concrete: { name: "Beton", icon: "⬜" },
+  biogas: { name: "Biogas", icon: "🫧" },
+  plastic: { name: "Plastik", icon: "🧴" },
+  electronics: { name: "Elektronik", icon: "💡" },
+  computer: { name: "Computer", icon: "💻" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -78,6 +86,9 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "wood", max: 80, byHand: true },
       { resource: "food", max: 25, byHand: true },
+      // Seb: under the trees there is ground too; a mine reaches it.
+      { resource: "stone", max: 30 },
+      { resource: "clay", max: 25 },
     ],
   },
   savanna: {
@@ -87,6 +98,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "food", max: 50, byHand: true },
       { resource: "fiber", max: 50, byHand: true },
+      { resource: "stone", max: 25 },
+      { resource: "clay", max: 30 },
     ],
   },
   mountains: {
@@ -136,6 +149,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "stone", max: 50, byHand: true },
       { resource: "water", max: 60, byHand: true },
+      { resource: "iron", max: 30 },
     ],
   },
   crystal: {
@@ -184,11 +198,12 @@ export const BUILDING_IDS = [
   "housing", "park", "monument",
   "farm", "fishery", "hydro-farm",
   "forester", "mine", "pump",
-  "sawmill", "workshop", "foundry", "glassworks",
-  "lab", "library", "observatory",
-  "power-wind", "power-coal", "power-solar", "power-atomic",
+  "sawmill", "workshop", "foundry", "glassworks", "plastics", "biogas-plant", "electronics",
+  "lab", "library", "observatory", "datacenter",
+  "power-wind", "power-coal", "power-gas", "power-solar", "power-atomic",
   "watchtower", "battery",
   "launchpad", "refinery",
+  "market",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -276,6 +291,7 @@ const NOISY: readonly AdjacencyDef[] = [
   { building: "foundry", bonus: -0.25 },
   { building: "refinery", bonus: -0.25 },
   { building: "power-coal", bonus: -0.25 },
+  { building: "plastics", bonus: -0.25 },
 ];
 
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
@@ -403,7 +419,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
-    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "lava", "ash"],
+    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
     workers: 3,
     extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite"], perWorker: 0.6 },
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
@@ -531,6 +547,60 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [{ biome: "mountains", bonus: 0.2 }, { building: "library", bonus: 0.2 }, ...NOISY],
     energy: -1,
   },
+  datacenter: {
+    name: "Rechenzentrum",
+    icon: "🖥️",
+    category: "research",
+    description: "Rechnet mit Computern: das meiste Wissen je Arbeiter, braucht aber viel Strom. +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn.",
+    cost: { computer: 5, concrete: 25, steel: 15 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "science", perWorker: 0.6 },
+    adjacency: [{ building: "library", bonus: 0.2 }, ...NOISY],
+    energy: -3,
+  },
+  "biogas-plant": {
+    name: "Biogasanlage",
+    icon: "🫧",
+    category: "production",
+    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
+    cost: { bricks: 15, planks: 10, iron: 5 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 1,
+    crafts: { recipes: ["biogas"], speed: 1 },
+    adjacency: [
+      { building: "farm", bonus: 0.2 },
+      { biome: "swamp", bonus: 0.15 },
+    ],
+  },
+  plastics: {
+    name: "Kunststoffwerk",
+    icon: "🧴",
+    category: "production",
+    description: "Kocht aus Öl Plastik für Elektronik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
+    cost: { bricks: 15, steel: 10, planks: 10 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["plastic"], speed: 1 },
+    adjacency: [{ building: "pump", bonus: 0.25 }],
+  },
+  electronics: {
+    name: "Elektronikwerk",
+    icon: "🔌",
+    category: "production",
+    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer. Braucht Strom. +15 % je Nachbar-Werkstatt.",
+    cost: { steel: 15, glass: 10, bricks: 10 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["electronics"], speed: 1 },
+    adjacency: [{ building: "workshop", bonus: 0.15 }],
+    energy: -1,
+    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer"], speed: 1.25 }, energy: -2 }],
+  },
   "power-wind": {
     name: "Windrad",
     icon: "🌬️",
@@ -559,6 +629,18 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 6,
     burns: { resource: "coal", perSecond: 0.1 },
   },
+  "power-gas": {
+    name: "Gaskraftwerk",
+    icon: "🔆",
+    category: "energy",
+    description: "+5 Strom mit einem Arbeiter, verbrennt Biogas. Sauberer als Kohle: kein Lärm, kein Staub.",
+    cost: { bricks: 20, steel: 5, wire: 5 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 1,
+    energy: 5,
+    burns: { resource: "biogas", perSecond: 0.08 },
+  },
   "power-solar": {
     name: "Solarfeld",
     icon: "☀️",
@@ -585,6 +667,17 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 2,
     energy: 15,
     burns: { resource: "uranium", perSecond: 0.02 },
+  },
+  market: {
+    name: "Markt",
+    icon: "🏪",
+    category: "production",
+    description: "Ein Händler tauscht Waren gegen andere, solange jemand am Stand arbeitet. Er nimmt 50 % Aufschlag. Nur einer pro Planet.",
+    cost: { planks: 20, stone: 20, cloth: 5 },
+    unlockLevel: 3,
+    allowedBiomes: LAND,
+    workers: 1,
+    unique: true,
   },
   launchpad: {
     name: "Startrampe",
@@ -621,7 +714,9 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
-export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens";
+export type RecipeId =
+  | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
+  | "plastic" | "biogas" | "electronics" | "computer";
 
 export interface RecipeDef {
   name: string;
@@ -644,7 +739,29 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   steel: { name: "Stahl", inputs: { iron: 2, coal: 1 }, outputs: { steel: 1 }, seconds: 10 },
   concrete: { name: "Beton", inputs: { stone: 2, clay: 1, water: 1 }, outputs: { concrete: 1 }, seconds: 8 },
   greens: { name: "Gemüse", inputs: { water: 1 }, outputs: { food: 2 }, seconds: 5 },
+  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
+  electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
+  computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
 };
+
+/**
+ * The market trader (Planet of Mine has trading too). Values are worker-seconds per unit, as in
+ * src/data/balance/resources.ts; the trader asks `markup` times the value of what he hands out.
+ * Wissen cannot be traded.
+ */
+export const MARKET = {
+  markup: 1.5,
+  values: {
+    food: 3, wood: 3, stone: 3, sand: 3, clay: 3, fiber: 3, water: 2,
+    iron: 4, coal: 4, copper: 4, oil: 5, biogas: 5,
+    uranium: 12, aetherite: 15, gold: 15,
+    planks: 10, tools: 12, wire: 9, cloth: 18, bricks: 9, fuel: 12,
+    glass: 18, concrete: 18, steel: 22, plastic: 22, electronics: 80, computer: 220,
+  } as Partial<Record<ResourceId, number>>,
+  /** Units per trade the market offers. */
+  lots: [1, 5] as const,
+} as const;
 
 /**
  * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and
@@ -654,16 +771,23 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
 export const INVADERS = {
   /** Team ascension level from which waves come. */
   minLevel: 5,
+  /** ...and team size (playtest: a 9-strong team at level 5 was wiped out). */
+  minPeople: 12,
   firstWaveCycles: [8, 16] as const,
   waveIntervalCycles: [20, 35] as const,
-  approachCycles: 6,
+  approachCycles: 8,
   /** Without long-range sight the team sees the fleet only this many cycles before arrival. */
-  blindWarningCycles: 1,
+  blindWarningCycles: 3,
   /** Cycles at the sun shield before the fleet moves on to a planet. */
   siegeCycles: 5,
   /** Flight time when the fleet moves on to another planet. */
   moveOnCycles: 3,
   shipHp: { base: 6, perWave: 4 },
+  /**
+   * Mothership hp scale with the team: × people / perPeople, within min..max, so a wave is about
+   * as tough for 12 inhabitants as for 60.
+   */
+  hpTeamScale: { perPeople: 20, min: 0.6, max: 3 },
   /** Escorts add to their roll: floor(wave × escortBonusPerWave). */
   escortBonusPerWave: 0.5,
   strongMul: 1.5,
@@ -692,11 +816,17 @@ export const SUPERNOVA = {
   delayPerSegmentCycles: 20,
   /** A segment below this hp does not count. */
   workingHp: 50,
-  segmentCost: { iron: 40, stone: 60, aetherite: 10, science: 20 } as Partial<Record<ResourceId, number>>,
-  repairCost: { iron: 15, stone: 15 } as Partial<Record<ResourceId, number>>,
+  /**
+   * Playtest 2026-10-21: 12 segments took 6 minutes. A segment now needs the late chain (steel,
+   * concrete) and real research, a crew of 3 and a long flight, so the shell is a project.
+   */
+  segmentCost: { steel: 15, concrete: 15, aetherite: 10, science: 60 } as Partial<Record<ResourceId, number>>,
+  repairCost: { steel: 5, concrete: 5 } as Partial<Record<ResourceId, number>>,
   /** Inhabitants who fly to the sun to build or repair, then come back. */
-  crew: 2,
-  unlockLevel: 4,
+  crew: 3,
+  /** Extra seconds every shield flight takes on top of the distance (the sun is far and hot). */
+  flightSeconds: 60,
+  unlockLevel: 6,
 } as const;
 
 export interface RocketDef {
@@ -718,7 +848,7 @@ export interface RocketDef {
  * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
  * locked out of flying.
  */
-export const ROCKET_IDS = ["colony", "combat"] as const;
+export const ROCKET_IDS = ["colony", "combat", "starship"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
 export const ROCKETS: Record<RocketId, RocketDef> = {
@@ -742,6 +872,17 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 4,
     maxRange: 16,
     versusOnly: true,
+  },
+  // The big ship after Planet of Mine: computers and ätherite, flies on uranium, far and fast.
+  starship: {
+    name: "Sternenschiff",
+    icon: "🛸",
+    cost: { computer: 2, aetherite: 10, steel: 20, concrete: 10 },
+    unlockLevel: 8,
+    capacity: 6,
+    fuel: { resource: "uranium", takeoff: 2, perDistance: 0.2, perPassenger: 0.1 },
+    secondsPerDistance: 1.5,
+    maxRange: 40,
   },
 };
 
@@ -835,10 +976,15 @@ export const RULES = {
   /** Inhabitants that can gather by hand on a segment without a building. */
   handWorkersPerSegment: 2,
   handRatePerWorker: 0.3,
-  foodPerInhabitantPerCycle: 2,
   starvingRateFactor: 0.5,
-  birthFoodCost: 10,
-  secondsPerBirth: 12,
+  /**
+   * Births, food upkeep and ascension thresholds come from src/data/balance (MODES, RULES), see
+   * rules.ts: secondsPerBirth, foodUpkeepPerCycle, nextLevelThreshold. Playtest 2026-10-21: the
+   * old flat values here (12 s per birth, 2 food) made hut spam the best strategy.
+   */
+  birthFoodCost: BALANCE_RULES.birthFoodCost,
+  /** Food beyond this rots at the end of a cycle: base + perCitizen × people of the economy. */
+  foodStock: BALANCE_RULES.foodStock,
   /** Fraction of max that regrows per second on a segment nobody works on. */
   regenPerSecond: 0.01,
   demolishRefund: 0.5,
@@ -847,12 +993,12 @@ export const RULES = {
    * team's ascension level `fromLevel` on (when the workshop unlocks). Without tools: withoutToolsMul.
    */
   tools: { perWorkerPerMinute: 0.1, withoutToolsMul: 0.6, fromLevel: 2 },
-  /** Cumulative ascension points needed for level 1, 2, 3, … */
-  ascensionThresholds: [15, 50, 120, 250, 450, 750, 1200, 1800, 2600, 3600],
-  startResources: { food: 20, wood: 10 } as Partial<Record<ResourceId, number>>,
+  startResources: BALANCE_RULES.startResources as Partial<Record<ResourceId, number>>,
   /** A fresh colony reveals this far around its landing site. */
   colonyRevealRadius: 1,
   battleDie: 6,
+  /** Workers pulled from their jobs to defend against an attack roll this much lower. */
+  workerDefensePenalty: 1,
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
   homeAdvantage: 1,
   maxTowerBonus: 2,

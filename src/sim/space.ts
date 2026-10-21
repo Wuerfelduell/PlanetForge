@@ -84,7 +84,10 @@ function colonize(planet: PlanetState, economyId: string, events: GameEvent[]): 
  */
 function battle(state: GameState, flight: Flight, planet: PlanetState, attacker: PlayerState, events: GameEvent[]): void {
   const residents = Object.values(state.units).filter((u) => u.planetId === planet.id && playerById(state, u.owner)?.economyId === planet.economyId);
-  const defenders = residents.filter((u) => u.segment === null);
+  // Everyone defends (playtest: a working planet fell without a single roll). Idle inhabitants
+  // stand in front and fight to the death; workers dragged from their jobs roll lower and
+  // surrender when they lose, so they become captives.
+  const defenders = [...residents.filter((u) => u.segment === null), ...residents.filter((u) => u.segment !== null)];
   const defenderId = mainOwner(residents) ?? state.players.find((p) => p.economyId === planet.economyId)?.id ?? "";
   const loserEconomy = state.economies[planet.economyId!]!;
   const loserPeople = state.players.filter((p) => p.economyId === planet.economyId).reduce((sum, p) => sum + peopleOf(state, p.id), 0);
@@ -94,12 +97,16 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   const attackBonus = modified(state.economies[attacker.economyId], "battleRoll", 0);
   let attackers = flight.units.length;
   let attackerLosses = 0;
-  let defenderLosses = 0;
-  while (attackers > 0 && defenderLosses < defenders.length) {
+  let beaten = 0;
+  const killed: UnitState[] = [];
+  while (attackers > 0 && beaten < defenders.length) {
+    const defender = defenders[beaten]!;
     const a = rng.int(1, RULES.battleDie) + attackBonus;
-    const d = rng.int(1, RULES.battleDie) + bonus;
-    if (a > d) defenderLosses++;
-    else {
+    const d = rng.int(1, RULES.battleDie) + bonus - (defender.segment === null ? 0 : RULES.workerDefensePenalty);
+    if (a > d) {
+      beaten++;
+      if (defender.segment === null) killed.push(defender);
+    } else {
       attackers--;
       attackerLosses++;
     }
@@ -110,11 +117,12 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   if (attackers > 0 && attackerLosses > 0 && modified(state.economies[attacker.economyId], "battleLosses", 0) < 0) {
     attackers++;
     attackerLosses--;
-  } else if (attackers === 0 && defenderLosses > 0 && modified(loserEconomy, "battleLosses", 0) < 0) {
-    defenderLosses--;
+  } else if (attackers === 0 && killed.length > 0 && modified(loserEconomy, "battleLosses", 0) < 0) {
+    killed.pop();
   }
 
-  for (const u of defenders.slice(0, defenderLosses)) delete state.units[u.id];
+  for (const u of killed) delete state.units[u.id];
+  const defenderLosses = killed.length;
   const won = attackers > 0;
   let captured = 0;
   if (won) {

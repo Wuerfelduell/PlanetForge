@@ -1,6 +1,8 @@
 import type { Music } from "../audio/music";
 import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
+import { PEOPLE_IDS, PLANET_TYPE_IDS, PLANET_TYPES, SYSTEM, WORLD_LIMITS, type PeopleId, type WorldOptions } from "../sim";
+import { isPeopleId, peopleArt, peoplePickerHtml } from "./peoplePicker";
 import "./mainMenu.css";
 
 /**
@@ -14,7 +16,29 @@ export interface NewGameOptions {
   /** factions: how many AI factions, and how hard they play. */
   factions: 2 | 3 | 4;
   difficulty: "cozy" | "normal" | "hard";
+  /** The player's own people (Volk). */
+  people: PeopleId;
+  /** World generation (all modes); "random" fields are drawn from the seed. */
+  world: WorldChoice;
 }
+
+/** What the world screen shows; `planets: "random"` is sent as a missing field. */
+export interface WorldChoice {
+  planets: number | "random";
+  start: NonNullable<WorldOptions["start"]>;
+  sun: NonNullable<WorldOptions["sun"]>;
+  size: NonNullable<WorldOptions["size"]>;
+}
+
+/** The sim's world options for a choice. */
+export function worldOptions(world: WorldChoice): WorldOptions {
+  const { planets, ...rest } = world;
+  return planets === "random" ? rest : { ...rest, planets };
+}
+
+const SUN_NAMES: Record<string, string> = { yellow: "🟡 Gelb", red: "🔴 Rot", blue: "🔵 Blau", white: "⚪ Weiß" };
+const PLANET_COUNTS = [1, 2, 3, 4, 6, 8, 10, 12, 16].filter((n) => n >= WORLD_LIMITS.planets.min && n <= WORLD_LIMITS.planets.max);
+const DEFAULT_WORLD: WorldChoice = { planets: "random", start: "temperate", sun: "random", size: "normal" };
 
 export type Where = "local" | "online";
 
@@ -66,6 +90,7 @@ export class MainMenu {
   set art(on: boolean) {
     this.hasArt = on;
     this.root.classList.toggle("art", on);
+    peopleArt.on = on;
     // Set here, not in the CSS, so the paths resolve against the page like the other art.
     const images = { "--menu-bg": "brand/menu-bg", "--menu-bg-landscape": "brand/menu-bg-landscape", "--menu-button": "ui/ui-button-menu", "--menu-button-pressed": "ui/ui-button-menu-pressed" };
     const hd = (window.devicePixelRatio || 1) > 1.25 ? "@2x" : "";
@@ -175,6 +200,8 @@ export class MainMenu {
       ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : ""}
       ${factions ? this.renderFactionChoices(pick) : ""}
       ${versus ? "" : this.renderCoopChoices(pick)}
+      ${this.renderPeople()}
+      ${this.renderWorld()}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
         ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", factions || this.where === "local", "Offline auf diesem Gerät")}
@@ -204,6 +231,26 @@ export class MainMenu {
         ${pick("difficulty", "normal", "Normal", c.difficulty === "normal")}
         ${pick("difficulty", "hard", "Hart", c.difficulty === "hard", "Wachsen schnell")}
       </div>`;
+  }
+
+  /** Star system like in Planet of Mine: planet count, start planet, sun, size, each with Zufall. */
+  private renderWorld(): string {
+    const w = this.choice.world;
+    const chip = (group: string, value: string | number, label: string) =>
+      `<button class="menu-chip${String(w[group as keyof WorldChoice]) === String(value) ? " on" : ""}" data-pick="world.${group}" data-value="${value}">${label}</button>`;
+    const random = (group: string) => chip(group, "random", "🎲 Zufall");
+    return `
+      <p class="menu-label">Welt</p>
+      <div class="menu-world">
+        <span>Planeten</span><div class="menu-chips">${random("planets")}${PLANET_COUNTS.map((n) => chip("planets", n, String(n))).join("")}</div>
+        <span>Startplanet</span><div class="menu-chips">${random("start")}${PLANET_TYPE_IDS.map((t) => chip("start", t, PLANET_TYPES[t].name)).join("")}</div>
+        <span>Größe</span><div class="menu-chips">${random("size")}${chip("size", "small", "Klein")}${chip("size", "normal", "Normal")}${chip("size", "large", "Groß")}</div>
+        <span>Sonne</span><div class="menu-chips">${random("sun")}${SYSTEM.sunTypes.map((s) => chip("sun", s, SUN_NAMES[s] ?? s)).join("")}</div>
+      </div>`;
+  }
+
+  private renderPeople(): string {
+    return `<p class="menu-label">Dein Volk</p>${peoplePickerHtml(this.choice.people)}`;
   }
 
   private renderCoopChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
@@ -262,11 +309,16 @@ export class MainMenu {
     if (pick) {
       const value = target.dataset.value!;
       if (pick === "mode") this.choice.mode = value as NewGameOptions["mode"];
+      else if (pick === "people") this.choice.people = value as PeopleId;
       else if (pick === "goal") this.choice.goal = value as NewGameOptions["goal"];
       else if (pick === "invaders") this.choice.invaders = value as NewGameOptions["invaders"];
       else if (pick === "factions") this.choice.factions = Number(value) as NewGameOptions["factions"];
       else if (pick === "difficulty") this.choice.difficulty = value as NewGameOptions["difficulty"];
       else if (pick === "where") this.where = value as Where;
+      else if (pick.startsWith("world.")) {
+        const key = pick.slice(6) as keyof WorldChoice;
+        this.choice.world = { ...this.choice.world, [key]: key === "planets" && value !== "random" ? Number(value) : value };
+      }
       writeOptions(this.choice);
       this.confirmNew = false;
       this.sfx.play("ui.toggle");
@@ -376,9 +428,12 @@ function escape(text: string): string {
 }
 
 function readOptions(): NewGameOptions {
-  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", factions: 3, difficulty: "normal" };
+  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", people: PEOPLE_IDS[0], world: DEFAULT_WORLD, factions: 3, difficulty: "normal" };
   try {
-    return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
+    const saved = { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") } as NewGameOptions;
+    if (!isPeopleId(saved.people)) saved.people = fallback.people;
+    saved.world = { ...DEFAULT_WORLD, ...saved.world };
+    return saved;
   } catch {
     return fallback;
   }

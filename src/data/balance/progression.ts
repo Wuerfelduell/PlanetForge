@@ -22,7 +22,8 @@ export const RULES = {
   /** … plus one more for every this many team ascension levels (design doc 4.5). */
   coopJoinLevelsPerExtraCitizen: 2,
   baseHousing: 3,
-  startResources: { food: 30, wood: 15 } as Cost<ResourceId>,
+  /** Wood 25: the first hut costs 15, so the player builds at once instead of waiting (playtest 2026-10-21). */
+  startResources: { food: 30, wood: 25 } as Cost<ResourceId>,
   /** Citizens that can gather by hand on a segment without a building. */
   handWorkersPerSegment: 2,
   handRatePerWorker: 0.3,
@@ -34,6 +35,11 @@ export const RULES = {
   starvingRateFactor: 0.5,
   starvationDeathAfterCycles: 2,
   birthFoodCost: 15,
+  /**
+   * Food does not pile up forever (playtest: 60 000 food unused): what is above
+   * base + perCitizen × citizens rots at the end of a cycle.
+   */
+  foodStock: { base: 120, perCitizen: 10 },
   /**
    * Seconds per birth on a planet = birthBase + birthPerCitizen × citizens on that planet
    * (values per mode in MODES). Growth slows as the people grows, so citizens stay the scarce
@@ -70,6 +76,11 @@ export const DIFFICULTY = {
 export const ASCENSION = {
   /** Points per minute = population × pointsPerCitizenPerMinute + building bonuses. */
   pointsPerCitizenPerMinute: 2,
+  /**
+   * Every building stage above the first adds this much per minute, so the production chain
+   * counts for ascension and not only the head count (playtest 2026-10-21: hut spam won).
+   */
+  pointsPerUpgradePerMinute: 2,
   maxLevel: 10,
 } as const;
 

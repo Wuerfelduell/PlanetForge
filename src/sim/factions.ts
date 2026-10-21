@@ -23,6 +23,7 @@ import {
   asteroidsVisible,
   buildBlocker,
   buildingStats,
+  foodUpkeepPerCycle,
   housing,
   idleUnits,
   launchBlocker,
@@ -221,7 +222,7 @@ function wants(state: GameState, faction: FactionState, economy: EconomyState, p
   const total = state.planets.reduce((sum, p) => (p.economyId === economy.id ? sum + population(state, p) : sum), 0);
   if (pop >= housing(state, planet) - 1 && total < cap) push("housing");
   const farms = (have.get("farm") ?? 0) + (have.get("fishery") ?? 0);
-  if (farms === 0 || economy.resources.food < pop * RULES.foodPerInhabitantPerCycle * 3) {
+  if (farms === 0 || economy.resources.food < foodUpkeepPerCycle(state, pop) * 3) {
     push("farm");
     push("fishery");
   }
@@ -258,10 +259,10 @@ function assignWorkers(state: GameState, faction: FactionState, economy: Economy
   let free = units.length - reserve;
   if (free <= 0) return;
   const pop = population(state, planet);
-  const foodLow = economy.resources.food < pop * RULES.foodPerInhabitantPerCycle * 3;
+  const foodLow = economy.resources.food < foodUpkeepPerCycle(state, pop) * 3;
   for (const s of planet.segments) {
     pickRecipe(s, economy);
-    pickGather(s, economy, pop);
+    pickGather(s, economy, foodUpkeepPerCycle(state, pop));
   }
   const scored = planet.segments
     .map((s) => ({ s, score: workScore(planet, s, economy, foodLow) }))
@@ -295,9 +296,9 @@ function pickRecipe(s: SegmentState, economy: EconomyState): void {
 }
 
 /** Hand gatherers collect what the stock is shortest of (fibers for cloth, sand for land, …). */
-function pickGather(s: SegmentState, economy: EconomyState, pop: number): void {
+function pickGather(s: SegmentState, economy: EconomyState, foodPerCycle: number): void {
   if (s.building || !s.revealed) return;
-  const target = (r: ResourceId) => (r === "food" ? Math.max(40, pop * RULES.foodPerInhabitantPerCycle * 4) : r === "wood" || r === "stone" ? 80 : FACTIONS.stockTarget);
+  const target = (r: ResourceId) => (r === "food" ? Math.max(40, foodPerCycle * 4) : r === "wood" || r === "stone" ? 80 : FACTIONS.stockTarget);
   let best: { r: ResourceId; need: number } | null = null;
   for (const d of s.deposits) {
     if (!d.byHand || (!d.infinite && d.amount <= 0)) continue;

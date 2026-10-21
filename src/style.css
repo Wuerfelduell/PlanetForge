@@ -45,6 +45,30 @@ html, body {
 }
 #hud .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 #hud .res-scroll, #hud .hud-controls, #hud .hud-rest { display: contents; }
+/* All resources, opened from "+n" in the top bar; floats over the planet so nothing jumps. */
+#hud .res-list {
+  position: absolute;
+  top: 100%;
+  left: 8px;
+  right: 8px;
+  max-width: 520px;
+  max-height: 50vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 4px 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  z-index: 6;
+}
+.res-item { display: flex; align-items: center; gap: 6px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.res-item .res-name { flex: 1; color: var(--muted); }
+.res-item.bad b { color: var(--bad); }
+#hud .chip.more { color: var(--muted); }
+#hud .chip.more.on { color: var(--text); box-shadow: 0 0 0 2px var(--accent); }
 #hud button, #hud .chip, #hud .level, #hud .cycle { pointer-events: auto; }
 .spacer { flex: 1; }
 
@@ -135,6 +159,8 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .hint { margin: 10px 0 0; padding: 8px 10px; border-radius: 10px; background: rgba(255, 209, 102, 0.12); font-size: 14px; }
 
 .deposits { display: flex; gap: 6px; flex-wrap: wrap; }
+.deposits + .deposits { margin-top: 6px; }
+.deposits .layer { flex-basis: 100%; font-size: 0.75em; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .deposit { font-variant-numeric: tabular-nums; }
 .deposit:disabled { opacity: 0.75; }
 .deposit.on { outline: 2px solid var(--accent); }
@@ -167,7 +193,8 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 #toasts {
   position: fixed;
   left: 50%;
-  top: calc(env(safe-area-inset-top) + 86px);
+  /* Just below the top bar (its height is set from main.ts), so toasts never cover the chips. */
+  top: calc(var(--hud-h, 86px) + 6px);
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -266,11 +293,20 @@ ul.owned small { color: var(--muted); }
 .shield-ring { position: relative; width: min(180px, 50vw); aspect-ratio: 1; margin: 6px auto 0; }
 .shield-ring img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-/* Phones: a slimmer top bar so the planet keeps the room. */
-@media (max-width: 699px) {
+/* Phones (also in landscape): a slimmer top bar so the planet keeps the room. */
+@media (max-width: 699px), (orientation: landscape) and (max-height: 500px) {
   #hud { padding: calc(env(safe-area-inset-top) + 6px) 8px 4px; gap: 4px; }
   #hud .row { gap: 4px; }
-  #hud .row.main, #hud .row.resources { flex-wrap: nowrap; }
+  #hud .row.main, #hud .row.resources, #hud .row.extra { flex-wrap: nowrap; }
+  /* Status line (invasion, shield, discoveries, flights): one line, swipe for more. */
+  #hud .row.extra { overflow-x: auto; scrollbar-width: none; pointer-events: auto; touch-action: pan-x; }
+  #hud .row.extra::-webkit-scrollbar { display: none; }
+  #hud .row.extra > * { flex: none; }
+  #hud .chip small { font-size: 12px; }
+  /* Thumb-sized targets: 36 px buttons, chips grow their tap area beyond what is drawn. */
+  #hud button { position: relative; }
+  #hud button::after { content: ""; position: absolute; inset: -5px -2px; }
+  #hud .chip, #hud .level { min-height: 28px; display: inline-flex; align-items: center; gap: 4px; }
   #hud .hud-controls { display: flex; flex: none; gap: 4px; }
   #hud .spacer { display: none; }
   /* All resources in one line: swipe sideways for the rest, the edge fades to hint at more. */
@@ -289,9 +325,30 @@ ul.owned small { color: var(--muted); }
   #hud .res-scroll::-webkit-scrollbar { display: none; }
   #hud .res-scroll .chip { flex: none; }
   #hud .chip, #hud .level { padding: 3px 8px; font-size: 13px; }
-  #hud .speed { min-width: 34px; padding: 4px 8px; font-size: 14px; }
+  #hud .speed { min-width: 40px; min-height: 36px; padding: 4px 8px; font-size: 15px; }
   #hud .chip.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
   #hud .cycle { flex: none; width: 18px; height: 18px; }
+}
+
+/* Phones in landscape: the panel becomes a column on the right, the planet keeps the left. */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root { --side-w: min(40vw, 420px); }
+  /* The top bar stays left of the panel column, so the column can use the full height. */
+  #hud { right: var(--side-w); }
+  body.panel-collapsed #hud { right: 0; }
+  #panel {
+    top: 0;
+    left: auto;
+    right: 0;
+    width: var(--side-w);
+    height: auto;
+    transform: none;
+    border-radius: 20px 0 0 20px;
+  }
+  body.panel-collapsed #panel { top: auto; height: var(--panel-h); }
+  #zoom-toggle { bottom: 10px; }
+  #music-control { right: calc(var(--side-w) + 12px); bottom: 10px; }
+  body.panel-collapsed #music-control { right: 12px; bottom: calc(var(--panel-h) + 10px); }
 }

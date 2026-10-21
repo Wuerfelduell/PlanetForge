@@ -38,6 +38,12 @@ function lateGame(options: { invaders?: "off" | "normal" | "strong"; goal?: "end
   const economy = economyOfPlayer(g, P1.id)!;
   economy.ascension.level = INVADERS.minLevel;
   for (const r of Object.keys(economy.resources) as (keyof typeof economy.resources)[]) economy.resources[r] = 5000;
+  // Waves need a big enough team.
+  const first = Object.values(g.units)[0]!;
+  for (let i = Object.keys(g.units).length; i < INVADERS.minPeople; i++) {
+    const id = `u${g.nextUnitId++}`;
+    g.units[id] = { ...first, id };
+  }
   return g;
 }
 
@@ -65,6 +71,23 @@ describe("invaders", () => {
     expect(spotted).toBeGreaterThanOrEqual(0);
     expect(arrived).toBeGreaterThan(spotted);
     expect(g.invasion!.target).toBe(homePlanet(g, P1.id)!.id);
+  });
+
+  it("wait for a team of INVADERS.minPeople and get tougher with more inhabitants", () => {
+    let small = lateGame();
+    for (const id of Object.keys(small.units).slice(INVADERS.minPeople - 1)) delete small.units[id];
+    homePlanet(small, P1.id)!.birthProgress = -1e9;
+    small = run(small, INVADERS.firstWaveCycles[1] + 2);
+    expect(small.nextWaveTick).toBeNull();
+    expect(small.invasion).toBeNull();
+
+    const hpWith = (people: number) => {
+      const g = lateGame();
+      const first = Object.values(g.units)[0]!;
+      for (let i = Object.keys(g.units).length; i < people; i++) g.units[`x${i}`] = { ...first, id: `x${i}` };
+      return untilSiege(g, []).invasion!.maxHp;
+    };
+    expect(hpWith(60)).toBeGreaterThan(hpWith(INVADERS.minPeople) * 3);
   });
 
   it("besieged planets cannot launch rockets", () => {
@@ -99,13 +122,13 @@ describe("invaders", () => {
     const events: GameEvent[] = [];
     let g = clone(lateGame());
     g.sun.shield[0] = { built: true, hp: 100 };
-    g.invasion = { wave: 1, target: "sun", arrivalTick: g.tick, spotted: true, sieging: true, siegeEndTick: g.tick + ticksPerCycle(g), hp: 10, maxHp: 10, bonus: 0 };
+    g.invasion = { wave: 1, target: "sun", arrivalTick: g.tick, spotted: true, sieging: true, siegeEndTick: g.tick + ticksPerCycle(g), hp: 1e6, maxHp: 1e6, bonus: 0 };
     g.wave = 1;
     g.nextWaveTick = null;
     g = run(g, 2, events);
     const home = homePlanet(g, P1.id)!;
     expect(events).toContainEqual(expect.objectContaining({ type: "invasionMoved", from: "sun", target: home.id }));
-    expect(g.invasion).toMatchObject({ target: home.id, sieging: false, hp: 10 });
+    expect(g.invasion).toMatchObject({ target: home.id, sieging: false, hp: 1e6 });
     g = run(g, INVADERS.moveOnCycles + 1, events);
     expect(g.invasion?.sieging).toBe(true);
   });
@@ -129,6 +152,7 @@ describe("invaders", () => {
     expect(burnt.deposits.every((d) => d.infinite || d.amount === 0)).toBe(true);
     expect(buildBlocker(g, homePlanet(g, P1.id)!, burnt, "housing")).toBe("Verbrannte Erde: erst aufräumen");
 
+    economyOfPlayer(g, P1.id)!.resources.food = 100; // food above the stock limit rots, the siege ate the rest
     const r = applyCommand(g, P1.id, { type: "terraform", planetId: home.id, segment: burnt.index, kind: "clearScorched" }, g.simTime);
     if (!r.ok) throw new Error(r.error);
     const cleared = homePlanet(r.state, P1.id)!.segments[burnt.index]!;
@@ -184,6 +208,7 @@ describe("supernova", () => {
   it("a shield flight builds a segment, delays the nova and brings the crew home", () => {
     const events: GameEvent[] = [];
     let g = lateGame({ invaders: "off" });
+    g.economies.e0!.ascension.level = SUPERNOVA.unlockLevel;
     const home = homePlanet(g, P1.id)!;
     home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
     const nova = novaTickNow(g)!;
@@ -205,6 +230,7 @@ describe("supernova", () => {
   it("a complete working shell saves the sun", () => {
     const events: GameEvent[] = [];
     let g = lateGame({ invaders: "off" });
+    g.economies.e0!.ascension.level = SUPERNOVA.unlockLevel;
     const home = homePlanet(g, P1.id)!;
     home.segments.find((s) => s.revealed && !s.building)!.building = "launchpad";
     g.sun.shield = g.sun.shield.map((_, i) => (i === 0 ? { built: false, hp: 0 } : { built: true, hp: 100 }));
