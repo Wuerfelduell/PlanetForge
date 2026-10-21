@@ -139,6 +139,71 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.plastics",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics.svg",
+      "out": "public/assets/sprites/buildings/plastics.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "plastics",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.plastics.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics-construction.svg",
+      "out": "public/assets/sprites/buildings/plastics-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "plastics",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.plastics.off",
+      "category": "buildings",
+      "src": "art/src/buildings/plastics-off.svg",
+      "out": "public/assets/sprites/buildings/plastics-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "plastics",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }

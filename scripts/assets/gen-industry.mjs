@@ -59,9 +59,29 @@ function gasPower(){
     rect(61,217,132,9,'rock-dark',4)+base();
 }
 
+function plastics(){
+  const crate=(x,y,token)=>rect(x,y,35,28,token,7)+shade(`M${x+28} ${y+10}V${y+21}H${x+9}`,token,5)+
+    line(`M${x+9} ${y+8}H${x+22}`,'cream',3);
+  return post(67,160,63,'rock')+post(104,160,63,'rock')+
+    pipe('M113 110H151Q165 110 165 124V151','paper',12)+
+    rect(47,68,81,105,'paper',22)+ellipse(87,69,40,16,'snow')+
+    path('M49 151H126L108 183H69Z','clay')+rect(78,180,20,29,'rock-dark',7)+
+    shade('M113 88V143H63','paper',9)+glint('M59 91V118')+
+    rect(75,45,24,25,'rock',8)+line('M87 71V109','rock-dark',5)+
+    circle(87,124,19,'science')+line('M79 116L95 132M79 132L95 116','snow',4)+
+    rect(144,145,59,61,'water',14)+shade('M190 158V193H158','water',7)+
+    rect(154,159,28,21,active('energy'),7)+
+    post(113,202,23,'rock')+post(204,202,23,'rock')+
+    rect(101,193,121,21,'rock-dark',10)+[114,141,168,195,211].map(x=>circle(x,203,5,'rock','stroke-width="3"')).join('')+
+    crate(143,113,'danger')+crate(181,166,'energy')+crate(181,135,'water')+
+    ellipse(48,218,11,7,'danger')+ellipse(72,216,11,8,'water')+ellipse(93,219,10,6,'energy')+
+    glint('M44 215H48M68 212H72')+base();
+}
+
 const buildings = [
   {id:'biogas-plant',draw:biogas,parts:['gas-flame']},
   {id:'power-gas',draw:gasPower,parts:['steam']},
+  {id:'plastics',draw:plastics},
 ];
 const assets=[];
 function emit(id,category,stem,body,size,anchor,parts=[],tags=[]){
