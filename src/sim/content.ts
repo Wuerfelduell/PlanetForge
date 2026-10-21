@@ -201,6 +201,7 @@ export const BUILDING_IDS = [
   "power-wind", "power-coal", "power-gas", "power-solar", "power-atomic",
   "watchtower", "battery",
   "launchpad", "refinery",
+  "market",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -665,6 +666,17 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 15,
     burns: { resource: "uranium", perSecond: 0.02 },
   },
+  market: {
+    name: "Markt",
+    icon: "🏪",
+    category: "production",
+    description: "Ein Händler tauscht Waren gegen andere, solange jemand am Stand arbeitet. Er nimmt 50 % Aufschlag. Nur einer pro Planet.",
+    cost: { planks: 20, stone: 20, cloth: 5 },
+    unlockLevel: 3,
+    allowedBiomes: LAND,
+    workers: 1,
+    unique: true,
+  },
   launchpad: {
     name: "Startrampe",
     icon: "🚀",
@@ -730,6 +742,24 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
 };
+
+/**
+ * The market trader (Planet of Mine has trading too). Values are worker-seconds per unit, as in
+ * src/data/balance/resources.ts; the trader asks `markup` times the value of what he hands out.
+ * Wissen cannot be traded.
+ */
+export const MARKET = {
+  markup: 1.5,
+  values: {
+    food: 3, wood: 3, stone: 3, sand: 3, clay: 3, fiber: 3, water: 2,
+    iron: 4, coal: 4, copper: 4, oil: 5, biogas: 5,
+    uranium: 12, aetherite: 15, gold: 15,
+    planks: 10, tools: 12, wire: 9, cloth: 18, bricks: 9, fuel: 12,
+    glass: 18, concrete: 18, steel: 22, plastic: 22, electronics: 80, computer: 220,
+  } as Partial<Record<ResourceId, number>>,
+  /** Units per trade the market offers. */
+  lots: [1, 5] as const,
+} as const;
 
 /**
  * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and

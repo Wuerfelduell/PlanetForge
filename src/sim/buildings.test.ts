@@ -190,4 +190,21 @@ describe("new buildings", () => {
     expect(econ(g).resources.plastic).toBeGreaterThan(before.plastic);
     expect(econ(g).resources.computer).toBeGreaterThan(before.computer);
   });
+
+  it("the market trader swaps goods with a markup while someone runs the stand", () => {
+    let g = world(["savanna", "savanna"]);
+    const home = homePlanet(g, P1.id)!;
+    const trade = (cmd: Partial<Extract<Command, { type: "trade" }>>) => applyCommand(g, P1.id, { type: "trade", planetId: home.id, give: "wood", get: "iron", count: 5, ...cmd }, g.simTime);
+    expect(trade({})).toMatchObject({ ok: false, error: "Hier steht kein Markt" });
+    g = build(g, 0, "market");
+    expect(trade({})).toMatchObject({ ok: false, error: "Niemand arbeitet am Markt" });
+    g = exec(g, { type: "assign", planetId: home.id, segment: 0, delta: 1 });
+    expect(trade({ get: "science" })).toMatchObject({ ok: false, error: "Das tauscht der Händler nicht" });
+    const before = { wood: econ(g).resources.wood, iron: econ(g).resources.iron };
+    g = exec(g, { type: "trade", planetId: home.id, give: "wood", get: "iron", count: 5 });
+    // 5 iron × 4 × 1.5 / 3 per wood = 10 wood.
+    expect(econ(g).resources.wood).toBe(before.wood - 10);
+    expect(econ(g).resources.iron).toBe(before.iron + 5);
+    expect(buildBlocker(g, homePlanet(g, P1.id)!, seg(g, 1), "market")).toBe("Nur eins pro Planet");
+  });
 });
