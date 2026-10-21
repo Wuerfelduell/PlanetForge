@@ -5,7 +5,7 @@ export const RESOURCE_IDS = [
   "food", "wood", "stone", "sand", "clay", "iron", "coal", "water", "oil", "biogas", "uranium", "aetherite",
   "copper", "gold", "fiber",
   // refined (first tier: sawmill and workshop; second tier: foundry)
-  "planks", "tools", "wire", "cloth", "bricks",
+  "planks", "tools", "wire", "cloth", "bricks", "fuel",
   "glass", "concrete", "steel", "plastic", "electronics", "computer",
   // special (no storage cap; energy is a live balance, not a stock)
   "science", "energy",
@@ -37,6 +37,7 @@ export const RESOURCES = {
   wire: { name: "Kupferdraht", category: "refined", icon: "resource.wire", baseCap: 60, value: 9 },
   cloth: { name: "Stoff", category: "refined", icon: "resource.cloth", baseCap: 60, value: 18 },
   bricks: { name: "Ziegel", category: "refined", icon: "resource.bricks", baseCap: 80, value: 9 },
+  fuel: { name: "Treibstoff", category: "refined", icon: "resource.fuel", baseCap: 60, value: 12 },
   glass: { name: "Glas", category: "refined", icon: "resource.glass", baseCap: 60, value: 18 },
   concrete: { name: "Beton", category: "refined", icon: "resource.concrete", baseCap: 60, value: 18 },
   steel: { name: "Stahl", category: "refined", icon: "resource.steel", baseCap: 60, value: 22 },

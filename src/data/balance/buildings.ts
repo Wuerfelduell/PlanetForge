@@ -2,7 +2,7 @@ import type { BiomeId, ResourceId } from "./resources";
 import type { BuildingDef, RecipeDef } from "./types";
 
 export const BUILDING_IDS = [
-  "housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "lab", "storage", "foundry", "market", "watchtower",
+  "housing", "farm", "sawmill", "forester", "mine", "pump", "refinery", "workshop", "lab", "storage", "foundry", "market", "watchtower",
   "power-wind", "power-coal", "air-filter", "hydro-farm", "launchpad", "power-solar", "monument", "power-atomic",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
@@ -24,13 +24,14 @@ const NOISY = [
   { building: "mine", bonus: -0.25 },
   { building: "foundry", bonus: -0.25 },
   { building: "power-coal", bonus: -0.25 },
+  { building: "refinery", bonus: -0.25 },
 ] as const;
 
 export const BUILDINGS = {
   housing: {
     name: "Wohnhaus",
     description:
-      "Platz für mehr Einwohner. Neue Einwohner kommen nur, solange Platz frei ist. −25 % Platz je lautem Nachbarn (Mine, Gießerei, Kohlekraftwerk), +10 % je Nachbar-Wald.",
+      "Platz für mehr Einwohner. Neue Einwohner kommen nur, solange Platz frei ist. −25 % Platz je lautem Nachbarn (Mine, Gießerei, Kohlekraftwerk, Raffinerie), +10 % je Nachbar-Wald.",
     art: "housing",
     biomes: "any-land",
     adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }],
@@ -140,6 +141,17 @@ export const BUILDINGS = {
       },
     ],
   },
+  refinery: {
+    name: "Raffinerie",
+    description: "Macht aus Öl Treibstoff für Raketen. +25 % je Nachbar-Pumpe, stinkt für Wohnhäuser und Labore.",
+    art: "refinery",
+    biomes: "any-land",
+    adjacency: [{ building: "pump", bonus: 0.25 }],
+    tiers: [
+      { cost: { planks: 15, stone: 20, iron: 10 }, unlockLevel: 2, buildSeconds: 12, workers: 2, crafts: { speed: 1 }, pollution: 0.02, usesTools: true },
+      { cost: { steel: 15, bricks: 10, tools: 5 }, unlockLevel: 6, buildSeconds: 15, workers: 3, crafts: { speed: 1.5 }, energy: -1, pollution: 0.03, usesTools: true },
+    ],
+  },
   workshop: {
     name: "Werkstatt",
     description: "Macht Werkzeug, Kupferdraht und Stoff. +15 % je Nachbar-Sägewerk oder -Mine.",
@@ -157,7 +169,7 @@ export const BUILDINGS = {
   lab: {
     name: "Labor",
     description:
-      "Erzeugt Wissen für Entdeckungen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Wohnhaus, −25 % je lautem Nachbarn (Mine, Gießerei, Kohlekraftwerk).",
+      "Erzeugt Wissen für Entdeckungen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Wohnhaus, −25 % je lautem Nachbarn (Mine, Gießerei, Kohlekraftwerk, Raffinerie).",
     art: "lab",
     biomes: "any-land",
     adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, ...NOISY],
@@ -286,7 +298,7 @@ export const BUILDINGS = {
 } as const satisfies Record<BuildingId, Def>;
 
 export const RECIPE_IDS = [
-  "planks", "tools", "wire", "cloth",
+  "planks", "tools", "wire", "cloth", "fuel",
   "charcoal", "bricks", "glass", "concrete", "steel", "biogas", "plastic", "electronics", "computer",
 ] as const;
 export type RecipeId = (typeof RECIPE_IDS)[number];
@@ -301,6 +313,7 @@ export const RECIPES = {
   tools: { name: "Werkzeug", inputs: { iron: 1, planks: 1 }, outputs: { tools: 2 }, seconds: 10, unlockLevel: 2, building: "workshop", tier: 1 },
   wire: { name: "Kupferdraht", inputs: { copper: 1 }, outputs: { wire: 1 }, seconds: 4, unlockLevel: 2, building: "workshop", tier: 1 },
   cloth: { name: "Stoff", inputs: { fiber: 3 }, outputs: { cloth: 1 }, seconds: 8, unlockLevel: 2, building: "workshop", tier: 1 },
+  fuel: { name: "Treibstoff", inputs: { oil: 2 }, outputs: { fuel: 1 }, seconds: 8, unlockLevel: 2, building: "refinery", tier: 1, pollution: 0.02 },
   charcoal: { name: "Holzkohle", inputs: { wood: 3 }, outputs: { coal: 1 }, seconds: 6, unlockLevel: 3, tier: 1, pollution: 0.02 },
   bricks: { name: "Ziegel", inputs: { clay: 2, coal: 1 }, outputs: { bricks: 2 }, seconds: 6, unlockLevel: 3, tier: 1, pollution: 0.01 },
   glass: { name: "Glas", inputs: { sand: 2, coal: 1 }, outputs: { glass: 1 }, seconds: 8, unlockLevel: 3, tier: 1, pollution: 0.02 },

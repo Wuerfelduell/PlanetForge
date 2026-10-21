@@ -57,12 +57,12 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | Stufe | Neu |
 |---|---|
 | 0 | Wohnhaus, Farm |
-| 1 | Mine (auch Kupfer), Pumpe (auch Öl, damit Raketen früh fliegen können), Sägewerk (Bretter), Förster |
-| 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
+| 1 | Mine (auch Kupfer), Pumpe (auch Öl), Sägewerk (Bretter), Förster |
+| 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Raffinerie (Treibstoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
 | 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
-| 4 | Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
+| 4 | Siedlerrakete (erste Kolonie), Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
 | 5 | Wohnhaus 3, Labor 2, Werkstatt 2, Mine 2 (auch Gold), Pumpe 2, Luftfilter (mit Ökologie), Biogas |
-| 6 | Gießerei 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
+| 6 | Gießerei 2, Raffinerie 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
 | 7 | Elektronik, Solarfeld |
 | 8 | Computer, Monument |
 | 9 | Große Rakete, Atomkraftwerk (mit Kernkraft) |
@@ -81,6 +81,7 @@ Nach Sebs Playtest (21.10.2026) sollen die Gebäude kniffliger werden, damit man
 | Werkzeug | 1 Eisen + 1 Brett → 2 | Werkstatt | 2 | Verschleiß in Minen und Sägewerken, Mine 2 |
 | Kupferdraht | 1 Kupfer | Werkstatt | 2 | Windrad, Kohlekraftwerk, Labor 2, Elektronik |
 | Stoff | 3 Fasern | Werkstatt | 2 | Markt, Wohnhaus 3, Transportrakete (Fallschirm) |
+| Treibstoff | 2 Öl | Raffinerie | 2 | jeder Raketenflug |
 | Ziegel | 2 Lehm + 1 Kohle → 2 | Gießerei | 3 | Wohnhaus 3, Kohlekraftwerk, Sägewerk 2, Werkstatt 2 |
 
 Elektronik braucht jetzt Kupferdraht statt Stahl, Computer Gold statt Ätherit. Damit gehen Computer auch auf dem Heimatplaneten. Ätherit bleibt für Monument und große Rakete das Ziel im All.
@@ -159,7 +160,14 @@ Einwohner hinschicken, jeder würfelt 1W6, dazu kommt die Verteidigung (Wachturm
 
 ## Raumfahrt
 
-Treibstoff pro Flug = ⌈Entfernung × (2 + 1,5 × Passagiere)⌉ Öl bei der kleinen Rakete (3 Plätze). Das belohnt wie im Original, wenige Einwohner pro Flug zu schicken. Die große Rakete fliegt mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie.
+Nach Sebs Playtest (21.10.2026) war Fliegen zu leicht, man war zu schnell durch. Deshalb gilt jetzt:
+
+- **Raketen fliegen mit Treibstoff, nicht mit Holz.** Treibstoff macht die Raffinerie (ab Stufe 2) aus 2 Öl. Öl kommt aus der Pumpe auf einem Öl-Vorkommen (Sumpf, Wüste). Die Raffinerie bekommt +25 % je Nachbar-Pumpe, stinkt aber wie die lauten Gebäude (−25 % für Wohnhaus und Labor daneben) und verbraucht Werkzeug.
+- **Jeder Start kostet extra.** Treibstoff pro Flug = ⌈Startkosten + Entfernung × (je Feld + je Passagier × Passagiere)⌉. Die Siedlerrakete (3 Plätze) braucht 6 + Entfernung × (1,5 + 1 × Passagiere), zum Nachbarplaneten mit 3 Einwohnern also 24 Treibstoff = 48 Öl.
+- **Öl ist knapp.** Leere Vorkommen wachsen nicht nach. Das Öl auf dem Heimatplaneten (je ein Sumpf- und Wüstenfeld, etwa 90) reicht für knapp zwei Kolonieflüge. Wer weiter will, braucht eine Kolonie mit Öl oder Handel. Plastik braucht ebenfalls Öl, man muss also abwägen. Der Test „flying is hard“ hält das bei 1,5 bis 3 Flügen.
+- **Kolonisieren erst ab Stufe 4.** Die Siedlerrakete kostet 20 Bretter, 15 Eisen, 5 Werkzeug und 3 Stoff. Gegeneinander bleiben Sabotage (Stufe 2, 12 Treibstoff für einen Saboteur) und Angriff (Stufe 3) früh, kosten aber auch Treibstoff.
+
+Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit Uran viel weiter. Eine Rakete wird beim Landen verbraucht und gibt etwas Stahl und Plastik für die neue Kolonie. Die Werte stehen in `SPACE.rockets` in `progression.ts`, die Kurzformel in `rocketFuel()`.
 
 ## Was zuerst im Playtest prüfen
 
@@ -168,3 +176,4 @@ Treibstoff pro Flug = ⌈Entfernung × (2 + 1,5 × Passagiere)⌉ Öl bei der kl
 3. Ob die Nahrung mit 3 pro Einwohner zu streng ist. Falls ja, zuerst `foodPerInhabitantPerMinute` auf 5 senken.
 4. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
 5. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
+6. Ob Fliegen jetzt schwer genug ist, aber nicht festfährt. Stellschrauben: `takeoffFuel` und `fuelPerPassenger` in `SPACE.rockets`, das Öl-Verhältnis im Rezept `fuel`.
