@@ -223,8 +223,8 @@ export class Ui {
         case "invasionDefeated":
           this.toast(`🏆 Mutterschiff über ${this.targetName(e.target)} zerstört! Wrackteile geborgen.`, "good");
           break;
-        case "invasionLeft":
-          this.toast(e.plundered ? `👾 Die Invasoren ziehen ab und nehmen ein Fünftel der Vorräte mit` : "👾 Die Invasoren ziehen von der Hülle ab", "warn");
+        case "invasionMoved":
+          this.toast(`👾 Die Invasoren ziehen von ${this.targetName(e.from)} weiter nach ${this.targetName(e.target)}! Ankunft in ${this.secondsUntil(e.arrivalTick)} s`, "bad");
           break;
         case "sunWarning":
           this.toast(`☀️ Die Sonne wird unruhig: Supernova in etwa ${e.cyclesLeft} Umläufen. Baut die Schutzhülle!`, "bad");

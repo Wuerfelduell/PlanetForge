@@ -440,8 +440,8 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
 
 /**
  * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and
- * time; each one targets a planet (or the sun shield, 13.3), besieges it for a few cycles and
- * leaves when its mothership is destroyed or after plundering.
+ * time; each one targets a planet (or the sun shield, 13.3) and stays until its mothership is
+ * destroyed. It never leaves on its own: from the sun it moves on to a planet after siegeCycles.
  */
 export const INVADERS = {
   /** Team ascension level from which waves come. */
@@ -451,13 +451,14 @@ export const INVADERS = {
   approachCycles: 6,
   /** Without long-range sight the team sees the fleet only this many cycles before arrival. */
   blindWarningCycles: 1,
+  /** Cycles at the sun shield before the fleet moves on to a planet. */
   siegeCycles: 5,
+  /** Flight time when the fleet moves on to another planet. */
+  moveOnCycles: 3,
   shipHp: { base: 6, perWave: 4 },
   /** Escorts add to their roll: floor(wave × escortBonusPerWave). */
   escortBonusPerWave: 0.5,
   strongMul: 1.5,
-  /** Share of every stockpile taken when the fleet leaves undefeated. */
-  plunderShare: 0.2,
   reward: { science: 30, iron: 15 },
   /** Never kills the last inhabitants of a planet, so it can grow again. */
   minSurvivors: 2,
