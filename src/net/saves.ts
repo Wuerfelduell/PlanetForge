@@ -1,3 +1,4 @@
+import type { WorldOptions } from "../sim";
 import { Capacitor } from "@capacitor/core";
 import { supabase } from "./supabase";
 
@@ -60,6 +61,8 @@ export function firstFreeSlot(saves: SaveSlot[]): number | null {
 export interface SaveOptions {
   /** Default coop. Versus ignores goal and invaders. */
   mode?: "coop" | "versus";
+  /** Star system (GameOptions.world); the server keeps only known keys. */
+  world?: WorldOptions;
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
 }
