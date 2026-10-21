@@ -41,9 +41,9 @@ export function mountLayoutControls(setPlanetZoom: (zoomed: boolean) => void): v
     zoom.title = zoomed ? "Ganzen Planeten zeigen" : "Felder heranzoomen";
     store(ZOOM_KEY, zoomed ? "close" : "whole");
   };
-  // Phones start with the close-up; wide screens have room for the whole planet.
+  // Phones (either orientation) start with the close-up; bigger screens have room for the whole planet.
   const saved = read(ZOOM_KEY);
-  setZoom(saved ? saved === "close" : window.innerWidth < 700);
+  setZoom(saved ? saved === "close" : Math.min(window.innerWidth, window.innerHeight) < 500);
   zoom.addEventListener("click", () => setZoom(!zoomed));
 }
 
