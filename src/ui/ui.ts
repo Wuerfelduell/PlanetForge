@@ -14,7 +14,6 @@ import {
   shieldBlocker,
   shieldFlightPlan,
   SUPERNOVA,
-  INVADERS,
   PLANET_TYPES,
   hasBuilding,
   rocketCapacity,
@@ -50,12 +49,8 @@ export interface UiActions {
   /** Switches between the planet wheel and the star map. */
   showMap(open: boolean): void;
   setSpeed(speed: number): void;
-  newGame(options: NewGameOptions): void;
-}
-
-export interface NewGameOptions {
-  goal: "endless" | "supernova";
-  invaders: "off" | "normal" | "strong";
+  /** Opens the main menu (continue, new game, online, settings). */
+  openMenu(): void;
 }
 
 /** HTML overlay: resource bar on top, segment panel at the bottom, toasts. */
@@ -82,8 +77,6 @@ export class Ui {
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
   private showDiscoveries = false;
-  /** New-game panel open, with the choices so far. */
-  private newGameChoice: NewGameOptions | null = null;
   /** Star map open, and the planet (or "sun") picked on it. */
   private mapOpen = false;
   /** Read by the star map to highlight the same planet. */
@@ -312,7 +305,6 @@ export class Ui {
       case "map":
         this.mapOpen = !this.mapOpen;
         this.showDiscoveries = false;
-        this.newGameChoice = null;
         this.lastPanel = this.lastHud = "";
         this.actions.showMap(this.mapOpen);
         break;
@@ -326,25 +318,8 @@ export class Ui {
         this.actions.showMap(false);
         this.actions.showPlanet(value!);
         break;
-      case "new":
-        this.newGameChoice = this.newGameChoice ? null : { goal: "supernova", invaders: "normal" };
-        this.showDiscoveries = false;
-        this.lastPanel = "";
-        break;
-      case "newGoal":
-      case "newInvaders":
-        if (!this.newGameChoice) break;
-        if (action === "newGoal") this.newGameChoice.goal = value as NewGameOptions["goal"];
-        else this.newGameChoice.invaders = value as NewGameOptions["invaders"];
-        this.lastPanel = "";
-        break;
-      case "startNew":
-        if (this.newGameChoice && confirm("Neues Spiel starten? Der aktuelle Planet geht verloren.")) {
-          const choice = this.newGameChoice;
-          this.newGameChoice = null;
-          this.lastPanel = "";
-          this.actions.newGame(choice);
-        }
+      case "menu":
+        this.actions.openMenu();
         break;
     }
   }
@@ -376,7 +351,7 @@ export class Ui {
       ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
       : "";
     return `
-      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" data-action="new" title="Neues Spiel">↻</button></div>
+      <div class="row resources">${chips}<span class="spacer"></span>${speeds}${versusButtons}<button class="speed" id="menu-button" data-action="menu" title="Menü">☰</button></div>
       <div class="row status">
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="Sternkarte">${this.mapOpen ? "🪐 Planet" : "🌌 Karte"}</button>
@@ -590,17 +565,7 @@ export class Ui {
     return html;
   }
 
-  /** Settings for a new local game: the coop goal and how hard the invaders hit. */
-  private renderNewGame(choice: NewGameOptions): string {
-    const option = (action: string, value: string, label: string, on: boolean) => `<button class="build${on ? " on" : ""}" data-action="${action}" data-value="${value}">${label}</button>`;
-    return `<h2>✨ Neues Spiel <button class="speed" data-action="new" title="Zurück">✕</button></h2>
-      <p class="muted">Ziel</p><div class="choices">${option("newGoal", "supernova", "☀️ Supernova abwenden", choice.goal === "supernova")}${option("newGoal", "endless", "♾️ Endlos", choice.goal === "endless")}</div>
-      <p class="muted">Invasoren (ab Aufstiegsstufe ${INVADERS.minLevel})</p><div class="choices">${option("newInvaders", "off", "Aus", choice.invaders === "off")}${option("newInvaders", "normal", "Normal", choice.invaders === "normal")}${option("newInvaders", "strong", "Stark", choice.invaders === "strong")}</div>
-      <button class="wide primary" data-action="startNew">Los geht's</button>`;
-  }
-
   private renderPanel(state: GameState, planet: PlanetState): string {
-    if (this.newGameChoice) return this.renderNewGame(this.newGameChoice);
     if (this.mapOpen) return this.renderMap(state);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
     const economy = economyOf(state, planet);
@@ -617,8 +582,10 @@ export class Ui {
     const output = segmentOutput(planet, s, workerCount(state, planet, s.index), economy);
     const deposits = s.deposits
       .map((d) => {
-        const amount = d.infinite ? "∞" : `${Math.floor(d.amount)}/${d.max}`;
-        const active = output[d.resource] ? " active" : "";
+        // Only whether something is left, not how much: players read the field, not a counter.
+        const empty = !d.infinite && d.amount <= 0;
+        const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
+        const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const tag = d.byHand ? "" : `<small>Mine</small>`;
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;

@@ -3,6 +3,7 @@ import { BIOMES, BUILDINGS, segmentOutput, TICK_MS, workerCount, type GameEvent,
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
+import { propFill } from "./props";
 
 const TOP = -Math.PI / 2;
 const TAP_SLOP_PX = 8;
@@ -588,12 +589,18 @@ export class PlanetView {
         if (chimney && !empty) this.chimneys.push({ ...at(chimney[0], chimney[1]), angle: mid, size: segWidth * k * 0.35, key: smokeKey });
       } else {
         const props = PROPS[s.biome] ?? [];
-        const texture = props.length ? artTexture(`biome.${s.biome}.prop.${props[(i * 7) % props.length]}`) : undefined;
+        const prop = props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
+        const fill = propFill(s);
+        // The prop is what the field holds: it shrinks while it is harvested, grows back while it
+        // regrows and is a stump (or gone, without that art) when the deposit is used up.
+        const stage = fill <= 0 ? "depleted" : fill < 1 / 3 ? "regrow-1" : fill < 2 / 3 ? "regrow-2" : undefined;
+        const staged = prop && stage ? artTexture(`${prop}.${stage}`) : undefined;
+        const texture = staged ?? (prop && fill > 0 ? artTexture(prop) : undefined);
         if (texture) {
           const sprite = l.props.take(texture);
           sprite.position.set(surface.x, surface.y);
           sprite.rotation = mid + Math.PI / 2;
-          sprite.scale.set((k * segWidth * 0.7) / PROP_SIZE);
+          sprite.scale.set(((k * segWidth * 0.7) / PROP_SIZE) * (staged ? 1 : PROP_MIN_SCALE + (1 - PROP_MIN_SCALE) * fill));
         }
       }
 
@@ -777,6 +784,9 @@ function indexAtTop(rotation: number, n: number): number {
 }
 
 /** Decoration per biome on empty segments (ids from the asset manifest). */
+/** Smallest size of a prop whose deposit is almost used up, relative to a full one. */
+const PROP_MIN_SCALE = 0.55;
+
 const PROPS: Partial<Record<string, string[]>> = {
   forest: ["tree-a", "tree-b", "tree-c"],
   savanna: ["acacia", "bush-a", "bush-b"],

@@ -8,15 +8,17 @@ const NAME_KEY = "planetforge.playerName";
 export interface MenuActions {
   /** A cloud game was opened; the caller swaps it in as the active session. */
   play(session: NetworkSession): void;
+  /** A free slot was picked for a new game; the main menu asks for the options. */
+  newGame(slot: number): void;
 }
 
 /**
- * Save menu for cloud games: 5 slots (own and joined games), new game, join by code or link,
- * invite friends, leave or remove. Opens on its own when the page was opened with ?join=CODE.
+ * Save menu for cloud games: 5 slots (own and joined games), join by code or link, invite
+ * friends, leave or remove. Opens from the main menu, and on its own when the page was opened
+ * with ?join=CODE.
  */
 export class OnlineMenu {
   private readonly root = document.createElement("div");
-  private readonly button = document.createElement("button");
   private current: NetworkSession | null = null;
   private busy = false;
 
@@ -28,21 +30,22 @@ export class OnlineMenu {
     });
     document.body.append(this.root);
 
-    this.button.id = "online-button";
-    this.button.type = "button";
-    this.button.textContent = "☁️ Online";
-    this.button.addEventListener("click", () => void this.open());
-    document.body.append(this.button);
-
     const code = new URLSearchParams(window.location.search).get("join");
     if (code) void this.open(code);
   }
 
-  /** The session that is running now, so the menu can show its code and who is online. */
+  /** The session that is running now, so the menu can show its code. */
   setCurrent(session: NetworkSession | null): void {
     this.current = session;
-    this.button.textContent = session ? `☁️ ${session.online.length || 1} online` : "☁️ Online";
-    if (session) session.onPresence = (online) => (this.button.textContent = `☁️ ${online.length} online`);
+  }
+
+  /** Starts a new cloud game in the given slot (or the first free one) and plays it. */
+  async create(options: SaveOptions, slot?: number): Promise<void> {
+    await ensureSignedIn();
+    const target = slot ?? firstFreeSlot(await listSaves());
+    if (target === null) throw new Error("Alle 5 Online-Plätze sind belegt. Verlasse oder entferne zuerst ein Spiel unter Online-Spiele.");
+    const id = await createSave(target, `Welt ${target}`, playerName(), options);
+    await this.play(id);
   }
 
   async open(joinCode?: string): Promise<void> {
@@ -75,15 +78,6 @@ export class OnlineMenu {
     nameRow.append(nameInput);
     sheet.append(nameRow);
 
-    const options = readOptions();
-    const optionRow = el("div", "field");
-    optionRow.append(el("span", "", "Neue Spiele"));
-    optionRow.append(
-      select("Spielziel", options.goal, { supernova: "Supernova abwehren", endless: "Endlos" }, (v) => writeOptions({ ...options, goal: (options.goal = v) })),
-      select("Invasoren", options.invaders, { normal: "Invasoren normal", strong: "Invasoren stark", off: "Keine Invasoren" }, (v) => writeOptions({ ...options, invaders: (options.invaders = v) })),
-    );
-    sheet.append(optionRow);
-
     const list = el("div", "slots");
     for (let s = 1; s <= SLOT_COUNT; s++) {
       const save = saves.find((g) => g.slot === s);
@@ -91,13 +85,13 @@ export class OnlineMenu {
       row.append(el("span", "slot-no", String(s)));
       if (!save) {
         row.append(el("span", "slot-name muted", "Frei"));
-        const create = button("Neues Spiel", () =>
-          this.run(async () => {
-            const id = await createSave(s, `Welt ${s}`, name(nameInput), options);
-            await this.play(id);
+        row.append(
+          button("Neues Spiel", () => {
+            writeName(nameInput.value.trim().slice(0, 24));
+            this.close();
+            this.actions.newGame(s);
           }),
         );
-        row.append(create);
       } else {
         const info = el("span", "slot-name");
         info.append(el("b", "", save.name));
@@ -160,7 +154,7 @@ export class OnlineMenu {
     }
 
     sheet.append(el("p", "muted note", "Deine Spielstände hängen an diesem Browser. Werden die Browserdaten gelöscht, sind sie nicht mehr erreichbar."));
-    sheet.append(button("Schließen", () => this.close(), "quiet"));
+    sheet.append(button("Zurück", () => this.close(), "quiet"));
     this.root.replaceChildren(sheet);
   }
 
@@ -210,7 +204,7 @@ export class OnlineMenu {
       return;
     }
     const fresh = el("div", "sheet");
-    fresh.append(box, button("Schließen", () => this.close(), "quiet"));
+    fresh.append(box, button("Zurück", () => this.close(), "quiet"));
     this.root.replaceChildren(fresh);
   }
 }
@@ -232,39 +226,15 @@ function button(label: string, onClick: () => void, kind = ""): HTMLButtonElemen
 }
 
 function name(input: HTMLInputElement): string {
-  const value = input.value.trim().slice(0, 24) || "Spieler";
-  writeName(value);
-  return value;
+  writeName(input.value.trim().slice(0, 24));
+  return playerName();
 }
 
-function select<T extends string>(label: string, value: T, choices: Record<T, string>, onChange: (value: T) => void): HTMLSelectElement {
-  const node = document.createElement("select");
-  node.setAttribute("aria-label", label);
-  for (const [key, text] of Object.entries(choices) as [T, string][]) node.append(new Option(text, key, false, key === value));
-  node.addEventListener("change", () => onChange(node.value as T));
-  return node;
+function playerName(): string {
+  return readName().trim() || "Spieler";
 }
 
-const OPTIONS_KEY = "planetforge.newGameOptions";
-
-function readOptions(): SaveOptions {
-  const fallback: SaveOptions = { goal: "supernova", invaders: "normal" };
-  try {
-    return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
-  } catch {
-    return fallback;
-  }
-}
-
-function writeOptions(options: SaveOptions): void {
-  try {
-    localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
-  } catch {
-    // ignore: only a convenience, like the name
-  }
-}
-
-function readName(): string {
+export function readName(): string {
   try {
     return localStorage.getItem(NAME_KEY) ?? "";
   } catch {
@@ -272,7 +242,7 @@ function readName(): string {
   }
 }
 
-function writeName(value: string): void {
+export function writeName(value: string): void {
   try {
     localStorage.setItem(NAME_KEY, value);
   } catch {

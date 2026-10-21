@@ -102,6 +102,7 @@ button:not(:disabled):active { transform: scale(0.96); }
 .deposit:disabled { opacity: 0.75; }
 .deposit.on { outline: 2px solid var(--accent); }
 .deposit.active { background: #2f5a3a; }
+.deposit.empty { opacity: 0.5; }
 .deposit small { color: var(--muted); }
 
 .workers { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-variant-numeric: tabular-nums; }
