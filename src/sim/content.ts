@@ -182,11 +182,11 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
 
 export const BUILDING_IDS = [
   "housing", "park", "monument",
-  "farm", "fishery", "greenhouse",
+  "farm", "fishery", "hydro-farm",
   "forester", "mine", "pump",
   "sawmill", "workshop", "foundry", "glassworks",
   "lab", "library", "observatory",
-  "windmill", "coalplant", "solar", "reactor",
+  "power-wind", "power-coal", "power-solar", "power-atomic",
   "watchtower", "battery",
   "launchpad", "refinery",
 ] as const;
@@ -275,7 +275,7 @@ const NOISY: readonly AdjacencyDef[] = [
   { building: "mine", bonus: -0.25 },
   { building: "foundry", bonus: -0.25 },
   { building: "refinery", bonus: -0.25 },
-  { building: "coalplant", bonus: -0.25 },
+  { building: "power-coal", bonus: -0.25 },
 ];
 
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
@@ -339,7 +339,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { biome: "ash", bonus: 0.15 },
       { building: "pump", bonus: 0.2 },
       { building: "mine", bonus: -0.25 },
-      { building: "coalplant", bonus: -0.2 },
+      { building: "power-coal", bonus: -0.2 },
     ],
     upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
   },
@@ -357,7 +357,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [{ biome: "ocean", bonus: 0.3 }],
     upgrades: [{ name: "Fischereihafen", cost: { planks: 10, cloth: 5 }, unlockLevel: 3, workers: 3, produces: { resource: "food", perWorker: 0.45 } }],
   },
-  greenhouse: {
+  "hydro-farm": {
     name: "Gewächshaus",
     icon: "🪴",
     category: "food",
@@ -531,7 +531,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [{ biome: "mountains", bonus: 0.2 }, { building: "library", bonus: 0.2 }, ...NOISY],
     energy: -1,
   },
-  windmill: {
+  "power-wind": {
     name: "Windrad",
     icon: "🌬️",
     category: "energy",
@@ -544,10 +544,10 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [
       { biome: "mountains", bonus: 0.25 },
       { biome: "tundra", bonus: 0.15 },
-      { building: "windmill", bonus: -0.4 },
+      { building: "power-wind", bonus: -0.4 },
     ],
   },
-  coalplant: {
+  "power-coal": {
     name: "Kohlekraftwerk",
     icon: "🔥",
     category: "energy",
@@ -559,7 +559,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 6,
     burns: { resource: "coal", perSecond: 0.1 },
   },
-  solar: {
+  "power-solar": {
     name: "Solarfeld",
     icon: "☀️",
     category: "energy",
@@ -571,10 +571,10 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 3,
     adjacency: [
       { biome: "desert", bonus: 0.3 },
-      { building: "coalplant", bonus: -0.3 },
+      { building: "power-coal", bonus: -0.3 },
     ],
   },
-  reactor: {
+  "power-atomic": {
     name: "Atomkraftwerk",
     icon: "☢️",
     category: "energy",

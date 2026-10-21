@@ -94,7 +94,7 @@ describe("power grid", () => {
     expect(powerFactor(homePlanet(g, P1.id)!, seg(g, 0))).toBe(RULES.energy.unpoweredMul);
     expect(housing(g, homePlanet(g, P1.id)!)).toBe(RULES.baseHousing + 3);
 
-    g = build(g, 2, "windmill");
+    g = build(g, 2, "power-wind");
     g = run(g, 1);
     expect(homePlanet(g, P1.id)!.power).toEqual({ supply: 2, demand: 1 });
     expect(housing(g, homePlanet(g, P1.id)!)).toBe(RULES.baseHousing + 12);
@@ -102,15 +102,15 @@ describe("power grid", () => {
 
   it("windmills shade each other", () => {
     let g = world(["savanna", "savanna"]);
-    g = build(g, 0, "windmill");
-    g = build(g, 1, "windmill");
+    g = build(g, 0, "power-wind");
+    g = build(g, 1, "power-wind");
     g = run(g, 1);
     expect(homePlanet(g, P1.id)!.power!.supply).toBeCloseTo(2 * 2 * 0.6, 5);
   });
 
   it("a coal plant needs its worker and burns coal; without coal it goes dark", () => {
     let g = world(["savanna", "savanna"]);
-    g = build(g, 0, "coalplant");
+    g = build(g, 0, "power-coal");
     g = run(g, 1);
     expect(homePlanet(g, P1.id)!.power).toBeUndefined();
     const planetId = homePlanet(g, P1.id)!.id;
@@ -128,7 +128,7 @@ describe("power grid", () => {
 
   it("a greenhouse turns water into food, slowly without power", () => {
     let g = world(["desert", "savanna"]);
-    g = build(g, 0, "greenhouse", 2);
+    g = build(g, 0, "hydro-farm", 2);
     const food = econ(g).resources.food;
     g = run(g, 10);
     // 2 workers / 5 s per craft × 2 food × 0.25 (no power).
