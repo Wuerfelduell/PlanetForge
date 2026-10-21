@@ -52,7 +52,7 @@ export interface UiActions {
 /** HTML overlay: resource bar on top, segment panel at the bottom, toasts. */
 export class Ui {
   private readonly hud = el("hud");
-  private readonly panel = el("panel");
+  private readonly panel = el("panel-body");
   private readonly toasts = el("toasts");
   private lastHud = "";
   private lastPanel = "";
