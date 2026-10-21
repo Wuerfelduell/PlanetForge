@@ -41,7 +41,7 @@ jobs:
       - run: npm --prefix scripts/assets ci
       - run: npm --prefix scripts/assets run assets:gen
       - run: npm --prefix scripts/assets run assets:build
-      - run: find public/assets/sprites -mindepth 1 -maxdepth 1 ! -name resources ! -name buildings -exec rm -rf {} +
+      - run: find public/assets/sprites -mindepth 1 -maxdepth 1 ! -name resources ! -name buildings ! -name discoveries ! -name ui ! -name space ! -name brand -exec rm -rf {} +
       - run: npm run build
       - run: npx cap sync android
       - name: Version from run number

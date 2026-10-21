@@ -200,6 +200,7 @@ async function boot(): Promise<void> {
   void loadArt().then((ok) => {
     if (!ok) return;
     ui.art = true;
+    menu.art = true;
     view.invalidate();
     ui.render(session.state);
   });
