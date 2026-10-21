@@ -787,6 +787,58 @@
         "neighbor-bonus"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "biome.forest.prop.sapling-a",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-sapling-a.svg",
+      "out": "public/assets/sprites/biomes/forest-sapling-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "soil",
+        "sapling"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "sapling",
+        "regrowth"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "biome.forest.prop.sapling-b",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-sapling-b.svg",
+      "out": "public/assets/sprites/biomes/forest-sapling-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "soil",
+        "sapling"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "sapling",
+        "regrowth"
+      ],
+      "phase": "P1"
     }
   ]
 }

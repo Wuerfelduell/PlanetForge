@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Every numbered delivery remains reproducible at its own commit.
-const RELEASE = 3;
+const RELEASE = 4;
 const assets = [];
 let state = 'idle';
 const paint = (token,tone=0) => C(state==='off'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -222,6 +222,31 @@ function badge(name) {
   return circle(32,32,28,'paper')+symbol;
 }
 if(RELEASE>=3)for(const name of ['no-tools','noise','neighbor-bonus'])emit(`ui.badge-${name}`,'ui',`badge-${name}`,badge(name),64,{tags:['ui','badge',name]});
+
+function sapling(variant) {
+  const mound=p('M32 118.5 Q26 116 36 111 Q47 102 63 103 Q83 101 93 111 Q103 117 94 118.5Z','clay')+
+    shadow('M85 108 Q91 108 93 111 Q103 117 94 118.5 H33 Q70 118 85 108Z','clay')+
+    shine('M41 112 Q46 108 51 108',2);
+  let plant='';
+  if(variant==='a') {
+    plant=rect(81,55,6,57,3,'sand')+line('M64 111 Q61 88 64 62','clay',6)+
+      p('M63 73 Q35 80 28 53 Q49 42 63 73Z','leaf')+
+      p('M64 64 Q66 35 99 39 Q102 66 64 64Z','grass')+
+      shadow('M64 64 Q88 61 99 39 Q102 66 64 64Z','grass')+
+      line('M63 72 L40 57 M66 62 L87 47','moss',1.5)+
+      line('M60 89 L87 86 M61 94 L84 91','paper',3)+shine('M75 45 Q81 41 87 42',2);
+  } else {
+    plant=rect(43,67,6,46,3,'sand')+
+      line('M64 112 Q70 88 65 47 M65 86 L40 65 M66 93 L89 70','clay',6)+
+      ellipse(39,64,17,13,'leaf')+ellipse(88,70,15,15,'grass')+ellipse(66,40,18,19,'moss')+
+      shadow('M80 30 Q87 55 66 59 Q55 58 52 52 Q76 57 80 30Z','moss')+
+      ellipse(60,32,6,4,'grass','stroke="none"')+ellipse(33,59,6,3,'grass','stroke="none"')+
+      line('M45 92 L70 96 M45 97 L68 101','paper',3)+shine('M81 63 Q84 60 87 60',2);
+  }
+  return part('soil',mound)+part('sapling',plant)+line('M53 113 L57 113 M75 115 L78 114','iron',1.5);
+}
+if(RELEASE>=4)for(const variant of ['a','b'])emit(`biome.forest.prop.sapling-${variant}`,'biomes',`forest-sapling-${variant}`,sapling(variant),128,
+  {anchor:[.5,.9375],parts:['soil','sapling'],tags:['forest','prop','sapling','regrowth']});
 
 write('art/manifest/economy.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Economy art: ${assets.length} ids generated (release ${RELEASE}).`);
