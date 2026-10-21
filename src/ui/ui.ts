@@ -319,6 +319,11 @@ export class Ui {
         this.actions.showMap(false);
         this.actions.showPlanet(value!);
         break;
+      case "home": {
+        const own = this.ownPlanets()[0];
+        if (own) this.actions.showPlanet(own.id);
+        break;
+      }
       case "menu":
         this.actions.openMenu();
         break;
@@ -326,7 +331,8 @@ export class Ui {
   }
 
   private renderHud(state: GameState, planet: PlanetState): string {
-    const economy = economyOf(state, planet);
+    // Always the viewer's own stock, also while looking at someone else's planet.
+    const economy = this.myEconomy(state) ?? economyOf(state, planet);
     if (!economy) return "";
     const shown = RESOURCE_IDS.filter((r) => r === "food" || r === "wood" || economy.resources[r] >= 1);
     const chips = shown
@@ -342,8 +348,9 @@ export class Ui {
       .map((s) => `<button class="speed${s === this.speed ? " on" : ""}" data-action="speed" data-value="${s}">${s === 0 ? "⏸" : `${s}×`}</button>`)
       .join("");
     const own = this.ownPlanets();
-    const planetChip =
-      own.length > 1
+    const planetChip = !own.some((p) => p.id === planet.id)
+      ? `<span class="chip" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
+      : own.length > 1
         ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
         : `<span class="chip" title="Planet">🪐 ${planet.name}</span>`;
     const me = state.players.find((p) => p.id === this.playerId);
@@ -418,6 +425,19 @@ export class Ui {
 
   private secondsUntil(tick: number): number {
     return Math.max(0, Math.ceil((tick - (this.state?.tick ?? 0)) / RULES.ticksPerSecond));
+  }
+
+  private myEconomy(state: GameState) {
+    return state.economies[state.players.find((p) => p.id === this.playerId)?.economyId ?? ""] ?? null;
+  }
+
+  /** Someone else's or a free planet: look only, with a way back. */
+  private renderForeign(state: GameState, planet: PlanetState): string {
+    const people = population(state, planet);
+    const back = this.ownPlanets().length ? `<button class="build" data-action="home">↩ Zurück zum eigenen Planeten</button>` : "";
+    return `<h2>${planet.type === "asteroid" ? "🪨" : "🪐"} ${planet.name} <small>${this.planetStatus(state, planet)}</small></h2>
+      <p class="muted">${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder${people ? ` · ${people} Einwohner` : ""}. Hier hast du nichts. Mit einer Rakete von deiner Startrampe kannst du hinfliegen.</p>
+      <div class="row">${back}<button class="build" data-action="map">🌌 Karte</button></div>`;
   }
 
   private ownPlanets(): PlanetState[] {
@@ -576,6 +596,7 @@ export class Ui {
   private renderPanel(state: GameState, planet: PlanetState): string {
     if (this.mapOpen) return this.renderMap(state);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
+    if (!this.isMine(planet.id)) return this.renderForeign(state, planet);
     const economy = economyOf(state, planet);
     if (!economy) return "";
     const s = planet.segments[this.selected]!;
