@@ -61,6 +61,7 @@ const MOTIONS: Record<string, Motion> = {
   "building.battery": { kind: "rock", amp: 0.25, speed: 1.5 },
   "building.sawmill.t1": { kind: "spin", speed: 6 },
   "building.sawmill.t2": { kind: "spin", speed: 7 },
+  "building.observatory": { kind: "rock", amp: 0.35, speed: 0.4 },
 };
 
 /** Chimney tops (256 canvas) that puff smoke while the building is staffed. */
