@@ -1,0 +1,1732 @@
+{
+  "assets": [
+    {
+      "id": "biome.forest.prop.tree-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-c.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-c-depleted.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-c-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-c.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-c-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-c-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.prop.tree-c.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-tree-c-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/forest-tree-c-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "forest",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.bush-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-bush-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/savanna-bush-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.acacia.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-acacia-depleted.svg",
+      "out": "public/assets/sprites/biomes/savanna-acacia-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.acacia.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-acacia-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/savanna-acacia-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.prop.acacia.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-acacia-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/savanna-acacia-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "savanna",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-c.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-c-depleted.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-c-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-c.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-c-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-c-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.prop.peak-c.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-peak-c-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/mountains-peak-c-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "mountains",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.wave-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wave-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ocean-wave-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.buoy.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-buoy-depleted.svg",
+      "out": "public/assets/sprites/biomes/ocean-buoy-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.buoy.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-buoy-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/ocean-buoy-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.prop.buoy.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-buoy-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/ocean-buoy-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "ocean",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.cactus-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-cactus-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-cactus-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-depleted.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.prop.dune.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-dune-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/desert-dune-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "desert",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.reed-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-reed-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-reed-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-depleted.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.prop.mushroom.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-mushroom-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/swamp-mushroom-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "swamp",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.pine-snow-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-pine-snow-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/tundra-pine-snow-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.ice-rock.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-ice-rock-depleted.svg",
+      "out": "public/assets/sprites/biomes/tundra-ice-rock-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.ice-rock.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-ice-rock-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/tundra-ice-rock-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.prop.ice-rock.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-ice-rock-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/tundra-ice-rock-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "tundra",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-c.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-c-depleted.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-c-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-c.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-c-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-c-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.prop.crystal-c.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-crystal-c-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/crystal-crystal-c-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "crystal",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    }
+  ]
+}
