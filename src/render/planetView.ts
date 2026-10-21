@@ -407,6 +407,10 @@ export class PlanetView {
         const p = this.surface(e.segment, 1);
         this.effects.dust(p.x, p.y, p.angle, this.segmentWidth() * 1.1);
         sfx.play(e.type === "built" ? "build.complete" : "build.demolish");
+      } else if (e.type === "terraformed" && e.planetId === this.planetId) {
+        const p = this.surface(e.segment, 1);
+        this.effects.dust(p.x, p.y, p.angle, this.segmentWidth() * 1.1);
+        sfx.play(e.kind === "plantTrees" ? "build.place" : "build.hammer");
       } else if (e.type === "revealed" && e.planetId === this.planetId) {
         for (const i of e.segments) {
           const p = this.surface(i, 0.95);
