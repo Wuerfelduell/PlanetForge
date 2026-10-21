@@ -61,10 +61,16 @@ async function boot(): Promise<void> {
   });
 
   /** A fresh game on this device; the old local save is replaced. */
-  const newLocalGame = ({ goal, invaders, people, world }: NewGameOptions) => {
+  const newLocalGame = (options: NewGameOptions) => {
     clearSave();
     leaveOnline();
-    session = LocalSession.newGame(undefined, { goal, invaders, world: worldOptions(world) }, people);
+    // Factions are a coop extra: the shared planet plus AI neighbors on their own planets.
+    const factions = options.mode === "factions";
+    session = LocalSession.newGame(
+      undefined,
+      { goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" },
+      options.people,
+    );
     started = true;
     saveLocal();
     showHome();
@@ -161,12 +167,12 @@ async function boot(): Promise<void> {
         if (!started) return null;
         const state = session.state;
         const level = state.economies[state.players.find((p) => p.id === session.playerId)?.economyId ?? ""]?.ascension.level ?? 0;
-        const where = session instanceof NetworkSession ? `Online · ${Math.max(1, session.online.length)} online` : "Allein";
+        const where = session instanceof NetworkSession ? `Online · ${Math.max(1, session.online.length)} online` : state.settings.factions > 0 ? `Allein · ${state.factions.filter((f) => !f.eliminated && f.stance !== "merged").length} Fraktionen` : "Allein";
         return `${where} · ⭐ ${level} · Umlauf ${cycleOf(state) + 1}`;
       },
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
-        else await online.create({ mode: options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world) }, slot, options.people);
+        else await online.create({ mode: options.mode === "factions" ? "coop" : options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world) }, slot, options.people);
       },
       openOnline: () => void online.open(),
       save() {
@@ -275,11 +281,17 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   upgraded: "build.complete",
   shieldComplete: "ascension.levelup",
   eliminated: "coop.leave",
+  factionOffer: "diplomacy.trade",
+  factionTrade: "diplomacy.trade",
+  factionGift: "diplomacy.happy",
+  factionDeclined: "diplomacy.angry",
+  factionMerged: "coop.join",
+  factionEliminated: "coop.leave",
 };
 
 function playEventSounds(events: GameEvent[]): void {
   for (const e of events) {
-    const id = EVENT_SOUNDS[e.type];
+    const id = e.type === "factionStance" ? (e.stance === "war" ? "war.declare" : e.stance === "allied" || e.stance === "merged" ? "diplomacy.happy" : "diplomacy.trade") : EVENT_SOUNDS[e.type];
     if (id) sfx.play(id);
   }
 }

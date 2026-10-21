@@ -1,10 +1,11 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { asteroidsVisible, INVADERS, SUPERNOVA, ticksPerCycle, type GameState } from "../sim";
+import { asteroidsVisible, factionOfEconomy, INVADERS, STANCE_NAMES, SUPERNOVA, ticksPerCycle, type GameState } from "../sim";
 import { artFrames, artTexture, hasArt } from "./art";
 
 const TAP_SLOP_PX = 10;
 const ZOOM_MAX = 5;
-const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab];
+/** Four human colors, then the AI factions (PlayerState.color 4 …). */
+const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab, 0xc39bff, 0xff9f43, 0x6ee7b7, 0xf87171];
 const SUN_COLORS: Record<string, number> = { yellow: 0xffd23f, red: 0xff7a4d, blue: 0x8fc7ff, white: 0xf4f1ff };
 const PLANET_COLORS: Record<string, number> = { temperate: 0x6fbf73, arid: 0xe0b35a, ice: 0xbfe6ff, lava: 0xe2603a, ocean: 0x4f8fdc, toxic: 0x9bd04a };
 /** Sun body in sim units (orbit radius 1 is the innermost planet). */
@@ -234,7 +235,9 @@ export class SystemView {
       const out = p.orbit.angle;
       const ox = Math.cos(out);
       const oy = Math.sin(out);
-      const t = this.label(people ? `${p.name} · ${people}👤` : p.name, x, y, font, owners.length ? 0xffffff : 0xb8bedc);
+      const faction = factionOfEconomy(state, p.economyId);
+      const tag = faction ? ` ${STANCE_NAMES[faction.stance].icon}` : "";
+      const t = this.label(people ? `${p.name}${tag} · ${people}👤` : p.name, x, y, font, owners.length ? 0xffffff : 0xb8bedc);
       const important = people > 0 || this.selected === p.id;
       if (!this.placeLabel(t, x, y, r * 1.5, [[ox, oy], [0, 1], [0, -1], [-ox, -oy], [1, 0], [-1, 0]], important)) t.visible = false;
       this.hits.push({ id: p.id, x, y, r: Math.max(r * 1.5, 22) });

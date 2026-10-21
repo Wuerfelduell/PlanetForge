@@ -6,6 +6,7 @@ import { tradeBlocker, tradePrice } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
+import { answerOffer, factionById, gift, propose, trade } from "./diplomacy";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
 import { terraform, terraformBlocker } from "./terraform";
@@ -42,6 +43,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (cmd.playerId === playerId) return "Du kannst dich nicht selbst entfernen";
       const index = state.players.findIndex((p) => p.id === cmd.playerId);
       if (index < 0) return "Unbekannter Spieler";
+      if (state.players[index]!.ai) return "Fraktionen kann man nicht entfernen";
       state.players.splice(index, 1);
       // Seb: the removed player's people simply vanish; nobody inherits them.
       for (const [id, u] of Object.entries(state.units)) if (u.owner === cmd.playerId) delete state.units[id];
@@ -100,6 +102,20 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       state.lobby.paused = cmd.type === "pause";
       events.push({ type: "lobby", ...state.lobby, playerId });
       return null;
+    }
+    case "factionTrade":
+    case "gift":
+    case "diplomacy":
+    case "answerOffer": {
+      if (!state.lobby.open) return "Das Spiel ist geschlossen";
+      const faction = factionById(state, cmd.faction);
+      if (!faction) return "Unbekannte Fraktion";
+      // Seb: war, peace and alliances are team decisions; until there is a vote, the host decides.
+      if (cmd.type !== "factionTrade" && cmd.type !== "gift" && playerId !== state.hostId) return "Nur der Gastgeber verhandelt mit Fraktionen";
+      if (cmd.type === "factionTrade") return trade(state, player, faction, cmd.resource, cmd.amount, events);
+      if (cmd.type === "gift") return gift(state, player, faction, cmd.resource, cmd.amount, events);
+      if (cmd.type === "diplomacy") return propose(state, player, faction, cmd.action, events);
+      return answerOffer(state, player, faction, cmd.accept, events);
     }
     case "assignUnit": {
       if (!state.lobby.open) return "Das Spiel ist geschlossen";
