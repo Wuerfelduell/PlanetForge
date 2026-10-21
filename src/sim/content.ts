@@ -15,6 +15,8 @@ export const RESOURCE_IDS = [
   "fuel",
   // Glassworks and foundry goods for the later buildings (greenhouse, observatory, power plants).
   "glass", "steel", "concrete",
+  // Late chains after Planet of Mine: biogas from swamps or food, plastic from oil, then electronics and computers.
+  "biogas", "plastic", "electronics", "computer",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -48,6 +50,10 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   glass: { name: "Glas", icon: "🪟" },
   steel: { name: "Stahl", icon: "🔩" },
   concrete: { name: "Beton", icon: "⬜" },
+  biogas: { name: "Biogas", icon: "🫧" },
+  plastic: { name: "Plastik", icon: "🧴" },
+  electronics: { name: "Elektronik", icon: "💡" },
+  computer: { name: "Computer", icon: "💻" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -192,9 +198,9 @@ export const BUILDING_IDS = [
   "housing", "park", "monument",
   "farm", "fishery", "hydro-farm",
   "forester", "mine", "pump",
-  "sawmill", "workshop", "foundry", "glassworks",
-  "lab", "library", "observatory",
-  "power-wind", "power-coal", "power-solar", "power-atomic",
+  "sawmill", "workshop", "foundry", "glassworks", "plastics", "biogas-plant", "electronics",
+  "lab", "library", "observatory", "datacenter",
+  "power-wind", "power-coal", "power-gas", "power-solar", "power-atomic",
   "watchtower", "battery",
   "launchpad", "refinery",
 ] as const;
@@ -284,6 +290,7 @@ const NOISY: readonly AdjacencyDef[] = [
   { building: "foundry", bonus: -0.25 },
   { building: "refinery", bonus: -0.25 },
   { building: "power-coal", bonus: -0.25 },
+  { building: "plastics", bonus: -0.25 },
 ];
 
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
@@ -539,6 +546,60 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     adjacency: [{ biome: "mountains", bonus: 0.2 }, { building: "library", bonus: 0.2 }, ...NOISY],
     energy: -1,
   },
+  datacenter: {
+    name: "Rechenzentrum",
+    icon: "🖥️",
+    category: "research",
+    description: "Rechnet mit Computern: das meiste Wissen je Arbeiter, braucht aber viel Strom. +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn.",
+    cost: { computer: 5, concrete: 25, steel: 15 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "science", perWorker: 0.6 },
+    adjacency: [{ building: "library", bonus: 0.2 }, ...NOISY],
+    energy: -3,
+  },
+  "biogas-plant": {
+    name: "Biogasanlage",
+    icon: "🫧",
+    category: "production",
+    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
+    cost: { bricks: 15, planks: 10, iron: 5 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 1,
+    crafts: { recipes: ["biogas"], speed: 1 },
+    adjacency: [
+      { building: "farm", bonus: 0.2 },
+      { biome: "swamp", bonus: 0.15 },
+    ],
+  },
+  plastics: {
+    name: "Kunststoffwerk",
+    icon: "🧴",
+    category: "production",
+    description: "Kocht aus Öl Plastik für Elektronik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
+    cost: { bricks: 15, steel: 10, planks: 10 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["plastic"], speed: 1 },
+    adjacency: [{ building: "pump", bonus: 0.25 }],
+  },
+  electronics: {
+    name: "Elektronikwerk",
+    icon: "🔌",
+    category: "production",
+    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer. Braucht Strom. +15 % je Nachbar-Werkstatt.",
+    cost: { steel: 15, glass: 10, bricks: 10 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["electronics"], speed: 1 },
+    adjacency: [{ building: "workshop", bonus: 0.15 }],
+    energy: -1,
+    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer"], speed: 1.25 }, energy: -2 }],
+  },
   "power-wind": {
     name: "Windrad",
     icon: "🌬️",
@@ -566,6 +627,18 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 1,
     energy: 6,
     burns: { resource: "coal", perSecond: 0.1 },
+  },
+  "power-gas": {
+    name: "Gaskraftwerk",
+    icon: "🔆",
+    category: "energy",
+    description: "+5 Strom mit einem Arbeiter, verbrennt Biogas. Sauberer als Kohle: kein Lärm, kein Staub.",
+    cost: { bricks: 20, steel: 5, wire: 5 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 1,
+    energy: 5,
+    burns: { resource: "biogas", perSecond: 0.08 },
   },
   "power-solar": {
     name: "Solarfeld",
@@ -629,7 +702,9 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
-export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens";
+export type RecipeId =
+  | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
+  | "plastic" | "biogas" | "electronics" | "computer";
 
 export interface RecipeDef {
   name: string;
@@ -652,6 +727,10 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   steel: { name: "Stahl", inputs: { iron: 2, coal: 1 }, outputs: { steel: 1 }, seconds: 10 },
   concrete: { name: "Beton", inputs: { stone: 2, clay: 1, water: 1 }, outputs: { concrete: 1 }, seconds: 8 },
   greens: { name: "Gemüse", inputs: { water: 1 }, outputs: { food: 2 }, seconds: 5 },
+  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
+  electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
+  computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
 };
 
 /**
@@ -662,16 +741,23 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
 export const INVADERS = {
   /** Team ascension level from which waves come. */
   minLevel: 5,
+  /** ...and team size (playtest: a 9-strong team at level 5 was wiped out). */
+  minPeople: 12,
   firstWaveCycles: [8, 16] as const,
   waveIntervalCycles: [20, 35] as const,
-  approachCycles: 6,
+  approachCycles: 8,
   /** Without long-range sight the team sees the fleet only this many cycles before arrival. */
-  blindWarningCycles: 1,
+  blindWarningCycles: 3,
   /** Cycles at the sun shield before the fleet moves on to a planet. */
   siegeCycles: 5,
   /** Flight time when the fleet moves on to another planet. */
   moveOnCycles: 3,
   shipHp: { base: 6, perWave: 4 },
+  /**
+   * Mothership hp scale with the team: × people / perPeople, within min..max, so a wave is about
+   * as tough for 12 inhabitants as for 60.
+   */
+  hpTeamScale: { perPeople: 20, min: 0.6, max: 3 },
   /** Escorts add to their roll: floor(wave × escortBonusPerWave). */
   escortBonusPerWave: 0.5,
   strongMul: 1.5,
@@ -861,6 +947,8 @@ export const RULES = {
   /** A fresh colony reveals this far around its landing site. */
   colonyRevealRadius: 1,
   battleDie: 6,
+  /** Workers pulled from their jobs to defend against an attack roll this much lower. */
+  workerDefensePenalty: 1,
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
   homeAdvantage: 1,
   maxTowerBonus: 2,

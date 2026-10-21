@@ -109,9 +109,9 @@ Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, En
 | Wohnraum | Hütte 0 → Holzhaus 2 → Steinhaus 5 → Wohnturm 7 (12 Plätze, Strom), Park 2 (+20 % Platz für Nachbar-Hütten), Monument 8 (+10 Aufstiegspunkte je Umlauf, eins pro Planet) |
 | Nahrung | Farm 0, Fischerei 1 (neben Meer, Stufe 2 Fischereihafen ab 3), Gewächshaus 4 (Wasser → Nahrung auf jedem Boden, Strom) |
 | Rohstoffe | Förster 1, Mine 1, Pumpe 1 |
-| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas) |
-| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom) |
-| Energie | Windrad 3, Kohlekraftwerk 4, Solarfeld 6, Atomkraftwerk 8 |
+| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas), Biogasanlage 4 (3 Nahrung + 1 Wasser → Biogas), Kunststoffwerk 5 (2 Öl → Plastik), Elektronikwerk 6 (2 Draht + Plastik + Glas → Elektronik, Strom; Stufe 2 Chipfabrik ab 8: 2 Elektronik + Glas + Gold → Computer) |
+| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom), Rechenzentrum 8 (0,6 Wissen je Arbeiter, kostet Computer, 3 Strom) |
+| Energie | Windrad 3, Kohlekraftwerk 4, Gaskraftwerk 5 (+5, 0,08 Biogas/s, kein Lärm), Solarfeld 6, Atomkraftwerk 8 |
 | Verteidigung | Wachturm 2 (Stufe 2 Festungsturm ab 5, +2), Abwehrbatterie 5 |
 | Raumfahrt | Startrampe 2, Raffinerie 2 |
 

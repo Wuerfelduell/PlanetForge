@@ -117,16 +117,37 @@ describe("versus battles", () => {
     expect(result).toEqual({ ok: false, error: "Angreifen kann man nur fremde Planeten" });
   });
 
-  it("an undefended planet falls: workers become captives, the stockpile is shared, the captor wins after assimilation", () => {
+  it("workers defend too, roll lower and surrender instead of dying", () => {
+    let lost = 0;
+    for (let seed = 1; seed <= 20; seed++) {
+      let g = setIdle(versusGame(), MO.id, false);
+      g.rng = seed;
+      const moPeople = peopleOf(g, MO.id);
+      const { events } = arrive(attack(g, 2));
+      const battle = events.find((e) => e.type === "battle");
+      if (battle?.type !== "battle") throw new Error("no battle");
+      expect(battle.defenderLosses).toBe(0);
+      if (battle.won) expect(battle.captured).toBe(moPeople);
+      else lost++;
+    }
+    // A planet at work is no longer a free win.
+    expect(lost).toBeGreaterThan(0);
+  });
+
+  it("a beaten working planet falls: workers become captives, the stockpile is shared, the captor wins after assimilation", () => {
     let g = setIdle(versusGame(), MO.id, false);
     const target = homePlanet(g, MO.id)!;
     const moPeople = peopleOf(g, MO.id);
     const moFood = economyOfPlayer(g, MO.id)!.resources.food;
     g = attack(g, 2);
-
-    const landed = arrive(g);
+    // A seed where the attack wins.
+    let landed = arrive(g);
+    for (let seed = 1; !landed.events.some((e) => e.type === "battle" && e.won); seed++) {
+      g.rng = seed;
+      landed = arrive(g);
+    }
     g = landed.state;
-    expect(landed.events).toContainEqual(expect.objectContaining({ type: "battle", won: true, attackerLosses: 0, defenderLosses: 0, captured: moPeople }));
+    expect(landed.events).toContainEqual(expect.objectContaining({ type: "battle", won: true, defenderLosses: 0, captured: moPeople }));
     const planet = planetById(g, target.id)!;
     expect(planet.economyId).toBe(economyOfPlayer(g, P1.id)!.id);
     expect(unitsOn(g, planet.id).every((u) => u.owner === P1.id)).toBe(true);
