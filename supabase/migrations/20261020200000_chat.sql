@@ -35,3 +35,4 @@ revoke all on function public.send_chat(uuid, text, text, jsonb) from public, an
 grant execute on function public.send_chat(uuid, text, text, jsonb) to authenticated;
 revoke all on public.chat_messages from anon;
 grant select on public.chat_messages to authenticated;
+grant all on public.chat_messages to service_role;

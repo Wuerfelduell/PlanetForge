@@ -41,6 +41,11 @@ create unique index game_members_user_slot_active on public.game_members(user_id
 
 alter table public.games enable row level security;
 alter table public.game_members enable row level security;
+-- Explicit Data API grants: new tables in public get none by default (Supabase, from 2026-10-30).
+-- Clients only read (through RLS); all writes go through security definer functions.
+revoke all on public.games, public.game_members from anon;
+grant select on public.games, public.game_members to authenticated;
+grant all on public.games, public.game_members to service_role;
 
 create or replace function private.is_game_member(p_game uuid)
 returns boolean language sql stable security definer set search_path = public as $$
