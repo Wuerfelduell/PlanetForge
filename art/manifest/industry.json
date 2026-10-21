@@ -1,0 +1,74 @@
+{
+  "assets": [
+    {
+      "id": "building.biogas-plant",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame"
+      ],
+      "tags": [
+        "biogas-plant",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.biogas-plant.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant-construction.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame",
+        "scaffolding"
+      ],
+      "tags": [
+        "biogas-plant",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.biogas-plant.off",
+      "category": "buildings",
+      "src": "art/src/buildings/biogas-plant-off.svg",
+      "out": "public/assets/sprites/buildings/biogas-plant-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "gas-flame"
+      ],
+      "tags": [
+        "biogas-plant",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
