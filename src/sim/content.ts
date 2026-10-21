@@ -17,6 +17,8 @@ export const RESOURCE_IDS = [
   "glass", "steel", "concrete",
   // Late chains after Planet of Mine: biogas from swamps or food, plastic from oil, then electronics and computers.
   "biogas", "plastic", "electronics", "computer",
+  // Seb: settlers on planets without breathable air need space suits, or they die off.
+  "suits",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -54,6 +56,7 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   plastic: { name: "Plastik", icon: "🧴" },
   electronics: { name: "Elektronik", icon: "💡" },
   computer: { name: "Computer", icon: "💻" },
+  suits: { name: "Raumanzug", icon: "🧑‍🚀" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -468,7 +471,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Werkstatt",
     icon: "🛠️",
     category: "production",
-    description: "Macht Werkzeug, Kupferdraht oder Stoff. +15 % je Nachbar-Sägewerk oder -Mine.",
+    description: "Macht Werkzeug, Kupferdraht oder Stoff, ab Stufe 2 auch Raumanzüge. +15 % je Nachbar-Sägewerk oder -Mine.",
     cost: { planks: 15, stone: 15 },
     unlockLevel: 2,
     allowedBiomes: LAND,
@@ -478,7 +481,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "sawmill", bonus: 0.15 },
       { building: "mine", bonus: 0.15 },
     ],
-    upgrades: [{ cost: { bricks: 15, iron: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "wire", "cloth"], speed: 1.5 } }],
+    upgrades: [{ cost: { bricks: 15, iron: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1.5 } }],
   },
   lab: {
     name: "Labor",
@@ -716,7 +719,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
 
 export type RecipeId =
   | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
-  | "plastic" | "biogas" | "electronics" | "computer";
+  | "plastic" | "biogas" | "electronics" | "computer" | "suits";
 
 export interface RecipeDef {
   name: string;
@@ -743,6 +746,7 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
+  suits: { name: "Raumanzug", inputs: { cloth: 2, glass: 1, steel: 1 }, outputs: { suits: 1 }, seconds: 12 },
 };
 
 /**
@@ -905,18 +909,20 @@ export type PlanetTypeId = (typeof PLANET_TYPE_IDS)[number] | "asteroid";
 
 export interface PlanetTypeDef {
   name: string;
+  /** Without breathable air, settlers wear out space suits (RULES.suits); start planets are exempt. */
+  breathable: boolean;
   /** Relative chance of each biome on this planet type. */
   biomeWeights: Partial<Record<BiomeId, number>>;
 }
 
 export const PLANET_TYPES: Record<PlanetTypeId, PlanetTypeDef> = {
-  temperate: { name: "Gemäßigt", biomeWeights: { forest: 3, savanna: 3, mountains: 2, ocean: 2, swamp: 1, desert: 1 } },
-  arid: { name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ash: 0.5, ocean: 0.5 } },
-  ice: { name: "Eis", biomeWeights: { tundra: 4, glacier: 3, mountains: 2, ocean: 1 } },
-  ocean: { name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
-  lava: { name: "Lava", biomeWeights: { lava: 3, ash: 2.5, mountains: 2, crystal: 1 } },
-  toxic: { name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
-  asteroid: { name: "Asteroid", biomeWeights: { mountains: 3, crystal: 2 } },
+  temperate: { breathable: true, name: "Gemäßigt", biomeWeights: { forest: 3, savanna: 3, mountains: 2, ocean: 2, swamp: 1, desert: 1 } },
+  arid: { breathable: true, name: "Trocken", biomeWeights: { desert: 4, savanna: 2, mountains: 2, ash: 0.5, ocean: 0.5 } },
+  ice: { breathable: false, name: "Eis", biomeWeights: { tundra: 4, glacier: 3, mountains: 2, ocean: 1 } },
+  ocean: { breathable: true, name: "Ozean", biomeWeights: { ocean: 5, swamp: 2, forest: 1, savanna: 1 } },
+  lava: { breathable: false, name: "Lava", biomeWeights: { lava: 3, ash: 2.5, mountains: 2, crystal: 1 } },
+  toxic: { breathable: false, name: "Giftig", biomeWeights: { swamp: 4, crystal: 2, desert: 1 } },
+  asteroid: { breathable: false, name: "Asteroid", biomeWeights: { mountains: 3, crystal: 2 } },
 };
 
 /**
@@ -988,6 +994,11 @@ export const RULES = {
   /** A fresh colony reveals this far around its landing site. */
   colonyRevealRadius: 1,
   battleDie: 6,
+  /**
+   * Planets without breathable air: each settler wears out this many suits per cycle; when the
+   * stock runs out, one settler there dies per cycle.
+   */
+  suits: { perInhabitantPerCycle: 0.2 },
   /** Workers pulled from their jobs to defend against an attack roll this much lower. */
   workerDefensePenalty: 1,
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
