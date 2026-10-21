@@ -6,6 +6,7 @@ import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
+import { terraform, terraformBlocker } from "./terraform";
 
 /**
  * Simulates up to `now`, then validates and applies one command from `playerId`.
@@ -203,6 +204,12 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       const deposit = segment.deposits.find((d) => d.resource === cmd.resource && d.byHand);
       if (!deposit) return "Kann man hier nicht von Hand sammeln";
       segment.gather = cmd.resource;
+      return null;
+    }
+    case "terraform": {
+      const blocker = terraformBlocker(state, planet, segment, cmd.kind);
+      if (blocker) return blocker;
+      terraform(state, planet, segment, cmd.kind, playerId, events);
       return null;
     }
     default: {

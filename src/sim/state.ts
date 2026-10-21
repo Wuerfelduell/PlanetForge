@@ -197,6 +197,8 @@ export interface DepositState {
   byHand: boolean;
 }
 
+export type TerraformKind = "plantTrees" | "fillSand" | "fillClay";
+
 /** Player intents. The only way anything outside the simulation changes the state. */
 export type Command =
   | { type: "build"; planetId: string; segment: number; building: BuildingId }
@@ -206,6 +208,8 @@ export type Command =
   /** Moves one specific unit; segment null makes it idle. */
   | { type: "assignUnit"; unitId: string; segment: number | null }
   | { type: "setGather"; planetId: string; segment: number; resource: ResourceId }
+  /** Plants trees or fills in water with sand or earth (see sim/terraform.ts). */
+  | { type: "terraform"; planetId: string; segment: number; kind: TerraformKind }
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
@@ -236,6 +240,7 @@ export type GameEvent =
   | { type: "revealed"; planetId: string; segments: number[] }
   | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
   | { type: "demolished"; planetId: string; segment: number; playerId: string }
+  | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
   | { type: "removed"; playerId: string; by: string }
   | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }

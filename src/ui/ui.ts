@@ -39,6 +39,9 @@ import {
   type BuildingId,
   type GameEvent,
   type PlanetState,
+  TERRAFORM,
+  terraformBlocker,
+  type TerraformKind,
 } from "../sim";
 import { currentHint } from "./hints";
 import { buildingIconUrl, resourceIconUrl } from "../render/art";
@@ -225,6 +228,7 @@ export class Ui {
         case "cycle":
         case "built":
         case "demolished":
+        case "terraformed":
         case "joined":
         case "lobby":
           break;
@@ -262,6 +266,9 @@ export class Ui {
         break;
       case "demolish":
         this.actions.send({ type: "demolish", ...at });
+        break;
+      case "terraform":
+        this.actions.send({ type: "terraform", ...at, kind: value as TerraformKind });
         break;
       case "launch": {
         const [to, rocket, count, from] = value!.split(":");
@@ -646,12 +653,30 @@ export class Ui {
     const queuedNote = queued
       ? `<p class="muted">⏳ Geplant: ${BUILDINGS[queued.building].icon} ${BUILDINGS[queued.building].name}, wird gebaut, sobald genug da ist. <button data-action="dequeue" data-value="${queue.indexOf(queued)}">Abbrechen</button></p>`
       : "";
+    // Planting trees and filling in water (only offered where it does something).
+    const terraforms = def
+      ? ""
+      : (Object.keys(TERRAFORM) as TerraformKind[])
+          .filter((k) => TERRAFORM[k].from.includes(s.biome))
+          .map((k) => {
+            const t = TERRAFORM[k];
+            const blocker = terraformBlocker(state, planet, s, k);
+            if (blocker === "Hier stehen genug Bäume") return "";
+            const cost = Object.entries(t.cost)
+              .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
+              .join(" ");
+            const result = t.to && t.to !== s.biome ? `wird ${BIOMES[t.to].name}` : "wächst nach";
+            return `<button class="build" data-action="terraform" data-value="${k}" ${blocker ? `disabled title="${blocker}"` : ""}>
+              <span class="icon">${t.icon}</span><span class="name">${t.name}</span><span class="cost">${cost}<br><small>${result}</small></span>
+            </button>`;
+          })
+          .join("");
     let actions = "";
     if (def) {
       const info = s.building === "launchpad" ? this.renderLaunches(state, planet) : `<p class="muted">${def.description}</p>`;
       actions = `${info}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
-      actions = `<div class="builds">${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
+      actions = `<div class="builds">${terraforms}${BUILDING_IDS.filter((b) => BUILDINGS[b].allowedBiomes.includes(s.biome))
         .map((b) => {
           const bd = BUILDINGS[b];
           const blocker = buildBlocker(state, planet, s, b);
@@ -667,7 +692,7 @@ export class Ui {
         })
         .join("")}</div>`;
     } else {
-      actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>`;
+      actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>${terraforms ? `<div class="builds">${terraforms}</div>` : ""}`;
     }
 
     return `<h2>${title}</h2><div class="deposits">${deposits}</div>${workers}${queuedNote}${actions}${hint}`;
