@@ -54,6 +54,22 @@ export class MainMenu {
     document.body.append(this.root);
   }
 
+  /** Original menu art is loaded: icons and buttons come from the asset pipeline instead of emoji. */
+  set art(on: boolean) {
+    this.hasArt = on;
+    this.root.classList.toggle("art", on);
+    // Set here, not in the CSS, so the paths resolve against the page like the other art.
+    const images = { "--menu-bg": "brand/menu-bg", "--menu-bg-landscape": "brand/menu-bg-landscape", "--menu-button": "ui/ui-button-menu", "--menu-button-pressed": "ui/ui-button-menu-pressed" };
+    const hd = (window.devicePixelRatio || 1) > 1.25 ? "@2x" : "";
+    for (const [name, path] of Object.entries(images)) this.root.style.setProperty(name, `url("assets/sprites/${path}${hd}.png")`);
+    if (this.isOpen) this.render();
+  }
+  private hasArt = false;
+
+  private icon(name: string, emoji: string): string {
+    return this.hasArt ? `<img class="menu-icon" src="assets/sprites/ui/ui-icon-${name}.png" alt="">` : emoji;
+  }
+
   get isOpen(): boolean {
     return !this.root.hidden;
   }
@@ -98,11 +114,11 @@ export class MainMenu {
         <p>Baue deinen Planeten, rette dein Sonnensystem.</p>
       </header>
       <nav class="menu-list">
-        ${current ? `<button class="menu-item primary" data-go="continue"><span>▶️ Weiter</span><small>${escape(current)}</small></button>` : ""}
-        <button class="menu-item${current ? "" : " primary"}" data-go="new"><span>✨ Neues Spiel</span><small>Allein oder mit Freunden</small></button>
-        <button class="menu-item" data-go="online"><span>☁️ Online-Spiele</span><small>Spielstände, mit Code beitreten, einladen</small></button>
-        <button class="menu-item" data-go="settings"><span>⚙️ Einstellungen</span><small>Name, Musik, Geräusche</small></button>
-        <button class="menu-item" data-go="credits"><span>📜 Credits</span></button>
+        ${current ? `<button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiter</span><small>${escape(current)}</small></button>` : ""}
+        <button class="menu-item${current ? "" : " primary"}" data-go="new"><span>${this.icon("new-game", "✨")} Neues Spiel</span><small>Allein oder mit Freunden</small></button>
+        <button class="menu-item" data-go="online"><span>${this.icon("load", "☁️")} Online-Spiele</span><small>Spielstände, mit Code beitreten, einladen</small></button>
+        <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
+        <button class="menu-item" data-go="credits"><span>${this.icon("credits", "📜")} Credits</span></button>
       </nav>`;
   }
 
@@ -115,17 +131,17 @@ export class MainMenu {
       ? `<div class="menu-confirm"><span>Dein Planet auf diesem Gerät wird überschrieben.</span><button class="danger" data-go="start!">Ja, neu starten</button><button data-go="cancelStart">Nein</button></div>`
       : "";
     return `
-      <h2>✨ Neues Spiel</h2>
+      <h2>${this.icon("new-game", "✨")} Neues Spiel</h2>
       <p class="menu-label">Spielmodus</p>
       <div class="menu-choices">
-        ${pick("mode", "coop", "🤝 Koop", !versus, "Gemeinsamer Planet")}
-        ${pick("mode", "versus", "⚔️ Versus", versus, "Jeder gegen jeden")}
+        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus, "Gemeinsamer Planet")}
+        ${pick("mode", "versus", `${this.icon("mode-versus", "⚔️")} Versus`, versus, "Jeder gegen jeden")}
       </div>
       ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : this.renderCoopChoices(pick)}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
         ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
-        ${pick("where", "online", "👥 Online", versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
+        ${pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
       </div>
       ${confirm}
       <div class="menu-actions">
@@ -154,7 +170,7 @@ export class MainMenu {
     const m = this.music.state;
     const s = this.sfx.settings;
     return `
-      <h2>⚙️ Einstellungen</h2>
+      <h2>${this.icon("profile", "⚙️")} Einstellungen</h2>
       <label class="menu-field"><span>Dein Name</span><input data-set="name" maxlength="24" value="${escape(readName())}" placeholder="Spieler"></label>
       <div class="menu-field">
         <label><input type="checkbox" data-set="music" ${m.enabled ? "checked" : ""}> 🎵 Musik</label>
@@ -170,7 +186,7 @@ export class MainMenu {
 
   private renderCredits(): string {
     return `
-      <h2>📜 Credits</h2>
+      <h2>${this.icon("credits", "📜")} Credits</h2>
       <p>Ein Fan-Projekt von <b>Seb</b>, inspiriert von <i>A Planet of Mine</i> (Tuesday Quest).</p>
       <p class="menu-note">Programmiert mit Claude. Grafiken mit Codex erstellt. Musik und Geräusche werden live im Code erzeugt, ohne fremde Aufnahmen.</p>
       <p class="menu-note">Technik: TypeScript, PixiJS, Supabase, Capacitor.</p>

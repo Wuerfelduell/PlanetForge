@@ -110,3 +110,39 @@
 
 /* Only the planet shows behind the menu, not the game HUD. */
 body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibility: hidden; }
+
+/* Codex menu art (once the atlases are loaded); without it the colors above stay. */
+#main-menu.art {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(14, 16, 34, 0.15), rgba(5, 6, 16, 0.55) 75%),
+    var(--menu-bg) center bottom / cover no-repeat,
+    var(--bg);
+}
+@media (min-aspect-ratio: 4/3) {
+  #main-menu.art {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(14, 16, 34, 0.15), rgba(5, 6, 16, 0.55) 75%),
+      var(--menu-bg-landscape) center / cover no-repeat,
+      var(--bg);
+  }
+}
+#main-menu.art .menu-card { background: rgba(14, 16, 34, 0.78); }
+#main-menu .menu-icon { width: 1.4em; height: 1.4em; vertical-align: -0.35em; }
+#main-menu h2 .menu-icon { width: 1.3em; height: 1.3em; }
+/* Orange 9-slice button for the main action. */
+#main-menu.art button.primary, #main-menu.art .menu-item.primary {
+  background: transparent;
+  border: 14px solid transparent;
+  border-image: var(--menu-button) 40 fill / 14px stretch;
+  padding: 2px 6px;
+  color: #2a1a0a;
+}
+#main-menu.art button.primary:active, #main-menu.art .menu-item.primary:active {
+  border-image-source: var(--menu-button-pressed);
+}
+#main-menu.art .menu-item.primary small { color: #5a3a14; }
+#main-menu .menu-item .menu-icon { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
+#main-menu .menu-choice .menu-icon { width: 36px; height: 36px; display: block; margin: 0 auto 2px; }
+/* Leave the planet of the background picture visible below the card. */
+#main-menu.art { align-items: flex-start; }
+@media (min-aspect-ratio: 4/3) { #main-menu.art { align-items: center; justify-content: flex-start; padding-left: max(5vw, 16px); } }
