@@ -1,13 +1,14 @@
-import type { GameState } from "../sim";
+import { upgradeState, type GameState } from "../sim";
 
-const KEY = "planetforge.save.v11";
+const KEY = "planetforge.save.v12";
+/** Older keys whose saves upgradeState can still read. */
+const OLD_KEYS = ["planetforge.save.v11"];
 
 export function loadGame(): GameState | null {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(KEY) ?? OLD_KEYS.map((k) => localStorage.getItem(k)).find((r) => r);
     if (!raw) return null;
-    const state = JSON.parse(raw) as GameState;
-    return state.version === 11 ? state : null;
+    return upgradeState(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -23,7 +24,7 @@ export function saveGame(state: GameState): void {
 
 export function clearSave(): void {
   try {
-    localStorage.removeItem(KEY);
+    for (const k of [KEY, ...OLD_KEYS]) localStorage.removeItem(k);
   } catch {
     // ignore
   }

@@ -13,7 +13,7 @@
 export * from "./content";
 export * from "./state";
 export * from "./rules";
-export { addPlayer, createGame, type GameOptions } from "./generate";
+export { addPlayer, createGame, upgradeState, type GameOptions } from "./generate";
 export { applyCommand } from "./commands";
 export { TERRAFORM, TERRAFORM_START_FILL, terraformBlocker, type TerraformDef } from "./terraform";
 export { novaTickNow } from "./invaders";

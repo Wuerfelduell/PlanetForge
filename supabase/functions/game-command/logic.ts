@@ -1,4 +1,4 @@
-import { addPlayer, advance, applyCommand, createGame, type Command, type GameEvent, type GameOptions, type GameState } from "../../../src/sim/index";
+import { addPlayer, advance, applyCommand, createGame, upgradeState, type Command, type GameEvent, type GameOptions, type GameState } from "../../../src/sim/index";
 
 /**
  * Server-side rules around the simulation, kept free of I/O so they can be unit tested.
@@ -63,7 +63,7 @@ export function step(input: StepInput): StepResult {
   const { members, playerId, request, now } = input;
   if (!members.some((m) => m.playerId === playerId)) return { ok: false, error: "Du bist nicht in diesem Spiel" };
 
-  let state = input.state?.version === SIM_VERSION ? input.state : null;
+  let state = upgradeState(input.state);
   let clockAt = input.clockAt;
   if (!state) {
     state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { ...input.options, now: 0 });
