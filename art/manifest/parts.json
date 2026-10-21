@@ -1,6 +1,138 @@
 {
   "assets": [
     {
+      "id": "building.sawmill.t1.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t1-back.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t1-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t1.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t1-part.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t1-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5938,
+        0.6484
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t1.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t1-front.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t1-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t2-back.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t2-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t2-part.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t2-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5664,
+        0.5898
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/sawmill-t2-front.svg",
+      "out": "public/assets/sprites/buildings/anim/sawmill-t2-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.battery.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/battery-back.svg",
