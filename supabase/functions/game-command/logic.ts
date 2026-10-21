@@ -32,7 +32,7 @@ export interface StepInput {
   request: Request;
   now: number;
   /** What the host picked when creating the save; used when the state is (re)created. */
-  options?: Pick<GameOptions, "goal" | "invaders" | "maxPlayers">;
+  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "maxPlayers">;
 }
 
 export type StepResult =
@@ -45,15 +45,18 @@ export function nextSimTime(state: GameState, clockAt: number | null, now: numbe
   return state.simTime + Math.min(Math.max(0, now - clockAt), MAX_GAP_MS);
 }
 
-/** Adds members who joined after the game started (coop drop-in), at the current sim time. */
-export function ensurePlayers(state: GameState, members: Member[], simNow: number): { ok: true; state: GameState } | { ok: false; error: string } {
+/**
+ * Adds members who joined after the game started (coop drop-in), at the current sim time.
+ * Members the simulation can't seat (a versus game that is over or has no start planet left)
+ * stay spectators instead of blocking everyone else's moves.
+ */
+export function ensurePlayers(state: GameState, members: Member[], simNow: number): GameState {
   for (const m of members) {
     if (state.players.some((p) => p.id === m.playerId)) continue;
     const joined = addPlayer(state, m.playerId, m.name, simNow);
-    if (!joined.ok) return joined;
-    state = joined.state;
+    if (joined.ok) state = joined.state;
   }
-  return { ok: true, state };
+  return state;
 }
 
 export function step(input: StepInput): StepResult {
@@ -75,9 +78,7 @@ export function step(input: StepInput): StepResult {
       events.push(...closed.events);
     }
   }
-  const joined = ensurePlayers(state, members, simNow);
-  if (!joined.ok) return joined;
-  state = joined.state;
+  state = ensurePlayers(state, members, simNow);
 
   if (request.kind === "sync") {
     return { ok: true, state: advance(state, simNow), events, changed: true, removed: [] };
