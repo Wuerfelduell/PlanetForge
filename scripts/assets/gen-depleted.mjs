@@ -96,10 +96,8 @@ function ocean(variant, stage) {
     return path(`M ${p(14, 115)} Q ${p(28, 95)} ${p(47, 103)} Q ${p(58, 108)} ${p(69, 96)} Q ${p(84, 80)} ${p(102, 98)} Q ${p(82, 92)} ${p(85, 106)} Q ${p(92, 114)} ${p(113, 113)} L ${p(111, 118.5)} L ${p(20, 118.5)} Z`, C('water')) + line(`M ${p(23, 110)} Q ${p(34, 102)} ${p(46, 107)} M ${p(68, 103)} Q ${p(79, 89)} ${p(96, 96)}`, 'snow', stage === 1 ? 1 : 2);
   }
   const top = stage === 1 ? 108 : 91, left = stage === 1 ? 36 : 23, right = stage === 1 ? 91 : 105;
-  let b = variant === 0
-    ? path(`M ${left} 116 Q 50 117 57 ${top + 5} Q 63 ${top - 5} 77 ${top} Q 63 ${top} 67 ${top + 8} Q 73 116 ${right} 114 Q ${right + 7} 115 ${right} 118.5 H ${left + 4} Z`, C('water'))
-    : path(`M ${left} 116 Q 47 ${top + 4} 58 ${top + 9} Q 66 ${top + 13} 73 ${top + 4} Q 83 ${top - 6} ${right} ${top + 6} Q 82 ${top + 1} 84 ${top + 11} L ${right + 4} 116 L ${right + 2} 118.5 H ${left + 5} Z`, C('water'));
-  b += line(variant === 0 ? `M 56 ${top + 7} Q 62 ${top - 1} 72 ${top}` : `M 69 ${top + 8} Q 77 ${top - 1} 86 ${top + 3}`, 'snow', 2);
+  let b = path(`M ${left} 116 Q 50 117 57 ${top + 5} Q 63 ${top - 5} 77 ${top} Q 63 ${top} 67 ${top + 8} Q 73 116 ${right} 114 Q ${right + 7} 115 ${right} 118.5 H ${left + 4} Z`, C('water'));
+  b += line(`M 56 ${top + 7} Q 62 ${top - 1} 72 ${top}`, 'snow', 2);
   return b;
 }
 
@@ -144,7 +142,50 @@ function swamp(variant, stage) {
   return b;
 }
 
-const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp };
+function tundra(variant, stage) {
+  if (variant === 2) {
+    if (!stage) return quarry(variant, true);
+    const top = stage === 1 ? 102 : 80, half = stage === 1 ? 15 : 33;
+    let b = path(`M ${64 - half} 118.5 Q ${60 - half} 116 ${64 - half} 110 L ${63 - half} ${top + 10} Q ${65 - half} ${top + 5} ${72 - half} ${top + 3} L 69 ${top} Q 75 ${top - 1} 79 ${top + 6} L ${64 + half} 111 Q ${69 + half} 118.5 ${59 + half} 118.5 Z`, C('snow'));
+    b += path(`M 70 ${top + 2} L 66 ${top + 17} L ${61 + half} 116 H 58 L 51 ${top + 18} Z`, C('snow', -.18), flat) + line(`M ${70 - half} ${top + 11} L ${76 - half} ${top + 7} L ${83 - half} ${top + 6}`, 'tint-white', 2);
+    if (stage === 1) b += rubble(39, 118, 6, 'snow') + rubble(91, 118, 5, 'snow');
+    return b;
+  }
+  if (!stage) return stump(variant, true) + chips(variant, true);
+  const top = stage === 1 ? 88 : 46, bottom = stage === 1 ? 114 : 108;
+  const w = (stage === 1 ? 13 : 28) + variant * (stage === 1 ? 2 : 4);
+  const y1 = round(top + (bottom - top) * .38), y2 = round(top + (bottom - top) * .7);
+  const w1 = round(w * .5), w2 = round(w * .75);
+  let b = trunk(bottom - 4, stage === 1 ? 6 : 9);
+  b += path(`M ${64 - w} ${bottom} Q ${67 - w} ${bottom - 6} ${68 - w2} ${y2} H ${64 - w2} Q ${68 - w2} ${y2 - 7} ${68 - w1} ${y1} H ${64 - w1} Q 59 ${top + 6} 61 ${top} Q 64 ${top - 5} 67 ${top} Q 69 ${top + 6} ${64 + w1} ${y1} H ${60 + w1} Q ${60 + w2} ${y2 - 7} ${64 + w2} ${y2} H ${60 + w2} Q ${61 + w} ${bottom - 6} ${64 + w} ${bottom} Q 64 ${bottom + 9} ${64 - w} ${bottom} Z`, C('leaf'));
+  b += path(`M ${64 - w1} ${y1} Q 59 ${top + 6} 61 ${top} Q 64 ${top - 5} 67 ${top} Q 69 ${top + 6} ${64 + w1} ${y1} Q 70 ${y1 + 4} 65 ${y1} Q 59 ${y1 + 5} ${64 - w1} ${y1} Z`, C('snow'), 'stroke-width="2"');
+  b += path(`M ${64 - w2} ${y2} L ${68 - w2} ${y2 - 6} Q 64 ${y2 + 1} ${60 + w2} ${y2 - 6} L ${64 + w2} ${y2} Q 74 ${y2 + 6} 65 ${y2} Q 54 ${y2 + 6} ${64 - w2} ${y2} Z`, C('snow'), 'stroke-width="2"');
+  b += path(`M ${64 - w} ${bottom} L ${68 - w} ${bottom - 6} Q 64 ${bottom + 1} ${60 + w} ${bottom - 6} L ${64 + w} ${bottom} Q 64 ${bottom + 9} ${64 - w} ${bottom} Z`, C('snow'), 'stroke-width="2"');
+  return b;
+}
+function crystalTip(x, height, width, broken = false) {
+  x = round(x); height = round(height); width = round(width);
+  const left = round(x - width / 2), right = round(x + width / 2), top = round(116 - height), shoulder = round(top + Math.min(14, height * .3));
+  if (broken) return path(`M ${left} 112 L ${left} ${top + 3} L ${round(x - 3)} ${top} L ${round(x + 2)} ${top + 4} L ${right} ${top + 1} L ${right} 112 L ${x} 118 Z`, C('crystal', -.18)) + path(`M ${left + 2} ${top + 4} L ${round(x - 3)} ${top + 2} L ${round(x + 2)} ${top + 6} L ${right - 2} ${top + 3} L ${right - 2} ${top + 7} L ${x} ${top + 10} Z`, C('rock'), flat);
+  return path(`M ${left} 112 L ${left} ${shoulder} Q ${left} ${shoulder - 3} ${x} ${top} L ${right} ${shoulder} L ${right} 112 L ${x} 116 Z`, C('crystal'))
+    + path(`M ${x} ${top + 2} V 113 L ${right - 2} 111 V ${shoulder + 1} Z`, C('crystal', -.18), flat)
+    + line(`M ${left + 3} ${shoulder + 3} V 109`, 'cream', 1.5);
+}
+function crystals(variant, stage) {
+  const formations = [
+    [[42, 48, 24], [78, 60, 27], [62, 91, 30]],
+    [[41, 70, 26], [83, 44, 31], [63, 57, 27]],
+    [[62, 98, 43], [91, 36, 21]],
+  ][variant];
+  let b = formations.map(([x, h, w], i) => !stage
+    ? crystalTip(x, 12 + i * 2, w * .8, true)
+    : crystalTip(64 + (x - 64) * (stage === 1 ? .6 : .8), h * (stage === 1 ? .3 : .7), w * (stage === 1 ? .45 : .75))).join('');
+  if (!stage) b += path('M 30 116 L 34 112 L 39 116 L 35 118 Z', C('crystal', -.18), 'stroke-width="1.5"');
+  if (stage === 2) b += line('M 98 80 V 86 M 95 83 H 101', 'crystal', 2);
+  return b;
+}
+
+const renderers = { forest: tree, savanna, mountains, ocean, desert, swamp, tundra, crystal: crystals };
 const stages = ['depleted', 'regrow-1', 'regrow-2'];
 const fullProps = JSON.parse(read('art/manifest/world.json')).assets.filter(a => /^biome\.[^.]+\.prop\.[^.]+$/.test(a.id));
 if (fullProps.length !== 24) throw new Error(`Expected 24 full props, found ${fullProps.length}`);
