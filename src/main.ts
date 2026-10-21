@@ -10,6 +10,7 @@ import { SystemView } from "./render/systemView";
 import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
+import { mountLayoutControls } from "./ui/layoutControls";
 import { music } from "./audio/music";
 import { unlockMusicOnFirstGesture } from "./audio/musicControl";
 import { MainMenu, type NewGameOptions } from "./ui/mainMenu";
@@ -60,7 +61,7 @@ async function boot(): Promise<void> {
   });
 
   /** A fresh game on this device; the old local save is replaced. */
-  const newLocalGame = (options: NewGameOptions) => {
+  const newLocalGame = (options: Omit<NewGameOptions, "mode">) => {
     clearSave();
     leaveOnline();
     session = LocalSession.newGame(undefined, options);
@@ -150,6 +151,7 @@ async function boot(): Promise<void> {
   });
   showHome();
   app.stage.addChild(view.stage, map.stage);
+  mountLayoutControls((zoomed) => view.setZoom(zoomed));
 
   // Start screen and pause menu. A local game pauses behind it; a cloud game keeps running.
   let speedBeforeMenu = 1;
@@ -163,7 +165,7 @@ async function boot(): Promise<void> {
         return `${where} · ⭐ ${level} · Umlauf ${cycleOf(state) + 1}`;
       },
       async newGame(options, where, slot) {
-        if (where === "local") newLocalGame(options);
+        if (where === "local") newLocalGame({ goal: options.goal, invaders: options.invaders });
         else await online.create(options, slot);
       },
       openOnline: () => void online.open(),
@@ -190,6 +192,7 @@ async function boot(): Promise<void> {
   const resize = new ResizeObserver(relayout);
   resize.observe(document.body);
   resize.observe(document.getElementById("hud")!);
+  resize.observe(document.getElementById("panel")!);
   ui.render(session.state);
   relayout();
 

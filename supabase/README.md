@@ -28,4 +28,4 @@ If nobody was online for 10 minutes (no command, no heartbeat), the next request
 
 ## Game options
 
-`create_save` takes `p_options` (`goal`: `supernova`|`endless`, `invaders`: `off`|`normal`|`strong`); unknown keys and values are dropped and the simulation's defaults apply. They are stored in `games.options` and passed to `createGame` together with `max_players` whenever game-command creates the state, so a save that starts over after a version change keeps them.
+`create_save` takes `p_options` (`mode`: `coop`|`versus`, `goal`: `supernova`|`endless`, `invaders`: `off`|`normal`|`strong`; versus ignores goal and invaders); unknown keys and values are dropped and the simulation's defaults apply. They are stored in `games.options` and passed to `createGame` together with `max_players` whenever game-command creates the state, so a save that starts over after a version change keeps them. `my_games.mode` tells the menu which mode a slot plays. Members the simulation can't seat (a finished versus game, no free start planet) stay spectators.
