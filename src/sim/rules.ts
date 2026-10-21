@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, MARKET, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import type { EconomyState, GameState, PlanetState, PlayerState, SegmentState, UnitState } from "./state";
 
@@ -161,6 +161,28 @@ export function powerFactor(planet: PlanetState, segment: SegmentState): number 
   const p = planet.power;
   if (!p || p.demand <= p.supply) return 1;
   return Math.max(RULES.energy.unpoweredMul, p.supply / p.demand);
+}
+
+/** What the market trader asks in `give` for `count` units of `get`, or null if he does not deal in them. */
+export function tradePrice(give: ResourceId, get: ResourceId, count: number): number | null {
+  const paid = MARKET.values[give];
+  const wanted = MARKET.values[get];
+  if (!paid || !wanted || give === get) return null;
+  return Math.ceil((count * wanted * MARKET.markup) / paid - 1e-9);
+}
+
+/** Why a trade cannot happen on this planet right now, or null. */
+export function tradeBlocker(state: GameState, planet: PlanetState, give: ResourceId, get: ResourceId, count: number): string | null {
+  const economy = economyOf(state, planet);
+  if (!economy) return "Unbewohnter Planet";
+  const market = planet.segments.find((s) => s.building === "market");
+  if (!market) return "Hier steht kein Markt";
+  if (workerCount(state, planet, market.index) === 0) return "Niemand arbeitet am Markt";
+  if (!Number.isInteger(count) || count <= 0 || count > 100) return "Ungültige Menge";
+  const price = tradePrice(give, get, count);
+  if (price === null) return "Das tauscht der Händler nicht";
+  if (economy.resources[give] < price) return NOT_AFFORDABLE;
+  return null;
 }
 
 /** Pumps also draw from a neighboring sea or glacier. */
