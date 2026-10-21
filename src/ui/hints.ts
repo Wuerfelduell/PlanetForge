@@ -1,4 +1,4 @@
-import { BUILDINGS, economyOf, housing, idleUnits, needsSuits, population, RULES, toolsWear, unitsOn, type GameState, type PlanetState } from "../sim";
+import { BUILDINGS, economyOf, housing, idleUnits, population, RULES, settlersOutside, toolsWear, unitsOn, type GameState, type PlanetState } from "../sim";
 
 /**
  * Contextual next-step hint. The original's biggest weakness is that it explains nothing;
@@ -11,8 +11,9 @@ export function currentHint(state: GameState, planet: PlanetState, playerId: str
   const idle = idleUnits(state, planet, playerId).length;
   if (unitsOn(state, planet.id, playerId).every((u) => u.segment === null)) return "Dreh den Planeten, wähl ein freies Feld wie Wald und tipp auf ＋, damit deine Leute sammeln.";
   if (economy.starving) return "Hunger! Setz Einwohner auf Savanne oder Meer, oder bau eine Farm.";
-  if (needsSuits(planet) && economy.resources.suits < unitsOn(state, planet.id).length * RULES.suits.perInhabitantPerCycle) {
-    return "Hier gibt es keine Atemluft: ohne Raumanzüge stirbt jeden Umlauf ein Siedler. Die Werkstatt (Stufe 2) näht sie aus Stoff, Glas und Stahl.";
+  const outside = settlersOutside(state, planet).length;
+  if (outside && economy.resources.suits < outside * RULES.suits.perInhabitantPerCycle) {
+    return "Hier gibt es keine Atemluft: Wer draußen arbeitet oder kein Bett hat, braucht Raumanzüge, sonst stirbt jeden Umlauf einer. Die Werkstatt näht sie aus Stoff und Eisen.";
   }
   const inv = state.invasion;
   if (inv?.target === planet.id) {

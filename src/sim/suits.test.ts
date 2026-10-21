@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceWithEvents, BUILDINGS, createGame, homePlanet, needsSuits, RECIPES, RULES, TICK_MS, ticksPerCycle, type GameEvent, type GameState } from "./index";
+import { advanceWithEvents, BIOMES, BUILDINGS, createGame, homePlanet, housing, needsSuits, settlersOutside, RECIPES, RULES, TICK_MS, ticksPerCycle, type GameEvent, type GameState } from "./index";
 
 const P1 = { id: "p1", name: "Seb" };
 const clone = (g: GameState) => JSON.parse(JSON.stringify(g)) as GameState;
@@ -54,6 +54,24 @@ describe("space suits", () => {
     expect(Object.values(g.units).filter((u) => u.planetId === planetId)).toHaveLength(0);
     // The home planet breathes freely.
     expect(Object.values(g.units).filter((u) => u.planetId === homePlanet(g, P1.id)!.id).length).toBeGreaterThan(0);
+  });
+
+  it("idle settlers inside the houses need none, workers outside do", () => {
+    let { g, planetId } = colony(0);
+    const planet = g.planets.find((p) => p.id === planetId)!;
+    planet.birthProgress = -1e9;
+    const land = planet.segments.filter((s) => BIOMES[s.biome].buildable);
+    for (const i of [0, 2, 3]) land[i]!.building = "housing";
+    expect(housing(g, planet) - RULES.baseHousing).toBeGreaterThanOrEqual(4);
+    expect(settlersOutside(g, planet)).toHaveLength(0);
+    g = run(g, 3);
+    expect(Object.values(g.units).filter((u) => u.planetId === planetId)).toHaveLength(4);
+    // Sent to work outside, a settler needs a suit again.
+    g.units.s0!.segment = land[1]!.index;
+    expect(settlersOutside(g, g.planets.find((p) => p.id === planetId)!).map((u) => u.id)).toEqual(["s0"]);
+    g = run(g, 1);
+    expect(g.units.s0).toBeUndefined();
+    expect(Object.values(g.units).filter((u) => u.planetId === planetId)).toHaveLength(3);
   });
 
   it("are cheap: cloth and iron, sewn in the plain workshop", () => {

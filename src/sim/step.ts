@@ -7,7 +7,7 @@ import {
   energyDemand,
   energySupply,
   housing,
-  needsSuits,
+  settlersOutside,
   neighbors,
   NOT_AFFORDABLE,
   ascensionPerCycle,
@@ -198,20 +198,21 @@ function birth(state: GameState, planet: PlanetState, residents: number, events:
   events.push({ type: "born", planetId: planet.id, playerId: parent.id, unitId });
 }
 
-/** Settlers on airless planets wear out suits; without any left, one of them dies per cycle. */
+/** Settlers outside on airless planets wear out suits; without any left, one of them dies per cycle. */
 function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): void {
   for (const planet of state.planets) {
-    if (planet.economyId !== economy.id || !needsSuits(planet)) continue;
-    const settlers = Object.values(state.units).filter((u) => u.planetId === planet.id);
-    if (!settlers.length) continue;
-    const need = settlers.length * RULES.suits.perInhabitantPerCycle;
+    if (planet.economyId !== economy.id) continue;
+    const outside = settlersOutside(state, planet);
+    if (!outside.length) continue;
+    const need = outside.length * RULES.suits.perInhabitantPerCycle;
     if (economy.resources.suits >= need) {
       economy.resources.suits -= need;
       continue;
     }
     economy.resources.suits = 0;
-    delete state.units[settlers[settlers.length - 1]!.id];
-    events.push({ type: "suffocated", planetId: planet.id, left: settlers.length - 1 });
+    delete state.units[outside[outside.length - 1]!.id];
+    const left = Object.values(state.units).filter((u) => u.planetId === planet.id).length;
+    events.push({ type: "suffocated", planetId: planet.id, left });
   }
 }
 
