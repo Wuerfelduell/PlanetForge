@@ -660,16 +660,23 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
 export const INVADERS = {
   /** Team ascension level from which waves come. */
   minLevel: 5,
+  /** ...and team size (playtest: a 9-strong team at level 5 was wiped out). */
+  minPeople: 12,
   firstWaveCycles: [8, 16] as const,
   waveIntervalCycles: [20, 35] as const,
-  approachCycles: 6,
+  approachCycles: 8,
   /** Without long-range sight the team sees the fleet only this many cycles before arrival. */
-  blindWarningCycles: 1,
+  blindWarningCycles: 3,
   /** Cycles at the sun shield before the fleet moves on to a planet. */
   siegeCycles: 5,
   /** Flight time when the fleet moves on to another planet. */
   moveOnCycles: 3,
   shipHp: { base: 6, perWave: 4 },
+  /**
+   * Mothership hp scale with the team: × people / perPeople, within min..max, so a wave is about
+   * as tough for 12 inhabitants as for 60.
+   */
+  hpTeamScale: { perPeople: 20, min: 0.6, max: 3 },
   /** Escorts add to their roll: floor(wave × escortBonusPerWave). */
   escortBonusPerWave: 0.5,
   strongMul: 1.5,
