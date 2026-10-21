@@ -11,6 +11,8 @@ export const RESOURCE_IDS = [
   "bricks", "gold",
   // Rocket fuel from the refinery (Seb: flying should be harder and need oil).
   "fuel",
+  // Glassworks and foundry goods for the later buildings (greenhouse, observatory, power plants).
+  "glass", "steel", "concrete",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -41,6 +43,9 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   bricks: { name: "Ziegel", icon: "🧱" },
   gold: { name: "Gold", icon: "🪙" },
   fuel: { name: "Treibstoff", icon: "⛽" },
+  glass: { name: "Glas", icon: "🪟" },
+  steel: { name: "Stahl", icon: "🔩" },
+  concrete: { name: "Beton", icon: "⬜" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -175,12 +180,38 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
   },
 };
 
-export const BUILDING_IDS = ["housing", "farm", "sawmill", "forester", "mine", "pump", "workshop", "refinery", "lab", "foundry", "launchpad", "watchtower", "battery"] as const;
+export const BUILDING_IDS = [
+  "housing", "park", "monument",
+  "farm", "fishery", "hydro-farm",
+  "forester", "mine", "pump",
+  "sawmill", "workshop", "foundry", "glassworks",
+  "lab", "library", "observatory",
+  "power-wind", "power-coal", "power-solar", "power-atomic",
+  "watchtower", "battery",
+  "launchpad", "refinery",
+] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
+
+/** Tabs of the build menu, in this order. */
+export const BUILDING_CATEGORY_IDS = ["housing", "food", "resources", "production", "research", "energy", "defense", "space"] as const;
+export type BuildingCategory = (typeof BUILDING_CATEGORY_IDS)[number];
+
+export const BUILDING_CATEGORIES: Record<BuildingCategory, { name: string; icon: string }> = {
+  housing: { name: "Wohnraum", icon: "🏠" },
+  food: { name: "Nahrung", icon: "🍎" },
+  resources: { name: "Rohstoffe", icon: "⛏️" },
+  production: { name: "Produktion", icon: "🛠️" },
+  research: { name: "Forschung", icon: "🔬" },
+  energy: { name: "Energie", icon: "⚡" },
+  defense: { name: "Verteidigung", icon: "🛡️" },
+  space: { name: "Raumfahrt", icon: "🚀" },
+};
 
 export interface BuildingDef {
   name: string;
   icon: string;
+  /** Build menu tab. */
+  category: BuildingCategory;
   description: string;
   cost: Partial<Record<ResourceId, number>>;
   /** Ascension level needed before it can be built. */
@@ -217,10 +248,21 @@ export interface BuildingDef {
   defense?: number;
   /** Damage to a besieging invader ship per worker and siege round. */
   battery?: number;
+  /**
+   * Power on the planet's grid: positive feeds it (scaled by adjacency, and by the crew on manned
+   * plants), negative draws from it. Short of power, consumers run at RULES.energy.unpoweredMul.
+   */
+  energy?: number;
+  /** Burns this much per second with a full crew (power plants); without it there is no power. */
+  burns?: { resource: ResourceId; perSecond: number };
+  /** Extra ascension points per cycle. */
+  ascension?: number;
+  /** At most one per planet. */
+  unique?: boolean;
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
-  Partial<Pick<BuildingDef, "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense">>;
+  Partial<Pick<BuildingDef, "name" | "icon" | "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense" | "energy">>;
 
 export interface AdjacencyDef {
   biome?: BiomeId;
@@ -233,6 +275,7 @@ const NOISY: readonly AdjacencyDef[] = [
   { building: "mine", bonus: -0.25 },
   { building: "foundry", bonus: -0.25 },
   { building: "refinery", bonus: -0.25 },
+  { building: "power-coal", bonus: -0.25 },
 ];
 
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
@@ -243,21 +286,48 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   housing: {
     name: "Hütte",
     icon: "🛖",
-    description: "Platz für 2 weitere Einwohner. Je Nachbar-Mine wird es enger (Lärm), ebenso neben Lava (Hitze). Nachbar-Wälder geben etwas mehr Platz.",
+    category: "housing",
+    description:
+      "Platz für Einwohner, ausbaubar zu Holzhaus, Steinhaus und Wohnturm. −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk) und neben Lava, +10 % je Nachbar-Wald, +20 % je Nachbar-Park.",
     cost: { wood: 15 },
     unlockLevel: 0,
     allowedBiomes: LAND,
     workers: 0,
     housing: 2,
-    adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }, { biome: "lava", bonus: -0.25 }],
+    adjacency: [...NOISY, { biome: "forest", bonus: 0.1 }, { biome: "lava", bonus: -0.25 }, { building: "park", bonus: 0.2 }],
     upgrades: [
-      { cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
-      { cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
+      { name: "Holzhaus", icon: "🏠", cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
+      { name: "Steinhaus", icon: "🏡", cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
+      // Needs power: without it only half the flats are lit and lived in.
+      { name: "Wohnturm", icon: "🏢", cost: { concrete: 20, steel: 10, glass: 10 }, unlockLevel: 7, housing: 12, energy: -1 },
     ],
+  },
+  park: {
+    name: "Park",
+    icon: "🌳",
+    category: "housing",
+    description: "Grünfläche ohne Arbeiter: Nachbar-Hütten bieten 20 % mehr Platz.",
+    cost: { wood: 10, stone: 10 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 0,
+  },
+  monument: {
+    name: "Monument",
+    icon: "🗿",
+    category: "housing",
+    description: "Der Stolz des Volkes: +10 Aufstiegspunkte pro Umlauf. Nur eins pro Planet.",
+    cost: { bricks: 30, steel: 20, gold: 10, aetherite: 10 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 0,
+    ascension: 10,
+    unique: true,
   },
   farm: {
     name: "Farm",
     icon: "🌾",
+    category: "food",
     description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
     cost: { wood: 12 },
     unlockLevel: 0,
@@ -269,12 +339,41 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { biome: "ash", bonus: 0.15 },
       { building: "pump", bonus: 0.2 },
       { building: "mine", bonus: -0.25 },
+      { building: "power-coal", bonus: -0.2 },
     ],
     upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
+  },
+  fishery: {
+    name: "Fischerei",
+    icon: "🎣",
+    category: "food",
+    description: "Fängt Fisch, ohne das Meer leer zu fischen. Muss neben einem Meer stehen, +30 % je Nachbar-Meer.",
+    cost: { wood: 15, stone: 5 },
+    unlockLevel: 1,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "food", perWorker: 0.35 },
+    needsNeighbor: ["ocean"],
+    adjacency: [{ biome: "ocean", bonus: 0.3 }],
+    upgrades: [{ name: "Fischereihafen", cost: { planks: 10, cloth: 5 }, unlockLevel: 3, workers: 3, produces: { resource: "food", perWorker: 0.45 } }],
+  },
+  "hydro-farm": {
+    name: "Gewächshaus",
+    icon: "🪴",
+    category: "food",
+    description: "Zieht aus Wasser Gemüse, auf jedem Boden, auch in Wüste, Tundra und Kristallfeld. Braucht Strom. +20 % je Nachbar-Pumpe.",
+    cost: { glass: 10, planks: 10, stone: 10 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 2,
+    crafts: { recipes: ["greens"], speed: 1 },
+    adjacency: [{ building: "pump", bonus: 0.2 }],
+    energy: -1,
   },
   sawmill: {
     name: "Sägewerk",
     icon: "🪚",
+    category: "production",
     description: "Macht aus Holz Bretter. Muss neben einem Wald stehen, +30 % je Nachbar-Wald. Verbraucht Werkzeug.",
     cost: { wood: 20, stone: 10 },
     unlockLevel: 1,
@@ -289,6 +388,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   forester: {
     name: "Förster",
     icon: "🌲",
+    category: "resources",
     description: "Benachbarte Wälder wachsen dreimal so schnell nach, abgeholzte Nachbarwälder werden neu bepflanzt. Braucht einen Arbeiter.",
     cost: { wood: 10, stone: 5 },
     unlockLevel: 1,
@@ -299,6 +399,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   mine: {
     name: "Mine",
     icon: "⛏️",
+    category: "resources",
     description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
@@ -320,6 +421,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   pump: {
     name: "Pumpe",
     icon: "🪣",
+    category: "resources",
     description: "Pumpt Wasser und das Öl des Feldes. Braucht Wasser oder Öl im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher. +50 % je Nachbar-Meer, +30 % je Nachbar-Gletscher.",
     cost: { stone: 12 },
     unlockLevel: 1,
@@ -336,6 +438,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   refinery: {
     name: "Raffinerie",
     icon: "🛢️",
+    category: "space",
     description: "Macht aus Öl Treibstoff für Raketen. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore. Verbraucht Werkzeug.",
     cost: { planks: 15, stone: 20, iron: 10 },
     unlockLevel: 2,
@@ -348,6 +451,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   workshop: {
     name: "Werkstatt",
     icon: "🛠️",
+    category: "production",
     description: "Macht Werkzeug, Kupferdraht oder Stoff. +15 % je Nachbar-Sägewerk oder -Mine.",
     cost: { planks: 15, stone: 15 },
     unlockLevel: 2,
@@ -363,32 +467,129 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   lab: {
     name: "Labor",
     icon: "🔬",
-    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, −25 % je Nachbar-Mine (Lärm).",
+    category: "research",
+    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk).",
     cost: { stone: 20, planks: 10, water: 10 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
     produces: { resource: "science", perWorker: 0.2 },
-    adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, ...NOISY],
+    adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, { building: "library", bonus: 0.2 }, ...NOISY],
     upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 } }],
   },
   foundry: {
     name: "Gießerei",
     icon: "🏭",
-    description: "Brennt Ziegel oder Holzkohle. Darf auf Lava stehen. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+    category: "production",
+    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
     cost: { stone: 25, clay: 15, planks: 10 },
     unlockLevel: 3,
     allowedBiomes: HOT_GROUND,
     workers: 2,
-    crafts: { recipes: ["bricks", "charcoal"], speed: 1 },
+    crafts: { recipes: ["bricks", "charcoal", "steel", "concrete"], speed: 1 },
     adjacency: [
       { building: "mine", bonus: 0.1 },
       { biome: "lava", bonus: 0.3 },
     ],
+    upgrades: [{ name: "Stahlwerk", cost: { bricks: 15, steel: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["bricks", "charcoal", "steel", "concrete"], speed: 1.5 }, energy: -1 }],
+  },
+  glassworks: {
+    name: "Glashütte",
+    icon: "🫙",
+    category: "production",
+    description: "Schmilzt Sand mit Kohle zu Glas. Darf auf Lava stehen. +20 % je Nachbar-Wüste, +30 % je Nachbar-Lavafeld.",
+    cost: { stone: 20, planks: 10, clay: 10 },
+    unlockLevel: 3,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    crafts: { recipes: ["glass"], speed: 1 },
+    adjacency: [
+      { biome: "desert", bonus: 0.2 },
+      { biome: "lava", bonus: 0.3 },
+    ],
+  },
+  library: {
+    name: "Bibliothek",
+    icon: "📚",
+    category: "research",
+    description: "Ohne Arbeiter: Nachbar-Labore und -Sternwarten forschen 20 % schneller.",
+    cost: { planks: 20, stone: 10, cloth: 5 },
+    unlockLevel: 3,
+    allowedBiomes: LAND,
+    workers: 0,
+  },
+  observatory: {
+    name: "Sternwarte",
+    icon: "🔭",
+    category: "research",
+    description: "Viel Wissen aus dem Blick in den Himmel. Braucht Strom. +20 % je Nachbar-Gebirge, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn.",
+    cost: { stone: 30, glass: 10, planks: 10 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "science", perWorker: 0.3 },
+    adjacency: [{ biome: "mountains", bonus: 0.2 }, { building: "library", bonus: 0.2 }, ...NOISY],
+    energy: -1,
+  },
+  "power-wind": {
+    name: "Windrad",
+    icon: "🌬️",
+    category: "energy",
+    description: "+2 Strom ohne Arbeiter. +25 % je Nachbar-Gebirge, +15 % je Nachbar-Tundra, −40 % je Nachbar-Windrad (Windschatten).",
+    cost: { planks: 15, stone: 10, wire: 5 },
+    unlockLevel: 3,
+    allowedBiomes: LAND,
+    workers: 0,
+    energy: 2,
+    adjacency: [
+      { biome: "mountains", bonus: 0.25 },
+      { biome: "tundra", bonus: 0.15 },
+      { building: "power-wind", bonus: -0.4 },
+    ],
+  },
+  "power-coal": {
+    name: "Kohlekraftwerk",
+    icon: "🔥",
+    category: "energy",
+    description: "+6 Strom mit einem Arbeiter, verbrennt Kohle. Laut für Hütten und Labore, Staub für Farmen.",
+    cost: { bricks: 20, iron: 15, wire: 5 },
+    unlockLevel: 4,
+    allowedBiomes: HOT_GROUND,
+    workers: 1,
+    energy: 6,
+    burns: { resource: "coal", perSecond: 0.1 },
+  },
+  "power-solar": {
+    name: "Solarfeld",
+    icon: "☀️",
+    category: "energy",
+    description: "+3 Strom ohne Arbeiter und ohne Brennstoff. +30 % je Nachbar-Wüste, −30 % je Nachbar-Kohlekraftwerk (Smog).",
+    cost: { glass: 15, steel: 5, wire: 5 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 0,
+    energy: 3,
+    adjacency: [
+      { biome: "desert", bonus: 0.3 },
+      { building: "power-coal", bonus: -0.3 },
+    ],
+  },
+  "power-atomic": {
+    name: "Atomkraftwerk",
+    icon: "☢️",
+    category: "energy",
+    description: "+15 Strom mit zwei Arbeitern aus wenig Uran, ganz ohne Rauch.",
+    cost: { concrete: 40, steel: 30, wire: 10 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 2,
+    energy: 15,
+    burns: { resource: "uranium", perSecond: 0.02 },
   },
   launchpad: {
     name: "Startrampe",
     icon: "🚀",
+    category: "space",
     description: "Schickt Raketen mit Einwohnern zu anderen Planeten.",
     cost: { wood: 25, stone: 15 },
     unlockLevel: 2,
@@ -398,16 +599,19 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   watchtower: {
     name: "Wachturm",
     icon: "🗼",
+    category: "defense",
     description: "+1 auf die Würfe der Verteidiger dieses Planeten.",
     cost: { planks: 10, stone: 20 },
     unlockLevel: 2,
     allowedBiomes: HOT_GROUND,
     workers: 0,
     defense: 1,
+    upgrades: [{ name: "Festungsturm", icon: "🏰", cost: { bricks: 15, iron: 10 }, unlockLevel: 5, defense: 2 }],
   },
   battery: {
     name: "Abwehrbatterie",
     icon: "🎯",
+    category: "defense",
     description: "Schießt auf Invasoren über dem Planeten: je Arbeiter 1 Treffer pro Umlauf.",
     cost: { iron: 25, stone: 25, wood: 10 },
     unlockLevel: 5,
@@ -417,7 +621,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   },
 };
 
-export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel";
+export type RecipeId = "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens";
 
 export interface RecipeDef {
   name: string;
@@ -436,6 +640,10 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   bricks: { name: "Ziegel", inputs: { clay: 2, coal: 1 }, outputs: { bricks: 2 }, seconds: 6 },
   charcoal: { name: "Holzkohle", inputs: { wood: 3 }, outputs: { coal: 1 }, seconds: 6 },
   fuel: { name: "Treibstoff", inputs: { oil: 2 }, outputs: { fuel: 1 }, seconds: 8 },
+  glass: { name: "Glas", inputs: { sand: 2, coal: 1 }, outputs: { glass: 1 }, seconds: 8 },
+  steel: { name: "Stahl", inputs: { iron: 2, coal: 1 }, outputs: { steel: 1 }, seconds: 10 },
+  concrete: { name: "Beton", inputs: { stone: 2, clay: 1, water: 1 }, outputs: { concrete: 1 }, seconds: 8 },
+  greens: { name: "Gemüse", inputs: { water: 1 }, outputs: { food: 2 }, seconds: 5 },
 };
 
 /**
@@ -649,4 +857,6 @@ export const RULES = {
   captiveAssimilationCycles: 10,
   /** versus: after this many cycles without a battle the game offers a draw. */
   drawOfferCycles: 300,
+  /** Consumers on a planet short of power run at supply ÷ demand, but never slower than this. */
+  energy: { unpoweredMul: 0.25 },
 } as const;

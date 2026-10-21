@@ -146,11 +146,20 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .rate { color: var(--good); font-size: 14px; }
 .rate small { color: var(--muted); }
 
+/* Build menu tabs: icons in one row (fits a phone), the open tab's name below. */
+.tabs { display: flex; gap: 4px; margin-top: 8px; }
+.tab { position: relative; flex: 1 1 0; min-width: 0; padding: 6px 0; font-size: 20px; opacity: 0.65; }
+.tab.on { opacity: 1; outline: 2px solid var(--accent, #ffd166); }
+.tab .dot { position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+.tab-name { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
 .builds { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin-top: 8px; }
 .build { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; }
 .build .icon { font-size: 24px; }
 .build .cost { font-size: 13px; color: var(--muted); }
 .build .cost .short { color: var(--bad); }
+.power { margin: 6px 0; color: var(--good); font-size: 14px; }
+.power small { color: var(--muted); }
+.power.short { color: var(--warn); }
 .wide { width: 100%; margin-top: 6px; padding: 10px; }
 .danger { background: #5a2733; }
 

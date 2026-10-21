@@ -100,6 +100,21 @@ Ein Planet ist ein Ring, jedes Feld hat also genau zwei Nachbarn. Industrie und 
 
 Bäume pflanzen und Meer mit Sand oder Lehm (als Erde) auffüllen baut der Thread „Ressourcen-Anzeige und Visuals“ als Befehl `terraform`, mit eigenen Kosten in `src/sim/content.ts`.
 
+## Baumenü und neue Gebäude
+
+Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, Energie, Verteidigung, Raumfahrt (dazu Gelände für Bäume pflanzen und Aufschütten). Ein grüner Punkt zeigt, wo gerade etwas baubar ist.
+
+| Reiter | Gebäude (ab Stufe) |
+|---|---|
+| Wohnraum | Hütte 0 → Holzhaus 2 → Steinhaus 5 → Wohnturm 7 (12 Plätze, Strom), Park 2 (+20 % Platz für Nachbar-Hütten), Monument 8 (+10 Aufstiegspunkte je Umlauf, eins pro Planet) |
+| Nahrung | Farm 0, Fischerei 1 (neben Meer, Stufe 2 Fischereihafen ab 3), Gewächshaus 4 (Wasser → Nahrung auf jedem Boden, Strom) |
+| Rohstoffe | Förster 1, Mine 1, Pumpe 1 |
+| Produktion | Sägewerk 1, Werkstatt 2, Gießerei 3 (jetzt auch Stahl und Beton, Stufe 2 Stahlwerk ab 5), Glashütte 3 (Sand + Kohle → Glas) |
+| Forschung | Labor 2, Bibliothek 3 (+20 % für Nachbar-Labore und -Sternwarten), Sternwarte 4 (0,3 Wissen je Arbeiter, Strom) |
+| Energie | Windrad 3, Kohlekraftwerk 4, Solarfeld 6, Atomkraftwerk 8 |
+| Verteidigung | Wachturm 2 (Stufe 2 Festungsturm ab 5, +2), Abwehrbatterie 5 |
+| Raumfahrt | Startrampe 2, Raffinerie 2 |
+
 ## Spielmodi und Pacing
 
 Zwei Modi, Solo ist der gemeinsame Modus mit einem Spieler (`MODES` in `progression.ts`):
@@ -151,6 +166,8 @@ Entdeckungen sind Abkürzungen und Seitenwege, nie Pflicht. Ihre Wirkung ist als
 Jedes Volk bekommt +30 % auf seinem Lieblingsbiom und +25 % auf seine Lieblingsressource, dazu eine Fähigkeit, die etwa +15 % Wirtschaft wert ist. Fähigkeiten ändern, *wie* man spielt (Raketen, Handel, Kampf, Verschmutzung), nicht wie schnell. Dammbiber und Stachelvolk sind die einfachsten zum Lernen, passend zu P0 in der Asset-Liste.
 
 ## Energie und Verschmutzung
+
+Im Spiel (src/sim/content.ts) gibt es bisher den Strom, noch keine Verschmutzung. Jeder Planet hat sein eigenes Netz. Windrad (+2, ab Stufe 3, Windschatten −40 % je Nachbar-Windrad), Kohlekraftwerk (+6 mit 1 Arbeiter, 0,1 Kohle/s, ab 4), Solarfeld (+3, ab 6) und Atomkraftwerk (+15 mit 2 Arbeitern, 0,02 Uran/s, ab 8) liefern. Strom brauchen nur neue Dinge: Wohnturm (Hütte Stufe 4), Gewächshaus, Sternwarte und Stahlwerk (Gießerei Stufe 2), je 1. Die älteren Stufe-2-Gebäude laufen ohne Strom weiter, damit laufende Spiele nicht plötzlich langsamer werden.
 
 Bei Energiemangel laufen alle Verbraucher mit Angebot ÷ Nachfrage, aber nie unter 25 %. Ein kleines Defizit ist also eine kleine Strafe und blockiert nichts. Verschmutzung baut sich mit 0,3 % des aktuellen Werts pro Sekunde ab und pendelt sich so bei Ausstoß ÷ 0,003 ein. Verschmutzung bremst den Nachwuchs (Koop-Design 2.5): über 30 dauert eine Geburt 25 % länger, über 60 dauert sie 60 % länger, über 85 gibt es keinen Nachwuchs mehr. Ein Kohlekraftwerk allein landet bei 20, mit einer Gießerei, die Stahl kocht, bei etwa 37 und damit über der ersten Schwelle. Ein Luftfilter (−0,12) holt das fast auf 0 zurück.
 
