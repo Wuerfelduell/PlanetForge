@@ -57,7 +57,7 @@ async function boot(): Promise<void> {
     setSpeed(speed) {
       session.speed = speed;
     },
-    openMenu: () => menu.open(),
+    openMenu: () => menu.open("pause"),
   });
 
   /** A fresh game on this device; the old local save is replaced. */

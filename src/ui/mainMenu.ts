@@ -25,7 +25,7 @@ export interface MainMenuActions {
   save(): { ok: boolean; text: string };
 }
 
-type Screen = "home" | "new" | "settings" | "credits";
+type Screen = "home" | "pause" | "new" | "settings" | "credits";
 
 const OPTIONS_KEY = "planetforge.newGameOptions";
 
@@ -63,10 +63,13 @@ export class MainMenu {
     // Set here, not in the CSS, so the paths resolve against the page like the other art.
     const images = { "--menu-bg": "brand/menu-bg", "--menu-bg-landscape": "brand/menu-bg-landscape", "--menu-button": "ui/ui-button-menu", "--menu-button-pressed": "ui/ui-button-menu-pressed" };
     const hd = (window.devicePixelRatio || 1) > 1.25 ? "@2x" : "";
-    for (const [name, path] of Object.entries(images)) this.root.style.setProperty(name, `url("assets/sprites/${path}${hd}.png")`);
+    // Absolute URLs: a url() inside a custom property resolves against the built stylesheet otherwise.
+    for (const [name, path] of Object.entries(images)) this.root.style.setProperty(name, `url("${new URL(`assets/sprites/${path}${hd}.png`, document.baseURI).href}")`);
     if (this.isOpen) this.render();
   }
   private hasArt = false;
+  /** Where "Zurück" leads: the pause menu in a game, otherwise the title screen. */
+  private base: "home" | "pause" = "home";
   /** Result of the last save, shown on the home screen. */
   private saved: { ok: boolean; text: string } | null = null;
 
@@ -78,9 +81,11 @@ export class MainMenu {
     return !this.root.hidden;
   }
 
+  /** "pause" from the game (☰), "home" for the title screen. */
   open(screen: Screen = "home"): void {
     const wasOpen = this.isOpen;
     this.screen = screen;
+    if (screen === "home" || screen === "pause") this.base = screen;
     this.confirmNew = false;
     this.error = "";
     this.root.hidden = false;
@@ -108,7 +113,7 @@ export class MainMenu {
 
   private render(): void {
     const body =
-      this.screen === "new" ? this.renderNew() : this.screen === "settings" ? this.renderSettings() : this.screen === "credits" ? this.renderCredits() : this.renderHome();
+      this.screen === "pause" ? this.renderPause() : this.screen === "new" ? this.renderNew() : this.screen === "settings" ? this.renderSettings() : this.screen === "credits" ? this.renderCredits() : this.renderHome();
     this.root.innerHTML = `<div class="menu-card${this.busy ? " busy" : ""}">${this.error ? `<p class="menu-error">${escape(this.error)}</p>` : ""}${body}</div>`;
   }
 
@@ -119,14 +124,28 @@ export class MainMenu {
         <h1>PlanetForge</h1>
         <p>Baue deinen Planeten, rette dein Sonnensystem.</p>
       </header>
-      ${current && this.saved ? `<p class="menu-saved${this.saved.ok ? "" : " bad"}">${this.saved.ok ? "💾" : "⚠️"} ${escape(this.saved.text)}</p>` : ""}
       <nav class="menu-list">
         ${current ? `<button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiter</span><small>${escape(current)}</small></button>` : ""}
         <button class="menu-item${current ? "" : " primary"}" data-go="new"><span>${this.icon("new-game", "✨")} Neues Spiel</span><small>Allein oder mit Freunden</small></button>
         <button class="menu-item" data-go="online"><span>${this.icon("load", "☁️")} Online-Spiele</span><small>Spielstände, mit Code beitreten, einladen</small></button>
         <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
         <button class="menu-item" data-go="credits"><span>${this.icon("credits", "📜")} Credits</span></button>
-        ${current ? `<button class="menu-item" data-go="save"><span>💾 Speichern</span><small>Jetzt noch einmal sichern</small></button>` : ""}
+      </nav>`;
+  }
+
+  /** In-game menu behind ☰: the game is already saved when it opens. */
+  private renderPause(): string {
+    const current = this.actions.current() ?? "";
+    const saved = this.saved;
+    return `
+      <h2>⏸️ Pause</h2>
+      <p class="menu-note">${escape(current)}</p>
+      ${saved ? `<p class="menu-saved${saved.ok ? "" : " bad"}">${saved.ok ? "✅" : "⚠️"} ${escape(saved.text)}</p>` : ""}
+      <nav class="menu-list">
+        <button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiterspielen</span></button>
+        <button class="menu-item" data-go="save"><span>💾 Speichern</span><small>Spielstand jetzt sichern</small></button>
+        <button class="menu-item" data-go="toHome"><span>🏠 Speichern &amp; zum Hauptmenü</span><small>Neues Spiel, Online-Spiele, Credits</small></button>
+        <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
       </nav>`;
   }
 
@@ -189,7 +208,7 @@ export class MainMenu {
         <input type="range" data-set="sfxVolume" min="0" max="100" step="5" value="${Math.round(s.volume * 100)}" ${s.muted ? "disabled" : ""} aria-label="Geräusch-Lautstärke">
       </div>
       <p class="menu-note">Alles wird in diesem Browser gespeichert.</p>
-      <div class="menu-actions"><button data-go="home">Zurück</button></div>`;
+      <div class="menu-actions"><button data-go="back">Zurück</button></div>`;
   }
 
   private renderCredits(): string {
@@ -198,7 +217,7 @@ export class MainMenu {
       <p>Ein Fan-Projekt von <b>Seb</b>, inspiriert von <i>A Planet of Mine</i> (Tuesday Quest).</p>
       <p class="menu-note">Programmiert mit Claude. Grafiken mit Codex erstellt. Musik und Geräusche werden live im Code erzeugt, ohne fremde Aufnahmen.</p>
       <p class="menu-note">Technik: TypeScript, PixiJS, Supabase, Capacitor.</p>
-      <div class="menu-actions"><button data-go="home">Zurück</button></div>`;
+      <div class="menu-actions"><button data-go="back">Zurück</button></div>`;
   }
 
   private onClick(e: MouseEvent): void {
@@ -224,13 +243,25 @@ export class MainMenu {
       return;
     }
     const go = target.dataset.go!;
-    this.sfx.play(go === "home" ? "ui.close" : "ui.tap");
+    this.sfx.play(go === "home" || go === "back" ? "ui.close" : "ui.tap");
     switch (go) {
       case "continue":
         this.close();
         break;
       case "save":
         this.saved = this.actions.save();
+        this.render();
+        break;
+      case "toHome":
+        this.saved = this.actions.save();
+        this.base = this.screen = "home";
+        this.render();
+        break;
+      case "back":
+        this.error = "";
+        this.confirmNew = false;
+        this.screen = this.base;
+        if (this.base === "home") this.slot = undefined;
         this.render();
         break;
       case "online":
