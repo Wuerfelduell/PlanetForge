@@ -86,6 +86,8 @@ export class SystemView {
     s.position.set(x, y);
     s.rotation = rotation;
     s.alpha = 1;
+    s.tint = 0xffffff;
+    s.anchor.set(0.5);
     s.scale.set(size / Math.max(texture.width, texture.height));
     return s;
   }
@@ -155,10 +157,18 @@ export class SystemView {
         const own = owners.some((pl) => pl.id === me?.id);
         const color = own ? 0x7bf0a0 : PLAYER_COLORS[owners[0]!.color % PLAYER_COLORS.length]!;
         g.circle(x, y, r * 1.3).stroke({ width: 2.5, color, alpha: 0.9 });
+        // A small flag in the owner's color on top.
+        const flag = art ? artTexture("space.planet-owned-flag") : undefined;
+        if (flag) {
+          const f = this.sprite(flag, x + r * 0.35, y - r * 0.75, Math.max(10, r * 0.9));
+          f.anchor.set(0.5, 1);
+          f.tint = color;
+        }
       }
       if (this.selected === p.id) {
         const ring = art ? artTexture("space.planet-ring-selected") : undefined;
-        if (ring) this.sprite(ring, x, y, r * 3.4);
+        // Ring art: inner edge at radius 100 of 256 for a planet 200 wide.
+        if (ring) this.sprite(ring, x, y, r * 2.3 * 1.28);
         else front.circle(x, y, r * 1.6).stroke({ width: 2.5, color: 0xffffff, alpha: 0.9 });
       }
       const people = Object.values(state.units).filter((u) => u.planetId === p.id).length;
@@ -188,7 +198,7 @@ export class SystemView {
       // Ship art points right; the launch pad rocket (fallback) points up.
       const ship = art ? artFrames(`ship.${f.rocket === "combat" ? "rocket-big" : "rocket-small"}`) : [];
       const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket === "combat" ? "building.rocket-big" : "building.rocket-small") : undefined;
-      if (rocket) this.sprite(rocket, x, y, Math.max(14, k * 0.35), angle + (ship.length ? 0 : Math.PI / 2));
+      if (rocket) this.sprite(rocket, x, y, Math.max(18, k * 0.5), angle + (ship.length ? 0 : Math.PI / 2));
       else {
         const s = Math.max(5, k * 0.12);
         front.poly([x + Math.cos(angle) * s * 1.6, y + Math.sin(angle) * s * 1.6, x + Math.cos(angle + 2.4) * s, y + Math.sin(angle + 2.4) * s, x + Math.cos(angle - 2.4) * s, y + Math.sin(angle - 2.4) * s]).fill(color);
