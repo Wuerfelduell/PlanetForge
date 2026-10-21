@@ -170,7 +170,7 @@ function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
 function portrait(p,expression){
  // A 3/4 face with two eyes; bust expands toward the bottom, without a background tile.
  const variant=bodyVariants[p.body];
- if(variant?.portraitBody)return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${variant.portraitBody(p)}${head(p,expression,true)}${clothing(p,true)}${variant.arms(p,{state:'idle',frame:0,angle:0})}</g>`;
+ if(variant?.portraitBody)return `<g transform="translate(-12 -70) scale(4.8)" stroke-width="2.5">${variant.portraitBody(p)}${head(p,expression,true)}${clothing(p,true)}${variant.arms(p,{state:'idle',frame:0,angle:0})}</g>`;
  return `<g transform="translate(-30 -70) scale(4.8)" stroke-width="2.5">${['quills','shell','spiral','wings','striped'].includes(p.tail)?tail(p):''}${group('bust',path('M35 113Q37 84 65 83Q92 80 102 113Q69 124 35 113Z',C(p.color)))}${head(p,expression,true)}${clothing(p,true)}</g>`;
 }
 function symbol(p){
