@@ -65,6 +65,9 @@ export interface SaveOptions {
   world?: WorldOptions;
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
+  /** coop: AI factions in the system (0-4) and how hard they play (migration 20261021120000). */
+  factions?: number;
+  difficulty?: "cozy" | "normal" | "hard";
 }
 
 export async function createSave(slot: number, name: string, displayName: string, options: SaveOptions, people: string | null = null): Promise<string> {

@@ -7,7 +7,7 @@ import "./mainMenu.css";
 
 /**
  * Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only.
- * "factions" is coop plus AI neighbors in the system (local only for now).
+ * "factions" is coop plus AI neighbors in the system.
  */
 export interface NewGameOptions {
   mode: "coop" | "versus" | "factions";
@@ -204,8 +204,8 @@ export class MainMenu {
       ${this.renderWorld()}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
-        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", factions || this.where === "local", "Offline auf diesem Gerät")}
-        ${factions ? `<button class="menu-choice" disabled>${this.icon("join", "👥")} Online<small>Mit Fraktionen bald</small></button>` : pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
+        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
+        ${pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
       </div>
       ${confirm}
       <div class="menu-actions">
@@ -362,7 +362,7 @@ export class MainMenu {
         break;
       case "start":
         // Starting alone over a running local game asks first; online games use a free slot.
-        if ((this.where === "local" || this.choice.mode === "factions") && this.choice.mode !== "versus" && this.actions.current()) {
+        if (this.where === "local" && this.choice.mode !== "versus" && this.actions.current()) {
           this.confirmNew = true;
           this.render();
           break;
@@ -383,7 +383,7 @@ export class MainMenu {
     this.busy = true;
     this.error = "";
     this.render();
-    const where = this.choice.mode === "versus" ? "online" : this.choice.mode === "factions" ? "local" : this.where;
+    const where = this.choice.mode === "versus" ? "online" : this.where;
     Promise.resolve(this.actions.newGame({ ...this.choice }, where, this.slot))
       .then(() => {
         this.busy = false;

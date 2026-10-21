@@ -172,7 +172,14 @@ async function boot(): Promise<void> {
       },
       async newGame(options, where, slot) {
         if (where === "local") newLocalGame(options);
-        else await online.create({ mode: options.mode === "factions" ? "coop" : options.mode, goal: options.goal, invaders: options.invaders, world: worldOptions(options.world) }, slot, options.people);
+        else {
+          const factions = options.mode === "factions";
+          await online.create(
+            { mode: options.mode === "versus" ? "versus" : "coop", goal: options.goal, invaders: options.invaders, world: worldOptions(options.world), factions: factions ? options.factions : 0, difficulty: factions ? options.difficulty : "normal" },
+            slot,
+            options.people,
+          );
+        }
       },
       openOnline: () => void online.open(),
       save() {

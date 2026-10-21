@@ -61,7 +61,7 @@ export interface StepInput {
   request: Request;
   now: number;
   /** What the host picked when creating the save; used when the state is (re)created. */
-  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "maxPlayers" | "world">;
+  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "maxPlayers" | "world" | "factions" | "difficulty">;
 }
 
 export type StepResult =
