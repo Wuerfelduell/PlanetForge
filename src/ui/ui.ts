@@ -118,7 +118,9 @@ export class Ui {
   }
 
   private res(resource: ResourceId): string {
-    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
+    // The name as tooltip: planks and bricks look like gold and copper bars (Seb, 2026-10-21).
+    const { name, icon } = RESOURCES[resource];
+    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${name}" title="${name}">` : `<span title="${name}">${icon}</span>`;
   }
 
   /** Icon of a field action: Codex art where it exists, else the emoji. */
@@ -740,7 +742,11 @@ export class Ui {
         const cost = Object.entries(next.cost)
           .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
           .join(" ");
-        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}</span></button>`;
+        const short = Object.entries(next.cost)
+          .filter(([r, v]) => economy.resources[r as ResourceId] < (v as number))
+          .map(([r]) => RESOURCES[r as ResourceId].name);
+        const missing = !locked && short.length ? `<br>Fehlt: ${short.join(", ")}` : "";
+        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
       }
       actions = `${info}${upgrade}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
