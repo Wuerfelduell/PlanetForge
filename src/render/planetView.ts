@@ -599,7 +599,9 @@ export class PlanetView {
         return;
       }
       wedge(`biome.${s.biome}.wedge`, i);
-      if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
+      // Burnt by invaders: own art once it exists, the pollution overlay until then.
+      if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
+      else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
       if (s.building) {
         const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;

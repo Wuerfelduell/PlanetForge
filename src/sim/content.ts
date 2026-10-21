@@ -403,6 +403,11 @@ export const INVADERS = {
   reward: { science: 30, iron: 15 },
   /** Never kills the last inhabitants of a planet, so it can grow again. */
   minSurvivors: 2,
+  /**
+   * Undefended rounds (no battery firing, nobody fighting): the wrecked building's field and this
+   * many more fields burn. Scorched earth yields nothing until it is cleared (terraform).
+   */
+  scorchPerUndefendedRound: 1,
   /** Damage to a shield segment per siege round. */
   shieldDamage: 25,
   /** Chance that a wave goes for the shield once a segment stands (design 13.3). */
