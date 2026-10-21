@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each release checkpoint remains independently reproducible.
-const RELEASE = 2;
+const RELEASE = 3;
 const assets = [];
 const p = (d, token, extra = '') => `<path d="${d}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
 const circle = (x,y,r,token,extra='') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -107,6 +107,57 @@ function menuButton(state) {
     p(`M44 ${top+12} H596`,null,`stroke="${C(token,.18)}" stroke-width="4"`);
 }
 if(RELEASE>=2)for(const state of ['normal','pressed','disabled'])emit(`ui.button-menu${state==='normal'?'':'-'+state}`,'ui',menuButton(state),640,160,{stroke:6,sliceInsets:[48,48,48,48],tags:['ui','menu','button',state]});
+
+function iconPlanet() {
+  return circle(64,64,40,'water')+p('M26 51 Q34 28 57 25 L70 35 L65 47 L49 43 L41 55Z','grass')+
+    p('M68 67 L91 57 L103 69 L93 87 L75 98 L65 83Z','leaf')+
+    p('M86 31 A40 40 0 0 1 41 97 Q107 85 86 31Z','ink','stroke="none" opacity="0.2"')+shine('M32 51 Q36 39 46 34');
+}
+function iconRocket(token='clay') {
+  return p('M40 52 L42 29 Q43 24 49 28 L69 43 M40 76 L42 99 Q43 104 49 100 L69 85',token)+
+    rect(22,52,22,24,5,'rock')+p('M33 46 Q73 36 105 64 Q73 92 33 82Z','cream')+
+    p('M84 50 Q96 55 105 64 Q96 73 84 78Z',token)+shade('M33 73 Q67 80 88 73 L84 78 Q60 91 33 82Z','cream')+
+    circle(60,64,12,'deep-water')+circle(60,64,8,'science')+shine('M39 51 L48 49',2)+shine('M57 60 L61 59',2);
+}
+function menuIcon(name) {
+  switch(name) {
+    case 'new-game':return iconPlanet()+circle(96,94,22,'ok')+p('M96 82 V106 M84 94 H108',null,`stroke="${C('cream')}" stroke-width="6"`);
+    case 'continue':return iconPlanet()+p('M53 40 Q49 38 49 44 V85 Q49 91 55 87 L86 68 Q91 64 85 60Z','cream')+shine('M56 48 L73 59',2);
+    case 'load':return p('M34 14 H82 L108 39 V88 L76 115 H34 L17 90 V36Z','crystal')+
+      shade('M82 15 L76 56 L108 39 V88 L76 115 V56Z','crystal')+rect(36,18,43,27,5,'paper')+rect(57,22,12,19,3,'rock-dark')+
+      g(iconPlanet(),'translate(22 27) scale(0.7)','stroke-width="4.3"')+shine('M25 40 V66',3);
+    case 'join':return g(iconRocket(),'translate(-1 26) scale(0.6) rotate(-25 64 64)','stroke-width="5"')+
+      g(iconRocket('crystal'),'translate(129 26) scale(-0.6 0.6) rotate(-25 64 64)','stroke-width="5"')+
+      star(64,36,9,'energy')+p('M43 100 Q64 111 85 100',null,`stroke="${C('science')}" stroke-width="4"`);
+    case 'mode-coop':return g(citizen('beaver',false),'translate(34 111) scale(0.8)','stroke-width="3.8"')+
+      g(citizen('hedgehog',false),'translate(87 111) scale(0.8)','stroke-width="3.8"')+
+      p('M64 47 Q39 32 46 20 Q54 10 64 23 Q75 10 83 20 Q90 32 64 47Z','danger')+shine('M49 24 Q51 20 55 22',2);
+    case 'mode-versus':return g(iconRocket('crystal'),'rotate(-45 64 64)','stroke-width="3"')+
+      g(iconRocket(),'rotate(-135 64 64)','stroke-width="3"');
+    case 'slot-empty':return circle(64,64,43,null,`stroke="${C('rock')}" stroke-width="4" stroke-dasharray="10 10.8"`)+
+      p('M42 43 Q64 30 86 43 M35 73 Q63 86 93 73',null,`stroke="${C('rock')}" stroke-width="2" stroke-dasharray="5 8"`);
+    case 'trash':return p('M29 40 H99 L94 103 Q93 113 82 113 H46 Q35 113 34 103Z','rock')+
+      shade('M81 41 H98 L93 103 Q93 113 81 113 H71Z','rock')+rect(23,28,82,14,6,'paper')+
+      p('M49 28 V21 Q49 15 56 15 H73 Q80 15 80 21 V28',null,'stroke-width="6"')+
+      p('M50 56 L52 96 M77 56 L75 96',null,'stroke-width="5"')+shine('M40 51 L42 76');
+    case 'copy':return rect(20,14,67,82,10,'paper')+shade('M72 16 H80 Q87 16 87 24 V86 Q87 96 77 96 H71Z','paper')+
+      rect(43,35,65,80,10,'cream')+p('M53 52 H92',null,`stroke="${C('clay')}" stroke-width="5"`)+
+      [59,75,91].map(x=>circle(x,77,3,'rock-dark','stroke="none"')).join('')+shine('M51 43 H81');
+    case 'profile':return circle(64,64,49,'cream')+circle(39,44,10,'ink')+circle(88,44,10,'ink')+
+      p('M33 60 Q31 36 64 36 Q97 36 96 60 V75 Q95 98 64 98 Q33 98 33 75Z','ink')+
+      rect(54,79,20,13,3,'cream','stroke="none"')+p('M64 80 V90',null,'stroke-width="2"')+shine('M28 43 Q32 32 41 28');
+    case 'credits':return g(star(42,63,31,'energy'),'','stroke-width="3"')+
+      p('M42 32 Q45 60 73 63 Q45 66 42 94 Q39 66 11 63 Q39 60 42 32Z',null)+
+      p('M87 83 V29 L112 21 V42 L87 50',null,'stroke-width="6"')+ellipse(77,88,13,10,'crystal','transform="rotate(-20 77 88)"')+
+      p('M87 29 L112 21 V38 L87 46Z','crystal')+shine('M88 29 L105 25',2);
+    case 'quit':return rect(24,14,77,100,9,'rock')+rect(34,24,57,88,5,'space')+
+      p('M35 25 L69 16 Q75 14 75 21 V107 Q75 114 69 112 L35 104Z','paper')+
+      shade('M65 20 L73 18 V109 L65 107Z','paper')+circle(63,66,4,'iron')+shine('M41 32 V86')+
+      p('M86 75 H114 M103 64 L114 75 L103 86',null,`stroke="${C('ascension')}" stroke-width="6"`);
+    default:throw new Error(`Unknown menu icon ${name}`);
+  }
+}
+if(RELEASE>=3)for(const name of ['new-game','continue','load','join','mode-coop','mode-versus','slot-empty','trash','copy','profile','credits','quit'])emit(`ui.icon-${name}`,'ui',menuIcon(name));
 
 write('art/manifest/menu.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Menu art: ${assets.length} ids generated (release ${RELEASE}).`);

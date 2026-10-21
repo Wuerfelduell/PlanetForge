@@ -157,6 +157,258 @@
         48,
         48
       ]
+    },
+    {
+      "id": "ui.icon-new-game",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-new-game.svg",
+      "out": "public/assets/sprites/ui/ui-icon-new-game.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-continue",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-continue.svg",
+      "out": "public/assets/sprites/ui/ui-icon-continue.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-load",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-load.svg",
+      "out": "public/assets/sprites/ui/ui-icon-load.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-join",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-join.svg",
+      "out": "public/assets/sprites/ui/ui-icon-join.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-mode-coop",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-mode-coop.svg",
+      "out": "public/assets/sprites/ui/ui-icon-mode-coop.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-mode-versus",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-mode-versus.svg",
+      "out": "public/assets/sprites/ui/ui-icon-mode-versus.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-slot-empty",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-slot-empty.svg",
+      "out": "public/assets/sprites/ui/ui-icon-slot-empty.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-trash",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-trash.svg",
+      "out": "public/assets/sprites/ui/ui-icon-trash.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-copy",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-copy.svg",
+      "out": "public/assets/sprites/ui/ui-icon-copy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-profile",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-profile.svg",
+      "out": "public/assets/sprites/ui/ui-icon-profile.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-credits",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-credits.svg",
+      "out": "public/assets/sprites/ui/ui-icon-credits.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-quit",
+      "category": "ui",
+      "src": "art/src/ui/ui-icon-quit.svg",
+      "out": "public/assets/sprites/ui/ui-icon-quit.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "menu"
+      ],
+      "phase": "P1"
     }
   ]
 }
