@@ -5,6 +5,10 @@ Project `PlanetForge` (eu-west-1), `https://cpqegtakybjqhihevzwt.supabase.co`.
 - `migrations/` – database schema: saves with 5 slots per player, members, RLS, private Realtime rooms `game:<id>`.
 - `functions/game-command/` – the game authority. `logic.ts` (pure, unit tested) wraps the shared simulation from `src/sim`; `index.ts` does the I/O.
 
+## Table grants
+
+New tables in `public` get no Data API grants by default (Supabase, from 2026-10-30), also when migrations recreate the schema. Every migration that creates a table grants explicitly in the same file: nothing to `anon`, only what the client needs to `authenticated` (on top of RLS), `all` to `service_role`.
+
 ## Deploying game-command
 
 The function imports `src/sim`, so it is deployed as one bundle:
