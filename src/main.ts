@@ -9,6 +9,8 @@ import { PlanetView } from "./render/planetView";
 import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
+import { music } from "./audio/music";
+import { mountMusicControl, unlockMusicOnFirstGesture } from "./audio/musicControl";
 import "./style.css";
 
 async function boot(): Promise<void> {
@@ -22,6 +24,9 @@ async function boot(): Promise<void> {
     autoDensity: true,
   });
   host.appendChild(app.canvas);
+
+  mountMusicControl(music);
+  unlockMusicOnFirstGesture(music);
 
   const saved = loadGame();
   let session: GameSession = saved ? new LocalSession(saved) : LocalSession.newGame();
@@ -151,6 +156,7 @@ async function boot(): Promise<void> {
       view.play(events, session.state);
       view.onEvents(events);
       playEventSounds(events);
+      updateMusicMood(events, session.playerId);
     }
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
@@ -202,3 +208,13 @@ function playEventSounds(events: GameEvent[]): void {
     if (id) sfx.play(id);
   }
 }
+
+/** Tense music while the own people fight or invaders besiege the planet, calm again once they are gone. */
+function updateMusicMood(events: GameEvent[], playerId: string): void {
+  for (const e of events) {
+    if (e.type === "battle" && (e.attacker === playerId || e.defender === playerId)) music.alert();
+    else if (e.type === "invasionArrived" || e.type === "siege") music.alert();
+    else if (e.type === "invasionDefeated" || e.type === "invasionLeft") music.setMood("calm");
+  }
+}
+
