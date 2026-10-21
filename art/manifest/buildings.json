@@ -700,6 +700,82 @@
       "phase": "P0"
     },
     {
+      "id": "building.housing.t4",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t4.svg",
+      "out": "public/assets/sprites/buildings/housing-t4.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier4",
+        "idle"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t4.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t4-construction.svg",
+      "out": "public/assets/sprites/buildings/housing-t4-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows",
+        "scaffolding"
+      ],
+      "tags": [
+        "housing",
+        "tier4",
+        "construction"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "building.housing.t4.off",
+      "category": "buildings",
+      "src": "art/src/buildings/housing-t4-off.svg",
+      "out": "public/assets/sprites/buildings/housing-t4-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "windows"
+      ],
+      "tags": [
+        "housing",
+        "tier4",
+        "off"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "building.mine.t1",
       "category": "buildings",
       "src": "art/src/buildings/mine-t1.svg",

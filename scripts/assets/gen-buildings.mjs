@@ -25,11 +25,28 @@ const roof = (y,token='clay') => path(`M36 ${y+30}Q28 ${y+24} 40 ${y+14}L108 ${y
 const crate = (x,y,s=34) => rect(x,y,s,s,'sand',7)+line(`M${x+6} ${y+6}L${x+s-6} ${y+s-6}M${x+s-6} ${y+6}L${x+6} ${y+s-6}`,'iron',4);
 
 function housing(tier){
+  if(tier===2)return foot(rect(167,63,25,61,'rock',8)+rect(162,57,35,13,'rock-dark',6)+anchor('chimney-smoke-anchor',180,57)+
+    rect(53,122,150,104,'iron',17)+line('M62 146H194M62 168H194M62 190H194M62 211H194','clay',4)+
+    line('M72 125V220M185 125V220','iron',9)+roof(100,'iron')+
+    line('M70 106L81 115L92 105M101 91L112 101L123 91M133 90L144 101L155 92M165 107L176 116L187 108','clay',4)+
+    group('windows',windowPane(84,153,28,31)+windowPane(146,153,28,31))+
+    rect(106,190,45,36,'paper',8)+door(114,194,29,31)+glint('M62 140V159'));
   if(tier===3){
-    const pods=[{x:62,y:151,w:132,c:'clay'},{x:81,y:94,w:113,c:'sand'},{x:62,y:37,w:132,c:'paper'}];
-    return foot(post(167,18,40,'rock')+anchor('chimney-smoke-anchor',173,18)+pods.map(p=>
-      rect(p.x,p.y,p.w,70,p.c,26)+path(`M${p.x+p.w-18} ${p.y+16}Q${p.x+p.w} ${p.y+63} ${p.x+p.w-24} ${p.y+64}H${p.x+20}`,'none',`stroke="${paint(p.c,-.18)}" stroke-width="9"`)+glint(`M${p.x+16} ${p.y+17}H${p.x+48}`)).join('')+
-      group('windows',[[83,56],[139,56],[99,113],[153,113],[79,172],[159,172]].map(([x,y])=>windowPane(x,y,20,24)).join(''))+door(114,184,31,41));
+    return foot(rect(168,37,27,68,'iron',8)+rect(162,31,39,14,'clay',6)+anchor('chimney-smoke-anchor',181,31)+
+      rect(51,102,154,124,'rock',18)+path('M187 114V205Q187 216 174 216H66','none',`stroke="${paint('rock-dark')}" stroke-width="10"`)+
+      roof(77,'clay')+rect(49,155,158,11,'paper',5)+
+      line('M58 137H70M183 137H198M58 186H69M184 186H199M65 212H82M175 212H190','paper',4)+
+      rect(58,146,13,7,'clay',2,'stroke="none"')+rect(182,171,15,8,'clay',2,'stroke="none"')+
+      group('windows',[118,179].map(y=>windowPane(76,y,27,28)+windowPane(153,y,27,28)).join(''))+
+      door(113,181,30,44)+glint('M59 111V123'));
+  }
+  if(tier===4){
+    return foot(post(166,25,30,'rock')+anchor('chimney-smoke-anchor',172,25)+line('M97 39V18M88 24H105','rock-dark',4)+
+      rect(62,37,132,189,'paper',24)+path('M179 53V207Q179 215 168 215','none',`stroke="${paint('paper',-.18)}" stroke-width="10"`)+
+      rect(58,35,140,16,'clay',8)+[89,131,173].map(y=>rect(58,y,140,9,'clay',4)).join('')+
+      group('windows',[58,100,142].flatMap(y=>[78,118,158].map(x=>windowPane(x,y,20,23))).join('')+
+        windowPane(78,188,20,23)+windowPane(158,188,20,23))+
+      door(113,188,30,37)+glint('M69 59V78'));
   }
   const chimney=tier===2?rect(170,55,25,77,'iron',9)+rect(164,49,37,15,'clay',7):'';
   return foot(chimney+anchor('chimney-smoke-anchor',182,tier===2?49:88)+rect(52,129,152,100,tier===1?'paper':'clay',34)+
@@ -276,7 +293,7 @@ const buildings = [
   {id:'library',tiers:1,phase:'P1',draw:library},
   {id:'refinery',tiers:1,phase:'P1',draw:refinery},
   {id:'observatory',tiers:1,phase:'P1',parts:['dome'],draw:observatory},
-  {id:'housing',tiers:3,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
+  {id:'housing',tiers:4,phase:'P0',parts:['chimney-smoke-anchor','windows'],draw:housing},
   {id:'mine',tiers:2,phase:'P0',parts:['cart','wheel'],draw:mine},
   {id:'pump',tiers:2,phase:'P0',parts:['pump-arm'],draw:pump},
   {id:'farm',tiers:2,phase:'P0',draw:farm},
