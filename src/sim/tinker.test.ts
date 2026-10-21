@@ -120,7 +120,7 @@ describe("tinkering", () => {
     const g = world(["mountains", "savanna", "ocean"]);
     const home = homePlanet(g, P1.id)!;
     expect(buildBlocker(g, home, seg(g, 0), "mine")).toBe("Hier gibt es nichts abzubauen");
-    expect(buildBlocker(g, home, seg(g, 0), "pump")).toBe("Braucht Wasser im Feld oder ein Nachbar-Meer");
+    expect(buildBlocker(g, home, seg(g, 0), "pump")).toBe("Braucht Wasser im Feld, ein Nachbar-Meer oder einen Nachbar-Gletscher");
     expect(buildBlocker(g, home, seg(g, 1), "pump")).toBeNull();
     seg(g, 0).deposits = [{ resource: "copper", amount: 10, max: 10, infinite: false, byHand: false }];
     expect(buildBlocker(g, home, seg(g, 0), "mine")).toBeNull();

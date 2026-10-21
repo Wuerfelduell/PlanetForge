@@ -600,7 +600,9 @@ export class PlanetView {
         wedge("overlay.fog", i);
         return;
       }
-      wedge(`biome.${s.biome}.wedge`, i);
+      // Biomes the art does not have yet keep their placeholder color.
+      if (artTexture(`biome.${s.biome}.wedge.${n}`)) wedge(`biome.${s.biome}.wedge`, i);
+      else g.poly(sector(ART_BODY * k, R, mid - step / 2, mid + step / 2)).fill(BIOMES[s.biome].color);
       // Burnt by invaders: own art once it exists, the pollution overlay until then.
       if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
       else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
@@ -858,6 +860,9 @@ const PROPS: Partial<Record<string, string[]>> = {
   swamp: ["reed-a", "mushroom", "reed-b"],
   tundra: ["pine-snow-a", "ice-rock", "pine-snow-b"],
   crystal: ["crystal-a", "crystal-b", "crystal-c"],
+  glacier: ["serac-a", "ice-floe", "serac-b"],
+  lava: ["vent-a", "basalt", "vent-b"],
+  ash: ["ash-cone", "dead-tree", "ash-rock"],
 };
 
 function sector(r0: number, r1: number, a0: number, a1: number): number[] {

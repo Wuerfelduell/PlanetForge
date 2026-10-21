@@ -22,7 +22,19 @@ Die Zahlen sind ein **erster Wurf aus Rechnung, nicht aus Playtests**. Sie sind 
 
 10 Ticks pro Sekunde wie im Prototyp. Ein Planetenumlauf (Zyklus) dauert im gemeinsamen Modus 60 Sekunden wie im Original und gegeneinander 20 Sekunden. Damit die Wirtschaft in beiden Modi gleich rechnet, sind Erträge **pro Arbeiter und Sekunde** angegeben, Nahrung und Aufstiegspunkte pro Minute. Zählwerte wie „Ruine hält 2 Umläufe“ sind absichtlich in Umläufen. Der Gastgeber wählt beim Erstellen ein Tempo (`TEMPO`: Gemütlich 0,75×, Normal, Schnell 1,5× auf die ganze Spieluhr) und eine Schwierigkeit (`DIFFICULTY`: KI-Aggression, Ultimaten, Monsterstärke; Gemütlich entspricht dem friedlichen Modus). Die Uhr läuft nur bei offener Lobby, eine offene Lobby ohne Spieler schließt nach 10 Minuten. Energie ist kein Vorrat, sondern eine laufende Bilanz pro Planet. Verschmutzung ist ein Planetenwert von 0 bis 100.
 
-IDs folgen der Asset-Liste aus dem Codex-Prompt: Biome `forest`, `savanna`, `mountains`, `ocean`, `swamp`, `desert`, `tundra`, `crystal`; Gebäude `housing`, `pump` usw.; Sprite-ID `building.<id>.t<n>` (Helfer `buildingSprite()`). Der Prototyp nutzt noch `meadow`, `mountain`, `sea`, `hut`, `well`. Zuordnung beim Umstellen: meadow → savanna, mountain → mountains, sea → ocean, hut → housing, well → pump.
+IDs folgen der Asset-Liste aus dem Codex-Prompt: Biome `forest`, `savanna`, `mountains`, `ocean`, `swamp`, `desert`, `tundra`, `crystal`, `glacier`, `lava`, `ash` (siehe „Eis- und Lavafelder“); Gebäude `housing`, `pump` usw.; Sprite-ID `building.<id>.t<n>` (Helfer `buildingSprite()`). Der Prototyp nutzt noch `meadow`, `mountain`, `sea`, `hut`, `well`. Zuordnung beim Umstellen: meadow → savanna, mountain → mountains, sea → ocean, hut → housing, well → pump.
+
+## Eis- und Lavafelder
+
+Eis- und Lavaplaneten haben eigene Felder, damit sie sich anders spielen als die Heimat:
+
+| Feld | Bauen | Vorkommen | Besonderheit | Terraforming |
+| --- | --- | --- | --- | --- |
+| Gletscher (`glacier`) | nein | Wasser 100 (Hand), Stein 20 (Hand) | Pumpen daneben gehen auch ohne Wasser im Feld, +30 % je Nachbar-Gletscher | Abtauen (30 Holz) → Tundra |
+| Lavafeld (`lava`) | nur Mine, Gießerei, Wachturm, Abwehrbatterie | Stein 60 (Hand), Eisen 45, Gold 20 (Stufe 2) | Gießerei +30 % je Nachbar-Lava, Hütten −25 % je Nachbar-Lava (Hitze) | Abkühlen (30 Wasser) → Aschefeld |
+| Aschefeld (`ash`) | ja | Sand 50 (Hand), Stein 30 (Hand), Kohle 25 | Fruchtbar: Farm darf drauf, +15 % je Nachbar-Asche | Bäume pflanzen (5 Nahrung) → Wald |
+
+Ein Lavaplanet wird so Schritt für Schritt bewohnbar: Lava abkühlen, auf der Asche Wald pflanzen. Eisplaneten liefern viel Wasser, aber wenig Bauplatz, bis man die Gletscher abtaut. Die Heimat bleibt gemäßigt, die neuen Felder kommen nur auf Eis-, Lava- und (selten Asche) Trockenplaneten vor. Seltenes Uran kann auch auf Lava liegen, seltene Kohle auf Asche.
 
 ## Grundgedanke
 

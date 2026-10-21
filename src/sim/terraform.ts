@@ -17,7 +17,7 @@ export interface TerraformDef {
  * New land and fresh trees start with a small deposit that regrows like any untouched one.
  */
 export const TERRAFORM: Record<TerraformKind, TerraformDef> = {
-  plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna"], to: "forest", cost: { food: 5 } },
+  plantTrees: { name: "Bäume pflanzen", icon: "🌱", from: ["forest", "savanna", "ash"], to: "forest", cost: { food: 5 } },
   fillSand: { name: "Mit Sand aufschütten", icon: "🏜️", from: ["ocean"], to: "desert", cost: { sand: 30 } },
   fillClay: { name: "Mit Erde aufschütten", icon: "🟫", from: ["ocean"], to: "savanna", cost: { clay: 30 } },
   // Seb: draining a swamp works too, but costs more sand than filling in the sea.
@@ -26,9 +26,12 @@ export const TERRAFORM: Record<TerraformKind, TerraformDef> = {
   clearScorched: {
     name: "Verbrannte Erde aufräumen",
     icon: "🧹",
-    from: ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal"],
+    from: ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal", "lava", "ash"],
     cost: { food: 5, stone: 10 },
   },
+  // Ice and lava worlds open up step by step: the glacier thaws to tundra, lava cools to ash.
+  thawGlacier: { name: "Abtauen", icon: "🔥", from: ["glacier"], to: "tundra", cost: { wood: 30 } },
+  coolLava: { name: "Abkühlen", icon: "💧", from: ["lava"], to: "ash", cost: { water: 30 } },
 };
 
 export const NOT_SCORCHED = "Hier ist nichts verbrannt";
