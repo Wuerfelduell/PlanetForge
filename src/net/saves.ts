@@ -14,6 +14,8 @@ export interface SaveSlot {
   isHost: boolean;
   playerCount: number;
   mode: "coop" | "versus";
+  /** The people this slot plays (or picked), if known. */
+  people: string | null;
 }
 
 const errorText: Record<string, string> = {
@@ -21,6 +23,7 @@ const errorText: Record<string, string> = {
   "game full": "Das Spiel ist schon voll",
   "not your save": "Nur der Host kann diesen Spielstand entfernen",
   "not signed in": "Nicht angemeldet",
+  "people taken": "Dieses Volk ist in dem Spiel schon vergeben. Wähle ein anderes.",
 };
 
 function fail(message: string): never {
@@ -44,6 +47,7 @@ export async function listSaves(): Promise<SaveSlot[]> {
     isHost: r.is_host,
     playerCount: Number(r.player_count),
     mode: r.mode === "versus" ? "versus" : "coop",
+    people: r.people ?? null,
   }));
 }
 
@@ -60,16 +64,24 @@ export interface SaveOptions {
   invaders: "off" | "normal" | "strong";
 }
 
-export async function createSave(slot: number, name: string, displayName: string, options: SaveOptions): Promise<string> {
-  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName, p_max_players: 4, p_options: options });
+export async function createSave(slot: number, name: string, displayName: string, options: SaveOptions, people: string | null = null): Promise<string> {
+  const { data, error } = await supabase().rpc("create_save", { p_slot: slot, p_name: name, p_display_name: displayName, p_max_players: 4, p_options: options, p_people: people });
   if (error) fail(error.message);
   return data.id;
 }
 
-export async function joinSave(code: string, slot: number, displayName: string): Promise<string> {
-  const { data, error } = await supabase().rpc("join_save", { p_code: code, p_slot: slot, p_display_name: displayName });
+/** A returning member keeps their people; `people` only counts for a new member. */
+export async function joinSave(code: string, slot: number, displayName: string, people: string | null = null): Promise<string> {
+  const { data, error } = await supabase().rpc("join_save", { p_code: code, p_slot: slot, p_display_name: displayName, p_people: people });
   if (error) fail(error.message);
   return data.id;
+}
+
+/** Peoples already played in the game behind this code (coop: each people once). */
+export async function takenPeoples(code: string): Promise<string[]> {
+  const { data, error } = await supabase().rpc("taken_peoples", { p_code: code });
+  if (error) fail(error.message);
+  return (data ?? []) as string[];
 }
 
 export async function leaveGame(gameId: string): Promise<void> {
