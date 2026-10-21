@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BIOMES, BUILDINGS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, SUPERNOVA, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
 
 /**
  * Walks the whole build and upgrade graph from a fresh home planet (Seb's playtest, 2026-10-21:
@@ -74,6 +74,11 @@ describe("reachability", () => {
         expect(resource.get(c as ResourceId) ?? Infinity, `${id}: ${c}`).toBeLessThanOrEqual(r.unlockLevel);
       }
     }
+  });
+
+  it("the sun shield is buildable once it unlocks, and needs the late chain", () => {
+    for (const c of Object.keys(SUPERNOVA.segmentCost)) expect(resource.get(c as ResourceId) ?? Infinity, c).toBeLessThanOrEqual(SUPERNOVA.unlockLevel);
+    expect(Object.keys(SUPERNOVA.segmentCost)).toEqual(expect.arrayContaining(["steel", "concrete"]));
   });
 
   it("gold is a late luxury: nothing before level 5 needs it", () => {

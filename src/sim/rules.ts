@@ -443,7 +443,7 @@ export function shieldFlightPlan(from: PlanetState, repair: boolean, economy?: E
   for (const [r, v] of Object.entries(repair ? SUPERNOVA.repairCost : SUPERNOVA.segmentCost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) + (v as number);
   // The colony rocket price is not paid twice: the crew rides a shuttle.
   for (const [r, v] of Object.entries(ROCKETS.colony.cost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) - (v as number);
-  return { ...plan, cost };
+  return { ...plan, cost, seconds: plan.seconds + SUPERNOVA.flightSeconds };
 }
 
 export function rocketCapacity(economy: EconomyState | undefined, rocket: RocketId): number {
