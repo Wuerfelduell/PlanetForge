@@ -94,6 +94,7 @@ function expireOffer(state: GameState, faction: FactionState, events: GameEvent[
   const offer = faction.offer;
   if (!offer || state.tick < offer.expiresTick) return;
   faction.offer = null;
+  if (faction.vote?.action === "offer") faction.vote = null;
   if (offer.kind === "ultimatum") declareWar(state, faction, "ultimatumRefused", events);
   else shiftAttitude(faction, -3);
 }

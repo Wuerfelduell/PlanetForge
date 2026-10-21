@@ -6,7 +6,7 @@ import { tradeBlocker, tradePrice } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
-import { answerOffer, factionById, gift, propose, trade } from "./diplomacy";
+import { decide, factionById, gift, trade, vote } from "./diplomacy";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
 import { terraform, terraformBlocker } from "./terraform";
@@ -106,16 +106,17 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     case "factionTrade":
     case "gift":
     case "diplomacy":
-    case "answerOffer": {
+    case "answerOffer":
+    case "voteDiplomacy": {
       if (!state.lobby.open) return "Das Spiel ist geschlossen";
       const faction = factionById(state, cmd.faction);
       if (!faction) return "Unbekannte Fraktion";
-      // Seb: war, peace and alliances are team decisions; until there is a vote, the host decides.
-      if (cmd.type !== "factionTrade" && cmd.type !== "gift" && playerId !== state.hostId) return "Nur der Gastgeber verhandelt mit Fraktionen";
       if (cmd.type === "factionTrade") return trade(state, player, faction, cmd.resource, cmd.amount, events);
       if (cmd.type === "gift") return gift(state, player, faction, cmd.resource, cmd.amount, events);
-      if (cmd.type === "diplomacy") return propose(state, player, faction, cmd.action, events);
-      return answerOffer(state, player, faction, cmd.accept, events);
+      // Seb: war, peace and alliances are team decisions (true majority); alone they happen at once.
+      if (cmd.type === "diplomacy") return decide(state, player, faction, cmd.action, true, events);
+      if (cmd.type === "answerOffer") return decide(state, player, faction, "offer", cmd.accept, events);
+      return vote(state, player, faction, cmd.yes, events);
     }
     case "assignUnit": {
       if (!state.lobby.open) return "Das Spiel ist geschlossen";
