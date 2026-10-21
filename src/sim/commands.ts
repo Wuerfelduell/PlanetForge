@@ -1,6 +1,7 @@
-import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
+import { BUILDINGS, CRYO, PEOPLE_IDS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
+import { createUnit } from "./units";
 import { placeBuilding } from "./build";
-import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, upgradeBlocker } from "./rules";
+import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
 import { tradeBlocker, tradePrice } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
@@ -221,6 +222,21 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
         if (own.length < -cmd.delta) return "Hier arbeiten keine Leute von dir";
         for (const u of own.slice(cmd.delta)) u.segment = null;
       }
+      return null;
+    }
+    case "thaw": {
+      const blocker = thawBlocker(state, planet, segment);
+      if (blocker) return blocker;
+      const economy = state.economies[planet.economyId!]!;
+      for (const r of RESOURCE_IDS) economy.resources[r] -= CRYO.thawCost[r] ?? 0;
+      const pod = segment.cryo!;
+      // Peoples somebody plays (AI factions included) stay theirs: take the next free one.
+      const taken = new Set(state.players.map((p) => p.people));
+      const start = PEOPLE_IDS.indexOf(pod.people);
+      const people = PEOPLE_IDS.map((_, i) => PEOPLE_IDS[(start + i) % PEOPLE_IDS.length]!).find((id) => !taken.has(id)) ?? pod.people;
+      for (let i = 0; i < pod.count; i++) createUnit(state, playerId, people, planet.id);
+      delete segment.cryo;
+      events.push({ type: "thawed", planetId: planet.id, segment: segment.index, people, count: pod.count, playerId });
       return null;
     }
     case "setGather": {
