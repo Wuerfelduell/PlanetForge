@@ -556,7 +556,10 @@ export class Ui {
   private launchButtons(state: GameState, planet: PlanetState, to: PlanetState, from = ""): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const idle = idleUnits(state, planet, this.playerId).length;
-    const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony"];
+    const level = economyOf(state, planet)?.ascension.level ?? 0;
+    // The starship joins the settler rocket once it is unlocked.
+    const rockets: RocketId[] =
+      to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : level >= ROCKETS.starship.unlockLevel ? ["colony", "starship"] : ["colony"];
     return rockets
       .map((rocket) => {
         const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
@@ -566,7 +569,7 @@ export class Ui {
         const cost = Object.entries(plan.cost)
           .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
           .join(" ");
-        const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `🚀 ${count} hinschicken`;
+        const label = rocket === "combat" ? `⚔️ Angriff mit ${count}` : `${ROCKETS[rocket].icon} ${count} hinschicken`;
         return `<button class="build" data-action="launch" data-value="${to.id}:${rocket}:${count}${from ? `:${from}` : ""}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${label}</span><span class="cost">${cost} · ${plan.seconds} s${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
       })
       .join("");

@@ -9,6 +9,8 @@ import {
   buildingStats,
   createGame,
   economyOfPlayer,
+  flightPlan,
+  ROCKETS,
   homePlanet,
   housing,
   powerFactor,
@@ -206,5 +208,17 @@ describe("new buildings", () => {
     expect(econ(g).resources.wood).toBe(before.wood - 10);
     expect(econ(g).resources.iron).toBe(before.iron + 5);
     expect(buildBlocker(g, homePlanet(g, P1.id)!, seg(g, 1), "market")).toBe("Nur eins pro Planet");
+  });
+
+  it("the starship flies on uranium, carries more and goes further than the settler rocket", () => {
+    const g = world(["savanna"]);
+    const home = homePlanet(g, P1.id)!;
+    const target = g.planets.find((p) => p.id !== home.id)!;
+    const ship = flightPlan(home, target, "starship", 6, econ(g));
+    const rocket = flightPlan(home, target, "colony", 3, econ(g));
+    expect(ship.cost.uranium).toBeGreaterThan(0);
+    expect(ship.cost.fuel).toBeUndefined();
+    expect(ship.seconds).toBeLessThan(rocket.seconds);
+    expect(ROCKETS.starship.capacity).toBeGreaterThan(ROCKETS.colony.capacity);
   });
 });

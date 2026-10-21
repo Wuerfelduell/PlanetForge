@@ -196,8 +196,8 @@ export class SystemView {
       const y = a.y + (b.y - a.y) * t;
       const angle = Math.atan2(b.y - a.y, b.x - a.x);
       // Ship art points right; the launch pad rocket (fallback) points up.
-      const ship = art ? artFrames(`ship.${f.rocket === "combat" ? "rocket-big" : "rocket-small"}`) : [];
-      const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket === "combat" ? "building.rocket-big" : "building.rocket-small") : undefined;
+      const ship = art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
+      const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket !== "colony" ? "building.rocket-big" : "building.rocket-small") : undefined;
       if (rocket) this.sprite(rocket, x, y, Math.max(18, k * 0.5), angle + (ship.length ? 0 : Math.PI / 2));
       else {
         const s = Math.max(5, k * 0.12);
