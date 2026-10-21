@@ -30,7 +30,10 @@ import {
   RESOURCE_IDS,
   RESOURCES,
   RULES,
+  RECIPES,
   segmentOutput,
+  segmentRecipe,
+  toolFactor,
   ticksPerCycle,
   workerCapacity,
   type Command,
@@ -44,7 +47,7 @@ import {
   type TerraformKind,
 } from "../sim";
 import { currentHint } from "./hints";
-import { buildingIconUrl, resourceIconUrl } from "../render/art";
+import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
 
 export interface UiActions {
   send(cmd: Command): void;
@@ -104,11 +107,11 @@ export class Ui {
   }
 
   private res(resource: ResourceId): string {
-    return this.art ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
+    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${RESOURCES[resource].icon}">` : RESOURCES[resource].icon;
   }
 
   private bicon(building: BuildingId): string {
-    return this.art ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
+    return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
   }
 
   /** The local player, whose people the +/- buttons move. */
@@ -644,8 +647,18 @@ export class Ui {
           <button class="round" data-action="assign" data-value="-1" ${workerCount(state, planet, s.index, this.playerId) > 0 ? "" : "disabled"}>－</button>
           <span>👤 ${workerCount(state, planet, s.index)}/${cap}${workerCount(state, planet, s.index) !== workerCount(state, planet, s.index, this.playerId) ? ` <small>(${workerCount(state, planet, s.index, this.playerId)} von dir)</small>` : ""}</span>
           <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, planet, this.playerId).length > 0 ? "" : "disabled"}>＋</button>
-          <span class="rate">${rate}${mult > 1 ? ` <small>Nachbarbonus ×${mult.toFixed(2)}</small>` : ""}</span>
+          <span class="rate">${rate}${mult !== 1 ? ` <small>Nachbarn ×${mult.toFixed(2)}</small>` : ""}${toolFactor(s, economy) < 1 ? ` <small>🔧 ohne Werkzeug langsamer</small>` : ""}</span>
         </div>`
+      : "";
+    const recipe = segmentRecipe(s);
+    const recipes = def?.crafts
+      ? `<div class="deposits">${def.crafts.recipes
+          .map((id) => {
+            const r = RECIPES[id];
+            const list = (c: Partial<Record<ResourceId, number>>) => Object.entries(c).map(([k, v]) => `${v}${this.res(k as ResourceId)}`).join(" ");
+            return `<button class="deposit${id === recipe ? " on" : ""}" data-action="gather" data-value="${id}" title="${r.name}">${list(r.inputs)} → ${list(r.outputs)}</button>`;
+          })
+          .join("")}</div>`
       : "";
 
     const queue = state.queues[planet.id] ?? [];
@@ -686,7 +699,7 @@ export class Ui {
             .join(" ");
           // Missing resources only: offer to queue the build instead of greying it out.
           const queueable = blocker === NOT_AFFORDABLE && !queued;
-          return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${bd.description}">
+          return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${blocker && !queueable && !locked ? `${blocker}. ` : ""}${bd.description}">
               <span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
@@ -695,7 +708,7 @@ export class Ui {
       actions = `<p class="muted">Hier kann man nicht bauen, aber Einwohner können sammeln.</p>${terraforms ? `<div class="builds">${terraforms}</div>` : ""}`;
     }
 
-    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${workers}${queuedNote}${actions}${hint}`;
+    return `<h2>${title}</h2><div class="deposits">${deposits}</div>${recipes}${workers}${queuedNote}${actions}${hint}`;
   }
 }
 

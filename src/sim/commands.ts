@@ -1,4 +1,4 @@
-import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { BUILDINGS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { placeBuilding } from "./build";
 import { shieldBlocker, shieldFlightPlan } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
@@ -200,6 +200,13 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       return null;
     }
     case "setGather": {
+      const crafts = segment.building ? BUILDINGS[segment.building].crafts : undefined;
+      if (crafts) {
+        // Crafting buildings: `gather` picks the recipe.
+        if (!crafts.recipes.includes(cmd.resource as RecipeId)) return "Das stellt dieses Gebäude nicht her";
+        segment.gather = cmd.resource;
+        return null;
+      }
       if (segment.building) return "Gebäude bestimmt, was abgebaut wird";
       const deposit = segment.deposits.find((d) => d.resource === cmd.resource && d.byHand);
       if (!deposit) return "Kann man hier nicht von Hand sammeln";

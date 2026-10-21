@@ -60,7 +60,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
 
   let state: GameState = {
-    version: 11,
+    version: 12,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -304,10 +304,14 @@ function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] 
   return out;
 }
 
+const TINKER_DEPOSITS = new Set<string>(["fiber", "copper"]);
+
 function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
+  // Tinkering deposits vary from a side stream so worlds of older seeds stay the same.
+  const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
     // ±25 % variation per segment.
-    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + rng.next() * 0.5));
+    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) ? side : rng).next() * 0.5));
     return { resource: d.resource, amount: max, max, infinite: !!d.infinite, byHand: !!d.byHand };
   });
   return {
@@ -341,4 +345,18 @@ function shuffle<T>(items: T[], rng: Rng): void {
     const j = rng.int(0, i);
     [items[i], items[j]] = [items[j]!, items[i]!];
   }
+}
+
+/**
+ * Brings a saved state from an older version up to date, or null if that is not possible.
+ * 11 → 12: the tinkering resources start at 0 (new deposits only appear on new planets).
+ */
+export function upgradeState(state: unknown): GameState | null {
+  const s = state as GameState | null;
+  if (!s || typeof s !== "object") return null;
+  if ((s.version as number) === 11) {
+    for (const economy of Object.values(s.economies)) for (const r of RESOURCE_IDS) economy.resources[r] ??= 0;
+    (s as { version: number }).version = 12;
+  }
+  return s.version === 12 ? s : null;
 }
