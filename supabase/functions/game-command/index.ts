@@ -2,6 +2,7 @@
 // saves the result with optimistic locking and broadcasts it to room game:<id> (see save_game_state).
 // Deployed as a bundle: `npm run build:functions` writes dist/index.js next to this file.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import type { GameOptions } from "../../../src/sim/index";
 import { parseRequest, step, userIdFromJwt, type Member } from "./logic";
 
 const cors = {
@@ -21,7 +22,7 @@ interface LoadedGame {
   clock_at: string | null;
   /** Missing until the options migration ran. */
   max_players?: number;
-  options?: { mode?: "coop" | "versus"; goal?: "endless" | "supernova"; invaders?: "off" | "normal" | "strong" };
+  options?: Pick<GameOptions, "mode" | "goal" | "invaders" | "world">;
   members: { user_id: string; player_id: string; display_name: string; people?: string | null }[];
 }
 

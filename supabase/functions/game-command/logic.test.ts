@@ -25,6 +25,15 @@ describe("game-command logic", () => {
     expect(defaults.ok && defaults.state.settings).toMatchObject({ goal: "supernova", invaders: "normal", maxPlayers: 4 });
   });
 
+  it("builds the world the host picked", () => {
+    const input = { state: null, clockAt: null, members: [alice], playerId: "p1", request: { gameId: GAME, kind: "sync" as const }, now: 1_000 };
+    const picked = step({ ...input, options: { world: { planets: 1, sun: "blue", size: "large" } } });
+    const plain = step(input);
+    if (!picked.ok || !plain.ok) throw new Error("step failed");
+    expect(picked.state.planets.length).toBeLessThan(plain.state.planets.length);
+    expect(picked.state.sun).toMatchObject({ type: "blue" });
+  });
+
   it("creates versus games with one economy and start planet per player", () => {
     const r = step({ state: null, clockAt: null, members: [alice, bob], playerId: "p1", request: { gameId: GAME, kind: "sync" }, now: 1_000, options: { mode: "versus", goal: "supernova", maxPlayers: 2 } });
     expect(r.ok).toBe(true);
