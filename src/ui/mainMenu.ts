@@ -7,14 +7,14 @@ import "./mainMenu.css";
 
 /**
  * Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only.
- * "factions" is coop plus AI neighbors in the system.
+ * Coop can add AI factions (neighbors in the system) as a world option.
  */
 export interface NewGameOptions {
-  mode: "coop" | "versus" | "factions";
+  mode: "coop" | "versus";
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
-  /** factions: how many AI factions, and how hard they play. */
-  factions: 2 | 3 | 4;
+  /** coop: how many AI factions live in the system (0 = none), and how hard they play. */
+  factions: 0 | 2 | 3 | 4;
   difficulty: "cozy" | "normal" | "hard";
   /** The player's own people (Volk). */
   people: PeopleId;
@@ -185,7 +185,6 @@ export class MainMenu {
     const pick = (group: string, value: string, label: string, on: boolean, note = "") =>
       `<button class="menu-choice${on ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}${note ? `<small>${note}</small>` : ""}</button>`;
     const versus = c.mode === "versus";
-    const factions = c.mode === "factions";
     const confirm = this.confirmNew
       ? `<div class="menu-confirm"><span>Dein Planet auf diesem Gerät wird überschrieben.</span><button class="danger" data-go="start!">Ja, neu starten</button><button data-go="cancelStart">Nein</button></div>`
       : "";
@@ -193,15 +192,13 @@ export class MainMenu {
       <h2>${this.icon("new-game", "✨")} Neues Spiel</h2>
       <p class="menu-label">Spielmodus</p>
       <div class="menu-choices">
-        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus && !factions, "Gemeinsamer Planet")}
-        ${pick("mode", "factions", "🏳️ Fraktionen", factions, "Nachbarn: Handel, Bündnis, Krieg")}
+        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus, "Gemeinsamer Planet, wahlweise mit Fraktionen")}
         ${pick("mode", "versus", `${this.icon("mode-versus", "⚔️")} Versus`, versus, "Jeder gegen jeden")}
       </div>
       ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : ""}
-      ${factions ? this.renderFactionChoices(pick) : ""}
       ${versus ? "" : this.renderCoopChoices(pick)}
       ${this.renderPeople()}
-      ${this.renderWorld()}
+      ${this.renderWorld(!versus)}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
         ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
@@ -214,39 +211,32 @@ export class MainMenu {
       </div>`;
   }
 
-  /** Factions mode: how many AI neighbors share the system, and how hard they play. */
-  private renderFactionChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
+  /**
+   * Star system like in Planet of Mine: planet count, start planet, sun, size, each with Zufall.
+   * Coop adds the AI factions living in the system (each on its own extra planet) and their strength.
+   */
+  private renderWorld(withFactions: boolean): string {
     const c = this.choice;
-    return `
-      <p class="menu-note">Andere Völker starten gleichzeitig auf eigenen Planeten. Handle mit ihnen, verbünde dich, schließ dich zusammen oder führ Krieg.</p>
-      <p class="menu-label">Fraktionen</p>
-      <div class="menu-choices">
-        ${pick("factions", "2", "2", c.factions === 2)}
-        ${pick("factions", "3", "3", c.factions === 3)}
-        ${pick("factions", "4", "4", c.factions === 4)}
-      </div>
-      <p class="menu-label">Stärke der Fraktionen</p>
-      <div class="menu-choices">
-        ${pick("difficulty", "cozy", "Entspannt", c.difficulty === "cozy", "Wachsen langsam")}
-        ${pick("difficulty", "normal", "Normal", c.difficulty === "normal")}
-        ${pick("difficulty", "hard", "Hart", c.difficulty === "hard", "Wachsen schnell")}
-      </div>`;
-  }
-
-  /** Star system like in Planet of Mine: planet count, start planet, sun, size, each with Zufall. */
-  private renderWorld(): string {
-    const w = this.choice.world;
+    const w = c.world;
     const chip = (group: string, value: string | number, label: string) =>
       `<button class="menu-chip${String(w[group as keyof WorldChoice]) === String(value) ? " on" : ""}" data-pick="world.${group}" data-value="${value}">${label}</button>`;
     const random = (group: string) => chip(group, "random", "🎲 Zufall");
+    const option = (group: "factions" | "difficulty", value: string | number, label: string) =>
+      `<button class="menu-chip${String(c[group]) === String(value) ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}</button>`;
+    const factions = withFactions
+      ? `
+        <span>🏳️ Fraktionen</span><div class="menu-chips">${option("factions", 0, "Keine")}${([2, 3, 4] as const).map((n) => option("factions", n, String(n))).join("")}</div>
+        ${c.factions ? `<span>Stärke der Fraktionen</span><div class="menu-chips">${option("difficulty", "cozy", "Entspannt")}${option("difficulty", "normal", "Normal")}${option("difficulty", "hard", "Hart")}</div>` : ""}`
+      : "";
+    const note = withFactions && c.factions ? `<p class="menu-note">Andere Völker starten gleichzeitig auf eigenen Planeten im System. Handelt mit ihnen, verbündet euch, schließt euch zusammen oder führt Krieg.</p>` : "";
     return `
       <p class="menu-label">Welt</p>
       <div class="menu-world">
         <span>Planeten</span><div class="menu-chips">${random("planets")}${PLANET_COUNTS.map((n) => chip("planets", n, String(n))).join("")}</div>
         <span>Startplanet</span><div class="menu-chips">${random("start")}${PLANET_TYPE_IDS.map((t) => chip("start", t, PLANET_TYPES[t].name)).join("")}</div>
         <span>Größe</span><div class="menu-chips">${random("size")}${chip("size", "small", "Klein")}${chip("size", "normal", "Normal")}${chip("size", "large", "Groß")}</div>
-        <span>Sonne</span><div class="menu-chips">${random("sun")}${SYSTEM.sunTypes.map((s) => chip("sun", s, SUN_NAMES[s] ?? s)).join("")}</div>
-      </div>`;
+        <span>Sonne</span><div class="menu-chips">${random("sun")}${SYSTEM.sunTypes.map((s) => chip("sun", s, SUN_NAMES[s] ?? s)).join("")}</div>${factions}
+      </div>${note}`;
   }
 
   private renderPeople(): string {
@@ -428,9 +418,14 @@ function escape(text: string): string {
 }
 
 function readOptions(): NewGameOptions {
-  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", people: PEOPLE_IDS[0], world: DEFAULT_WORLD, factions: 3, difficulty: "normal" };
+  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", people: PEOPLE_IDS[0], world: DEFAULT_WORLD, factions: 0, difficulty: "normal" };
   try {
-    const saved = { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") } as NewGameOptions;
+    const raw = { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") } as Omit<NewGameOptions, "mode"> & { mode: string };
+    // The former "Fraktionen" mode is coop with factions.
+    const mode: NewGameOptions["mode"] = raw.mode === "versus" ? "versus" : "coop";
+    const saved: NewGameOptions = { ...raw, mode };
+    if (raw.mode === "factions" && !saved.factions) saved.factions = 3;
+    if (![0, 2, 3, 4].includes(saved.factions)) saved.factions = 0;
     if (!isPeopleId(saved.people)) saved.people = fallback.people;
     saved.world = { ...DEFAULT_WORLD, ...saved.world };
     return saved;
