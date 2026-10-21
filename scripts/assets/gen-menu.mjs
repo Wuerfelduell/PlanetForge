@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each release checkpoint remains independently reproducible.
-const RELEASE = 4;
+const RELEASE = 5;
 const assets = [];
 const p = (d, token, extra = '') => `<path d="${d}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
 const circle = (x,y,r,token,extra='') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -192,6 +192,54 @@ function cargoShip(frame) {
   return exhaust(frame)+g(b,'','id="hull"')+'<g id="engine-anchor" transform="translate(26.8 64)"/>';
 }
 if(RELEASE>=4)for(const kind of ['rocket-small','rocket-big','cargo'])emit(`ship.${kind}`,'space',frame=>kind==='cargo'?cargoShip(frame):flightRocket(kind==='rocket-big',frame),128,128,{frames:2,fps:6,parts:['hull','exhaust','engine-anchor'],tags:['star-map','ship','nose-right','flight','loop']});
+
+function planetRing(kind) {
+  // Exact geometric inner edge r=100 for all states; glows stay outside it.
+  let b='';
+  if(kind==='hover')b=circle(128,128,104,null,`stroke="${C('tint-white')}" stroke-width="8" opacity="0.2"`)+
+    circle(128,128,102,null,`stroke="${C('tint-white')}" stroke-width="4" opacity="0.6"`);
+  if(kind==='selected')b=circle(128,128,105,null,`stroke="${C('energy')}" stroke-width="10"`)+
+    p('M34 86 A103 103 0 0 1 85 34',null,`stroke="${C('cream')}" stroke-width="2"`)+
+    Array.from({length:4},(_,i)=>g(p('M128 13 V6',null,`stroke="${C('energy')}" stroke-width="4"`),`rotate(${i*90} 128 128)`)).join('');
+  if(kind==='target')for(let i=0;i<20;i++) {
+    const d=`M${polar(104,-5)} A104 104 0 0 1 ${polar(104,5)}`;
+    b+=g(p(d,null,`stroke="${C('danger')}" stroke-width="8"`)+p(d,null,`stroke="${C('ascension')}" stroke-width="2"`),`translate(128 128) rotate(${i*18})`);
+  }
+  return g(b,'','id="ring"');
+}
+function ownedFlag() {
+  return g(p('M33 12 Q47 5 58 13 L55 35 Q45 29 33 35Z','tint-white')+
+    `<path d="M49 10 Q54 10 58 13 L55 35 Q52 33 48 32Z" fill="${C('rock',.18)}" stroke="none"/>`+
+    p('M37 14 L44 12',null,`stroke="${C('tint-white')}" stroke-width="1.5"`),'','id="flag"')+
+    rect(30,9,4,54,2,'tint-white')+circle(32,7,3,'tint-white');
+}
+function beltRock(variant) {
+  const shape=variant%2?'M-26 -5 Q-22 -19 -9 -15 L1 -27 Q12 -32 19 -16 Q34 -10 29 7 Q26 18 11 16 Q3 32 -10 23 L-14 13 Q-29 14 -26 -5Z':
+    'M-26 -13 Q-20 -28 -3 -27 L15 -23 Q28 -19 29 -3 L24 16 Q18 29 1 28 L-18 20 Q-32 13 -26 -13Z';
+  return p(shape,'rock')+p('M19 -19 Q32 -6 24 16 Q18 29 1 28 L-9 24 Q18 20 19 -19Z','rock-dark','stroke="none"')+
+    ellipse(-8,-7,6,4,'rock-dark','stroke-width="1.5"')+ellipse(7,10,8,6,'rock-dark','stroke-width="1.5"')+
+    p('M-12 -4 Q-8 0 -3 -4 M1 13 Q7 17 13 13',null,`stroke="${C('rock',.18)}" stroke-width="1.5"`)+
+    p('M-17 -18 Q-10 -23 -4 -21',null,`stroke="${C('rock',.18)}" stroke-width="2"`);
+}
+function asteroidBelt() {
+  let dust='',rocks='';
+  // Repeat all edge-crossing shapes at +/-1024. No background rectangle:
+  // alpha remains zero above and below the gently irregular orbital band.
+  for(let i=0;i<83;i++) {
+    const x=(i*263+3)%1024,y=76+(i*i*13+i*7)%108,r=i%7===0?2:1;
+    for(const dx of [-1024,0,1024])if(x+dx+r>=0&&x+dx-r<=1024)dust+=circle(x+dx,y,r,'rock',`stroke="none" opacity="${i%3===0?'0.5':'0.3'}"`);
+  }
+  for(let i=0;i<25;i++) {
+    const x=(i*157+2)%1024,y=77+(i*i*31+i*19)%102,s=[.4,.6,.8,.5,.7][i%5];
+    for(const dx of [-1024,0,1024])if(x+dx+34*s>=0&&x+dx-34*s<=1024)rocks+=g(beltRock(i),`translate(${x+dx} ${y}) scale(${s})`,'stroke-width="3"');
+  }
+  return g(dust,'','id="dust"')+g(rocks,'','id="asteroids"');
+}
+if(RELEASE>=5) {
+  for(const kind of ['hover','selected','target'])emit(`space.planet-ring-${kind}`,'space',planetRing(kind),256,256,{parts:['ring'],tags:['star-map','ring',kind,'inner-radius-100']});
+  emit('space.planet-owned-flag','space',ownedFlag(),64,64,{anchor:[.5,1],tintable:true,parts:['flag'],tags:['star-map','owned','tintable']});
+  emit('space.asteroid-belt-tile','space',asteroidBelt(),1024,256,{stroke:3,parts:['asteroids','dust'],tags:['star-map','asteroid-belt','tileable-x','transparent']});
+}
 
 write('art/manifest/menu.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Menu art: ${assets.length} ids generated (release ${RELEASE}).`);

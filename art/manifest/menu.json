@@ -496,6 +496,132 @@
       ],
       "phase": "P1",
       "fps": 6
+    },
+    {
+      "id": "space.planet-ring-hover",
+      "category": "space",
+      "src": "art/src/space/space-planet-ring-hover.svg",
+      "out": "public/assets/sprites/space/space-planet-ring-hover.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ring"
+      ],
+      "tags": [
+        "star-map",
+        "ring",
+        "hover",
+        "inner-radius-100"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.planet-ring-selected",
+      "category": "space",
+      "src": "art/src/space/space-planet-ring-selected.svg",
+      "out": "public/assets/sprites/space/space-planet-ring-selected.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ring"
+      ],
+      "tags": [
+        "star-map",
+        "ring",
+        "selected",
+        "inner-radius-100"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.planet-ring-target",
+      "category": "space",
+      "src": "art/src/space/space-planet-ring-target.svg",
+      "out": "public/assets/sprites/space/space-planet-ring-target.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ring"
+      ],
+      "tags": [
+        "star-map",
+        "ring",
+        "target",
+        "inner-radius-100"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.planet-owned-flag",
+      "category": "space",
+      "src": "art/src/space/space-planet-owned-flag.svg",
+      "out": "public/assets/sprites/space/space-planet-owned-flag.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        1
+      ],
+      "frames": 1,
+      "parts": [
+        "flag"
+      ],
+      "tags": [
+        "star-map",
+        "owned",
+        "tintable"
+      ],
+      "phase": "P1",
+      "tintable": true
+    },
+    {
+      "id": "space.asteroid-belt-tile",
+      "category": "space",
+      "src": "art/src/space/space-asteroid-belt-tile.svg",
+      "out": "public/assets/sprites/space/space-asteroid-belt-tile.png",
+      "viewBox": [
+        1024,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "asteroids",
+        "dust"
+      ],
+      "tags": [
+        "star-map",
+        "asteroid-belt",
+        "tileable-x",
+        "transparent"
+      ],
+      "phase": "P1"
     }
   ]
 }
