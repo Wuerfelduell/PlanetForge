@@ -57,4 +57,12 @@ describe("world options", () => {
       expect(window.filter((s) => s.biome === "forest").length).toBeGreaterThanOrEqual(3);
     }
   });
+
+  it("every start planet has two oil fields", () => {
+    for (const seed of ["a", "b", "c", "d"]) {
+      for (const p of starts(createGame(seed, [P1], { now: 0, mode: "versus", maxPlayers: 4 }))) {
+        expect(p.segments.filter((s) => s.deposits.some((d) => d.resource === "oil")).length).toBeGreaterThanOrEqual(SYSTEM.oilFieldsPerStartPlanet);
+      }
+    }
+  });
 });
