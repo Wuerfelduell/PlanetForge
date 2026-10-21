@@ -135,6 +135,8 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .hint { margin: 10px 0 0; padding: 8px 10px; border-radius: 10px; background: rgba(255, 209, 102, 0.12); font-size: 14px; }
 
 .deposits { display: flex; gap: 6px; flex-wrap: wrap; }
+.deposits + .deposits { margin-top: 6px; }
+.deposits .layer { flex-basis: 100%; font-size: 0.75em; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .deposit { font-variant-numeric: tabular-nums; }
 .deposit:disabled { opacity: 0.75; }
 .deposit.on { outline: 2px solid var(--accent); }

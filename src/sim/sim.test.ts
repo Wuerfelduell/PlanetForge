@@ -250,7 +250,8 @@ describe("host and queue", () => {
   it("queued builds run once affordable, in order, and stale ones drop", () => {
     let g = newGame(4);
     econ(g).resources.wood = 0;
-    const [a, b] = home(g).segments.filter((s) => s.revealed && s.biome !== "ocean");
+    // Two fields where both housing and a farm may stand.
+    const [a, b] = home(g).segments.filter((s) => s.revealed && ["savanna", "forest", "swamp"].includes(s.biome));
     g = exec(g, { type: "enqueue", segment: a!.index, building: "housing" });
     g = exec(g, { type: "enqueue", segment: b!.index, building: "farm" });
     expect(attempt(g, { type: "enqueue", segment: a!.index, building: "farm" })).toEqual({ ok: false, error: "Für dieses Feld ist schon etwas geplant" });
