@@ -75,7 +75,7 @@ describe("invaders", () => {
     expect(launchBlocker(g, P1.id, home, free, "colony", 1)).toBe(BLOCKADED);
   });
 
-  it("without defenders they wreck, kill and plunder, but never wipe the team out", () => {
+  it("without defenders they wreck and kill, never leave on their own, but never wipe the team out", () => {
     const events: GameEvent[] = [];
     let g = untilSiege(lateGame(), events);
     g = clone(g);
@@ -83,13 +83,31 @@ describe("invaders", () => {
     const home = homePlanet(g, P1.id)!;
     const fields = home.segments.filter((s) => s.revealed);
     Object.values(g.units).forEach((u, i) => (u.segment = fields[i % fields.length]!.index));
-    const before = g.economies.e0!.resources.wood;
-    g = run(g, INVADERS.siegeCycles + 1, events);
-    expect(events).toContainEqual(expect.objectContaining({ type: "invasionLeft", plundered: true }));
-    expect(g.invasion).toBeNull();
-    expect(g.nextWaveTick).not.toBeNull();
-    expect(g.economies.e0!.resources.wood).toBeLessThan(before);
+    home.birthProgress = -1e9;
+    // Freed workers fight back eventually; a mothership they can't bring down shows it never leaves.
+    g.invasion!.hp = g.invasion!.maxHp = 1e6;
+    const wave = g.invasion!.wave;
+    g = run(g, INVADERS.siegeCycles * 4, events);
+    expect(g.invasion).toMatchObject({ wave, target: home.id, sieging: true });
+    expect(events.some((e) => e.type === "invasionMoved")).toBe(false);
+    expect(g.nextWaveTick).toBeNull();
+    expect(events.filter((e) => e.type === "siege").length).toBeGreaterThan(INVADERS.siegeCycles * 3);
     expect(Object.keys(g.units).length).toBeGreaterThanOrEqual(INVADERS.minSurvivors);
+  });
+
+  it("a fleet at the sun shield can't be fought there, so it moves on to a planet", () => {
+    const events: GameEvent[] = [];
+    let g = clone(lateGame());
+    g.sun.shield[0] = { built: true, hp: 100 };
+    g.invasion = { wave: 1, target: "sun", arrivalTick: g.tick, spotted: true, sieging: true, siegeEndTick: g.tick + ticksPerCycle(g), hp: 10, maxHp: 10, bonus: 0 };
+    g.wave = 1;
+    g.nextWaveTick = null;
+    g = run(g, 2, events);
+    const home = homePlanet(g, P1.id)!;
+    expect(events).toContainEqual(expect.objectContaining({ type: "invasionMoved", from: "sun", target: home.id }));
+    expect(g.invasion).toMatchObject({ target: home.id, sieging: false, hp: 10 });
+    g = run(g, INVADERS.moveOnCycles + 1, events);
+    expect(g.invasion?.sieging).toBe(true);
   });
 
   it("undefended, they burn the ground: no building, no gathering until it is cleared", () => {
@@ -105,6 +123,7 @@ describe("invaders", () => {
     g = run(g, 1, events);
     const siege = events.filter((e) => e.type === "siege").at(-1) as Extract<GameEvent, { type: "siege" }>;
     expect(siege.scorched?.length).toBe(1 + INVADERS.scorchPerUndefendedRound);
+    expect(homePlanet(g, P1.id)!.segments[siege.scorched![0]!]!.ruin).toBe(true);
     const burnt = homePlanet(g, P1.id)!.segments[siege.scorched![1]!]!;
     expect(burnt.scorched).toBe(true);
     expect(burnt.deposits.every((d) => d.infinite || d.amount === 0)).toBe(true);

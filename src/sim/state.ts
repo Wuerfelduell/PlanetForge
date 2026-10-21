@@ -193,6 +193,8 @@ export interface SegmentState {
   tier?: number;
   /** Burnt by invaders: no building, no gathering, no regrowth until cleared. */
   scorched?: true;
+  /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
+  ruin?: true;
 }
 
 export interface DepositState {
@@ -267,7 +269,7 @@ export type GameEvent =
   | { type: "invasionArrived"; target: string; wave: number }
   | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
   | { type: "invasionDefeated"; target: string; wave: number }
-  | { type: "invasionLeft"; target: string; wave: number; plundered: boolean }
+  | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
   | { type: "sunWarning"; cyclesLeft: number }
   | { type: "shieldBuilt"; segment: number; repaired: boolean }
   | { type: "shieldComplete" }

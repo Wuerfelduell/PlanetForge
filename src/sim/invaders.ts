@@ -1,4 +1,4 @@
-import { BIOMES, INVADERS, RESOURCE_IDS, RULES, SUPERNOVA } from "./content";
+import { BIOMES, INVADERS, RULES, SUPERNOVA } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
 import { buildingStats, planetById, planetDefense, ticksPerCycle } from "./rules";
@@ -133,6 +133,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         s.building = null;
         s.builtBy = null;
         delete s.tier;
+        s.ruin = true;
         if (undefended) scorched.push(s.index);
       }
       if (undefended) {
@@ -160,12 +161,25 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     for (const [r, v] of Object.entries(INVADERS.reward)) economy.resources[r as keyof typeof economy.resources] += v * inv.wave;
     events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave });
     endInvasion(state, rng);
-  } else if (state.tick >= inv.siegeEndTick) {
-    const plundered = inv.target !== "sun";
-    if (plundered) for (const r of RESOURCE_IDS) economy.resources[r] = Math.floor(economy.resources[r] * (1 - INVADERS.plunderShare));
-    events.push({ type: "invasionLeft", target: inv.target, wave: inv.wave, plundered });
-    endInvasion(state, rng);
+  } else if (inv.target === "sun" ? state.tick >= inv.siegeEndTick : !hasResidents(state, inv.target)) {
+    // The fleet never gives up on its own (Seb): it can't be fought at the sun, so after a while
+    // it moves on to a populated planet; an emptied planet is left for the next populated one.
+    moveOn(state, economy, inv, rng, events);
   }
+}
+
+function hasResidents(state: GameState, planetId: string): boolean {
+  return Object.values(state.units).some((u) => u.planetId === planetId);
+}
+
+function moveOn(state: GameState, economy: EconomyState, inv: Invasion, rng: Rng, events: GameEvent[]): void {
+  const planets = state.planets.filter((p) => p.economyId === economy.id && p.id !== inv.target && hasResidents(state, p.id));
+  if (!planets.length) return;
+  const from = inv.target;
+  inv.target = rng.pick(planets).id;
+  inv.sieging = false;
+  inv.arrivalTick = state.tick + cycles(state, INVADERS.moveOnCycles);
+  events.push({ type: "invasionMoved", from, target: inv.target, wave: inv.wave, arrivalTick: inv.arrivalTick });
 }
 
 function endInvasion(state: GameState, rng: Rng): void {

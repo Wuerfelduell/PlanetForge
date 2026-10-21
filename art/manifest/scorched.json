@@ -1,0 +1,117 @@
+{
+  "assets": [
+    {
+      "id": "overlay.scorched.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.scorched.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.scorched.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.scorched.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-clear-scorched",
+      "category": "ui",
+      "src": "art/src/ui/icon-clear-scorched.svg",
+      "out": "public/assets/sprites/ui/icon-clear-scorched.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "scorched",
+        "ui"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

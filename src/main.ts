@@ -254,7 +254,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   invasionArrived: "monster.roar",
   siege: "battle.dice",
   invasionDefeated: "ascension.levelup",
-  invasionLeft: "alert.warning",
+  invasionMoved: "war.declare",
   sunWarning: "alert.warning",
   shieldBuilt: "build.complete",
   upgraded: "build.complete",
@@ -274,7 +274,7 @@ function updateMusicMood(events: GameEvent[], playerId: string): void {
   for (const e of events) {
     if (e.type === "battle" && (e.attacker === playerId || e.defender === playerId)) music.alert();
     else if (e.type === "invasionArrived" || e.type === "siege") music.alert();
-    else if (e.type === "invasionDefeated" || e.type === "invasionLeft") music.setMood("calm");
+    else if (e.type === "invasionDefeated") music.setMood("calm");
   }
 }
 

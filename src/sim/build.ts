@@ -11,6 +11,7 @@ export function placeBuilding(state: GameState, planet: PlanetState, segment: Se
   // Hand gatherers go back to idle; their owners re-assign them to the building.
   for (const u of workersOn(state, planet, segment.index)) u.segment = null;
   segment.building = building;
+  delete segment.ruin;
   segment.builtBy = playerId;
   events.push({ type: "built", planetId: planet.id, segment: segment.index, building, playerId });
   const revealed: number[] = [];
