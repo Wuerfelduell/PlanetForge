@@ -22,7 +22,7 @@ interface LoadedGame {
   /** Missing until the options migration ran. */
   max_players?: number;
   options?: { mode?: "coop" | "versus"; goal?: "endless" | "supernova"; invaders?: "off" | "normal" | "strong" };
-  members: { user_id: string; player_id: string; display_name: string }[];
+  members: { user_id: string; player_id: string; display_name: string; people?: string | null }[];
 }
 
 Deno.serve(async (req) => {
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     if (!game) return json({ ok: false, error: "Spiel nicht gefunden" }, 404);
     const me = game.members.find((m) => m.user_id === userId);
     if (!me) return json({ ok: false, error: "Du bist nicht in diesem Spiel" }, 403);
-    const members: Member[] = game.members.map((m) => ({ playerId: m.player_id, name: m.display_name }));
+    const members: Member[] = game.members.map((m) => ({ playerId: m.player_id, name: m.display_name, people: m.people }));
 
     const now = Date.now();
     const result = step({

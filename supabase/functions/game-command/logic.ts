@@ -1,4 +1,4 @@
-import { addPlayer, advance, applyCommand, createGame, upgradeState, type Command, type GameEvent, type GameOptions, type GameState } from "../../../src/sim/index";
+import { addPlayer, advance, applyCommand, createGame, PEOPLE_IDS, upgradeState, type Command, type GameEvent, type GameOptions, type GameState, type PeopleId } from "../../../src/sim/index";
 
 /**
  * Server-side rules around the simulation, kept free of I/O so they can be unit tested.
@@ -21,6 +21,35 @@ export type Request = { gameId: string; kind: "sync" } | { gameId: string; kind:
 export interface Member {
   playerId: string;
   name: string;
+  /** People picked when creating or joining the save; null/undefined = first free one. */
+  people?: string | null;
+}
+
+/**
+ * Peoples for members who aren't seated yet. A pick that is unknown or already in use (in the
+ * state or by an earlier member) falls back to the first free people, like a member who didn't
+ * pick, so the database check and the simulation can never hand out one people twice.
+ */
+export function assignPeoples(state: GameState | null, members: Member[]): Map<string, PeopleId> {
+  const seated = new Set(state?.players.map((p) => p.id) ?? []);
+  const pending = members.filter((m) => !seated.has(m.playerId));
+  const taken = new Set<string>(state?.players.map((p) => p.people) ?? []);
+  const out = new Map<string, PeopleId>();
+  for (const m of pending) {
+    const pick = m.people as PeopleId | null | undefined;
+    if (pick && PEOPLE_IDS.includes(pick) && !taken.has(pick)) {
+      out.set(m.playerId, pick);
+      taken.add(pick);
+    }
+  }
+  for (const m of pending) {
+    if (out.has(m.playerId)) continue;
+    const free = PEOPLE_IDS.find((id) => !taken.has(id));
+    if (!free) continue;
+    out.set(m.playerId, free);
+    taken.add(free);
+  }
+  return out;
 }
 
 export interface StepInput {
@@ -51,9 +80,10 @@ export function nextSimTime(state: GameState, clockAt: number | null, now: numbe
  * stay spectators instead of blocking everyone else's moves.
  */
 export function ensurePlayers(state: GameState, members: Member[], simNow: number): GameState {
+  const peoples = assignPeoples(state, members);
   for (const m of members) {
     if (state.players.some((p) => p.id === m.playerId)) continue;
-    const joined = addPlayer(state, m.playerId, m.name, simNow);
+    const joined = addPlayer(state, m.playerId, m.name, simNow, peoples.get(m.playerId));
     if (joined.ok) state = joined.state;
   }
   return state;
@@ -66,7 +96,8 @@ export function step(input: StepInput): StepResult {
   let state = upgradeState(input.state);
   let clockAt = input.clockAt;
   if (!state) {
-    state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name })), { ...input.options, now: 0 });
+    const peoples = assignPeoples(null, members);
+    state = createGame(request.gameId, members.map((m) => ({ id: m.playerId, name: m.name, people: peoples.get(m.playerId) })), { ...input.options, now: 0 });
     clockAt = now;
   }
   const simNow = nextSimTime(state, clockAt, now);

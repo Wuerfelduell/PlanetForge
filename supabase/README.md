@@ -29,3 +29,7 @@ If nobody was online for 10 minutes (no command, no heartbeat), the next request
 ## Game options
 
 `create_save` takes `p_options` (`mode`: `coop`|`versus`, `goal`: `supernova`|`endless`, `invaders`: `off`|`normal`|`strong`; versus ignores goal and invaders); unknown keys and values are dropped and the simulation's defaults apply. They are stored in `games.options` and passed to `createGame` together with `max_players` whenever game-command creates the state, so a save that starts over after a version change keeps them. `my_games.mode` tells the menu which mode a slot plays. Members the simulation can't seat (a finished versus game, no free start planet) stay spectators.
+
+## Peoples
+
+Every player picks a people (ids from `PEOPLE_IDS`): `create_save(p_slot, p_name, p_display_name, p_max_players, p_options, p_people)` and `join_save(p_code, p_slot, p_display_name, p_people)`; `null` lets the simulation pick the first free one. The pick is stored in `game_members.people`. `join_save` raises `people taken` when an active member picked it or a player in the saved state plays it; `taken_peoples(p_code)` returns those ids for the picker. Returning players keep their people. game-command hands the picks to `createGame`/`addPlayer` and falls back to a free people on any clash, so no people is ever played twice. `my_games.people` shows the people a slot plays (its pick before the first sync).

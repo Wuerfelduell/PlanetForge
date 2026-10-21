@@ -35,6 +35,26 @@ describe("game-command logic", () => {
     expect(a.homePlanetId).not.toBe(b.homePlanetId);
   });
 
+  it("gives every member the people they picked, and a free one on a clash", () => {
+    const r = step({ state: null, clockAt: null, members: [{ ...alice, people: "starowls" }, { ...bob, people: "starowls" }, { playerId: "p3", name: "Carol", people: "nope" }], playerId: "p1", request: { gameId: GAME, kind: "sync" }, now: 1_000 });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const peoples = r.state.players.map((p) => p.people);
+    expect(peoples[0]).toBe("starowls");
+    expect(new Set(peoples).size).toBe(3);
+  });
+
+  it("seats a member who joins later with their pick unless it is taken", () => {
+    const first = step({ state: null, clockAt: null, members: [{ ...alice, people: "echobats" }], playerId: "p1", request: { gameId: GAME, kind: "sync" }, now: 1_000 });
+    if (!first.ok) throw new Error(first.error);
+    const join = (people: string) =>
+      step({ state: first.state, clockAt: 1_000, members: [{ ...alice, people: "echobats" }, { ...bob, people }], playerId: "p2", request: { gameId: GAME, kind: "sync" }, now: 2_000 });
+    const picked = join("frostseals");
+    expect(picked.ok && picked.state.players.find((p) => p.id === "p2")?.people).toBe("frostseals");
+    const clash = join("echobats");
+    expect(clash.ok && clash.state.players.find((p) => p.id === "p2")?.people).not.toBe("echobats");
+  });
+
   it("keeps members the simulation can't seat as spectators", () => {
     const carol: Member = { playerId: "p3", name: "Carol" };
     const input = { state: null, clockAt: null, members: [alice, bob], playerId: "p1", request: { gameId: GAME, kind: "sync" as const }, now: 1_000, options: { mode: "versus" as const, maxPlayers: 2 } };
