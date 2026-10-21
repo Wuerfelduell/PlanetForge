@@ -18,7 +18,7 @@ const defs=[
  {id:'dunehoppers',animal:'jerboa',color:'sand',fur:'sand',gear:'runner',ears:'tall',tail:'long',body:'hopper',biome:'desert',phase:'P1'},
  {id:'starowls',animal:'owl',color:'science',fur:'rock-dark',gear:'goggles',ears:'tufts',tail:'taper',body:'round',biome:'mountains',phase:'P1'},
  {id:'tideotters',animal:'otter',color:'water',fur:'iron',gear:'vest',ears:'small',tail:'taper',body:'pear',biome:'ocean',phase:'P1'},
- {id:'hornbeetles',animal:'beetle',color:'iron',fur:'iron',gear:'smith',ears:'horn',tail:'shell',body:'round',biome:'savanna',phase:'P1'},
+ {id:'hornbeetles',animal:'beetle',color:'iron',fur:'iron',gear:'smith',ears:'horn',tail:'none',body:'insect',biome:'savanna',phase:'P1'},
  {id:'frostseals',animal:'seal',color:'snow',fur:'snow',gear:'scarf',ears:'none',tail:'none',body:'flipper',biome:'tundra',phase:'P1'},
  {id:'swapcoons',animal:'raccoon',color:'coal',fur:'rock',gear:'trader',ears:'round',tail:'striped',body:'pear',biome:'forest',phase:'P1'},
  {id:'glowsnails',animal:'snail',color:'toxic',fur:'grass',gear:'satchel',ears:'antennae',tail:'spiral',body:'slug',biome:'swamp',phase:'P1'},
@@ -78,6 +78,7 @@ function head(p,expression='neutral',portrait=false){
  return group('head',ears(p)+path(p.animal==='hedgehog'?'M45 51Q59 37 77 47Q88 53 92 64L102 69Q106 77 97 82Q83 91 59 85Q37 80 40 63Z':'M43 49Q58 37 78 44Q96 48 96 65Q108 73 96 82Q77 94 55 84Q37 77 41 61Z',fur)+path('M44 65Q43 83 69 85Q87 88 97 78Q84 86 70 80Q51 80 49 65Z',C(p.fur,-.18),flat)+ellipse(57,52,8,4,C(p.fur,.18),flat)+face(p,expression,portrait));
 }
 function clothing(p,portrait=false){
+ if(bodyVariants[p.body]?.clothing)return group('clothing',bodyVariants[p.body].clothing(p))+group('headwear','');
  const color=C(p.color);
  if(p.gear==='helmet')return group('clothing',path('M43 93Q65 103 81 89L84 108Q63 117 44 107Z',color)+line('M53 95V107M73 95V107')+rect(55,102,15,9,3,C('paper')))+group('headwear',path('M39 48Q36 29 59 27Q83 25 91 45Z',C('energy'))+path('M40 46Q62 39 94 45L96 50Q66 48 39 53Z',C('energy'))+path('M60 29L62 42','none',`stroke="${C('energy',-.18)}" stroke-width="5"`));
  if(p.gear==='basket')return group('clothing',path('M43 89Q60 99 80 87L80 95Q61 106 43 98Z',color)+line('M49 93L65 111'))+group('headwear','')+group('basket',path('M21 88Q30 78 40 88','none')+rect(17,88,28,22,5,C('savanna'))+line('M19 96H43M20 103H42M26 90V108M35 90V108')+circle(24,88,5,C('danger'))+circle(34,87,5,C('clay'))+path('M29 84Q27 75 36 79Q37 84 29 84Z',C('leaf')));
@@ -115,6 +116,36 @@ const bodyVariants={
   arms:(p,{state,angle})=>group('arm',path('M69 87Q75 81 81 86M70 93Q77 87 84 91','none',`stroke="${C('ink')}" stroke-width="5"`)+path('M69 87Q75 81 81 86M70 93Q77 87 84 91','none',`stroke="${C(p.fur)}" stroke-width="2"`)+(state==='work'?heldTool():'')+ellipse(state==='work'?88:81,86,3.5,3,C('sand'))+ellipse(state==='work'?90:84,93,3.5,3,C('sand')),state==='work'?`rotate(${angle} 78 91)`:''),
   portraitBody:p=>tail(p)+group('bust',group('body',bodyVariants.hopper.body(p))+group('feet',bodyVariants.hopper.feet(p,{state:'idle',frame:0}))),
  },
+ insect:{
+  head:(p,expression,portrait)=>{
+   const horns=path('M59 52Q54 43 60 32Q64 29 64 34Q63 43 74 46Z',C('iron',-.18))+path('M77 48Q94 42 96 29Q95 20 99 22Q111 43 90 55Z',C('iron'))+path('M86 45Q99 39 99 29','none',`stroke="${C('iron',.18)}" stroke-width="2"`);
+   const antennae=path('M62 57L53 48L49 49M91 57L100 48L104 49','none',`stroke="${C('ink')}" stroke-width="3"`)+circle(49,48,2,C('iron'))+circle(104,48,2,C('iron'));
+   return antennae+horns+ellipse(78,62,21,17,C('iron'))+path('M59 65Q66 82 88 75Q99 70 98 61Q90 76 69 70Z',C('iron',-.18),flat)+ellipse(69,51,7,3,C('iron',.18),flat)+roundEyes(expression,portrait?[70,87]:[86],61,4)+(expression==='angry'?line('M79 72Q86 68 92 72'):line('M79 69Q86 78 93 69'));
+  },
+  body:()=>ellipse(52,87,29,24,C('iron'))+path('M53 64Q81 67 81 88Q78 111 53 111Z',C('iron',-.18),flat)+path('M53 65Q48 87 53 110','none',`stroke="${C('ink')}" stroke-width="2"`)+ellipse(38,76,8,4,C('iron',.18),flat)+path('M62 76Q71 80 73 86','none',`stroke="${C('iron')}" stroke-width="3"`),
+  feet:(p,{state,frame,step=0})=>{
+   // Four planted limbs plus the two foreground arms = six insect legs.
+   // Alternating diagonal pairs lift, while the other pair remains at y=120.
+   const shifts=state==='walk'?[step,-step,-step,step]:[0,0,0,0];
+   return [
+    'M36 90L24 104L24 115L17 118.5',
+    'M66 91L82 103L88 115L96 118.5',
+    'M43 100L34 109L40 118.5L48 118.5',
+    'M65 100L72 109L67 118.5L76 118.5',
+   ].map((d,i)=>{
+    const lift=state==='walk'&&((frame===1&&[0,3].includes(i))||(frame===3&&[1,2].includes(i)))?3:0;
+    // Endpoints at 117 keep the 3px outer radius on the 120px ground line.
+    d=d.replaceAll('118.5','117');
+    return `<g transform="translate(${shifts[i]} ${-lift})">${path(d,'none',`stroke="${C('ink')}" stroke-width="6"`)}${path(d,'none',`stroke="${C('iron',i<2?-.18:0)}" stroke-width="3"`)}</g>`;
+   }).join('');
+  },
+  arms:(p,{state,angle})=>{
+   const limbs='M74 82L85 79L93 86M72 92L83 99L94 93';
+   return group('arm',path(limbs,'none',`stroke="${C('ink')}" stroke-width="6"`)+path(limbs,'none',`stroke="${C('iron')}" stroke-width="3"`)+(state==='work'?heldTool():'')+path('M92 83Q98 84 95 89M93 90Q99 92 94 96','none',`stroke="${C('ink')}" stroke-width="3"`),state==='work'?`rotate(${angle} 78 91)`:state==='walk'?`rotate(${round(angle/3)} 78 91)`:'');
+  },
+  clothing:()=>path('M30 96Q51 103 76 96L76 101Q53 108 31 102Z',C('coal'))+rect(52,99,8,6,2,C('rock'))+rect(33,98,9,9,2,C('rock-dark'))+line('M36 99V104',C('rock',.18)),
+  portraitBody:p=>group('tail','')+group('bust',group('feet',bodyVariants.insect.feet(p,{state:'idle',frame:0}))+group('body',bodyVariants.insect.body(p))),
+ },
 };
 function rig(p,{state='idle',frame=0,expression='neutral',portrait=false}={}){
  let bob=state==='idle'?frame:state==='walk'?[0,-2,0,-2][frame]:frame?-1:1;
@@ -150,7 +181,7 @@ function symbol(p){
  jerboa:path('M54 85Q20 109 24 70Q26 60 21 53','none',`stroke="${C('ink')}" stroke-width="4"`)+ellipse(20,51,4,6,C('tint-white'))+ellipse(59,76,16,17,gold)+ellipse(51,44,10,14,gold)+ellipse(77,40,11,15,gold)+ellipse(68,63,22,19,gold)+ellipse(76,70,11,7,C('cream'),flat)+circle(78,59,4,C('ink'),flat)+ellipse(87,67,2,2,C('ink'),flat)+line('M82 71L98 69M82 74L98 77')+path('M55 85L69 94L57 102','none',`stroke="${C('ink')}" stroke-width="7"`)+ellipse(74,102,19,4,C('clay')),
  owl:circle(64,66,31,C('science'))+circle(51,64,16,C('cream'))+circle(78,64,16,C('cream'))+circle(53,64,5,C('ink'),flat)+circle(76,64,5,C('ink'),flat)+path('M58 78L70 78L64 87Z',gold),
  otter:circle(64,65,32,C('ascension'))+circle(64,65,16,C('water'))+path('M29 62H45M83 62H99M61 31V47M61 83V99','none',`stroke="${C('cream')}" stroke-width="9"`),
- beetle:ellipse(64,77,25,27,C('iron'))+path('M54 53Q69 43 61 25L69 31L78 26Q88 46 73 59Z',C('iron'))+line('M64 62V101'),
+ beetle:path('M46 71L31 76L24 91M47 88L36 98L38 107M81 87L93 98L92 107M83 68L98 74L105 89M45 62L31 54L25 62M86 59L99 51L105 60','none',`stroke="${C('ink')}" stroke-width="4"`)+ellipse(64,79,25,28,C('iron'))+path('M64 52Q91 53 89 81Q85 106 64 107Z',C('iron',-.18),flat)+line('M64 53V106')+ellipse(53,67,6,3,C('iron',.18),flat)+path('M58 53Q47 43 53 32Q56 41 66 43M68 44Q82 37 80 22Q94 34 80 49Z',C('iron'))+path('M54 52L44 42M80 51L92 41','none',`stroke="${C('ink')}" stroke-width="3"`)+ellipse(68,54,19,13,C('iron'))+circle(61,53,3,C('ink'),flat)+circle(76,53,3,C('ink'),flat)+line('M62 61Q68 66 74 61'),
  seal:path('M36 73Q21 63 22 52Q38 48 50 68Q47 39 64 30Q83 38 79 68Q92 49 107 54Q104 72 84 79L80 96L44 96Z',C('snow'))+path('M47 80Q64 88 82 79L80 90H46Z',C('danger')),
  raccoon:rect(33,50,63,48,8,C('savanna'))+path('M32 51L64 32L97 51L65 69Z',C('iron'))+path('M35 48Q43 37 53 46L49 56L39 56Z',C('coal'))+path('M77 45Q88 36 95 47L90 57L80 55Z',C('coal')),
  snail:circle(64,66,32,C('toxic'))+path('M63 91Q36 86 43 61Q50 39 73 50Q94 67 73 81Q59 88 54 73Q51 62 65 62','none',`stroke="${C('ink')}" stroke-width="5"`),
