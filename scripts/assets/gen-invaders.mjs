@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each checkpoint is independently reproducible; final release includes all seven items.
-const STAGE = 2;
+const STAGE = 3;
 const assets=[];
 let state='idle';
 const paint=(token,tone=0)=>C(state!=='idle'&&!['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -75,6 +75,21 @@ if(STAGE>=2){
   emit({id:'invader.mothership.idle',category:'invaders',stem:'mothership-idle',frames:2,fps:3,parts:['hull','lights'],tags:['mothership','idle','loop'],draw:f=>mothership(f)});
   emit({id:'invader.mothership.damaged',category:'invaders',stem:'mothership-damaged',parts:['hull','lights','cracks','smoke'],tags:['mothership','damaged'],draw:()=>mothership(1,true)});
 }
+
+function escort(frame){
+  const engine=group('engine',ellipse(32,46,frame===1?9:13,frame===1?5:8,'crystal',`opacity="${frame===1?.5:.8}"`)+
+    ellipse(32,45,frame===1?5:8,frame===1?3:5,'toxic')+ellipse(30,44,3,2,'cream','stroke="none"'));
+  const hull=path('M9 33 Q12 46 32 46 Q52 46 55 33Z','rock-dark')+
+    ellipse(32,33,26,8,'crystal')+shadow('M7 35 Q31 42 57 32 Q56 41 32 41 Q11 41 7 35Z','crystal')+
+    path('M18 29 Q18 13 31 12 Q46 12 47 29 Q31 35 18 29Z','paper')+
+    shadow('M38 14 Q46 19 46 29 L41 31 Q44 23 38 14Z','paper')+
+    ellipse(32,23,9,7,'coal')+ellipse(32,23,6,5,'toxic')+ellipse(35,23,2,4,'deep-water')+
+    circle(29,21,1.5,'cream','stroke="none"')+
+    line('M21 24 Q21 18 25 17','cream',1)+
+    ellipse(14,34,2,1,'uranium','stroke-width="0.8"')+ellipse(49,34,2,1,'uranium','stroke-width="0.8"');
+  return engine+group('hull',hull);
+}
+if(STAGE>=3)emit({id:'invader.escort',category:'invaders',stem:'escort',size:[64,64],frames:2,fps:5,parts:['hull','engine'],tags:['escort','loop'],draw:escort});
 
 write('art/manifest/invaders.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Invader art: stage ${STAGE}, ${assets.length} ids generated.`);

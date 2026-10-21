@@ -144,6 +144,32 @@
         "damaged"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "invader.escort",
+      "category": "invaders",
+      "src": "art/src/invaders/escort-f{f}.svg",
+      "out": "public/assets/sprites/invaders/escort-f{f}.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 5,
+      "parts": [
+        "hull",
+        "engine"
+      ],
+      "tags": [
+        "invaders",
+        "escort",
+        "loop"
+      ],
+      "phase": "P1"
     }
   ]
 }
