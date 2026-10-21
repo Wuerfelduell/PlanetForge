@@ -158,6 +158,11 @@ describe("versus battles", () => {
     expect(peopleOf(g, MO.id)).toBe(moPeople);
     expect(g.result).toBeNull();
     expect(applyCommand(g, MO.id, { type: "assignUnit", unitId: unitsOn(g, planet.id)[0]!.id, segment: null }, g.simTime)).toEqual({ ok: false, error: "Dieser Einwohner gehört dir nicht" });
+    // Mo's buildings now belong to the conqueror: P1 may tear them down, Mo no longer can.
+    const built = planet.segments.find((s) => s.building && s.builtBy === MO.id)!;
+    expect(built).toBeDefined();
+    expect(applyCommand(g, MO.id, { type: "demolish", planetId: planet.id, segment: built.index }, g.simTime)).toEqual({ ok: false, error: "Dieser Planet gehört dir nicht" });
+    expect(applyCommand(g, P1.id, { type: "demolish", planetId: planet.id, segment: built.index }, g.simTime).ok).toBe(true);
 
     const later = run(g, (RULES.captiveAssimilationCycles + 1) * g.settings.cycleSeconds * RULES.ticksPerSecond);
     expect(later.events).toContainEqual({ type: "assimilated", playerId: P1.id, count: moPeople });

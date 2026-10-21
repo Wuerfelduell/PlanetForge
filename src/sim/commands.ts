@@ -205,7 +205,9 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     case "demolish": {
       if (!segment.building) return "Hier steht nichts";
       // On a shared planet nobody tears down a teammate's work (unless the builder left the game).
-      if (segment.builtBy && segment.builtBy !== playerId && playerById(state, segment.builtBy)) return "Das hat ein Mitspieler gebaut";
+      // A conquered planet's buildings belong to the conqueror: the old builder is no teammate.
+      const builder = segment.builtBy && segment.builtBy !== playerId ? playerById(state, segment.builtBy) : undefined;
+      if (builder && builder.economyId === player.economyId) return "Das hat ein Mitspieler gebaut";
       const economy = state.economies[planet.economyId!]!;
       const paid = paidFor(segment);
       for (const r of RESOURCE_IDS) economy.resources[r] += Math.floor((paid[r] ?? 0) * modified(economy, "demolishRefund", RULES.demolishRefund));
