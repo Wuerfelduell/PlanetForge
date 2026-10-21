@@ -343,6 +343,384 @@
         "mini"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t1.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade",
+        "scaffolding"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t1-off.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t2.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade",
+        "scaffolding"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.sawmill.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/sawmill-t2-off.svg",
+      "out": "public/assets/sprites/buildings/sawmill-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "blade"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "sawmill.t2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t1.svg",
+      "out": "public/assets/sprites/buildings/workshop-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/workshop-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t1-off.svg",
+      "out": "public/assets/sprites/buildings/workshop-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t2.svg",
+      "out": "public/assets/sprites/buildings/workshop-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "forge-glow"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/workshop-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "forge-glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.workshop.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/workshop-t2-off.svg",
+      "out": "public/assets/sprites/buildings/workshop-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "chimney-smoke-anchor",
+        "forge-glow"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "workshop.t2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.forester",
+      "category": "buildings",
+      "src": "art/src/buildings/forester.svg",
+      "out": "public/assets/sprites/buildings/forester.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "economy",
+        "forester",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.forester.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/forester-construction.svg",
+      "out": "public/assets/sprites/buildings/forester-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "buildings",
+        "economy",
+        "forester",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.forester.off",
+      "category": "buildings",
+      "src": "art/src/buildings/forester-off.svg",
+      "out": "public/assets/sprites/buildings/forester-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "economy",
+        "forester",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
