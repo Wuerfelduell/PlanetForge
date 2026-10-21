@@ -60,6 +60,19 @@ describe("terraform", () => {
     expect(act(sand.state, index, "fillClay").ok).toBe(false);
   });
 
+  it("drains a swamp with more sand", () => {
+    const { g, index } = setup("ocean");
+    const s = home(g).segments[index]!;
+    s.biome = "swamp";
+    s.deposits = [{ resource: "clay", amount: 70, max: 70, infinite: false, byHand: true }, { resource: "water", amount: 40, max: 40, infinite: false, byHand: false }];
+    expect(act(g, index, "fillSand").ok).toBe(false);
+    const r = act(g, index, "drainSwamp");
+    if (!r.ok) throw new Error(r.error);
+    expect(home(r.state).segments[index]!.biome).toBe("savanna");
+    expect(home(r.state).segments[index]!.gather).toBe("food");
+    expect(economyOfPlayer(r.state, P1.id)!.resources.sand).toBe(0);
+  });
+
   it("needs the resources", () => {
     const { g, index } = setup("ocean");
     economyOfPlayer(g, P1.id)!.resources.sand = 5;

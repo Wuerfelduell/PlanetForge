@@ -199,7 +199,7 @@ export interface DepositState {
   byHand: boolean;
 }
 
-export type TerraformKind = "plantTrees" | "fillSand" | "fillClay";
+export type TerraformKind = "plantTrees" | "fillSand" | "fillClay" | "drainSwamp";
 
 /** Player intents. The only way anything outside the simulation changes the state. */
 export type Command =
