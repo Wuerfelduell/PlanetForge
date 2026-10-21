@@ -57,9 +57,10 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     saved: false,
   };
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
+  planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
 
   let state: GameState = {
-    version: 10,
+    version: 11,
     seed,
     rng: 0,
     simTime: options.now ?? 0,
@@ -192,6 +193,36 @@ function generatePlanets(rng: Rng, startPlanets: number, startSize: number): Pla
       type,
       orbit: { radius: i + 1, angle: rng.next() * Math.PI * 2 },
       startSlot,
+      economyId: null,
+      birthProgress: 0,
+      segments,
+    };
+  });
+}
+
+/**
+ * The asteroid belt: a few small rocks between the planet orbits, each with rare deposits. Own
+ * random stream, so the planets of a seed stay the same as before asteroids existed.
+ */
+function generateAsteroids(rng: Rng, planets: PlanetState[]): PlanetState[] {
+  const usedNames = new Set(planets.map((p) => p.name));
+  const maxOrbit = Math.max(...planets.map((p) => p.orbit.radius));
+  const count = rng.int(SYSTEM.asteroids.min, SYSTEM.asteroids.max);
+  return Array.from({ length: count }, (_, i) => {
+    const biomes = weightedBiomes(rng, "asteroid", SYSTEM.asteroids.segments);
+    const segments = biomes.map((biome, index) => createSegment(index, biome, rng));
+    const rare = pickDistinct(rng, Object.keys(RARE_RESOURCES) as ResourceId[], rng.int(SYSTEM.asteroids.rare.min, SYSTEM.asteroids.rare.max));
+    for (const resource of rare) placeRareDeposit(rng, segments, resource, false);
+    let name = planetName(rng);
+    while (usedNames.has(name)) name = planetName(rng);
+    usedNames.add(name);
+    return {
+      id: `a${i}`,
+      name,
+      type: "asteroid" as const,
+      // Between two planet orbits, never on one.
+      orbit: { radius: 1.5 + rng.int(0, Math.max(0, maxOrbit - 2)) + (rng.next() - 0.5) * 0.3, angle: rng.next() * Math.PI * 2 },
+      startSlot: null,
       economyId: null,
       birthProgress: 0,
       segments,
