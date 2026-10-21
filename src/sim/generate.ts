@@ -58,6 +58,11 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   };
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, mode === "coop" ? SYSTEM.coopStartPlanetSegments : SYSTEM.startPlanetSegments);
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
+  // Rockets burn fuel from oil: every start planet gets oil, from its own stream so worlds stay the same.
+  const oilRng = new Rng(seedFromString(`${seed}:oil`));
+  for (const p of planets) {
+    if (p.startSlot !== null && !p.segments.some((x) => x.deposits.some((d) => d.resource === "oil"))) placeRareDeposit(oilRng, p.segments, "oil", true);
+  }
 
   let state: GameState = {
     version: 12,
