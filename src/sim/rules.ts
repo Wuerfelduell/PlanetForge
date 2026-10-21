@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, MARKET, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, MARKET, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { atWar, factionOfEconomy } from "./diplomacy";
 import { ASCENSION } from "../data/balance/progression";
@@ -468,4 +468,9 @@ export function planetDefense(state: GameState, planet: PlanetState): number {
   const general = modified(economy, "battleRoll", 0);
   const towerExtra = towers > 0 ? modified(economy, "battleRoll", 0, { building: "watchtower" }) - general : 0;
   return RULES.homeAdvantage + Math.min(RULES.maxTowerBonus, towers) + general + towerExtra;
+}
+
+/** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
+export function needsSuits(planet: PlanetState): boolean {
+  return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;
 }

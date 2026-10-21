@@ -13,6 +13,7 @@ import {
   cycleOf,
   housing,
   discoveryCost,
+  needsSuits,
   OFFERABLE,
   discoveryDescription,
   discoveryName,
@@ -203,6 +204,9 @@ export class Ui {
         }
         case "depleted":
           this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft${e.resource === "wood" ? ". Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}`, "warn");
+          break;
+        case "suffocated":
+          if (this.isMine(e.planetId)) this.toast(`🧑‍🚀 Keine Raumanzüge mehr: ein Siedler auf ${this.planetName(e.planetId)} ist erstickt. Eine Werkstatt (Stufe 2) näht neue.`, "bad");
           break;
         case "starving":
           this.toast("🍂 Hunger! Ohne Nahrung arbeiten alle nur halb so schnell.", "bad");
@@ -755,8 +759,8 @@ export class Ui {
   private planetStatus(state: GameState, to: PlanetState): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const faction = factionOfEconomy(state, to.economyId);
-    if (faction) return `${STANCE_NAMES[faction.stance].icon} ${faction.name}`;
-    return to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
+    const owner = faction ? `${STANCE_NAMES[faction.stance].icon} ${faction.name}` : to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
+    return needsSuits(to) ? `${owner} · keine Atemluft, braucht Raumanzüge` : owner;
   }
 
   /** Launch pad: one row per reachable planet with the rockets that can go there. */

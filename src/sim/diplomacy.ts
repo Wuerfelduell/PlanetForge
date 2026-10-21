@@ -1,5 +1,5 @@
 import { RESOURCES as RESOURCE_VALUES } from "../data/balance/resources";
-import { PEOPLES, RESOURCE_IDS, type PeopleId, type ResourceId } from "./content";
+import { PEOPLES, RECIPES, RESOURCE_IDS, RESOURCES, type PeopleId, type ResourceId } from "./content";
 import type { Rng } from "./rng";
 import { buildingStats, peopleOf, playerById, ticksPerCycle } from "./rules";
 import type { EconomyState, FactionOfferKind, FactionPersonality, FactionState, FactionStance, GameEvent, GameState, PlayerState } from "./state";
@@ -120,8 +120,16 @@ export function strength(state: GameState, economyId: string): number {
   return people + towers * 2;
 }
 
+/** Worker-seconds per unit from the balance table; goods the table lacks (suits) are priced from their recipe. */
 export function resourceValue(resource: ResourceId): number {
-  return RESOURCE_VALUES[resource].value;
+  const known = (RESOURCE_VALUES as Partial<Record<ResourceId, { value: number }>>)[resource];
+  if (known) return known.value;
+  const recipe = Object.values(RECIPES).find((r) => resource in r.outputs);
+  if (!recipe) return 10;
+  let inputs = 0;
+  for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) inputs += resourceValue(r) * v;
+  const made = (recipe.outputs as Partial<Record<ResourceId, number>>)[resource] ?? 1;
+  return Math.round((inputs + recipe.seconds) / made);
 }
 
 export function bundleSize(resource: ResourceId): number {
@@ -191,7 +199,7 @@ export function trade(state: GameState, player: PlayerState, faction: FactionSta
 }
 
 function RESOURCES_NAME(resource: ResourceId): string {
-  return RESOURCE_VALUES[resource].name;
+  return RESOURCES[resource].name;
 }
 
 /** Team gives a faction something; the goodwill scales with the value. */
