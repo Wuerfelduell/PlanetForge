@@ -85,7 +85,8 @@ interface MovingPart {
 }
 
 /** Player colors by PlayerState.color; the first one stays white for single player. */
-const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab];
+/** Four human colors, then the AI factions (PlayerState.color 4 …). */
+const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab, 0xc39bff, 0xff9f43, 0x6ee7b7, 0xf87171];
 
 interface SegmentSprites {
   icon: Text;

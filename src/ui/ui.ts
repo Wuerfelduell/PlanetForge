@@ -54,6 +54,19 @@ import {
   terraformBlocker,
   NOT_SCORCHED,
   type TerraformKind,
+  attitudeLabel,
+  bundleSize,
+  factionById,
+  factionEconomy,
+  factionOfEconomy,
+  PEOPLES,
+  PERSONALITY_NAMES,
+  sellable,
+  STANCE_NAMES,
+  strength,
+  TEAM_ECONOMY,
+  tradeQuote,
+  type FactionState,
 } from "../sim";
 import { currentHint } from "./hints";
 import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
@@ -96,6 +109,9 @@ export class Ui {
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
   private showDiscoveries = false;
+  /** Factions panel open, and the faction whose trade list is unfolded. */
+  private showFactions = false;
+  private tradeWith: string | null = null;
   /** Open tab of the build menu; kept while the player taps from field to field. */
   private buildTab: BuildingCategory | "terrain" = "housing";
   /** Star map open, and the planet (or "sun") picked on it. */
@@ -260,6 +276,41 @@ export class Ui {
         case "upgraded":
           if (e.playerId === this.playerId) this.toast(`⬆️ ${BUILDINGS[e.building].name} auf Stufe ${e.tier} ausgebaut`, "good");
           break;
+        case "factionOffer": {
+          const name = this.factionName(e.faction);
+          const text =
+            e.kind === "ultimatum"
+              ? `${name} fordern ${e.amount} ${RESOURCES[e.resource!].name}, sonst Krieg!`
+              : e.kind === "alliance"
+                ? `${name} schlagen ein Bündnis vor`
+                : e.kind === "peace"
+                  ? `${name} bieten Frieden an`
+                  : `${name} wollen sich deinem Volk anschließen`;
+          this.toast(`💬 ${text} (🏳️ Fraktionen)`, e.kind === "ultimatum" ? "bad" : "good");
+          break;
+        }
+        case "factionStance": {
+          const name = this.factionName(e.faction);
+          if (e.stance === "war") this.toast(`⚔️ Krieg mit ${name}!${e.reason === "attacked" ? " Dein Angriff hat sie verfeindet." : e.reason === "ultimatumRefused" ? " Das Ultimatum ist abgelehnt." : ""}`, "bad");
+          else if (e.stance === "peace") this.toast(e.reason === "brokenAlliance" ? `💔 ${name} kündigen das Bündnis` : `🕊️ Frieden mit ${name}`, e.reason === "brokenAlliance" ? "warn" : "good");
+          else if (e.stance === "allied") this.toast(`🤝 Bündnis mit ${name}`, "good");
+          break;
+        }
+        case "factionDeclined":
+          this.toast(`🙅 ${this.factionName(e.faction)} lehnen ${e.action === "peace" ? "Frieden" : e.action === "alliance" ? "das Bündnis" : "den Zusammenschluss"} ab`, "warn");
+          break;
+        case "factionTrade":
+          if (e.playerId === this.playerId) this.toast(`⚖️ ${e.gotAmount} ${RESOURCES[e.got].name} für ${e.gaveAmount} ${RESOURCES[e.gave].name} von ${this.factionName(e.faction)}`, "good");
+          break;
+        case "factionGift":
+          if (e.from === e.faction) this.toast(`🎁 ${this.factionName(e.faction)} schenken dir ${e.amount} ${RESOURCES[e.resource].name}`, "good");
+          break;
+        case "factionMerged":
+          this.toast(`🫂 ${this.factionName(e.faction)} gehören jetzt zu deinem Volk: ${e.units} Einwohner, ${e.planets} Planet${e.planets === 1 ? "" : "en"}`, "good");
+          break;
+        case "factionEliminated":
+          this.toast(`💀 ${this.factionName(e.faction)} sind ausgelöscht`, "warn");
+          break;
         case "cycle":
         case "built":
         case "demolished":
@@ -335,6 +386,36 @@ export class Ui {
       case "vote":
         this.actions.send({ type: "voteDiscovery", discovery: value! });
         break;
+      case "factions":
+        this.showFactions = !this.showFactions;
+        this.showDiscoveries = false;
+        this.lastPanel = "";
+        break;
+      case "tradeWith":
+        this.tradeWith = this.tradeWith === value ? null : value!;
+        this.lastPanel = "";
+        break;
+      case "trade": {
+        const [faction, resource, amount] = value!.split(":");
+        this.actions.send({ type: "trade", faction: faction!, resource: resource as ResourceId, amount: Number(amount) });
+        break;
+      }
+      case "gift": {
+        const [faction, resource, amount] = value!.split(":");
+        this.actions.send({ type: "gift", faction: faction!, resource: resource as ResourceId, amount: Number(amount) });
+        break;
+      }
+      case "diplomacy": {
+        const [faction, action] = value!.split(":") as [string, "war" | "peace" | "alliance" | "merge"];
+        if (action === "war" && !confirm(`Wirklich ${this.factionName(faction)} den Krieg erklären?`)) break;
+        this.actions.send({ type: "diplomacy", faction, action });
+        break;
+      }
+      case "answerOffer": {
+        const [faction, accept] = value!.split(":");
+        this.actions.send({ type: "answerOffer", faction: faction!, accept: accept === "1" });
+        break;
+      }
       case "shield": {
         const [segment, repair, from] = value!.split(":");
         this.actions.send({ type: "shieldFlight", planetId: from || this.planetId, segment: Number(segment), repair: repair === "1" });
@@ -358,6 +439,7 @@ export class Ui {
       case "map":
         this.mapOpen = !this.mapOpen;
         this.showDiscoveries = false;
+        this.showFactions = false;
         this.lastPanel = "";
         this.lastHud = NO_HUD;
         this.actions.showMap(this.mapOpen);
@@ -368,6 +450,7 @@ export class Ui {
         break;
       case "view":
         this.mapOpen = false;
+        this.showFactions = false;
         this.lastPanel = "";
         this.lastHud = NO_HUD;
         this.actions.showMap(false);
@@ -436,6 +519,12 @@ export class Ui {
       const label = economy.offer ? `🔬 Entdeckung wählen <small>${Math.floor(economy.resources.science)}/${discoveryCost(state, economy)}</small>` : `🔬 ${economy.discoveries.length} Entdeckungen`;
       chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries">${label}</button>`);
     }
+    if (state.settings.factions > 0) {
+      const live = state.factions.filter((f) => !f.eliminated && f.stance !== "merged");
+      const offers = live.filter((f) => f.offer && f.offer.expiresTick > state.tick).length;
+      const war = live.some((f) => f.stance === "war");
+      chips.push(`<button class="chip${offers ? " glow" : war ? " bad" : ""}" data-action="factions">🏳️ Fraktionen${offers ? ` <small>${offers} Angebot${offers === 1 ? "" : "e"}</small>` : war ? " <small>Krieg</small>" : ""}</button>`);
+    }
     // The server closes the lobby after 10 idle minutes; only the host can open it again.
     if (!state.lobby.open) {
       chips.push(
@@ -475,6 +564,7 @@ export class Ui {
   private resultText(result: NonNullable<GameState["result"]>): string {
     if ("draw" in result) return "🤝 Unentschieden";
     if ("supernova" in result) return "💥 Die Sonne ist zur Supernova geworden. Spiel verloren.";
+    if (this.state && factionById(this.state, result.winner)) return `💀 Dein Volk ist ausgelöscht. ${this.factionName(result.winner)} beherrschen das System.`;
     return result.winner === this.playerId ? "🏆 Du hast gewonnen!" : `🏁 ${this.playerName(result.winner)} hat gewonnen`;
   }
 
@@ -494,9 +584,87 @@ export class Ui {
   private renderForeign(state: GameState, planet: PlanetState): string {
     const people = population(state, planet);
     const back = this.ownPlanets().length ? `<button class="build" data-action="home">↩ Zurück zum eigenen Planeten</button>` : "";
+    const faction = factionOfEconomy(state, planet.economyId);
+    const note = faction
+      ? `Hier leben die ${faction.name} (${PERSONALITY_NAMES[faction.personality].name}, ${STANCE_NAMES[faction.stance].icon} ${STANCE_NAMES[faction.stance].name}). ${faction.stance === "war" ? "Mit einer Kampfrakete von deiner Startrampe kannst du angreifen." : "Handeln und verhandeln kannst du unter 🏳️ Fraktionen."}`
+      : "Hier hast du nichts. Mit einer Rakete von deiner Startrampe kannst du hinfliegen.";
     return `<h2>${planet.type === "asteroid" ? "🪨" : "🪐"} ${planet.name} <small>${this.planetStatus(state, planet)}</small></h2>
-      <p class="muted">${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder${people ? ` · ${people} Einwohner` : ""}. Hier hast du nichts. Mit einer Rakete von deiner Startrampe kannst du hinfliegen.</p>
-      <div class="row">${back}<button class="build" data-action="map">🌌 Karte</button></div>`;
+      <p class="muted">${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder${people ? ` · ${people} Einwohner` : ""}. ${note}</p>
+      <div class="row">${back}<button class="build" data-action="map">🌌 Karte</button>${faction ? `<button class="build" data-action="factions">🏳️ Fraktionen</button>` : ""}</div>`;
+  }
+
+  private factionName(id: string): string {
+    return this.state ? (factionById(this.state, id)?.name ?? "Fraktion") : "Fraktion";
+  }
+
+  /** The factions panel: who lives in the system, how they feel about the team, trade and diplomacy. */
+  private renderFactions(state: GameState): string {
+    const me = state.players.find((p) => p.id === this.playerId);
+    const team = me ? state.economies[me.economyId] : undefined;
+    let html = `<h2>🏳️ Fraktionen <button class="speed" data-action="factions" title="Zurück">✕</button></h2>`;
+    if (!team) return html;
+    const host = state.hostId === this.playerId;
+    const order = [...state.factions].sort((a, b) => Number(a.eliminated || a.stance === "merged") - Number(b.eliminated || b.stance === "merged"));
+    for (const f of order) html += this.renderFaction(state, f, team, host);
+    if (!host) html += `<p class="muted">Krieg, Frieden und Bündnisse entscheidet ${this.playerName(state.hostId)}; handeln und schenken kann jeder.</p>`;
+    return html;
+  }
+
+  private renderFaction(state: GameState, f: FactionState, team: GameState["economies"][string], host: boolean): string {
+    const player = state.players.find((p) => p.id === f.id);
+    const people = PEOPLES[player?.people ?? state.players[0]!.people];
+    const icon = `${people.icon}`;
+    if (f.eliminated || f.stance === "merged") {
+      return `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${f.stance === "merged" ? "🫂 Gehören zu deinem Volk" : "💀 Ausgelöscht"}</small></span></div>`;
+    }
+    const economy = factionEconomy(state, f)!;
+    const planets = state.planets.filter((p) => p.economyId === economy.id);
+    const pop = Object.values(state.units).filter((u) => u.owner === f.id).length;
+    const stance = STANCE_NAMES[f.stance];
+    const personality = PERSONALITY_NAMES[f.personality];
+    const mood = f.stance === "war" ? "" : ` · ${attitudeLabel(f.attitude)}`;
+    const power = strength(state, economy.id) > strength(state, TEAM_ECONOMY) * 1.3 ? " · stärker als ihr" : strength(state, economy.id) * 1.3 < strength(state, TEAM_ECONOMY) ? " · schwächer als ihr" : "";
+    let html = `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${personality.icon} ${personality.name} · ${stance.icon} ${stance.name}${mood} · ⭐ ${economy.ascension.level} · ${planets.length} Planet${planets.length === 1 ? "" : "en"} · ${pop} Einwohner${power}</small></span>${planets[0] ? `<button class="build" data-action="view" data-value="${planets[0].id}">🔍 Ansehen</button>` : ""}</div>`;
+
+    const offer = f.offer && f.offer.expiresTick > state.tick ? f.offer : null;
+    if (offer) {
+      const text =
+        offer.kind === "ultimatum"
+          ? `fordern ${offer.amount} ${this.res(offer.resource!)} ${RESOURCES[offer.resource!].name}, sonst erklären sie den Krieg.`
+          : offer.kind === "alliance"
+            ? "schlagen ein Bündnis vor: kein Krieg, ab und zu ein Geschenk, bessere Preise."
+            : offer.kind === "peace"
+              ? "bieten Frieden an."
+              : "wollen sich deinem Volk anschließen: ihre Planeten, Einwohner und Vorräte werden deine.";
+      html += `<p class="offer">💬 ${f.name} ${text} <small>Noch ${this.secondsUntil(offer.expiresTick)} s</small></p>`;
+      if (host) html += `<div class="choices"><button class="chip glow" data-action="answerOffer" data-value="${f.id}:1">✅ Annehmen</button><button class="chip" data-action="answerOffer" data-value="${f.id}:0">❌ Ablehnen</button></div>`;
+    }
+
+    const chips: string[] = [];
+    if (f.stance !== "war") chips.push(`<button class="chip${this.tradeWith === f.id ? " on" : ""}" data-action="tradeWith" data-value="${f.id}">⚖️ Handeln</button>`);
+    if (host) {
+      if (f.stance === "war") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:peace">🕊️ Frieden anbieten</button>`);
+      if (f.stance === "peace") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:alliance">🤝 Bündnis vorschlagen</button>`);
+      if (f.stance === "allied") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:merge">🫂 Zusammenschluss</button>`);
+      if (f.stance !== "war") chips.push(`<button class="chip bad" data-action="diplomacy" data-value="${f.id}:war">⚔️ Krieg erklären</button>`);
+    }
+    html += `<div class="choices">${chips.join("")}</div>`;
+
+    if (this.tradeWith === f.id && f.stance !== "war") {
+      const goods = sellable(state, f);
+      const rows = goods
+        .map((r) => {
+          const amount = bundleSize(r);
+          const quote = tradeQuote(state, f, r, amount, team);
+          if (!quote) return "";
+          return `<div class="target"><span>${this.res(r)} ${amount} ${RESOURCES[r].name} <small>für ${this.res(quote.give)} ${quote.giveAmount} ${RESOURCES[quote.give].name}</small></span><button class="build" data-action="trade" data-value="${f.id}:${r}:${amount}" ${quote.affordable ? "" : `disabled title="Zu wenig ${RESOURCES[quote.give].name}"`}>Kaufen</button></div>`;
+        })
+        .join("");
+      html += rows ? `<p class="muted">Sie verkaufen, was sie übrig haben${f.stance === "allied" ? "; Verbündete zahlen weniger" : ""}:</p><div class="targets">${rows}</div>` : `<p class="muted">Gerade haben sie nichts übrig.</p>`;
+      const gifts = (["food", "wood", "stone", "planks", "tools", "iron"] as ResourceId[]).filter((r) => team.resources[r] >= 10);
+      if (gifts.length) html += `<p class="muted">Schenken (macht sie freundlicher):</p><div class="choices">${gifts.map((r) => `<button class="chip" data-action="gift" data-value="${f.id}:${r}:10">🎁 10 ${this.res(r)}</button>`).join("")}</div>`;
+    }
+    return `<div class="faction-card">${html}</div>`;
   }
 
   private ownPlanets(): PlanetState[] {
@@ -546,6 +714,8 @@ export class Ui {
 
   private planetStatus(state: GameState, to: PlanetState): string {
     const me = state.players.find((p) => p.id === this.playerId);
+    const faction = factionOfEconomy(state, to.economyId);
+    if (faction) return `${STANCE_NAMES[faction.stance].icon} ${faction.name}`;
     return to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
   }
 
@@ -670,6 +840,7 @@ export class Ui {
   private renderPanel(state: GameState, planet: PlanetState): string {
     if (this.mapOpen) return this.renderMap(state);
     if (this.showDiscoveries) return this.renderDiscoveries(state);
+    if (this.showFactions) return this.renderFactions(state);
     if (!this.isMine(planet.id)) return this.renderForeign(state, planet);
     const economy = economyOf(state, planet);
     if (!economy) return "";

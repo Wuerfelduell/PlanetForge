@@ -3,11 +3,17 @@ import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
 import "./mainMenu.css";
 
-/** Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only. */
+/**
+ * Choices for a new game (design 13.4). Versus has neither goal nor invaders and runs online only.
+ * "factions" is coop plus AI neighbors in the system (local only for now).
+ */
 export interface NewGameOptions {
-  mode: "coop" | "versus";
+  mode: "coop" | "versus" | "factions";
   goal: "endless" | "supernova";
   invaders: "off" | "normal" | "strong";
+  /** factions: how many AI factions, and how hard they play. */
+  factions: 2 | 3 | 4;
+  difficulty: "cozy" | "normal" | "hard";
 }
 
 export type Where = "local" | "online";
@@ -154,6 +160,7 @@ export class MainMenu {
     const pick = (group: string, value: string, label: string, on: boolean, note = "") =>
       `<button class="menu-choice${on ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}${note ? `<small>${note}</small>` : ""}</button>`;
     const versus = c.mode === "versus";
+    const factions = c.mode === "factions";
     const confirm = this.confirmNew
       ? `<div class="menu-confirm"><span>Dein Planet auf diesem Gerät wird überschrieben.</span><button class="danger" data-go="start!">Ja, neu starten</button><button data-go="cancelStart">Nein</button></div>`
       : "";
@@ -161,19 +168,41 @@ export class MainMenu {
       <h2>${this.icon("new-game", "✨")} Neues Spiel</h2>
       <p class="menu-label">Spielmodus</p>
       <div class="menu-choices">
-        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus, "Gemeinsamer Planet")}
+        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus && !factions, "Gemeinsamer Planet")}
+        ${pick("mode", "factions", "🏳️ Fraktionen", factions, "Nachbarn: Handel, Bündnis, Krieg")}
         ${pick("mode", "versus", `${this.icon("mode-versus", "⚔️")} Versus`, versus, "Jeder gegen jeden")}
       </div>
-      ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : this.renderCoopChoices(pick)}
+      ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : ""}
+      ${factions ? this.renderFactionChoices(pick) : ""}
+      ${versus ? "" : this.renderCoopChoices(pick)}
       <p class="menu-label">Spielen</p>
       <div class="menu-choices">
-        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
-        ${pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
+        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", factions || this.where === "local", "Offline auf diesem Gerät")}
+        ${factions ? `<button class="menu-choice" disabled>${this.icon("join", "👥")} Online<small>Mit Fraktionen bald</small></button>` : pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
       </div>
       ${confirm}
       <div class="menu-actions">
         <button data-go="home">Zurück</button>
         <button class="primary" data-go="start">Los geht's</button>
+      </div>`;
+  }
+
+  /** Factions mode: how many AI neighbors share the system, and how hard they play. */
+  private renderFactionChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
+    const c = this.choice;
+    return `
+      <p class="menu-note">Andere Völker starten gleichzeitig auf eigenen Planeten. Handle mit ihnen, verbünde dich, schließ dich zusammen oder führ Krieg.</p>
+      <p class="menu-label">Fraktionen</p>
+      <div class="menu-choices">
+        ${pick("factions", "2", "2", c.factions === 2)}
+        ${pick("factions", "3", "3", c.factions === 3)}
+        ${pick("factions", "4", "4", c.factions === 4)}
+      </div>
+      <p class="menu-label">Stärke der Fraktionen</p>
+      <div class="menu-choices">
+        ${pick("difficulty", "cozy", "Entspannt", c.difficulty === "cozy", "Wachsen langsam")}
+        ${pick("difficulty", "normal", "Normal", c.difficulty === "normal")}
+        ${pick("difficulty", "hard", "Hart", c.difficulty === "hard", "Wachsen schnell")}
       </div>`;
   }
 
@@ -235,6 +264,8 @@ export class MainMenu {
       if (pick === "mode") this.choice.mode = value as NewGameOptions["mode"];
       else if (pick === "goal") this.choice.goal = value as NewGameOptions["goal"];
       else if (pick === "invaders") this.choice.invaders = value as NewGameOptions["invaders"];
+      else if (pick === "factions") this.choice.factions = Number(value) as NewGameOptions["factions"];
+      else if (pick === "difficulty") this.choice.difficulty = value as NewGameOptions["difficulty"];
       else if (pick === "where") this.where = value as Where;
       writeOptions(this.choice);
       this.confirmNew = false;
@@ -279,7 +310,7 @@ export class MainMenu {
         break;
       case "start":
         // Starting alone over a running local game asks first; online games use a free slot.
-        if (this.where === "local" && this.choice.mode === "coop" && this.actions.current()) {
+        if ((this.where === "local" || this.choice.mode === "factions") && this.choice.mode !== "versus" && this.actions.current()) {
           this.confirmNew = true;
           this.render();
           break;
@@ -300,7 +331,7 @@ export class MainMenu {
     this.busy = true;
     this.error = "";
     this.render();
-    const where = this.choice.mode === "versus" ? "online" : this.where;
+    const where = this.choice.mode === "versus" ? "online" : this.choice.mode === "factions" ? "local" : this.where;
     Promise.resolve(this.actions.newGame({ ...this.choice }, where, this.slot))
       .then(() => {
         this.busy = false;
@@ -345,7 +376,7 @@ function escape(text: string): string {
 }
 
 function readOptions(): NewGameOptions {
-  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal" };
+  const fallback: NewGameOptions = { mode: "coop", goal: "supernova", invaders: "normal", factions: 3, difficulty: "normal" };
   try {
     return { ...fallback, ...JSON.parse(localStorage.getItem(OPTIONS_KEY) ?? "{}") };
   } catch {
