@@ -48,7 +48,6 @@ import {
   upgradeBlocker,
   thawBlocker,
   CRYO,
-  PEOPLES,
   toolFactor,
   ticksPerCycle,
   workerCapacity,

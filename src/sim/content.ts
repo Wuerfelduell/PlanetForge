@@ -954,6 +954,8 @@ export const SYSTEM = {
   freePlanetSegments: [16, 24, 32],
   /** Rare deposits per start planet / per free planet. */
   rarePerStartPlanet: 2,
+  /** Oil fields every start planet gets (rockets burn fuel from oil). */
+  oilFieldsPerStartPlanet: 2,
   rarePerFreePlanet: { min: 2, max: 4 },
   rareDepositMax: 60,
   sunTypes: ["yellow", "red", "blue", "white"],

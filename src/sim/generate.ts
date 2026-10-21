@@ -99,10 +99,13 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
   const factions = mode === "coop" ? Math.max(0, Math.min(FACTIONS.max, Math.floor(options.factions ?? 0))) : 0;
   const planets = generatePlanets(rng, mode === "coop" ? 1 : maxPlayers, startSize, startType, freePlanets, factions);
   planets.push(...generateAsteroids(new Rng(seedFromString(`${seed}:asteroids`)), planets));
-  // Rockets burn fuel from oil: every start planet gets oil, from its own stream so worlds stay the same.
+  // Rockets burn fuel from oil: every start planet gets oil fields, from its own stream so worlds stay the same.
   const oilRng = new Rng(seedFromString(`${seed}:oil`));
   for (const p of planets) {
-    if (p.startSlot !== null && !p.segments.some((x) => x.deposits.some((d) => d.resource === "oil"))) placeRareDeposit(oilRng, p.segments, "oil", true);
+    if (p.startSlot === null) continue;
+    // Two oil fields (playtest: one field was about one colony flight, and easy to build over).
+    const oilFields = () => p.segments.filter((x) => x.deposits.some((d) => d.resource === "oil")).length;
+    for (let tries = 0; tries < 6 && oilFields() < SYSTEM.oilFieldsPerStartPlanet; tries++) placeRareDeposit(oilRng, p.segments, "oil", true, true);
   }
   // Cryo pods with frozen peoples on free planets, from their own stream as well.
   const cryoRng = new Rng(seedFromString(`${seed}:cryo`));
@@ -349,11 +352,23 @@ function startRarePackages(rng: Rng, maxPlayers: number): ResourceId[][] {
   return Array.from({ length: maxPlayers }, (_, slot) => patterns[slot % patterns.length]!.slice(0, SYSTEM.rarePerStartPlanet));
 }
 
-function placeRareDeposit(rng: Rng, segments: SegmentState[], resource: ResourceId, keepStartArea: boolean): void {
+function placeRareDeposit(
+  rng: Rng,
+  segments: SegmentState[],
+  resource: ResourceId,
+  keepStartArea: boolean,
+  newField = false,
+): void {
   const allowed = RARE_RESOURCES[resource]!;
   const n = segments.length;
   // On start planets the rare stuff waits outside the start area, as a reason to explore.
-  const eligible = segments.filter((s) => !keepStartArea || ringDistance(s.index, 0, n) > RULES.startRevealRadius);
+  // A new field skips segments that already hold this resource instead of topping them up.
+  const eligible = segments.filter(
+    (s) =>
+      (!keepStartArea || ringDistance(s.index, 0, n) > RULES.startRevealRadius) &&
+      (!newField || !s.deposits.some((d) => d.resource === resource)),
+  );
+  if (eligible.length === 0) return;
   let candidates = eligible.filter((s) => allowed.includes(s.biome));
   if (candidates.length === 0) {
     // Somewhere a mine can reach it, without wiping out another rare deposit placed before.
