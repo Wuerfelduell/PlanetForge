@@ -60,6 +60,21 @@ describe("references", () => {
 });
 
 describe("sanity", () => {
+  it("every recipe is crafted by a building that crafts and is unlocked in time", () => {
+    for (const [id, r] of Object.entries(recipes)) {
+      const where = ((r as { building?: string }).building ?? "foundry") as keyof typeof buildings;
+      const tier = buildings[where].tiers[r.tier - 1] as AnyTier | undefined;
+      expect(tier?.crafts, `${id} at ${where}`).toBeTruthy();
+      expect(tier!.unlockLevel, id).toBeLessThanOrEqual(r.unlockLevel);
+    }
+  });
+
+  it("placement is a puzzle: there are neighbor penalties as well as bonuses", () => {
+    const all = Object.values(buildings).flatMap((d) => ("adjacency" in d ? (d.adjacency as readonly { bonus: number }[]) : []));
+    expect(all.filter((a) => a.bonus < 0).length).toBeGreaterThanOrEqual(8);
+    expect(all.filter((a) => a.bonus > 0).length).toBeGreaterThanOrEqual(10);
+  });
+
   it("tiers unlock in order and never get worse", () => {
     for (const { id, def } of tiers()) {
       const ts = def.tiers as readonly AnyTier[];

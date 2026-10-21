@@ -42,6 +42,11 @@ export const RULES = {
   /** Fraction of max that regrows per second on a deposit nobody works on. Empty deposits stay empty. */
   regenPerSecond: 0.01,
   demolishRefund: 0.5,
+  /**
+   * Tools wear out: every worker in a building with `usesTools` uses this many per minute.
+   * Without tools in stock it works at withoutToolsMul. Off until the workshop exists.
+   */
+  tools: { perWorkerPerMinute: 0.1, withoutToolsMul: 0.6, fromLevel: 2 },
   /** Cycles a ruin blocks a segment after demolition or destruction. */
   ruinCycles: 2,
   /** The clock only runs while the host's lobby is open; an open lobby with nobody online closes after this. */
@@ -172,7 +177,7 @@ export const SPACE = {
     },
     "rocket-small": {
       art: "rocket-small",
-      cost: { plastic: 10, steel: 10, glass: 5 },
+      cost: { plastic: 10, steel: 10, cloth: 5 },
       unlockLevel: 6,
       capacity: 3,
       fuel: "oil",
