@@ -3,6 +3,7 @@ import { asteroidsVisible, INVADERS, SUPERNOVA, ticksPerCycle, type GameState } 
 import { artFrames, artTexture, hasArt } from "./art";
 
 const TAP_SLOP_PX = 10;
+const ZOOM_MAX = 5;
 const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab];
 const SUN_COLORS: Record<string, number> = { yellow: 0xffd23f, red: 0xff7a4d, blue: 0x8fc7ff, white: 0xf4f1ff };
 const PLANET_COLORS: Record<string, number> = { temperate: 0x6fbf73, arid: 0xe0b35a, ice: 0xbfe6ff, lava: 0xe2603a, ocean: 0x4f8fdc, toxic: 0x9bd04a };
@@ -29,6 +30,12 @@ export class SystemView {
   private cy = 0;
   /** Pixels per sim unit. */
   private scale = 40;
+  /** Fit-all layout; zoom and pan (pinch, wheel, drag) apply on top, so big systems stay readable. */
+  private base = { scale: 40, cx: 0, cy: 0, maxOrbit: 1 };
+  private zoom = 1;
+  private pan = { x: 0, y: 0 };
+  /** Label boxes of the current draw, for collision avoidance. */
+  private placed: { x0: number; y0: number; x1: number; y1: number }[] = [];
   private width = 0;
   private height = 0;
   private time = 0;
@@ -54,9 +61,58 @@ export class SystemView {
     this.height = height;
     const free = Math.max(160, height - topInset - bottomInset);
     const maxOrbit = Math.max(1, ...state.planets.map((p) => p.orbit.radius));
-    this.scale = Math.min(width * 0.48, free * 0.48) / (maxOrbit + 0.45);
-    this.cx = width / 2;
-    this.cy = topInset + free / 2;
+    this.base = { scale: Math.min(width * 0.48, free * 0.48) / (maxOrbit + 0.45), cx: width / 2, cy: topInset + free / 2, maxOrbit };
+    this.applyView();
+  }
+
+  private applyView(): void {
+    this.zoom = Math.min(ZOOM_MAX, Math.max(1, this.zoom));
+    // Pan only as far as the system reaches, and not at all when zoomed out.
+    const reach = this.base.maxOrbit * this.base.scale * (this.zoom - 1);
+    this.pan.x = Math.min(reach, Math.max(-reach, this.pan.x));
+    this.pan.y = Math.min(reach, Math.max(-reach, this.pan.y));
+    this.scale = this.base.scale * this.zoom;
+    this.cx = this.base.cx + this.pan.x;
+    this.cy = this.base.cy + this.pan.y;
+  }
+
+  /** Zooms by `factor` keeping the screen point (px, py) in place. */
+  private zoomAt(factor: number, px: number, py: number): void {
+    const wx = (px - this.cx) / this.scale;
+    const wy = (py - this.cy) / this.scale;
+    this.zoom *= factor;
+    const scale = this.base.scale * Math.min(ZOOM_MAX, Math.max(1, this.zoom));
+    this.pan.x = px - wx * scale - this.base.cx;
+    this.pan.y = py - wy * scale - this.base.cy;
+    this.applyView();
+  }
+
+  /**
+   * Places a label at the first candidate anchor (dx, dy = side of the point) that overlaps no
+   * earlier label; returns false when all do. `force` places it at the first candidate anyway.
+   */
+  private placeLabel(t: Text, x: number, y: number, dist: number, sides: [number, number][], force: boolean): boolean {
+    const put = ([dx, dy]: [number, number]) => {
+      t.anchor.set(0.5 - dx * 0.5, 0.5 - dy * 0.5);
+      t.position.set(x + dx * dist, y + dy * dist);
+      // Keep it on screen.
+      const left = t.x - t.anchor.x * t.width;
+      if (left < 4) t.x += 4 - left;
+      else if (left + t.width > this.width - 4) t.x -= left + t.width - (this.width - 4);
+      const x0 = t.x - t.anchor.x * t.width;
+      const y0 = t.y - t.anchor.y * t.height;
+      return { x0, y0, x1: x0 + t.width, y1: y0 + t.height };
+    };
+    for (const side of sides) {
+      const box = put(side);
+      if (!this.placed.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0)) {
+        this.placed.push(box);
+        return true;
+      }
+    }
+    if (!force) return false;
+    this.placed.push(put(sides[0]!));
+    return true;
   }
 
   update(state: GameState, deltaMs: number): void {
@@ -113,6 +169,7 @@ export class SystemView {
     this.used = 0;
     this.textsUsed = 0;
     this.hits = [];
+    this.placed = [];
     const g = this.back;
     const lines = this.lines;
     const front = this.front;
@@ -146,7 +203,7 @@ export class SystemView {
     for (const p of state.planets) {
       if (p.type === "asteroid" && !seeAsteroids && p.economyId === null) continue;
       const { x, y } = this.at(state, p.id);
-      const r = Math.max(9, k * (0.16 + p.segments.length / 160));
+      const r = Math.max(Math.min(9, k * 0.4), k * (0.16 + p.segments.length / 160));
       const asteroid = p.type === "asteroid";
       const rich = p.segments.some((s) => s.deposits.some((d) => d.resource === "aetherite"));
       const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : artTexture(`planet.planet-${p.type}`);
@@ -172,14 +229,14 @@ export class SystemView {
         else front.circle(x, y, r * 1.6).stroke({ width: 2.5, color: 0xffffff, alpha: 0.9 });
       }
       const people = Object.values(state.units).filter((u) => u.planetId === p.id).length;
-      // Label on the side away from the sun, so inner planets do not cover it.
+      // Label on the side away from the sun, else whichever side is free. Planets nobody lives
+      // on lose their label when crowded (zoom in to read them); owned or selected ones keep it.
       const out = p.orbit.angle;
-      const t = this.label(people ? `${p.name} · ${people}👤` : p.name, x + Math.cos(out) * r * 1.5, y + Math.sin(out) * r * 1.5, font, owners.length ? 0xffffff : 0xb8bedc);
-      t.anchor.set(0.5 - Math.cos(out) * 0.5, 0.5 - Math.sin(out) * 0.5);
-      // Keep it on screen.
-      const left = t.x - t.anchor.x * t.width;
-      if (left < 4) t.x += 4 - left;
-      else if (left + t.width > this.width - 4) t.x -= left + t.width - (this.width - 4);
+      const ox = Math.cos(out);
+      const oy = Math.sin(out);
+      const t = this.label(people ? `${p.name} · ${people}👤` : p.name, x, y, font, owners.length ? 0xffffff : 0xb8bedc);
+      const important = people > 0 || this.selected === p.id;
+      if (!this.placeLabel(t, x, y, r * 1.5, [[ox, oy], [0, 1], [0, -1], [-ox, -oy], [1, 0], [-1, 0]], important)) t.visible = false;
       this.hits.push({ id: p.id, x, y, r: Math.max(r * 1.5, 22) });
     }
 
@@ -267,30 +324,68 @@ export class SystemView {
       if (e) this.sprite(e, ex, ey, size * 0.3);
       else this.front.circle(ex, ey, Math.max(2.5, size * 0.07)).fill(0xff8f8f);
     }
-    this.label(inv.sieging ? `Belagerung ${inv.hp}/${inv.maxHp}` : `Welle ${inv.wave}`, x, y + size * 0.55, font, 0xff8f8f);
+    const tag = this.label(inv.sieging ? `Belagerung ${inv.hp}/${inv.maxHp}` : `Welle ${inv.wave}`, x, y, font, 0xff8f8f);
+    this.placeLabel(tag, x, y, size * 0.55, [[0, 1], [0, -1], [1, 0], [-1, 0]], true);
   }
 
   private bindInput(canvas: HTMLCanvasElement): void {
-    let down: { id: number; x: number; y: number } | null = null;
+    // Screen point in layout pixels.
+    const local = (e: { clientX: number; clientY: number }) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: ((e.clientX - rect.left) / rect.width) * this.width, y: ((e.clientY - rect.top) / rect.height) * this.height };
+    };
+    const pointers = new Map<number, { x: number; y: number }>();
+    let down: { id: number; x: number; y: number; moved: boolean } | null = null;
     canvas.addEventListener("pointerdown", (e) => {
       if (!this.stage.visible) return;
-      down = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      pointers.set(e.pointerId, local(e));
+      down = pointers.size === 1 ? { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false } : null;
     });
-    canvas.addEventListener("pointerup", (e) => {
-      if (!this.stage.visible || !down || down.id !== e.pointerId) return;
-      const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y) > TAP_SLOP_PX;
-      down = null;
-      if (moved) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * this.width;
-      const y = ((e.clientY - rect.top) / rect.height) * this.height;
+    canvas.addEventListener("pointermove", (e) => {
+      if (!this.stage.visible || !pointers.has(e.pointerId)) return;
+      const prev = pointers.get(e.pointerId)!;
+      const next = local(e);
+      if (pointers.size === 2) {
+        // Pinch: zoom around the midpoint, pan with it.
+        const other = [...pointers.entries()].find(([id]) => id !== e.pointerId)![1];
+        const before = Math.hypot(prev.x - other.x, prev.y - other.y);
+        const after = Math.hypot(next.x - other.x, next.y - other.y);
+        if (before > 0) this.zoomAt(after / before, (next.x + other.x) / 2, (next.y + other.y) / 2);
+      } else if (down && down.id === e.pointerId) {
+        if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > TAP_SLOP_PX) down.moved = true;
+        if (down.moved) {
+          this.pan.x += next.x - prev.x;
+          this.pan.y += next.y - prev.y;
+          this.applyView();
+        }
+      }
+      pointers.set(e.pointerId, next);
+    });
+    const release = (e: PointerEvent) => {
+      pointers.delete(e.pointerId);
+      const tap = this.stage.visible && down && down.id === e.pointerId && !down.moved && e.type === "pointerup";
+      if (down?.id === e.pointerId) down = null;
+      if (!tap) return;
+      const { x, y } = local(e);
       let best: { id: string; d: number } | null = null;
       for (const h of this.hits) {
         const d = Math.hypot(h.x - x, h.y - y);
         if (d <= h.r && (!best || d < best.d)) best = { id: h.id, d };
       }
       if (best) this.onSelect(best.id);
-    });
+    };
+    canvas.addEventListener("pointerup", release);
+    canvas.addEventListener("pointercancel", release);
+    canvas.addEventListener(
+      "wheel",
+      (e) => {
+        if (!this.stage.visible) return;
+        e.preventDefault();
+        const { x, y } = local(e);
+        this.zoomAt(Math.exp(-e.deltaY * 0.0015), x, y);
+      },
+      { passive: false },
+    );
   }
 }
 
