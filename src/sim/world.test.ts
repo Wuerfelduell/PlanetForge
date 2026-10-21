@@ -50,4 +50,11 @@ describe("world options", () => {
     const b = createGame("r", [P1], { now: 0, world: { start: "random", size: "random" } });
     expect(a).toEqual(b);
   });
+
+  it("every start window has three forests", () => {
+    for (const seed of ["echo", "a", "b", "c", "d"]) {
+      const window = starts(createGame(seed, [P1], { now: 0 }))[0]!.segments.filter((s) => s.revealed);
+      expect(window.filter((s) => s.biome === "forest").length).toBeGreaterThanOrEqual(3);
+    }
+  });
 });

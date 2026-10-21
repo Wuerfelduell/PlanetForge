@@ -10,6 +10,7 @@ import {
   cycleOf,
   housing,
   discoveryCost,
+  OFFERABLE,
   discoveryDescription,
   discoveryName,
   flightPlan,
@@ -175,7 +176,7 @@ export class Ui {
           break;
         }
         case "depleted":
-          this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft`, "warn");
+          this.toast(`${RESOURCES[e.resource].icon} ${RESOURCES[e.resource].name} auf Feld ${e.segment + 1} erschöpft${e.resource === "wood" ? ". Tipp: Bäume pflanzen (🌱) oder ein Förster lässt ihn nachwachsen" : ""}`, "warn");
           break;
         case "starving":
           this.toast("🍂 Hunger! Ohne Nahrung arbeiten alle nur halb so schnell.", "bad");
@@ -644,7 +645,8 @@ export class Ui {
         .join("")}</div>`;
       if (!enough) html += `<p class="muted">Labore erzeugen Wissen. Die Wahl gilt, sobald genug da ist.</p>`;
     } else {
-      html += `<p class="muted">Die nächste Wahl kommt mit der nächsten Aufstiegsstufe.</p>`;
+      const open = OFFERABLE.some((id) => !economy.discoveries.includes(id));
+      html += `<p class="muted">${open ? "Die nächste Wahl kommt mit der nächsten Aufstiegsstufe." : "Alle Entdeckungen sind erforscht."}</p>`;
     }
     if (economy.discoveries.length) {
       html += `<p class="muted">Schon entdeckt:</p><ul class="owned">${economy.discoveries.map((id) => `<li>${this.dicon(id)} <b>${discoveryName(id)}</b> <small>${discoveryDescription(id)}</small></li>`).join("")}</ul>`;
