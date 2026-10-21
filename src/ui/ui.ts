@@ -192,6 +192,8 @@ export class Ui {
     for (const e of events) {
       switch (e.type) {
         case "born":
+          // Faction births are their business.
+          if (this.state?.players.find((p) => p.id === e.playerId)?.ai) break;
           this.toast(`👶 Neuer Einwohner${e.playerId === this.playerId ? "" : ` bei ${this.state?.players.find((p) => p.id === e.playerId)?.name ?? "Mitspieler"}`}`);
           break;
         case "levelUp": {
