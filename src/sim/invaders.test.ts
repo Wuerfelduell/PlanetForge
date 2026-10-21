@@ -129,6 +129,7 @@ describe("invaders", () => {
     expect(burnt.deposits.every((d) => d.infinite || d.amount === 0)).toBe(true);
     expect(buildBlocker(g, homePlanet(g, P1.id)!, burnt, "housing")).toBe("Verbrannte Erde: erst aufräumen");
 
+    economyOfPlayer(g, P1.id)!.resources.food = 100; // food above the stock limit rots, the siege ate the rest
     const r = applyCommand(g, P1.id, { type: "terraform", planetId: home.id, segment: burnt.index, kind: "clearScorched" }, g.simTime);
     if (!r.ok) throw new Error(r.error);
     const cleared = homePlanet(r.state, P1.id)!.segments[burnt.index]!;

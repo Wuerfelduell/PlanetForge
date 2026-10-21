@@ -9,7 +9,10 @@ import {
   housing,
   neighbors,
   NOT_AFFORDABLE,
-  nextLevelThreshold,
+  ascensionPerCycle,
+  economyThreshold,
+  foodUpkeepPerCycle,
+  secondsPerBirth,
   planetById,
   segmentOutput,
   segmentRecipe,
@@ -177,7 +180,7 @@ function birth(state: GameState, planet: PlanetState, residents: number, events:
   const economy = state.economies[planet.economyId!]!;
   if (residents === 0 || residents >= housing(state, planet) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
   planet.birthProgress += DT;
-  if (planet.birthProgress < modified(economy, "birthTime", RULES.secondsPerBirth) - 1e-9) return;
+  if (planet.birthProgress < modified(economy, "birthTime", secondsPerBirth(state, residents)) - 1e-9) return;
 
   // The smallest people on the planet grows first (join order breaks ties), so nobody falls behind.
   const counts = new Map<string, number>();
@@ -198,7 +201,7 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
   for (const economy of Object.values(state.economies)) {
     const people = state.planets.filter((p) => p.economyId === economy.id).reduce((sum, p) => sum + (residents.get(p.id) ?? 0), 0);
     if (people === 0) continue;
-    const upkeep = people * RULES.foodPerInhabitantPerCycle;
+    const upkeep = foodUpkeepPerCycle(state, people);
     if (economy.resources.food >= upkeep) {
       economy.resources.food -= upkeep;
       economy.starving = false;
@@ -209,11 +212,21 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
     }
 
     const a = economy.ascension;
-    // Monuments add their points on top of what the people earn.
+    // Monuments and upgraded buildings add their points on top of what the people earn.
     let monuments = 0;
-    for (const p of state.planets) if (p.economyId === economy.id) for (const s of p.segments) monuments += buildingStats(s)?.ascension ?? 0;
-    a.points += modified(economy, "ascensionPerCycle", people) + monuments;
-    for (let t = nextLevelThreshold(a.level); t !== null && a.points >= t; t = nextLevelThreshold(a.level)) {
+    let upgrades = 0;
+    for (const p of state.planets) {
+      if (p.economyId !== economy.id) continue;
+      for (const s of p.segments) {
+        monuments += buildingStats(s)?.ascension ?? 0;
+        if (s.building) upgrades += (s.tier ?? 1) - 1;
+      }
+    }
+    const earned = ascensionPerCycle(state, people, upgrades);
+    a.points += modified(economy, "ascensionPerCycle", earned.people) + earned.upgrades + monuments;
+    // Food beyond the stock limit rots, so it cannot pile up for the rest of the game.
+    economy.resources.food = Math.min(economy.resources.food, RULES.foodStock.base + RULES.foodStock.perCitizen * people);
+    for (let t = economyThreshold(state, economy); t !== null && a.points >= t; t = economyThreshold(state, economy)) {
       a.level += 1;
       events.push({ type: "levelUp", economyId: economy.id, level: a.level });
       grantPick(state, economy);

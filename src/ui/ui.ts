@@ -29,7 +29,7 @@ import {
   population,
   workerCount,
   economyOf,
-  nextLevelThreshold,
+  economyThreshold,
   RESOURCE_IDS,
   RESOURCES,
   RULES,
@@ -394,8 +394,8 @@ export class Ui {
       .join("");
     const ascension = economy.ascension;
     const lvl = ascension.level;
-    const prev = lvl === 0 ? 0 : (nextLevelThreshold(lvl - 1) ?? 0);
-    const next = nextLevelThreshold(lvl);
+    const prev = lvl === 0 ? 0 : (economyThreshold(state, economy, lvl - 1) ?? 0);
+    const next = economyThreshold(state, economy, lvl);
     const progress = next === null ? 1 : (ascension.points - prev) / (next - prev);
     const cycleProgress = (state.tick % ticksPerCycle(state)) / ticksPerCycle(state);
     // Pause plus one 1×/3× toggle instead of three buttons, to keep the bar to one line on phones.

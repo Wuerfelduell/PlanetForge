@@ -12,6 +12,8 @@ import {
   population,
   RARE_RESOURCES,
   RULES,
+  nextLevelThreshold,
+  secondsPerBirth,
   SYSTEM,
   TICK_MS,
   ticksPerCycle,
@@ -195,6 +197,7 @@ describe("commands", () => {
     expect(applyCommand(g, P1.id, { type: "assign", planetId: "mars", segment: savanna.index, delta: 1 }, g.simTime).ok).toBe(false);
     expect(attempt(g, { type: "assign", segment: 999, delta: 1 }).ok).toBe(false);
     expect(attempt(g, { type: "assign", segment: home(g).segments.find((s) => !s.revealed)!.index, delta: 1 }).ok).toBe(false);
+    econ(g).resources.wood = 0;
     expect(attempt(g, { type: "build", segment: savanna.index, building: "housing" }).ok).toBe(false);
   });
 
@@ -334,7 +337,7 @@ describe("simulation", () => {
     econ(g).resources.wood = 15;
     const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
     g = exec(g, { type: "build", segment: land.index, building: "housing" });
-    const { state, events } = run(g, RULES.ticksPerSecond * RULES.secondsPerBirth);
+    const { state, events } = run(g, RULES.ticksPerSecond * secondsPerBirth(g, population(g, home(g))));
     expect(population(state, home(state))).toBe(RULES.startPopulation + 1);
     expect(events.some((e) => e.type === "born")).toBe(true);
   });
@@ -345,7 +348,7 @@ describe("simulation", () => {
     econ(g).resources.wood = 15;
     const land = home(g).segments.find((s) => s.revealed && s.biome !== "ocean")!;
     g = exec(g, { type: "build", segment: land.index, building: "housing" });
-    const { state, events } = run(g, RULES.ticksPerSecond * RULES.secondsPerBirth);
+    const { state, events } = run(g, RULES.ticksPerSecond * secondsPerBirth(g, population(g, home(g))));
     expect(events).toContainEqual(expect.objectContaining({ type: "born", playerId: MO.id }));
     expect(population(state, home(state), MO.id)).toBe(RULES.coopJoinPopulation + 1);
   });
@@ -362,7 +365,7 @@ describe("simulation", () => {
   it("levels up at the thresholds", () => {
     const g = newGame(3);
     econ(g).resources.food = 1000;
-    econ(g).ascension.points = RULES.ascensionThresholds[0] - 1;
+    econ(g).ascension.points = nextLevelThreshold(0)! - 1;
     const { state, events } = run(g, ticksPerCycle(g));
     expect(econ(state).ascension.level).toBe(1);
     expect(events).toContainEqual({ type: "levelUp", economyId: econ(g).id, level: 1 });
