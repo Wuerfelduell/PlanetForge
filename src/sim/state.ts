@@ -271,8 +271,6 @@ export type Command =
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
-  /** Buy `count` of `get` from the market trader on this planet, paying in `give`. */
-  | { type: "trade"; planetId: string; give: ResourceId; get: ResourceId; count: number }
   /** Sends `count` idle units of the sender from a planet with a launch pad. combat: versus attack. */
   | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
   /** Votes for one option of the economy's open discovery offer (alone: picks it). */
@@ -311,7 +309,6 @@ export type GameEvent =
   | { type: "built"; planetId: string; segment: number; building: BuildingId; playerId: string }
   | { type: "demolished"; planetId: string; segment: number; playerId: string }
   | { type: "upgraded"; planetId: string; segment: number; building: BuildingId; tier: number; playerId: string }
-  | { type: "traded"; planetId: string; give: ResourceId; paid: number; get: ResourceId; count: number; playerId: string }
   | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
   | { type: "removed"; playerId: string; by: string }

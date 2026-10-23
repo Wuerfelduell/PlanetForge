@@ -2,7 +2,6 @@ import { BUILDINGS, CRYO, PEOPLE_IDS, RESOURCE_IDS, RULES, SUPERNOVA, type Recip
 import { createUnit } from "./units";
 import { placeBuilding } from "./build";
 import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
-import { tradeBlocker, tradePrice } from "./rules";
 import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
@@ -140,17 +139,6 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   if (!state.lobby.open) return "Das Spiel ist geschlossen";
   const planet = planetById(state, cmd.planetId);
   if (!planet) return "Unbekannter Planet";
-  if (cmd.type === "trade") {
-    if (planet.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
-    const blocker = tradeBlocker(state, planet, cmd.give, cmd.get, cmd.count);
-    if (blocker) return blocker;
-    const economy = state.economies[planet.economyId!]!;
-    const paid = tradePrice(cmd.give, cmd.get, cmd.count)!;
-    economy.resources[cmd.give] -= paid;
-    economy.resources[cmd.get] += cmd.count;
-    events.push({ type: "traded", planetId: planet.id, give: cmd.give, paid, get: cmd.get, count: cmd.count, playerId });
-    return null;
-  }
   if (cmd.type === "dequeue") {
     if (planet.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
     const queue = state.queues[planet.id] ?? [];

@@ -59,7 +59,7 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | 0 | Wohnhaus, Farm |
 | 1 | Mine (auch Kupfer), Pumpe (auch Öl), Sägewerk (Bretter), Förster |
 | 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Raffinerie (Treibstoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
-| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
+| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Kampfrakete (gegeneinander) |
 | 4 | Siedlerrakete (erste Kolonie), Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
 | 5 | Wohnhaus 3, Labor 2, Werkstatt 2, Mine 2 (auch Gold), Pumpe 2, Luftfilter (mit Ökologie), Biogas |
 | 6 | Gießerei 2, Raffinerie 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
@@ -77,10 +77,10 @@ Nach Sebs Playtest (21.10.2026) sollen die Gebäude kniffliger werden, damit man
 
 | Ware | Rezept | Wo | Ab Stufe | Gebraucht für |
 |---|---|---|---|---|
-| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad, Markt |
+| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad |
 | Werkzeug | 1 Eisen + 1 Brett → 2 | Werkstatt | 2 | Verschleiß in Minen und Sägewerken, Mine 2 |
 | Kupferdraht | 1 Kupfer | Werkstatt | 2 | Windrad, Kohlekraftwerk, Labor 2, Elektronik |
-| Stoff | 3 Fasern | Werkstatt | 2 | Markt, Wohnhaus 3, Transportrakete (Fallschirm) |
+| Stoff | 3 Fasern | Werkstatt | 2 | Wohnhaus 3, Transportrakete (Fallschirm) |
 | Treibstoff | 2 Öl | Raffinerie | 2 | jeder Raketenflug |
 | Ziegel | 2 Lehm + 1 Kohle → 2 | Gießerei | 3 | Wohnhaus 3, Kohlekraftwerk, Sägewerk 2, Werkstatt 2 |
 
@@ -117,11 +117,9 @@ Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, En
 
 Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Computer, 10 Ätherit, 20 Stahl, 10 Beton, fliegt mit Uran (2 + 0,2 je Distanz + 0,1 je Passagier), 6 Plätze, Reichweite 40, doppelt so schnell.
 
-Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, tauscht ein Händler jede Ware (außer Wissen) gegen jede andere. Preis = Menge × Wert der gewünschten Ware × 1,5 ÷ Wert der gegebenen Ware, aufgerundet; Werte wie in src/data/balance/resources.ts (`MARKET` in content.ts).
-
 ## Edelsteine
 
-Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, gibt es teuer am Markt (Wert 50–60).
+Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, muss man auf anderen Planeten holen.
 
 ## Spielmodi und Pacing
 
