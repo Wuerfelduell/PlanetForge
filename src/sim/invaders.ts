@@ -1,7 +1,7 @@
 import { BIOMES, INVADERS, RULES, SUPERNOVA } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
-import { buildingStats, planetById, planetDefense, ticksPerCycle } from "./rules";
+import { buildingStats, economyOf, planetById, planetDefense, planetShield, ticksPerCycle } from "./rules";
 import type { EconomyState, Flight, GameEvent, GameState, Invasion, PlanetState } from "./state";
 
 /**
@@ -108,9 +108,17 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
   } else {
     const planet = planetById(state, inv.target)!;
     const residents = Object.values(state.units).filter((u) => u.planetId === planet.id);
+    const stock = economyOf(state, planet) ?? economy;
     for (const s of planet.segments) {
-      const per = buildingStats(s)?.battery;
-      if (per) damage += per * residents.filter((u) => u.segment === s.index).length;
+      const stats = buildingStats(s);
+      if (!stats?.battery) continue;
+      let crew = residents.filter((u) => u.segment === s.index).length;
+      // Missile launchers fire only while there is fuel for them.
+      if (stats.ammo) {
+        crew = Math.min(crew, Math.floor(stock.resources[stats.ammo.resource] / stats.ammo.perShot));
+        stock.resources[stats.ammo.resource] -= crew * stats.ammo.perShot;
+      }
+      damage += stats.battery * crew;
     }
     const defenders = residents.filter((u) => u.segment === null).slice(0, 10);
     const defense = planetDefense(state, planet);
@@ -124,7 +132,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         defenderLosses++;
       }
     }
-    if (inv.hp - damage > 0) {
+    if (inv.hp - damage > 0 && planetShield(state, planet) === 0) {
       // Nobody fought back: the surface burns along with the building.
       const undefended = damage === 0 && defenders.length === 0;
       const built = planet.segments.filter((s) => s.building);

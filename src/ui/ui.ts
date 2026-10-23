@@ -245,7 +245,8 @@ export class Ui {
           if (e.attacker === this.playerId) {
             this.toast(e.won ? `⚔️ ${where} erobert! ${e.captured} Gefangene` : `⚔️ Angriff auf ${where} gescheitert`, e.won ? "good" : "bad");
           } else if (e.defender === this.playerId) {
-            this.toast(e.won ? `💥 ${where} ist verloren` : `🛡️ ${where} gehalten, ${e.attackerLosses} Angreifer besiegt`, e.won ? "bad" : "good");
+            const trapped = e.intercepted ? ` (${e.intercepted} schon beim Landen)` : "";
+            this.toast(e.won ? `💥 ${where} ist verloren` : `🛡️ ${where} gehalten, ${e.attackerLosses} Angreifer besiegt${trapped}`, e.won ? "bad" : "good");
           }
           break;
         }

@@ -227,7 +227,10 @@ function wants(state: GameState, faction: FactionState, economy: EconomyState, p
     push("farm");
     push("fishery");
   }
-  if (faction.stance === "war" || faction.attitude < 0) push("watchtower");
+  if (faction.stance === "war" || faction.attitude < 0) {
+    push("watchtower");
+    if ((have.get("pitfall") ?? 0) < RULES.maxIntercept) push("pitfall");
+  }
   const counted = new Map<BuildingId, number>();
   for (const b of LADDER) {
     counted.set(b, (counted.get(b) ?? 0) + 1);

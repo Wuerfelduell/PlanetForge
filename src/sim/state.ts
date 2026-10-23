@@ -171,6 +171,8 @@ export interface Flight {
   arrivalTick: number;
   /** Flight to the sun to build or repair a shield segment (to = "sun"). */
   shield?: { segment: number; repair: boolean };
+  /** Combat rockets: roll bonus from barracks on the launch planet. */
+  attackBonus?: number;
 }
 
 export interface EconomyState {
@@ -319,7 +321,7 @@ export type GameEvent =
   | { type: "lobby"; open: boolean; paused: boolean; playerId: string }
   | { type: "launched"; flightId: string; playerId: string; from: string; to: string; rocket: RocketId; count: number; arrivalTick: number }
   | { type: "landed"; flightId: string; playerId: string; planetId: string; count: number; colonized: boolean }
-  | { type: "battle"; planetId: string; attacker: string; defender: string; attackerLosses: number; defenderLosses: number; won: boolean; captured: number }
+  | { type: "battle"; planetId: string; attacker: string; defender: string; attackerLosses: number; defenderLosses: number; won: boolean; captured: number; intercepted?: number }
   | { type: "assimilated"; playerId: string; count: number }
   | { type: "eliminated"; playerId: string }
   | { type: "surrendered"; playerId: string }
