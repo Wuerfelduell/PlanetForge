@@ -25,7 +25,7 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
   const planets = [{ pop: startPop, progress: 0 }];
   let points = 0;
   let level = 0;
-  for (let t = 1; level < ASCENSION.maxLevel && t < 10 * 3600; t++) {
+  for (let t = 1; level < ASCENSION.mainLevel && t < 10 * 3600; t++) {
     if (mode === "coop" && level >= 6 && planets.length < players) planets.push({ pop: 1, progress: 0 });
     let pop = 0;
     for (const p of planets) {
@@ -37,7 +37,7 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
       pop += p.pop;
     }
     points += pop * pointsPerSecond;
-    while (level < ASCENSION.maxLevel && points >= ascensionThreshold(level + 1, mode, players)!) {
+    while (level < ASCENSION.mainLevel && points >= ascensionThreshold(level + 1, mode, players)!) {
       level += 1;
       out.push({ level, minute: t / 60, population: pop });
     }
@@ -47,7 +47,7 @@ export function levelTimeline(mode: ModeId = "coop", players = 1): LevelEta[] {
 
 /** Total science until the last level (versus: level 8, when fights usually decide) and how many discoveries that buys. */
 export function sciencePerGame(mode: ModeId = "coop", players = 1): { science: number; discoveries: number } {
-  const last = mode === "versus" ? 8 : ASCENSION.maxLevel;
+  const last = mode === "versus" ? 8 : ASCENSION.mainLevel;
   const timeline = levelTimeline(mode, players).slice(0, last);
   // Ascension points are citizen-minutes × 2, so lab output follows from them directly.
   const citizenMinutes = ascensionThreshold(last, mode, players)! / ASCENSION.pointsPerCitizenPerMinute;

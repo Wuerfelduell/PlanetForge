@@ -210,3 +210,7 @@ Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit
 4. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
 5. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
 6. Ob Fliegen jetzt schwer genug ist, aber nicht festfährt. Stellschrauben: `takeoffFuel` und `fuelPerPassenger` in `SPACE.rockets`, das Öl-Verhältnis im Rezept `fuel`.
+
+## Late game: levels 11–20 (coop)
+
+Seb (2026-10-23): research beyond level 10. Coop goes on to level 20 (`ASCENSION.maxLevel`), versus still ends at 10. Levels 1–10 keep the design pace (`ASCENSION.mainLevel`, `PACING`); thresholds 11–20 are 17 900 … 146 400 points, so each level takes about 20–40 minutes with a few colonies. Every level from 11 to 20 unlocks at least one new discovery (14 in total: genetics, nanotech, warp drive, quantum computing, force fields, … transcendence). Discovery cost grows ×1.35 per discovery up to the 14th, then only ×1.15 (`DISCOVERY_RULES.lateFrom/lateGrowth`), so the late research stays affordable with labs. The new discoveries have no icons yet (fallback 📜).
