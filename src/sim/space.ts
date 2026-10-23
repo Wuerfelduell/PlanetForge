@@ -3,7 +3,7 @@ import { Rng } from "./rng";
 import { modified } from "./discoveries";
 import { landAtSun } from "./invaders";
 import { checkFactionEliminations, checkTeamWipe, onBattle } from "./diplomacy";
-import { activePlayers, countsFor, flightPlan, peopleOf, planetById, planetDefense, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
+import { activePlayers, countsFor, flightPlan, peopleOf, planetAttackBonus, planetById, planetDefense, planetIntercept, planetShield, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
 import type { Flight, GameEvent, GameState, PlanetState, PlayerState, UnitState } from "./state";
 import type { RocketId } from "./content";
 
@@ -26,6 +26,8 @@ export function launch(state: GameState, player: PlayerState, from: PlanetState,
     launchTick: state.tick,
     arrivalTick: state.tick + plan.seconds * RULES.ticksPerSecond,
   };
+  const drill = rocket === "combat" ? planetAttackBonus(state, from) : 0;
+  if (drill > 0) flight.attackBonus = drill;
   state.flights.push(flight);
   events.push({ type: "launched", flightId: flight.id, playerId: player.id, from: from.id, to: to.id, rocket, count, arrivalTick: flight.arrivalTick });
 }
@@ -94,9 +96,11 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
 
   const rng = new Rng(state.rng);
   const bonus = planetDefense(state, planet);
-  const attackBonus = modified(state.economies[attacker.economyId], "battleRoll", 0);
-  let attackers = flight.units.length;
-  let attackerLosses = 0;
+  const attackBonus = modified(state.economies[attacker.economyId], "battleRoll", 0) + (flight.attackBonus ?? 0) - planetShield(state, planet);
+  // Pitfalls and flak take some attackers before anyone rolls.
+  const intercepted = Math.min(flight.units.length, planetIntercept(state, planet));
+  let attackers = flight.units.length - intercepted;
+  let attackerLosses = intercepted;
   let beaten = 0;
   const killed: UnitState[] = [];
   while (attackers > 0 && beaten < defenders.length) {
@@ -152,7 +156,7 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
     }
     for (const u of flight.units.slice(attackerLosses)) state.units[u.id] = { ...u, planetId: planet.id, segment: null };
   }
-  events.push({ type: "battle", planetId: planet.id, attacker: attacker.id, defender: defenderId, attackerLosses, defenderLosses, won, captured });
+  events.push({ type: "battle", planetId: planet.id, attacker: attacker.id, defender: defenderId, attackerLosses, defenderLosses, won, captured, ...(intercepted ? { intercepted } : {}) });
   if (state.settings.factions > 0) onBattle(state, attacker, loserEconomy.id, won, events);
 }
 

@@ -454,6 +454,36 @@ export function planetDefense(state: GameState, planet: PlanetState): number {
   return RULES.homeAdvantage + Math.min(RULES.maxTowerBonus, towers) + general + towerExtra;
 }
 
+/** Attackers downed on arrival at a planet, before the dice: pitfalls and worked flak. */
+export function planetIntercept(state: GameState, planet: PlanetState): number {
+  let total = 0;
+  for (const s of planet.segments) {
+    const stats = buildingStats(s);
+    if (stats?.intercept) total += stats.intercept * (stats.workers > 0 ? workerCount(state, planet, s.index) : 1);
+  }
+  return Math.min(RULES.maxIntercept, total);
+}
+
+/** Roll bonus of combat rockets launched from this planet: worked barracks. */
+export function planetAttackBonus(state: GameState, planet: PlanetState): number {
+  let total = 0;
+  for (const s of planet.segments) {
+    const stats = buildingStats(s);
+    if (stats?.attack && workerCount(state, planet, s.index) > 0) total += stats.attack;
+  }
+  return Math.min(RULES.maxAttackBonus, total);
+}
+
+/** Strength of a worked shield generator on the planet, 0 without one. */
+export function planetShield(state: GameState, planet: PlanetState): number {
+  let best = 0;
+  for (const s of planet.segments) {
+    const stats = buildingStats(s);
+    if (stats?.shield && workerCount(state, planet, s.index) > 0) best = Math.max(best, stats.shield);
+  }
+  return best;
+}
+
 /** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
 export function needsSuits(planet: PlanetState): boolean {
   return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;

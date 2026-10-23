@@ -212,6 +212,7 @@ export const BUILDING_IDS = [
   "watchtower", "battery",
   "launchpad", "refinery",
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
+  "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -271,6 +272,20 @@ export interface BuildingDef {
   defense?: number;
   /** Damage to a besieging invader ship per worker and siege round. */
   battery?: number;
+  /** Each battery round uses this much per firing worker; without it that worker cannot fire. */
+  ammo?: { resource: ResourceId; perShot: number };
+  /**
+   * Attackers shot down on arrival, before the dice battle: per worker, or per building when
+   * nobody works here (counted up to RULES.maxIntercept per planet).
+   */
+  intercept?: number;
+  /** Added to the rolls of combat rockets launched from this planet (counted up to RULES.maxAttackBonus). */
+  attack?: number;
+  /**
+   * Worked planetary shield: invaders cannot wreck or burn anything here, and attackers roll
+   * this much lower.
+   */
+  shield?: number;
   /**
    * Power on the planet's grid: positive feeds it (scaled by adjacency, and by the crew on manned
    * plants), negative draws from it. Short of power, consumers run at RULES.energy.unpoweredMul.
@@ -285,7 +300,7 @@ export interface BuildingDef {
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
-  Partial<Pick<BuildingDef, "name" | "icon" | "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense" | "energy">>;
+  Partial<Pick<BuildingDef, "name" | "icon" | "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense" | "energy" | "intercept" | "attack">>;
 
 export interface AdjacencyDef {
   biome?: BiomeId;
@@ -760,6 +775,78 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     workers: 2,
     battery: 1,
   },
+  pitfall: {
+    name: "Fallgrube",
+    icon: "🕳️",
+    category: "defense",
+    description: "Eine getarnte Grube: bei jedem Angriff auf diesen Planeten stürzt ein Angreifer hinein, bevor gewürfelt wird.",
+    cost: { wood: 15, stone: 10 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 0,
+    intercept: 1,
+  },
+  barracks: {
+    name: "Kaserne",
+    icon: "⚔️",
+    category: "defense",
+    description: "Soldaten üben hier: Kampfraketen, die von diesem Planeten starten, würfeln +1, solange jemand trainiert. Ausbaubar zur Militärakademie.",
+    cost: { planks: 20, bricks: 15, tools: 5 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 1,
+    attack: 1,
+    upgrades: [{ name: "Militärakademie", icon: "🎖️", cost: { steel: 15, cloth: 10 }, unlockLevel: 7, workers: 2, attack: 2 }],
+  },
+  flak: {
+    name: "Flakgeschütz",
+    icon: "💥",
+    category: "defense",
+    description: "Holt landende Kampfraketen vom Himmel: je Arbeiter ein Angreifer weniger, bevor gewürfelt wird. Trifft auch Invasoren (1 Treffer pro Arbeiter und Umlauf).",
+    cost: { steel: 10, bricks: 10, tools: 5 },
+    unlockLevel: 6,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    intercept: 1,
+    battery: 1,
+  },
+  "missile-launcher": {
+    name: "Raketenwerfer",
+    icon: "🎆",
+    category: "defense",
+    description: "Feuert Raketen auf Invasoren: je Arbeiter 4 Treffer pro Umlauf, verbraucht dabei 2 Treibstoff pro Arbeiter.",
+    cost: { steel: 15, wire: 10, electronics: 2 },
+    unlockLevel: 7,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 4,
+    ammo: { resource: "fuel", perShot: 2 },
+  },
+  "shield-generator": {
+    name: "Schildgenerator",
+    icon: "🛡️",
+    category: "defense",
+    description: "Ein Energieschild über dem Planeten, solange jemand ihn bedient: Invasoren können nichts zerstören oder verbrennen, Angreifer würfeln −1. Braucht viel Strom. Nur einer pro Planet.",
+    cost: { steel: 20, glass: 20, electronics: 4 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 1,
+    shield: 1,
+    energy: -4,
+    unique: true,
+  },
+  "ion-cannon": {
+    name: "Ionenkanone",
+    icon: "⚡",
+    category: "defense",
+    description: "Die stärkste Waffe gegen Invasoren: je Arbeiter 8 Treffer pro Umlauf. Braucht viel Strom.",
+    cost: { aetherite: 10, computer: 1, steel: 20 },
+    unlockLevel: 9,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 8,
+    energy: -4,
+  },
 };
 
 export type RecipeId =
@@ -1070,6 +1157,10 @@ export const RULES = {
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
   homeAdvantage: 1,
   maxTowerBonus: 2,
+  /** Attackers that pitfalls and flak can down before one battle. */
+  maxIntercept: 3,
+  /** Bonus on combat rocket rolls from barracks on the launch planet. */
+  maxAttackBonus: 2,
   /** versus: captives count for their original owner for this many cycles, then join the captor. */
   captiveAssimilationCycles: 10,
   /** versus: after this many cycles without a battle the game offers a draw. */
