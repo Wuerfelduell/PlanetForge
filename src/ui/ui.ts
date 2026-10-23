@@ -969,7 +969,7 @@ export class Ui {
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
-        const tag = deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : "";
+        const tag = deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : d.resource === "platinum" ? `<small>Tiefbohrer</small>` : "";
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
     };

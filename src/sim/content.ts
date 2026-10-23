@@ -21,6 +21,9 @@ export const RESOURCE_IDS = [
   "suits",
   // Gems (Seb): very rare, a handful per world, needed only for a few special things.
   "diamond", "emerald", "ruby",
+  // More ores (Seb: "mehr verschiedene Erze"): tin and silver mined as they are, bauxite and
+  // ilmenite smelted to aluminium and titanium, platinum only from asteroids and far planets.
+  "tin", "silver", "bauxite", "ilmenite", "platinum", "bronze", "aluminium", "titanium",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -62,6 +65,14 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   diamond: { name: "Diamant", icon: "💠" },
   emerald: { name: "Smaragd", icon: "✳️" },
   ruby: { name: "Rubin", icon: "♦️" },
+  tin: { name: "Zinn", icon: "🥫" },
+  silver: { name: "Silber", icon: "🥈" },
+  bauxite: { name: "Bauxit", icon: "🟤" },
+  ilmenite: { name: "Titanerz", icon: "🌑" },
+  platinum: { name: "Platin", icon: "⚪" },
+  bronze: { name: "Bronze", icon: "🥉" },
+  aluminium: { name: "Aluminium", icon: "🥄" },
+  titanium: { name: "Titan", icon: "🛡️" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -74,7 +85,7 @@ export interface DepositDef {
   infinite?: boolean;
   /** Can be collected by inhabitants without a building. */
   byHand?: boolean;
-  /** Deep deposit: only a building stage that lists it reaches it (gold, mine stage 2). */
+  /** Deep deposit: only a building stage that lists it reaches it (gold and silver, mine stage 2). */
   tier?: 2;
 }
 
@@ -108,6 +119,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "fiber", max: 50, byHand: true },
       { resource: "stone", max: 25 },
       { resource: "clay", max: 30 },
+      { resource: "bauxite", max: 35 },
     ],
   },
   mountains: {
@@ -119,6 +131,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "iron", max: 50 },
       { resource: "copper", max: 45 },
       { resource: "gold", max: 15, tier: 2 },
+      { resource: "tin", max: 25 },
+      { resource: "silver", max: 15, tier: 2 },
     ],
   },
   ocean: {
@@ -138,6 +152,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "sand", max: 90, byHand: true },
       { resource: "stone", max: 30 },
       { resource: "copper", max: 30 },
+      { resource: "ilmenite", max: 20 },
     ],
   },
   swamp: {
@@ -148,6 +163,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "clay", max: 70, byHand: true },
       { resource: "water", max: 40 },
       { resource: "fiber", max: 30, byHand: true },
+      { resource: "bauxite", max: 25 },
     ],
   },
   tundra: {
@@ -158,6 +174,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 50, byHand: true },
       { resource: "water", max: 60, byHand: true },
       { resource: "iron", max: 30 },
+      { resource: "tin", max: 35 },
+      { resource: "silver", max: 20, tier: 2 },
     ],
   },
   crystal: {
@@ -188,6 +206,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 60, byHand: true },
       { resource: "iron", max: 45 },
       { resource: "gold", max: 20, tier: 2 },
+      { resource: "ilmenite", max: 35 },
     ],
   },
   ash: {
@@ -198,6 +217,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "sand", max: 50, byHand: true },
       { resource: "stone", max: 30, byHand: true },
       { resource: "coal", max: 25 },
+      { resource: "ilmenite", max: 25 },
     ],
   },
 };
@@ -213,6 +233,7 @@ export const BUILDING_IDS = [
   "launchpad", "refinery",
   "market",
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
+  "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -430,7 +451,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     unlockLevel: 1,
     allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
     workers: 3,
-    extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite"], perWorker: 0.6 },
+    extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "tin", "bauxite", "ilmenite"], perWorker: 0.6 },
     adjacency: [{ biome: "mountains", bonus: 0.25 }],
     needsDeposit: true,
     usesTools: true,
@@ -439,7 +460,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
         cost: { iron: 15, bricks: 10, tools: 5 },
         unlockLevel: 5,
         workers: 5,
-        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold"], perWorker: 0.8 },
+        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold", "tin", "bauxite", "ilmenite", "silver"], perWorker: 0.8 },
       },
     ],
   },
@@ -728,6 +749,84 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     battery: 3,
     energy: -2,
   },
+  // New ores (Seb: "mehr verschiedene Erze"): a smelter for the alloys and light metals, and one
+  // new thing each that needs them, so every ore has a use.
+  smelter: {
+    name: "Erzschmelze",
+    icon: "⚗️",
+    category: "production",
+    description:
+      "Schmilzt Kupfer und Zinn zu Bronze und Bauxit zu Aluminium, ab Stufe 2 (Lichtbogenofen) auch Titanerz zu Titan. Braucht Strom. Darf auf Lava stehen. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+    cost: { bricks: 15, stone: 20, iron: 10 },
+    unlockLevel: 4,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    crafts: { recipes: ["bronze", "aluminium"], speed: 1 },
+    adjacency: [
+      { building: "mine", bonus: 0.1 },
+      { biome: "lava", bonus: 0.3 },
+    ],
+    energy: -1,
+    upgrades: [{ name: "Lichtbogenofen", cost: { steel: 10, bronze: 10, wire: 5 }, unlockLevel: 6, workers: 3, crafts: { recipes: ["bronze", "aluminium", "titanium"], speed: 1.25 }, energy: -2 }],
+  },
+  "bell-tower": {
+    name: "Glockenturm",
+    icon: "🔔",
+    category: "housing",
+    description: "Eine Bronzeglocke ruft das Volk zusammen: +3 Aufstiegspunkte pro Umlauf. Nur einer pro Planet.",
+    cost: { bronze: 12, stone: 20, planks: 10 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 0,
+    ascension: 3,
+    unique: true,
+  },
+  "power-tower": {
+    name: "Solarturm",
+    icon: "🪞",
+    category: "energy",
+    description: "Silberspiegel auf Aluminiumgestellen bündeln die Sonne: +6 Strom ohne Arbeiter und ohne Brennstoff. +30 % je Nachbar-Wüste, −30 % je Nachbar-Kohlekraftwerk (Smog).",
+    cost: { silver: 4, aluminium: 10, glass: 10 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 0,
+    energy: 6,
+    adjacency: [
+      { biome: "desert", bonus: 0.3 },
+      { building: "power-coal", bonus: -0.3 },
+    ],
+  },
+  "deep-drill": {
+    name: "Tiefbohrer",
+    icon: "🪛",
+    category: "resources",
+    description:
+      "Ein Bohrer mit Titankopf fördert alle Erze des Feldes schneller als die Mine, auch tiefes Gold und Silber und als einziger Platin. Braucht Strom. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
+    cost: { titanium: 8, steel: 15, electronics: 2 },
+    unlockLevel: 7,
+    allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
+    workers: 3,
+    extracts: {
+      resources: ["iron", "copper", "coal", "uranium", "aetherite", "gold", "tin", "bauxite", "ilmenite", "silver", "platinum"],
+      perWorker: 1,
+    },
+    adjacency: [{ biome: "mountains", bonus: 0.25 }],
+    needsDeposit: true,
+    usesTools: true,
+    energy: -2,
+  },
+  "power-fuelcell": {
+    name: "Brennstoffzelle",
+    icon: "🔋",
+    category: "energy",
+    description: "Platin spaltet Wasser und verbrennt es sauber: +8 Strom mit einem Arbeiter, kein Lärm, kein Staub.",
+    cost: { platinum: 3, titanium: 10, steel: 10 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 1,
+    energy: 8,
+    burns: { resource: "water", perSecond: 0.1 },
+  },
   market: {
     name: "Markt",
     icon: "🏪",
@@ -776,7 +875,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
 
 export type RecipeId =
   | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
-  | "plastic" | "biogas" | "electronics" | "computer" | "suits";
+  | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium";
 
 export interface RecipeDef {
   name: string;
@@ -804,6 +903,9 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
   suits: { name: "Raumanzug", inputs: { cloth: 2, iron: 1 }, outputs: { suits: 1 }, seconds: 8 },
+  bronze: { name: "Bronze", inputs: { copper: 2, tin: 1, coal: 1 }, outputs: { bronze: 2 }, seconds: 8 },
+  aluminium: { name: "Aluminium", inputs: { bauxite: 3 }, outputs: { aluminium: 1 }, seconds: 10 },
+  titanium: { name: "Titan", inputs: { ilmenite: 2, coal: 2 }, outputs: { titanium: 1 }, seconds: 14 },
 };
 
 /**
@@ -820,6 +922,8 @@ export const MARKET = {
     planks: 10, tools: 12, wire: 9, cloth: 18, bricks: 9, fuel: 12,
     glass: 18, concrete: 18, steel: 22, plastic: 22, electronics: 80, computer: 220,
     diamond: 60, emerald: 50, ruby: 50,
+    tin: 5, bauxite: 4, ilmenite: 5, silver: 15, platinum: 35,
+    bronze: 12, aluminium: 20, titanium: 35,
   } as Partial<Record<ResourceId, number>>,
   /** Units per trade the market offers. */
   lots: [1, 5] as const,
@@ -1039,6 +1143,18 @@ export const GEMS = {
   /** Chance per free planet or asteroid to hold one gem field. */
   planetChance: 0.35,
   amount: [6, 12] as const,
+} as const;
+
+/**
+ * Platinum (Seb: "mehr verschiedene Erze"): never on a start planet, so flying out pays. From its
+ * own seed stream; only the deep drill reaches it, the market sells it to those without a rocket.
+ */
+export const PLATINUM = {
+  /** Chance per asteroid / per other free planet to hold one platinum field. */
+  asteroidChance: 0.6,
+  planetChance: 0.3,
+  biomes: ["mountains", "crystal", "lava", "tundra"] as readonly BiomeId[],
+  amount: [15, 30] as const,
 } as const;
 
 /**
