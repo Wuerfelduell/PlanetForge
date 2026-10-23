@@ -11,6 +11,10 @@ export const DISCOVERY_IDS = [
   "space-mining", "weather-control",
   "crystal-lore", "automation",
   "terraforming", "atomic-power",
+  // Late game, levels 11–20 (coop goes on past level 10).
+  "genetics", "nanotech", "deep-space-radar", "arcology", "warp-drive", "quantum-computing",
+  "force-fields", "biosphere", "golden-age", "matter-replicator", "cloning", "star-forge",
+  "galactic-council", "transcendence",
 ] as const;
 export type DiscoveryId = (typeof DISCOVERY_IDS)[number];
 
@@ -181,12 +185,117 @@ export const DISCOVERIES = {
     minLevel: 9,
     unlocks: { buildings: ["power-atomic"] },
   },
+  genetics: {
+    name: "Genetik",
+    description: "Nachwuchs kommt 20 % schneller.",
+    minLevel: 11,
+    modifiers: [{ stat: "birthTime", mul: 0.8 }],
+  },
+  nanotech: {
+    name: "Nanotechnik",
+    description: "Alle Gebäude produzieren 15 % mehr.",
+    minLevel: 11,
+    modifiers: [{ stat: "buildingOutput", mul: 1.15 }],
+  },
+  "deep-space-radar": {
+    name: "Tiefraumradar",
+    description: "+4 Sichtweite auf der Sternkarte, jedes neue Gebäude deckt ein Feld weiter auf.",
+    minLevel: 12,
+    modifiers: [
+      { stat: "sightRadius", add: 4 },
+      { stat: "revealRadius", add: 1 },
+    ],
+  },
+  arcology: {
+    name: "Arkologie",
+    description: "+2 Plätze in jedem Wohnhaus.",
+    minLevel: 12,
+    modifiers: [{ stat: "housing", add: 2, scope: { building: "housing" } }],
+  },
+  "warp-drive": {
+    name: "Warpantrieb",
+    description: "Raketen brauchen 40 % weniger Treibstoff und tragen zwei Einwohner mehr.",
+    minLevel: 13,
+    modifiers: [
+      { stat: "rocketFuel", mul: 0.6 },
+      { stat: "rocketCapacity", add: 2 },
+    ],
+  },
+  "quantum-computing": {
+    name: "Quantenrechner",
+    description: "Alle weiteren Entdeckungen kosten 25 % weniger.",
+    minLevel: 13,
+    modifiers: [{ stat: "discoveryCost", mul: 0.75 }],
+  },
+  "force-fields": {
+    name: "Kraftfelder",
+    description: "+2 auf jeden Kampfwurf, im Kampf stirbt einer weniger.",
+    minLevel: 14,
+    modifiers: [
+      { stat: "battleRoll", add: 2 },
+      { stat: "battleLosses", add: -1 },
+    ],
+  },
+  biosphere: {
+    name: "Biosphäre",
+    description: "Farmen +25 %, alle Vorkommen wachsen 50 % schneller nach.",
+    minLevel: 14,
+    modifiers: [
+      { stat: "buildingOutput", mul: 1.25, scope: { building: "farm" } },
+      { stat: "regenRate", mul: 1.5 },
+    ],
+  },
+  "golden-age": {
+    name: "Goldenes Zeitalter",
+    description: "+20 % Aufstiegspunkte pro Umlauf.",
+    minLevel: 15,
+    modifiers: [{ stat: "ascensionPerCycle", mul: 1.2 }],
+  },
+  "matter-replicator": {
+    name: "Materiewandler",
+    description: "Sammeln von Hand +50 %.",
+    minLevel: 16,
+    modifiers: [{ stat: "handGatherRate", mul: 1.5 }],
+  },
+  cloning: {
+    name: "Klonlabor",
+    description: "Nachwuchs kommt 25 % schneller.",
+    minLevel: 17,
+    modifiers: [{ stat: "birthTime", mul: 0.75 }],
+  },
+  "star-forge": {
+    name: "Sternenschmiede",
+    description: "Alle Gebäude produzieren 20 % mehr.",
+    minLevel: 18,
+    modifiers: [{ stat: "buildingOutput", mul: 1.2 }],
+  },
+  "galactic-council": {
+    name: "Galaktischer Rat",
+    description: "+25 % Aufstiegspunkte pro Umlauf, Entdeckungen kosten 20 % weniger.",
+    minLevel: 19,
+    modifiers: [
+      { stat: "ascensionPerCycle", mul: 1.25 },
+      { stat: "discoveryCost", mul: 0.8 },
+    ],
+  },
+  transcendence: {
+    name: "Transzendenz",
+    description: "Die höchste Erkenntnis: +50 % Aufstiegspunkte, alle Gebäude +25 %.",
+    minLevel: 20,
+    modifiers: [
+      { stat: "ascensionPerCycle", mul: 1.5 },
+      { stat: "buildingOutput", mul: 1.25 },
+    ],
+  },
 } as const satisfies Record<DiscoveryId, DiscoveryDef<ResourceId, BiomeId>>;
 
 export const DISCOVERY_RULES = {
   /** Cost of the n-th discovery bought (0-based): round(baseCost × growth^n). */
   baseCost: 30,
   growth: 1.35,
+  /** From this many bought discoveries on, each one costs only lateGrowth × the previous one. */
+  lateFrom: 14,
+  lateGrowth: 1.15,
   /** New choices offered at every ascension level-up. Unbought offers stay. */
   offersPerLevel: 3,
   /** Science granted on reaching level L: sciencePerLevel × L. */

@@ -55,7 +55,8 @@ describe("references", () => {
     expect(buildingSprite("market")).toBe("building.market");
     for (const r of Object.values(resources)) expect(r.icon).toMatch(/^resource\.[a-z]+$/);
     expect(IDS.peoples).toHaveLength(12);
-    expect(IDS.discoveries).toHaveLength(24);
+    // 24 from the art brief plus 14 late-game discoveries (levels 11–20, no art yet).
+    expect(IDS.discoveries).toHaveLength(38);
   });
 });
 
@@ -203,7 +204,10 @@ describe("pacing", () => {
 
   it("formulas", () => {
     expect(ascensionThreshold(1)).toBe(25);
-    expect(ascensionThreshold(11)).toBeNull();
+    expect(ascensionThreshold(11)).toBe(17900);
+    expect(ascensionThreshold(20)).toBe(146400);
+    expect(ascensionThreshold(21)).toBeNull();
+    expect(ascensionThreshold(11, "versus")).toBeNull();
     expect(ascensionThreshold(10, "coop", 2)).toBe(Math.round(12900 * 1.3));
     expect(coopJoinCitizens(0)).toBe(3);
     expect(coopJoinCitizens(5)).toBe(5);

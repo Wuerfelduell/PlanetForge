@@ -14,6 +14,7 @@ import {
   ticksPerCycle,
   type GameState,
 } from "./index";
+import { DISCOVERIES } from "./discoveries";
 
 const P1 = { id: "p1", name: "Seb" };
 const MO = { id: "p2", name: "Mo" };
@@ -117,5 +118,37 @@ describe("discoveries", () => {
     const before = segmentOutput(planet, forest, 2, economy).wood!;
     economy.discoveries.push("swift-feet");
     expect(segmentOutput(planet, forest, 2, economy).wood!).toBeCloseTo(before * 1.2);
+  });
+
+  it("coop goes on past level 10 and offers late research there, versus stops at 10", () => {
+    let g = createGame("late", [P1], { now: 0, invaders: "off" });
+    g = clone(g);
+    const economy = economyOfPlayer(g, P1.id)!;
+    economy.ascension.level = 10;
+    economy.ascension.points = nextLevelThreshold(10, "coop", 1)! - 1;
+    economy.discoveries = OFFERABLE.filter((id) => DISCOVERIES[id].minLevel <= 10);
+    economy.resources.food = 5000;
+    const { state, events } = runCycle(g);
+    const after = economyOfPlayer(state, P1.id)!;
+    expect(events).toContainEqual(expect.objectContaining({ type: "levelUp", level: 11 }));
+    expect(after.offer?.options.length).toBeGreaterThan(0);
+    for (const id of after.offer!.options) expect(DISCOVERIES[id as keyof typeof DISCOVERIES].minLevel).toBe(11);
+    expect(nextLevelThreshold(19, "coop", 1)).not.toBeNull();
+    expect(nextLevelThreshold(20, "coop", 1)).toBeNull();
+    expect(nextLevelThreshold(10, "versus", 1)).toBeNull();
+  });
+
+  it("every level from 11 to 20 brings at least one new offerable discovery", () => {
+    for (let level = 11; level <= 20; level++) {
+      expect(OFFERABLE.some((id) => DISCOVERIES[id].minLevel === level), `level ${level}`).toBe(true);
+    }
+  });
+
+  it("late discoveries get cheaper growth, so they stay affordable", () => {
+    const g = createGame("cost", [P1], { now: 0 });
+    const economy = economyOfPlayer(g, P1.id)!;
+    const costAt = (n: number) => discoveryCost(g, { ...economy, discoveries: Array(n).fill("swift-feet") });
+    expect(costAt(15) / costAt(14)).toBeCloseTo(1.15, 1);
+    expect(costAt(5) / costAt(4)).toBeCloseTo(1.35, 1);
   });
 });

@@ -1,4 +1,5 @@
 import { DISCOVERIES, DISCOVERY_RULES, type DiscoveryId } from "../data/balance/discoveries";
+import { discoveryBaseCost } from "../data/balance/index";
 import { MODES } from "../data/balance/progression";
 import { Rng } from "./rng";
 import type { EconomyState, GameEvent, GameState } from "./state";
@@ -71,7 +72,7 @@ export function discoveryCost(state: GameState, economy: EconomyState): number {
   const players = state.players.filter((p) => p.economyId === economy.id).length || 1;
   const mode = MODES[state.settings.mode];
   const playerMul = mode.playerDiscoveryCostMul[Math.min(players, mode.playerDiscoveryCostMul.length) - 1] ?? 1;
-  const base = DISCOVERY_RULES.baseCost * DISCOVERY_RULES.growth ** economy.discoveries.length * mode.discoveryCostMul * playerMul;
+  const base = discoveryBaseCost(economy.discoveries.length) * mode.discoveryCostMul * playerMul;
   return Math.round(modified(economy, "discoveryCost", base));
 }
 

@@ -143,7 +143,8 @@ export class Ui {
   }
 
   private dicon(id: string): string {
-    return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="">` : "📜";
+    // Late discoveries may not have art yet: fall back to the scroll.
+    return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="" onerror="this.replaceWith('📜')">` : "📜";
   }
 
   /** HUD badge from the ui atlas (single PNG), the emoji until the art is loaded. */
