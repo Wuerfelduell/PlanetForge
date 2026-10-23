@@ -57,7 +57,6 @@ const MOTIONS: Record<string, Motion> = {
   "building.pump.t2": { kind: "rock", amp: 0.14, speed: 2 },
   "building.mine.t1": { kind: "slide", dist: 14, speed: 1.3 },
   "building.mine.t2": { kind: "slide", dist: 14, speed: 1.3 },
-  "building.market": { kind: "rock", amp: 0.06, speed: 3 },
   "building.battery": { kind: "rock", amp: 0.25, speed: 1.5 },
   "building.sawmill.t1": { kind: "spin", speed: 6 },
   "building.sawmill.t2": { kind: "spin", speed: 7 },

@@ -7,10 +7,7 @@ import {
   BUILDING_IDS,
   BUILDINGS,
   type BuildingCategory,
-  MARKET,
   GEMS,
-  tradeBlocker,
-  tradePrice,
   cycleOf,
   housing,
   discoveryCost,
@@ -128,9 +125,6 @@ export class Ui {
   private readonly depleted = new Map<ResourceId, number>();
   /** Open tab of the build menu; kept while the player taps from field to field. */
   private buildTab: BuildingCategory | "terrain" = "housing";
-  /** Market: what the player pays with and what they want. */
-  private marketGive: ResourceId | null = null;
-  private marketGet: ResourceId | null = null;
   /** Star map open, and the planet (or "sun") picked on it. */
   private mapOpen = false;
   /** Read by the star map to highlight the same planet. */
@@ -343,9 +337,6 @@ export class Ui {
         case "factionEliminated":
           this.toast(`💀 ${this.factionName(e.faction)} sind ausgelöscht`, "warn");
           break;
-        case "traded":
-          if (e.playerId === this.playerId) this.toast(`🏪 ${e.count} ${RESOURCES[e.get].name} für ${e.paid} ${RESOURCES[e.give].name} getauscht`, "good");
-          break;
         case "cycle":
         case "built":
         case "demolished":
@@ -411,16 +402,6 @@ export class Ui {
       case "draw": {
         const me = this.state?.players.find((p) => p.id === this.playerId);
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
-        break;
-      }
-      case "marketGive":
-      case "marketGet":
-        this[action] = value as ResourceId;
-        this.lastPanel = "";
-        break;
-      case "trade": {
-        const [count, give, get] = value!.split(":");
-        this.actions.send({ type: "trade", planetId: this.planetId, give: give as ResourceId, get: get as ResourceId, count: Number(count) });
         break;
       }
       case "buildTab":
@@ -803,30 +784,6 @@ export class Ui {
   }
 
   /** Launch pad: one row per reachable planet with the rockets that can go there. */
-  /** Market stand: pick what to pay with, then what to get, then how much. */
-  private renderMarket(state: GameState, planet: PlanetState): string {
-    const economy = economyOf(state, planet);
-    if (!economy) return "";
-    const tradeable = RESOURCE_IDS.filter((r) => MARKET.values[r]);
-    const owned = tradeable.filter((r) => economy.resources[r] >= 1);
-    const give = this.marketGive && owned.includes(this.marketGive) ? this.marketGive : null;
-    const chip = (r: ResourceId, action: string, on: boolean, extra = "") =>
-      `<button class="deposit${on ? " on" : ""}" data-action="${action}" data-value="${r}" title="${RESOURCES[r].name}">${this.res(r)}${extra}</button>`;
-    let html = `<p class="tab-name">Du gibst</p><div class="deposits">${owned.map((r) => chip(r, "marketGive", r === give, ` <small>${Math.floor(economy.resources[r])}</small>`)).join("") || `<small class="muted">Nichts zum Tauschen da</small>`}</div>`;
-    if (!give) return html;
-    const get = this.marketGet && this.marketGet !== give ? this.marketGet : null;
-    html += `<p class="tab-name">Du bekommst</p><div class="deposits">${tradeable.filter((r) => r !== give).map((r) => chip(r, "marketGet", r === get)).join("")}</div>`;
-    if (!get) return html;
-    const offers = MARKET.lots
-      .map((count) => {
-        const price = tradePrice(give, get, count)!;
-        const blocker = tradeBlocker(state, planet, give, get, count);
-        return `<button class="build" data-action="trade" data-value="${count}:${give}:${get}" ${blocker ? `disabled title="${blocker}"` : ""}><span class="name">${count} ${this.res(get)} kaufen</span><span class="cost"><span class="${economy.resources[give] >= price ? "" : "short"}">${price} ${this.res(give)}</span>${blocker && blocker !== NOT_AFFORDABLE ? `<br>${blocker}` : ""}</span></button>`;
-      })
-      .join("");
-    return `${html}<div class="choices">${offers}</div>`;
-  }
-
   private renderLaunches(state: GameState, planet: PlanetState): string {
     const idle = idleUnits(state, planet, this.playerId).length;
     const rows = this.visiblePlanets(state)
@@ -1032,7 +989,7 @@ export class Ui {
       const info =
         s.building === "launchpad"
           ? this.renderLaunches(state, planet)
-          : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}${s.building === "market" ? this.renderMarket(state, planet) : ""}`;
+          : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}`;
       const next = nextUpgrade(s);
       let upgrade = "";
       if (next) {
