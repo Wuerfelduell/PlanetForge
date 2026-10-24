@@ -1,0 +1,758 @@
+{
+  "assets": [
+    {
+      "id": "resource.tin",
+      "category": "resources",
+      "src": "art/src/resources/tin.svg",
+      "out": "public/assets/sprites/resources/tin.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "tin"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.tin.mini",
+      "category": "resources",
+      "src": "art/src/resources/tin-mini.svg",
+      "out": "public/assets/sprites/resources/tin-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "tin-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.silver",
+      "category": "resources",
+      "src": "art/src/resources/silver.svg",
+      "out": "public/assets/sprites/resources/silver.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "silver"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.silver.mini",
+      "category": "resources",
+      "src": "art/src/resources/silver-mini.svg",
+      "out": "public/assets/sprites/resources/silver-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "silver-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bauxite",
+      "category": "resources",
+      "src": "art/src/resources/bauxite.svg",
+      "out": "public/assets/sprites/resources/bauxite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bauxite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bauxite.mini",
+      "category": "resources",
+      "src": "art/src/resources/bauxite-mini.svg",
+      "out": "public/assets/sprites/resources/bauxite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bauxite-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ilmenite",
+      "category": "resources",
+      "src": "art/src/resources/ilmenite.svg",
+      "out": "public/assets/sprites/resources/ilmenite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "ilmenite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ilmenite.mini",
+      "category": "resources",
+      "src": "art/src/resources/ilmenite-mini.svg",
+      "out": "public/assets/sprites/resources/ilmenite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "ilmenite-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.platinum",
+      "category": "resources",
+      "src": "art/src/resources/platinum.svg",
+      "out": "public/assets/sprites/resources/platinum.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "platinum"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.platinum.mini",
+      "category": "resources",
+      "src": "art/src/resources/platinum-mini.svg",
+      "out": "public/assets/sprites/resources/platinum-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "platinum-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bronze",
+      "category": "resources",
+      "src": "art/src/resources/bronze.svg",
+      "out": "public/assets/sprites/resources/bronze.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bronze"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bronze.mini",
+      "category": "resources",
+      "src": "art/src/resources/bronze-mini.svg",
+      "out": "public/assets/sprites/resources/bronze-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bronze-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.aluminium",
+      "category": "resources",
+      "src": "art/src/resources/aluminium.svg",
+      "out": "public/assets/sprites/resources/aluminium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "aluminium"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.aluminium.mini",
+      "category": "resources",
+      "src": "art/src/resources/aluminium-mini.svg",
+      "out": "public/assets/sprites/resources/aluminium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "aluminium-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.titanium",
+      "category": "resources",
+      "src": "art/src/resources/titanium.svg",
+      "out": "public/assets/sprites/resources/titanium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "titanium"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.titanium.mini",
+      "category": "resources",
+      "src": "art/src/resources/titanium-mini.svg",
+      "out": "public/assets/sprites/resources/titanium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "titanium-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1-off.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2-off.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower.svg",
+      "out": "public/assets/sprites/buildings/bell-tower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower-construction.svg",
+      "out": "public/assets/sprites/buildings/bell-tower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower-off.svg",
+      "out": "public/assets/sprites/buildings/bell-tower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower.svg",
+      "out": "public/assets/sprites/buildings/power-tower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "power-tower"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower-construction.svg",
+      "out": "public/assets/sprites/buildings/power-tower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "power-tower-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower-off.svg",
+      "out": "public/assets/sprites/buildings/power-tower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "power-tower-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill.svg",
+      "out": "public/assets/sprites/buildings/deep-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/deep-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill-off.svg",
+      "out": "public/assets/sprites/buildings/deep-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "power-fuelcell"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell-construction.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "power-fuelcell-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell-off.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "power-fuelcell-off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
