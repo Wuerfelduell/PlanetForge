@@ -28,7 +28,7 @@ function pitfall(){
     leaf(63,188,-12)+leaf(89,190,18)+leaf(112,198,48)+leaf(71,211,160)+leaf(103,219,160))+
   [[46,188],[191,187],[62,216]].map(([x,y])=>path(`M${x} ${y+18}V${y-9}Q${x+5} ${y-18} ${x+10} ${y-9}V${y+18}Z`,'iron')+glint(`M${x+3} ${y-4}V${y+8}`)).join('')+
   group('flag',line('M205 219V140','ink',6)+path('M205 143Q214 138 226 145L221 156L227 169Q214 163 205 167Z','ascension')+path('M215 148L221 154L215 160L210 154Z','coal','stroke="none"'))+
-  glint('M42 210Q49 221 66 223')+leaf(171,224,145);
+  glint('M42 210Q49 221 66 223')+leaf(171,219,145);
 }
 const flag=(x,y,token='danger')=>line(`M${x} ${y+67}V${y}`,'rock-dark',5)+path(`M${x+2} ${y+3}Q${x+16} ${y-4} ${x+30} ${y+6}L${x+24} ${y+17}L${x+31} ${y+28}Q${x+16} ${y+19} ${x+2} ${y+27}Z`,token);
 const target=(x,y,r)=>post(x-6,y+8,225-y-8,'iron')+circle(x,y,r,'paper')+circle(x,y,round(r*.6),'danger')+circle(x,y,round(r*.2),'paper','stroke="none"');
