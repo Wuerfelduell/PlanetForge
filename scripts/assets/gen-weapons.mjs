@@ -77,7 +77,25 @@ function flak(){return ellipse(128,215,97,22,'sand')+
  line('M89 186L102 173','rock-dark',8)+rect(75,180,23,15,'iron',7)+
  [34,80,126,172].map((x,i)=>sandbag(x,210+(i===1||i===2?3:0))).join('');}
 
+function missileLauncher(){return foot(
+ rect(45,206,125,19,'rock-dark',8)+path('M76 207L91 166H148L164 207Z','rock')+
+ path('M129 172H146L158 204H138Z','rock-dark','stroke="none"')+
+ group('rack',`<g transform="rotate(24 128 165)">`+
+  rect(63,102,126,73,'rock-dark',12)+
+  [0,1,2,3].map(i=>{const x=70+i*28,token=['science','clay','energy','crystal'][i];return path(`M${x+1} 140L${x-4} 158L${x+10} 153L${x+24} 158L${x+19} 140Z`,'rock')+
+   rect(x,77,20,78,'paper',9)+path(`M${x+14} 80H${x+19}V145Q${x+19} 153 ${x+11} 153V88Z`,'paper','stroke="none"',-.18)+
+   path(`M${x} 81Q${x-1} 64 ${x+10} 55Q${x+21} 64 ${x+20} 81Z`,token)+
+   glint(`M${x+6} 89V119`)+line(`M${x+3} 130H${x+17}`,'rock-dark',4);
+  }).join('')+
+  rect(61,145,130,13,'iron',5)+line('M70 151H180','clay',3)+
+  circle(76,151,2,'paper','stroke="none"')+circle(177,151,2,'paper','stroke="none"')+'</g>')+
+ circle(128,165,21,'rock')+circle(128,165,11,'iron')+glint('M114 159Q117 151 125 151')+
+ rect(184,178,34,46,'clay',10)+ellipse(201,179,17,7,'paper')+rect(183,187,36,7,'rock-dark',3)+rect(183,212,36,7,'rock-dark',3)+
+ circle(205,178,3,'coal','stroke-width="3"')+glint('M191 198V206')+
+ pipe('M188 222H172V195Q172 184 160 184','rock-dark',4));}
+
 const definitions=[
+ {id:'missile-launcher',draw:missileLauncher,parts:['rack'],pivot:[128,165]},
  {id:'flak',draw:flak,parts:['barrel'],pivot:[128,162]},
  {id:'barracks.t1',draw:()=>barracks(1),parts:['flag','training-dummy']},
  {id:'barracks.t2',draw:()=>barracks(2),parts:['flag','banner','training-yard']},

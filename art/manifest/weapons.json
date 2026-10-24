@@ -1,6 +1,97 @@
 {
   "assets": [
     {
+      "id": "building.missile-launcher",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
+      "id": "building.missile-launcher.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
+      "id": "building.missile-launcher.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher-off.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
       "id": "building.flak",
       "category": "buildings",
       "src": "art/src/buildings/flak.svg",
