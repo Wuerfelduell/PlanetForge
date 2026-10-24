@@ -335,6 +335,424 @@
         "titanium-mini"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t1-off.svg",
+      "out": "public/assets/sprites/buildings/smelter-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "smoke-anchor"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t1-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.smelter.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/smelter-t2-off.svg",
+      "out": "public/assets/sprites/buildings/smelter-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "smelter-t2-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower.svg",
+      "out": "public/assets/sprites/buildings/bell-tower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower-construction.svg",
+      "out": "public/assets/sprites/buildings/bell-tower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.bell-tower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/bell-tower-off.svg",
+      "out": "public/assets/sprites/buildings/bell-tower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "bell"
+      ],
+      "tags": [
+        "ores",
+        "bell-tower-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower.svg",
+      "out": "public/assets/sprites/buildings/power-tower.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "power-tower"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower-construction.svg",
+      "out": "public/assets/sprites/buildings/power-tower-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "power-tower-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-tower.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-tower-off.svg",
+      "out": "public/assets/sprites/buildings/power-tower-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "glow"
+      ],
+      "tags": [
+        "ores",
+        "power-tower-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill.svg",
+      "out": "public/assets/sprites/buildings/deep-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/deep-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.deep-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/deep-drill-off.svg",
+      "out": "public/assets/sprites/buildings/deep-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "tags": [
+        "ores",
+        "deep-drill-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "power-fuelcell"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell-construction.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "ores",
+        "power-fuelcell-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-fuelcell.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-fuelcell-off.svg",
+      "out": "public/assets/sprites/buildings/power-fuelcell-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "power-fuelcell-off"
+      ],
+      "phase": "P1"
     }
   ]
 }
