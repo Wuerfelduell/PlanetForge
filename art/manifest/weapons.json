@@ -1,6 +1,97 @@
 {
   "assets": [
     {
+      "id": "building.flak",
+      "category": "buildings",
+      "src": "art/src/buildings/flak.svg",
+      "out": "public/assets/sprites/buildings/flak.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
+      "id": "building.flak.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/flak-construction.svg",
+      "out": "public/assets/sprites/buildings/flak-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
+      "id": "building.flak.off",
+      "category": "buildings",
+      "src": "art/src/buildings/flak-off.svg",
+      "out": "public/assets/sprites/buildings/flak-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
       "id": "building.barracks.t1",
       "category": "buildings",
       "src": "art/src/buildings/barracks-t1.svg",

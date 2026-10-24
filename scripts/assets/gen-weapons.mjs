@@ -60,7 +60,25 @@ function barracks(tier){
   group('flag',flag(202,78,'science')));
 }
 
+function sandbag(x,y,w=46){return rect(x,y,w,24,'sand',11)+
+ path(`M${x+5} ${y+16}Q${x+w/2} ${y+23} ${x+w-4} ${y+14}V${y+17}Q${x+w-4} ${y+22} ${x+w-12} ${y+22}H${x+12}Z`,'sand','stroke="none"',-.18)+
+ line(`M${x+w-9} ${y+7}Q${x+w-14} ${y+12} ${x+w-9} ${y+17}`,'iron',3)+glint(`M${x+8} ${y+7}H${x+22}`);}
+function flak(){return ellipse(128,215,97,22,'sand')+
+ [36,80,124,168].map((x,i)=>sandbag(x,185+(i===0||i===3?9:0))).join('')+
+ ellipse(128,209,63,14,'rock-dark')+path('M99 208L107 166H148L159 208Z','rock')+
+ path('M107 171V151Q107 135 123 135H136Q151 135 151 151V178Z','paper')+
+ group('barrel',`<g transform="rotate(-68 128 162)">`+
+  rect(115,131,34,62,'rock-dark',12)+
+  [133,171].map(y=>rect(132,y,98,20,'rock',8)+path(`M141 ${y+14}H228V${y+19}H141Z`,'rock-dark','stroke="none"')+
+    rect(161,y-3,12,26,'paper',5)+rect(206,y-3,12,26,'paper',5)+
+    ellipse(231,y+10,7,13,'rock-dark')+ellipse(233,y+10,3,7,'coal','stroke-width="3"')+glint(`M143 ${y+5}H155M179 ${y+5}H199`)).join('')+
+  '</g>')+
+ circle(128,162,21,'iron')+circle(128,162,11,'paper')+circle(128,162,4,'rock-dark','stroke="none"')+
+ line('M89 186L102 173','rock-dark',8)+rect(75,180,23,15,'iron',7)+
+ [34,80,126,172].map((x,i)=>sandbag(x,210+(i===1||i===2?3:0))).join('');}
+
 const definitions=[
+ {id:'flak',draw:flak,parts:['barrel'],pivot:[128,162]},
  {id:'barracks.t1',draw:()=>barracks(1),parts:['flag','training-dummy']},
  {id:'barracks.t2',draw:()=>barracks(2),parts:['flag','banner','training-yard']},
  {id:'pitfall',draw:pitfall,parts:['camouflage','flag']},
