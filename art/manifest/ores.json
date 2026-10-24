@@ -1,0 +1,340 @@
+{
+  "assets": [
+    {
+      "id": "resource.tin",
+      "category": "resources",
+      "src": "art/src/resources/tin.svg",
+      "out": "public/assets/sprites/resources/tin.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "tin"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.tin.mini",
+      "category": "resources",
+      "src": "art/src/resources/tin-mini.svg",
+      "out": "public/assets/sprites/resources/tin-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "tin-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.silver",
+      "category": "resources",
+      "src": "art/src/resources/silver.svg",
+      "out": "public/assets/sprites/resources/silver.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "silver"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.silver.mini",
+      "category": "resources",
+      "src": "art/src/resources/silver-mini.svg",
+      "out": "public/assets/sprites/resources/silver-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "silver-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bauxite",
+      "category": "resources",
+      "src": "art/src/resources/bauxite.svg",
+      "out": "public/assets/sprites/resources/bauxite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bauxite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bauxite.mini",
+      "category": "resources",
+      "src": "art/src/resources/bauxite-mini.svg",
+      "out": "public/assets/sprites/resources/bauxite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bauxite-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ilmenite",
+      "category": "resources",
+      "src": "art/src/resources/ilmenite.svg",
+      "out": "public/assets/sprites/resources/ilmenite.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "ilmenite"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ilmenite.mini",
+      "category": "resources",
+      "src": "art/src/resources/ilmenite-mini.svg",
+      "out": "public/assets/sprites/resources/ilmenite-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "ilmenite-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.platinum",
+      "category": "resources",
+      "src": "art/src/resources/platinum.svg",
+      "out": "public/assets/sprites/resources/platinum.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "platinum"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.platinum.mini",
+      "category": "resources",
+      "src": "art/src/resources/platinum-mini.svg",
+      "out": "public/assets/sprites/resources/platinum-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "platinum-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bronze",
+      "category": "resources",
+      "src": "art/src/resources/bronze.svg",
+      "out": "public/assets/sprites/resources/bronze.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bronze"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.bronze.mini",
+      "category": "resources",
+      "src": "art/src/resources/bronze-mini.svg",
+      "out": "public/assets/sprites/resources/bronze-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "bronze-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.aluminium",
+      "category": "resources",
+      "src": "art/src/resources/aluminium.svg",
+      "out": "public/assets/sprites/resources/aluminium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "aluminium"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.aluminium.mini",
+      "category": "resources",
+      "src": "art/src/resources/aluminium-mini.svg",
+      "out": "public/assets/sprites/resources/aluminium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "aluminium-mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.titanium",
+      "category": "resources",
+      "src": "art/src/resources/titanium.svg",
+      "out": "public/assets/sprites/resources/titanium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "titanium"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.titanium.mini",
+      "category": "resources",
+      "src": "art/src/resources/titanium-mini.svg",
+      "out": "public/assets/sprites/resources/titanium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ores",
+        "titanium-mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
