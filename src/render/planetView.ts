@@ -63,6 +63,10 @@ const MOTIONS: Record<string, Motion> = {
   "building.observatory": { kind: "rock", amp: 0.35, speed: 0.4 },
   "building.prism-dome": { kind: "spin", speed: 0.5 },
   "building.ruby-laser": { kind: "rock", amp: 0.3, speed: 1.2 },
+  "building.flak": { kind: "rock", amp: 0.2, speed: 1.8 },
+  "building.missile-launcher": { kind: "rock", amp: 0.12, speed: 0.8 },
+  "building.shield-generator": { kind: "spin", speed: 0.8 },
+  "building.ion-cannon": { kind: "rock", amp: 0.18, speed: 0.6 },
 };
 
 /** Chimney tops (256 canvas) that puff smoke while the building is staffed. */
