@@ -81,7 +81,10 @@ export const ASCENSION = {
    * counts for ascension and not only the head count (playtest 2026-10-21: hut spam won).
    */
   pointsPerUpgradePerMinute: 2,
-  maxLevel: 10,
+  /** Levels 1–10 follow the design pace (PACING); coop goes on to maxLevel as a long late game. */
+  mainLevel: 10,
+  /** coop only: versus ends at level 10 (MODES.versus.thresholds). */
+  maxLevel: 20,
 } as const;
 
 /**
@@ -294,8 +297,12 @@ export const MODES = {
     secondsPerCycle: 60,
     birthBase: 30,
     birthPerCitizen: 6,
-    /** Cumulative ascension points for level 1 … 10. */
-    thresholds: [25, 100, 270, 600, 1150, 2050, 3300, 5200, 8300, 12900],
+    /**
+     * Cumulative ascension points for level 1 … 20. Levels 11–20 are the late game (Seb
+     * 2026-10-23: research beyond level 10): each step takes roughly 20–40 minutes with a few
+     * colonies, so the team always has the next discovery ahead.
+     */
+    thresholds: [25, 100, 270, 600, 1150, 2050, 3300, 5200, 8300, 12900, 17900, 23900, 31400, 40400, 51400, 64400, 79900, 98400, 120400, 146400],
     discoveryCostMul: 1,
     /**
      * Design doc 4.6: base × (0.7 + 0.3·n). One planet, one birth queue (the population cap

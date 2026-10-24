@@ -1,0 +1,611 @@
+{
+  "assets": [
+    {
+      "id": "building.ion-cannon",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
+      "id": "building.ion-cannon.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon-construction.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
+      "id": "building.ion-cannon.off",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon-off.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
+      "id": "building.shield-generator",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator.svg",
+      "out": "public/assets/sprites/buildings/shield-generator.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
+      "id": "building.shield-generator.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator-construction.svg",
+      "out": "public/assets/sprites/buildings/shield-generator-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
+      "id": "building.shield-generator.off",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator-off.svg",
+      "out": "public/assets/sprites/buildings/shield-generator-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
+      "id": "building.missile-launcher",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
+      "id": "building.missile-launcher.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
+      "id": "building.missile-launcher.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-launcher-off.svg",
+      "out": "public/assets/sprites/buildings/missile-launcher-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rack"
+      ],
+      "tags": [
+        "defense",
+        "missile-launcher",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "rack": [
+          128,
+          165
+        ]
+      }
+    },
+    {
+      "id": "building.flak",
+      "category": "buildings",
+      "src": "art/src/buildings/flak.svg",
+      "out": "public/assets/sprites/buildings/flak.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
+      "id": "building.flak.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/flak-construction.svg",
+      "out": "public/assets/sprites/buildings/flak-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
+      "id": "building.flak.off",
+      "category": "buildings",
+      "src": "art/src/buildings/flak-off.svg",
+      "out": "public/assets/sprites/buildings/flak-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "defense",
+        "flak",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          128,
+          162
+        ]
+      }
+    },
+    {
+      "id": "building.barracks.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1-off.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2-off.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.pitfall",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall.svg",
+      "out": "public/assets/sprites/buildings/pitfall.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.pitfall.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall-construction.svg",
+      "out": "public/assets/sprites/buildings/pitfall-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.pitfall.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall-off.svg",
+      "out": "public/assets/sprites/buildings/pitfall-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

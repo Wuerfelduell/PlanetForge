@@ -1,0 +1,312 @@
+{
+  "assets": [
+    {
+      "id": "discovery.genetics",
+      "category": "discoveries",
+      "src": "art/src/discoveries/genetics.svg",
+      "out": "public/assets/sprites/discoveries/genetics.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "genetics",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.nanotech",
+      "category": "discoveries",
+      "src": "art/src/discoveries/nanotech.svg",
+      "out": "public/assets/sprites/discoveries/nanotech.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "nanotech",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.deep-space-radar",
+      "category": "discoveries",
+      "src": "art/src/discoveries/deep-space-radar.svg",
+      "out": "public/assets/sprites/discoveries/deep-space-radar.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "deep-space-radar",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.arcology",
+      "category": "discoveries",
+      "src": "art/src/discoveries/arcology.svg",
+      "out": "public/assets/sprites/discoveries/arcology.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "arcology",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.warp-drive",
+      "category": "discoveries",
+      "src": "art/src/discoveries/warp-drive.svg",
+      "out": "public/assets/sprites/discoveries/warp-drive.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "warp-drive",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.quantum-computing",
+      "category": "discoveries",
+      "src": "art/src/discoveries/quantum-computing.svg",
+      "out": "public/assets/sprites/discoveries/quantum-computing.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "quantum-computing",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.force-fields",
+      "category": "discoveries",
+      "src": "art/src/discoveries/force-fields.svg",
+      "out": "public/assets/sprites/discoveries/force-fields.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "force-fields",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.biosphere",
+      "category": "discoveries",
+      "src": "art/src/discoveries/biosphere.svg",
+      "out": "public/assets/sprites/discoveries/biosphere.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "biosphere",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.golden-age",
+      "category": "discoveries",
+      "src": "art/src/discoveries/golden-age.svg",
+      "out": "public/assets/sprites/discoveries/golden-age.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "golden-age",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.matter-replicator",
+      "category": "discoveries",
+      "src": "art/src/discoveries/matter-replicator.svg",
+      "out": "public/assets/sprites/discoveries/matter-replicator.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "matter-replicator",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.cloning",
+      "category": "discoveries",
+      "src": "art/src/discoveries/cloning.svg",
+      "out": "public/assets/sprites/discoveries/cloning.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "cloning",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.star-forge",
+      "category": "discoveries",
+      "src": "art/src/discoveries/star-forge.svg",
+      "out": "public/assets/sprites/discoveries/star-forge.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "star-forge",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.galactic-council",
+      "category": "discoveries",
+      "src": "art/src/discoveries/galactic-council.svg",
+      "out": "public/assets/sprites/discoveries/galactic-council.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "galactic-council",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "discovery.transcendence",
+      "category": "discoveries",
+      "src": "art/src/discoveries/transcendence.svg",
+      "out": "public/assets/sprites/discoveries/transcendence.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "discoveries",
+        "transcendence",
+        "overlay-on-ui.discovery-badge"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

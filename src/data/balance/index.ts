@@ -57,7 +57,7 @@ export const IDS = {
 
 const playerIndex = (players: number) => Math.min(Math.max(Math.round(players), 1), COOP.maxPlayers) - 1;
 
-/** Cumulative ascension points for `level` (1–10) in a mode and team size, or null past max. */
+/** Cumulative ascension points for `level` (1–20 coop, 1–10 versus) in a mode and team size, or null past max. */
 export function ascensionThreshold(level: number, mode: ModeId = "coop", players = 1): number | null {
   const m = MODES[mode];
   const base = m.thresholds[level - 1];
@@ -65,11 +65,19 @@ export function ascensionThreshold(level: number, mode: ModeId = "coop", players
   return Math.round(base * m.playerThresholdMul[playerIndex(players)]!);
 }
 
+/**
+ * round(baseCost × growth^n) up to lateFrom discoveries, then only lateGrowth per discovery, so
+ * the late-game research (levels 11–20) stays affordable.
+ */
+export function discoveryBaseCost(owned: number): number {
+  const { baseCost, growth, lateFrom, lateGrowth } = DISCOVERY_RULES;
+  return baseCost * growth ** Math.min(owned, lateFrom) * lateGrowth ** Math.max(0, owned - lateFrom);
+}
+
 /** Science cost of the next discovery when `owned` were bought already (start discoveries don't count). */
 export function discoveryCost(owned: number, mode: ModeId = "coop", players = 1, costMul = 1): number {
-  const { baseCost, growth } = DISCOVERY_RULES;
   const m = MODES[mode];
-  return Math.round(baseCost * growth ** owned * m.discoveryCostMul * m.playerDiscoveryCostMul[playerIndex(players)]! * costMul);
+  return Math.round(discoveryBaseCost(owned) * m.discoveryCostMul * m.playerDiscoveryCostMul[playerIndex(players)]! * costMul);
 }
 
 /** Seconds until the next birth on a planet with `citizens` citizens. */

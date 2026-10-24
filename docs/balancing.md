@@ -59,7 +59,7 @@ Jede Stufe bringt etwas Neues, und alles auf dem Hauptpfad kommt allein über di
 | 0 | Wohnhaus, Farm |
 | 1 | Mine (auch Kupfer), Pumpe (auch Öl), Sägewerk (Bretter), Förster |
 | 2 | Werkstatt (Werkzeug, Kupferdraht, Stoff), Raffinerie (Treibstoff), Labor, Wohnhaus 2, Lager, Startrampe, Späherrakete (gegeneinander: Sabotage) |
-| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Markt, Kampfrakete (gegeneinander) |
+| 3 | Gießerei (Holzkohle, Ziegel, Glas, Beton), Kampfrakete (gegeneinander) |
 | 4 | Siedlerrakete (erste Kolonie), Stahl, Sägewerk 2, Farm 2 (Gewächshaus), Windrad, Kohlekraftwerk, Wachturm |
 | 5 | Wohnhaus 3, Labor 2, Werkstatt 2, Mine 2 (auch Gold), Pumpe 2, Luftfilter (mit Ökologie), Biogas |
 | 6 | Gießerei 2, Raffinerie 2, Plastik, Hydrofarm, Lager 2, Transportrakete |
@@ -77,10 +77,10 @@ Nach Sebs Playtest (21.10.2026) sollen die Gebäude kniffliger werden, damit man
 
 | Ware | Rezept | Wo | Ab Stufe | Gebraucht für |
 |---|---|---|---|---|
-| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad, Markt |
+| Bretter | 2 Holz | Sägewerk | 1 | Wohnhaus 2, Labor, Lager, Werkstatt, Wachturm, Windrad |
 | Werkzeug | 1 Eisen + 1 Brett → 2 | Werkstatt | 2 | Verschleiß in Minen und Sägewerken, Mine 2 |
 | Kupferdraht | 1 Kupfer | Werkstatt | 2 | Windrad, Kohlekraftwerk, Labor 2, Elektronik |
-| Stoff | 3 Fasern | Werkstatt | 2 | Markt, Wohnhaus 3, Transportrakete (Fallschirm) |
+| Stoff | 3 Fasern | Werkstatt | 2 | Wohnhaus 3, Transportrakete (Fallschirm) |
 | Treibstoff | 2 Öl | Raffinerie | 2 | jeder Raketenflug |
 | Ziegel | 2 Lehm + 1 Kohle → 2 | Gießerei | 3 | Wohnhaus 3, Kohlekraftwerk, Sägewerk 2, Werkstatt 2 |
 
@@ -117,11 +117,9 @@ Das Baumenü hat Reiter: Wohnraum, Nahrung, Rohstoffe, Produktion, Forschung, En
 
 Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Computer, 10 Ätherit, 20 Stahl, 10 Beton, fliegt mit Uran (2 + 0,2 je Distanz + 0,1 je Passagier), 6 Plätze, Reichweite 40, doppelt so schnell.
 
-Markt (Produktion, ab 3, einer pro Planet): solange jemand am Stand arbeitet, tauscht ein Händler jede Ware (außer Wissen) gegen jede andere. Preis = Menge × Wert der gewünschten Ware × 1,5 ÷ Wert der gegebenen Ware, aufgerundet; Werte wie in src/data/balance/resources.ts (`MARKET` in content.ts).
-
 ## Edelsteine
 
-Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, gibt es teuer am Markt (Wert 50–60).
+Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, muss man auf anderen Planeten holen.
 
 
 ## Neue Erze
@@ -136,7 +134,7 @@ Mehr Erze wie in Planet of Mine, alle zusätzlich zu den alten (Content in `src/
 | Silber | tief in Gebirge und Tundra | Mine 2 | – | Solarturm (ab 6, +6 Strom ohne Arbeiter) |
 | Platin | nur Asteroiden (60 %) und andere Planeten (30 %) | nur Tiefbohrer | – | Brennstoffzelle (ab 8, +8 Strom aus Wasser) |
 
-Neue Gebäude: Erzschmelze (ab 4, Strom, Stufe 2 Lichtbogenofen ab 6), Glockenturm, Solarturm, Tiefbohrer (ab 7, fördert alle Erze mit 1,0 je Arbeiter, auch tief und Platin) und Brennstoffzelle. Die neuen Felder variieren aus dem Nebenstrom, Welten alter Seeds bleiben gleich; alte Spielstände bekommen die Vorkommen und das Platin beim Laden. Was fehlt, verkauft der Markt.
+Neue Gebäude: Erzschmelze (ab 4, Strom, Stufe 2 Lichtbogenofen ab 6), Glockenturm, Solarturm, Tiefbohrer (ab 7, fördert alle Erze mit 1,0 je Arbeiter, auch tief und Platin) und Brennstoffzelle. Die neuen Felder variieren aus dem Nebenstrom, Welten alter Seeds bleiben gleich; alte Spielstände bekommen die Vorkommen und das Platin beim Laden.
 ## Spielmodi und Pacing
 
 **Playtest 21.10.2026.** Die Simulation lief mit eigenen, viel schnelleren Zahlen (Geburt 12 s flach, 2 Nahrung pro Umlauf, Schwellen 15 bis 3600). Ein Spieler, der nur Hütten und Farmen baut, war nach 37 Minuten auf Stufe 10, schneller als einer mit der ganzen Produktionskette. Jetzt liest `src/sim` Geburten, Nahrung, Schwellen und Startvorrat direkt aus `src/data/balance`, damit die beiden nicht wieder auseinanderlaufen. Dazu kommen drei Änderungen:
@@ -226,3 +224,7 @@ Die Transportrakete (Stufe 6) fliegt weiter und schneller, die große Rakete mit
 4. Ob der Sprung ins All ab Stufe 6 genug Zug hat, oder ob Ätherit schon früher lockt.
 5. Ob sich Arbeitermangel gut anfühlt oder nur frustriert. Stellschraube ist `birthPerCitizen`.
 6. Ob Fliegen jetzt schwer genug ist, aber nicht festfährt. Stellschrauben: `takeoffFuel` und `fuelPerPassenger` in `SPACE.rockets`, das Öl-Verhältnis im Rezept `fuel`.
+
+## Late game: levels 11–20 (coop)
+
+Seb (2026-10-23): research beyond level 10. Coop goes on to level 20 (`ASCENSION.maxLevel`), versus still ends at 10. Levels 1–10 keep the design pace (`ASCENSION.mainLevel`, `PACING`); thresholds 11–20 are 17 900 … 146 400 points, so each level takes about 20–40 minutes with a few colonies. Every level from 11 to 20 unlocks at least one new discovery (14 in total: genetics, nanotech, warp drive, quantum computing, force fields, … transcendence). Discovery cost grows ×1.35 per discovery up to the 14th, then only ×1.15 (`DISCOVERY_RULES.lateFrom/lateGrowth`), so the late research stays affordable with labs. The new discoveries have no icons yet (fallback 📜).

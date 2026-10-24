@@ -231,9 +231,9 @@ export const BUILDING_IDS = [
   "power-wind", "power-coal", "power-gas", "power-solar", "power-atomic",
   "watchtower", "battery",
   "launchpad", "refinery",
-  "market",
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
   "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell",
+  "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -293,6 +293,20 @@ export interface BuildingDef {
   defense?: number;
   /** Damage to a besieging invader ship per worker and siege round. */
   battery?: number;
+  /** Each battery round uses this much per firing worker; without it that worker cannot fire. */
+  ammo?: { resource: ResourceId; perShot: number };
+  /**
+   * Attackers shot down on arrival, before the dice battle: per worker, or per building when
+   * nobody works here (counted up to RULES.maxIntercept per planet).
+   */
+  intercept?: number;
+  /** Added to the rolls of combat rockets launched from this planet (counted up to RULES.maxAttackBonus). */
+  attack?: number;
+  /**
+   * Worked planetary shield: invaders cannot wreck or burn anything here, and attackers roll
+   * this much lower.
+   */
+  shield?: number;
   /**
    * Power on the planet's grid: positive feeds it (scaled by adjacency, and by the crew on manned
    * plants), negative draws from it. Short of power, consumers run at RULES.energy.unpoweredMul.
@@ -307,7 +321,7 @@ export interface BuildingDef {
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
-  Partial<Pick<BuildingDef, "name" | "icon" | "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense" | "energy">>;
+  Partial<Pick<BuildingDef, "name" | "icon" | "workers" | "housing" | "produces" | "extracts" | "crafts" | "battery" | "defense" | "energy" | "intercept" | "attack">>;
 
 export interface AdjacencyDef {
   biome?: BiomeId;
@@ -527,7 +541,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Gießerei",
     icon: "🏭",
     category: "production",
-    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
     cost: { stone: 25, clay: 15, planks: 10 },
     unlockLevel: 3,
     allowedBiomes: HOT_GROUND,
@@ -756,7 +770,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     icon: "⚗️",
     category: "production",
     description:
-      "Schmilzt Kupfer und Zinn zu Bronze und Bauxit zu Aluminium, ab Stufe 2 (Lichtbogenofen) auch Titanerz zu Titan. Braucht Strom. Darf auf Lava stehen. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine. Laut für Hütten und Labore.",
+      "Schmilzt Kupfer und Zinn zu Bronze und Bauxit zu Aluminium, ab Stufe 2 (Lichtbogenofen) auch Titanerz zu Titan. Braucht Strom. Darf auf Lava stehen. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
     cost: { bricks: 15, stone: 20, iron: 10 },
     unlockLevel: 4,
     allowedBiomes: HOT_GROUND,
@@ -827,17 +841,6 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     energy: 8,
     burns: { resource: "water", perSecond: 0.1 },
   },
-  market: {
-    name: "Markt",
-    icon: "🏪",
-    category: "production",
-    description: "Ein Händler tauscht Waren gegen andere, solange jemand am Stand arbeitet. Er nimmt 50 % Aufschlag. Nur einer pro Planet.",
-    cost: { planks: 20, stone: 20, cloth: 5 },
-    unlockLevel: 3,
-    allowedBiomes: LAND,
-    workers: 1,
-    unique: true,
-  },
   launchpad: {
     name: "Startrampe",
     icon: "🚀",
@@ -870,6 +873,78 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     allowedBiomes: HOT_GROUND,
     workers: 2,
     battery: 1,
+  },
+  pitfall: {
+    name: "Fallgrube",
+    icon: "🕳️",
+    category: "defense",
+    description: "Eine getarnte Grube: bei jedem Angriff auf diesen Planeten stürzt ein Angreifer hinein, bevor gewürfelt wird.",
+    cost: { wood: 15, stone: 10 },
+    unlockLevel: 2,
+    allowedBiomes: LAND,
+    workers: 0,
+    intercept: 1,
+  },
+  barracks: {
+    name: "Kaserne",
+    icon: "⚔️",
+    category: "defense",
+    description: "Soldaten üben hier: Kampfraketen, die von diesem Planeten starten, würfeln +1, solange jemand trainiert. Ausbaubar zur Militärakademie.",
+    cost: { planks: 20, bricks: 15, tools: 5 },
+    unlockLevel: 4,
+    allowedBiomes: LAND,
+    workers: 1,
+    attack: 1,
+    upgrades: [{ name: "Militärakademie", icon: "🎖️", cost: { steel: 15, cloth: 10 }, unlockLevel: 7, workers: 2, attack: 2 }],
+  },
+  flak: {
+    name: "Flakgeschütz",
+    icon: "💥",
+    category: "defense",
+    description: "Holt landende Kampfraketen vom Himmel: je Arbeiter ein Angreifer weniger, bevor gewürfelt wird. Trifft auch Invasoren (1 Treffer pro Arbeiter und Umlauf).",
+    cost: { steel: 10, bricks: 10, tools: 5 },
+    unlockLevel: 6,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    intercept: 1,
+    battery: 1,
+  },
+  "missile-launcher": {
+    name: "Raketenwerfer",
+    icon: "🎆",
+    category: "defense",
+    description: "Feuert Raketen auf Invasoren: je Arbeiter 4 Treffer pro Umlauf, verbraucht dabei 2 Treibstoff pro Arbeiter.",
+    cost: { steel: 15, wire: 10, electronics: 2 },
+    unlockLevel: 7,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 4,
+    ammo: { resource: "fuel", perShot: 2 },
+  },
+  "shield-generator": {
+    name: "Schildgenerator",
+    icon: "🛡️",
+    category: "defense",
+    description: "Ein Energieschild über dem Planeten, solange jemand ihn bedient: Invasoren können nichts zerstören oder verbrennen, Angreifer würfeln −1. Braucht viel Strom. Nur einer pro Planet.",
+    cost: { steel: 20, glass: 20, electronics: 4 },
+    unlockLevel: 8,
+    allowedBiomes: LAND,
+    workers: 1,
+    shield: 1,
+    energy: -4,
+    unique: true,
+  },
+  "ion-cannon": {
+    name: "Ionenkanone",
+    icon: "⚡",
+    category: "defense",
+    description: "Die stärkste Waffe gegen Invasoren: je Arbeiter 8 Treffer pro Umlauf. Braucht viel Strom.",
+    cost: { aetherite: 10, computer: 1, steel: 20 },
+    unlockLevel: 9,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 8,
+    energy: -4,
   },
 };
 
@@ -907,27 +982,6 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   aluminium: { name: "Aluminium", inputs: { bauxite: 3 }, outputs: { aluminium: 1 }, seconds: 10 },
   titanium: { name: "Titan", inputs: { ilmenite: 2, coal: 2 }, outputs: { titanium: 1 }, seconds: 14 },
 };
-
-/**
- * The market trader (Planet of Mine has trading too). Values are worker-seconds per unit, as in
- * src/data/balance/resources.ts; the trader asks `markup` times the value of what he hands out.
- * Wissen cannot be traded.
- */
-export const MARKET = {
-  markup: 1.5,
-  values: {
-    food: 3, wood: 3, stone: 3, sand: 3, clay: 3, fiber: 3, water: 2,
-    iron: 4, coal: 4, copper: 4, oil: 5, biogas: 5,
-    uranium: 12, aetherite: 15, gold: 15,
-    planks: 10, tools: 12, wire: 9, cloth: 18, bricks: 9, fuel: 12,
-    glass: 18, concrete: 18, steel: 22, plastic: 22, electronics: 80, computer: 220,
-    diamond: 60, emerald: 50, ruby: 50,
-    tin: 5, bauxite: 4, ilmenite: 5, silver: 15, platinum: 35,
-    bronze: 12, aluminium: 20, titanium: 35,
-  } as Partial<Record<ResourceId, number>>,
-  /** Units per trade the market offers. */
-  lots: [1, 5] as const,
-} as const;
 
 /**
  * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and
@@ -1147,7 +1201,7 @@ export const GEMS = {
 
 /**
  * Platinum (Seb: "mehr verschiedene Erze"): never on a start planet, so flying out pays. From its
- * own seed stream; only the deep drill reaches it, the market sells it to those without a rocket.
+ * own seed stream; only the deep drill reaches it.
  */
 export const PLATINUM = {
   /** Chance per asteroid / per other free planet to hold one platinum field. */
@@ -1217,6 +1271,10 @@ export const RULES = {
   /** Defenders fight at home: added to their rolls; ties go to the defenders too. */
   homeAdvantage: 1,
   maxTowerBonus: 2,
+  /** Attackers that pitfalls and flak can down before one battle. */
+  maxIntercept: 3,
+  /** Bonus on combat rocket rolls from barracks on the launch planet. */
+  maxAttackBonus: 2,
   /** versus: captives count for their original owner for this many cycles, then join the captor. */
   captiveAssimilationCycles: 10,
   /** versus: after this many cycles without a battle the game offers a draw. */

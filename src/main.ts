@@ -263,7 +263,6 @@ window.addEventListener("pointerdown", () => sfx.unlock(), { once: true, capture
 
 /** Sounds for events that are not tied to a spot on the planet (those play in PlanetView). */
 const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
-  traded: "diplomacy.trade",
   born: "citizen.born",
   levelUp: "ascension.levelup",
   depleted: "alert.warning",

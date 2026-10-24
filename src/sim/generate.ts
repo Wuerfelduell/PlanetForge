@@ -533,6 +533,20 @@ export function upgradeState(state: unknown): GameState | null {
       }
     }
   }
+  // The market is gone (Seb: swapping water for ore felt like cheating): built ones are refunded in full.
+  const marketCost: Partial<Record<ResourceId, number>> = { planks: 20, stone: 20, cloth: 5 };
+  for (const planet of s.planets) {
+    for (const segment of planet.segments) {
+      if ((segment.building as string) !== "market") continue;
+      const economy = planet.economyId ? s.economies[planet.economyId] : undefined;
+      if (economy) for (const [r, n] of Object.entries(marketCost) as [ResourceId, number][]) economy.resources[r] += n;
+      for (const u of Object.values(s.units)) if (u.planetId === planet.id && u.segment === segment.index) u.segment = null;
+      segment.building = null;
+      segment.builtBy = null;
+      delete segment.tier;
+    }
+    if (s.queues[planet.id]) s.queues[planet.id] = s.queues[planet.id]!.filter((q) => (q.building as string) !== "market");
+  }
   // Platinum came later too: worlds without any get their fields, the same a new game would have.
   if (!s.planets.some((p) => p.segments.some((x) => x.deposits.some((d) => d.resource === "platinum")))) placePlatinum(s.seed, s.planets);
   (s as { version: number }).version = 12;
