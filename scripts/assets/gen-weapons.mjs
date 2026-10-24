@@ -94,7 +94,27 @@ function missileLauncher(){return foot(
  circle(205,178,3,'coal','stroke-width="3"')+glint('M191 198V206')+
  pipe('M188 222H172V195Q172 184 160 184','rock-dark',4));}
 
+function shieldGenerator(){
+ const ringBack=angle=>`<g transform="rotate(${angle} 128 82)">${path('M69 82A59 18 0 1 0 187 82A59 18 0 1 0 69 82','none',`stroke="${paint('ink')}" stroke-width="10"`)}${path('M69 82A59 18 0 1 0 187 82A59 18 0 1 0 69 82','none',`stroke="${paint('rock')}" stroke-width="4"`)}</g>`;
+ const ringFront=angle=>`<g transform="rotate(${angle} 128 82)">${line('M69 82A59 18 0 0 0 187 82','ink',10)}${line('M69 82A59 18 0 0 0 187 82',state==='idle'?'science':'rock-dark',4)}${circle(177,92,5,lit('science'),'stroke-width="3"')}</g>`;
+ return foot(
+  group('shield-field',state==='idle'?path('M128 18L208 58V132L128 172L48 132V58Z','science',`fill-opacity="0.1" stroke="${paint('science')}" stroke-width="3" opacity="0.5"`)+
+    line('M48 58L72 70L72 94L48 106M208 58L184 70V94L208 106M104 30V56L128 70L152 56V30','science',2,'opacity="0.4"'):'')+
+  path('M63 221L80 207L111 141H145L176 207L193 221Z','rock')+
+  path('M137 142H145L176 207L192 220H168L140 162Z','rock-dark','stroke="none"')+
+  path('M104 222L114 111Q128 99 142 111L152 222Z','paper')+
+  path('M135 113L141 115L150 221H139Z','paper','stroke="none"',-.18)+
+  rect(119,145,18,54,lit('science'),8)+line('M123 152V178',state==='idle'?'snow':'rock-dark',3)+
+  rect(84,211,88,14,'rock-dark',6)+glint('M116 125L113 164')+
+  group('orb',[0,60,-60].map(ringBack).join('')+
+    circle(128,82,34,'paper')+circle(128,82,27,lit('science'))+
+    path('M149 68Q160 99 131 107Q109 108 104 89Q124 107 141 91Q153 81 149 68Z',state==='idle'?'deep-water':'rock-dark','stroke="none"')+
+    ellipse(118,72,10,6,state==='idle'?'snow':'rock','stroke="none" transform="rotate(-35 118 72)"')+
+    [0,60,-60].map(ringFront).join('')));
+}
+
 const definitions=[
+ {id:'shield-generator',draw:shieldGenerator,parts:['orb','shield-field'],pivot:[128,82]},
  {id:'missile-launcher',draw:missileLauncher,parts:['rack'],pivot:[128,165]},
  {id:'flak',draw:flak,parts:['barrel'],pivot:[128,162]},
  {id:'barracks.t1',draw:()=>barracks(1),parts:['flag','training-dummy']},

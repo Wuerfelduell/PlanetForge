@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.shield-generator.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shield-generator-back.svg",
+      "out": "public/assets/sprites/buildings/anim/shield-generator-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.shield-generator.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shield-generator-part.svg",
+      "out": "public/assets/sprites/buildings/anim/shield-generator-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.32030000000000003
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.shield-generator.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shield-generator-front.svg",
+      "out": "public/assets/sprites/buildings/anim/shield-generator-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.missile-launcher.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/missile-launcher-back.svg",

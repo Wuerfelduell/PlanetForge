@@ -1,6 +1,100 @@
 {
   "assets": [
     {
+      "id": "building.shield-generator",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator.svg",
+      "out": "public/assets/sprites/buildings/shield-generator.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
+      "id": "building.shield-generator.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator-construction.svg",
+      "out": "public/assets/sprites/buildings/shield-generator-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
+      "id": "building.shield-generator.off",
+      "category": "buildings",
+      "src": "art/src/buildings/shield-generator-off.svg",
+      "out": "public/assets/sprites/buildings/shield-generator-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "orb",
+        "shield-field"
+      ],
+      "tags": [
+        "defense",
+        "shield-generator",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "orb": [
+          128,
+          82
+        ]
+      }
+    },
+    {
       "id": "building.missile-launcher",
       "category": "buildings",
       "src": "art/src/buildings/missile-launcher.svg",
