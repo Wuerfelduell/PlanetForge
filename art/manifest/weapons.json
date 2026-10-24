@@ -1,6 +1,167 @@
 {
   "assets": [
     {
+      "id": "building.barracks.t1",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t1.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1-construction.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t1.off",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t1-off.svg",
+      "out": "public/assets/sprites/buildings/barracks-t1-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "training-dummy"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t1",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2-construction.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.barracks.t2.off",
+      "category": "buildings",
+      "src": "art/src/buildings/barracks-t2-off.svg",
+      "out": "public/assets/sprites/buildings/barracks-t2-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "flag",
+        "banner",
+        "training-yard"
+      ],
+      "tags": [
+        "defense",
+        "barracks",
+        "t2",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.pitfall",
       "category": "buildings",
       "src": "art/src/buildings/pitfall.svg",
