@@ -1,6 +1,100 @@
 {
   "assets": [
     {
+      "id": "building.ion-cannon",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
+      "id": "building.ion-cannon.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon-construction.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
+      "id": "building.ion-cannon.off",
+      "category": "buildings",
+      "src": "art/src/buildings/ion-cannon-off.svg",
+      "out": "public/assets/sprites/buildings/ion-cannon-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "energy-cables"
+      ],
+      "tags": [
+        "defense",
+        "ion-cannon",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          92,
+          151
+        ]
+      }
+    },
+    {
       "id": "building.shield-generator",
       "category": "buildings",
       "src": "art/src/buildings/shield-generator.svg",

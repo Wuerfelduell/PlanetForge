@@ -113,7 +113,30 @@ function shieldGenerator(){
     [0,60,-60].map(ringFront).join('')));
 }
 
+function ionCannon(){return foot(
+ rect(39,191,176,34,'rock-dark',12)+path('M38 223L48 186H76L83 223ZM174 223L180 186H206L220 223Z','rock')+
+ line('M51 210L56 194M189 210L194 194','paper',5)+
+ path('M74 195L76 148Q77 122 101 124Q124 126 129 147L148 195Z','paper')+
+ path('M111 133Q125 139 129 154L146 193H125L111 151Z','paper','stroke="none"',-.18)+
+ rect(92,198,70,24,'coal',8)+[104,122,140].map(x=>rect(x,204,10,12,lit('science'),3,'stroke="none"')).join('')+
+ group('barrel',`<g transform="rotate(-28 92 151)">`+
+  rect(72,125,51,52,'rock-dark',17)+rect(99,134,132,34,'rock-dark',13)+
+  rect(111,138,116,26,'paper',10)+path('M118 155H226V163H118Z','rock','stroke="none"')+
+  [127,155,183].map((x,i)=>rect(x,123,16,56,lit(i===1?'science':'crystal'),7)+
+    line(`M${x+5} 132V160`,state==='idle'?'snow':'rock',3)+
+    line(`M${x+11} 144V171`,state==='idle'?(i===1?'deep-water':'oil-sheen'):'coal',3)).join('')+
+  rect(211,121,22,60,'rock',9)+ellipse(235,151,11,29,'paper')+ellipse(237,151,6,19,lit('science'))+
+  line('M237 139V160',state==='idle'?'snow':'rock-dark',3)+glint('M82 133H103M116 143H120')+
+  pipe('M104 170Q112 190 142 185Q157 181 156 175','oil-sheen',6)+
+  line('M116 181Q132 187 144 179',state==='idle'?'science':'rock-dark',3)+'</g>')+
+ group('energy-cables',pipe('M86 157Q52 153 52 184Q51 206 84 207H104V218','oil-sheen',7)+
+  line('M60 178Q57 199 84 199H96',state==='idle'?'science':'rock-dark',3))+
+ circle(92,151,25,'rock-dark')+circle(92,151,17,'rock')+circle(92,151,8,lit('crystal'))+
+ glint('M78 143Q81 137 88 136')+circle(62,217,3,'coal','stroke="none"')+circle(196,217,3,'coal','stroke="none"'));
+}
+
 const definitions=[
+ {id:'ion-cannon',draw:ionCannon,parts:['barrel','energy-cables'],pivot:[92,151]},
  {id:'shield-generator',draw:shieldGenerator,parts:['orb','shield-field'],pivot:[128,82]},
  {id:'missile-launcher',draw:missileLauncher,parts:['rack'],pivot:[128,165]},
  {id:'flak',draw:flak,parts:['barrel'],pivot:[128,162]},
