@@ -1,0 +1,80 @@
+{
+  "assets": [
+    {
+      "id": "building.pitfall",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall.svg",
+      "out": "public/assets/sprites/buildings/pitfall.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.pitfall.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall-construction.svg",
+      "out": "public/assets/sprites/buildings/pitfall-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag",
+        "scaffolding"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.pitfall.off",
+      "category": "buildings",
+      "src": "art/src/buildings/pitfall-off.svg",
+      "out": "public/assets/sprites/buildings/pitfall-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "camouflage",
+        "flag"
+      ],
+      "tags": [
+        "defense",
+        "pitfall",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
