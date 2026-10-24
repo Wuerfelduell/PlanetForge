@@ -92,7 +92,8 @@ describe("world with factions", () => {
     const a = runCycles(newGame("gleich"), 30).state;
     const b = runCycles(newGame("gleich"), 30).state;
     expect(a).toEqual(b);
-  });
+    // Two 30-cycle runs take ~3 s alone and timed out at 5 s on a busy CI runner.
+  }, 30000);
 });
 
 describe("faction economy", () => {

@@ -121,6 +121,20 @@ Sternenschiff (ab 8, neben der Siedlerrakete an der Startrampe): kostet 2 Comput
 
 Diamant, Smaragd und Rubin sind absichtlich ganz selten: jeder Startplanet hat genau ein Edelsteinfeld (6 bis 12 Stück, außerhalb des Startgebiets), andere Planeten und Asteroiden nur zu 35 %. Abbau nur mit der Edelsteinmine (ab 5, 0,03 je Arbeiter und Sekunde). Gebraucht werden sie nur für drei Dinge: Rubinlaser (Verteidigung, ab 7, 2 Rubine), Prismenkuppel (Forschung, ab 8, 2 Smaragde + 1 Diamant) und Kristallpalast (Wohnraum, ab 9, je 3 von allen dreien, 20 Plätze, +5 Aufstiegspunkte). Was auf dem eigenen Planeten fehlt, muss man auf anderen Planeten holen.
 
+
+## Neue Erze
+
+Mehr Erze wie in Planet of Mine, alle zusätzlich zu den alten (Content in `src/sim/content.ts`):
+
+| Erz | Wo | Abbau | Wird zu | Gebraucht für |
+| --- | --- | --- | --- | --- |
+| Zinn | Gebirge, Tundra | Mine | Bronze (2 Kupfer + 1 Zinn + 1 Kohle → 2) | Glockenturm (ab 4, +3 Aufstieg), Lichtbogenofen |
+| Bauxit | Savanne, Sumpf | Mine | Aluminium (3 → 1, Strom) | Solarturm |
+| Titanerz | Wüste, Lava, Asche | Mine | Titan (2 + 2 Kohle → 1, erst Lichtbogenofen ab 6) | Tiefbohrer, Brennstoffzelle |
+| Silber | tief in Gebirge und Tundra | Mine 2 | – | Solarturm (ab 6, +6 Strom ohne Arbeiter) |
+| Platin | nur Asteroiden (60 %) und andere Planeten (30 %) | nur Tiefbohrer | – | Brennstoffzelle (ab 8, +8 Strom aus Wasser) |
+
+Neue Gebäude: Erzschmelze (ab 4, Strom, Stufe 2 Lichtbogenofen ab 6), Glockenturm, Solarturm, Tiefbohrer (ab 7, fördert alle Erze mit 1,0 je Arbeiter, auch tief und Platin) und Brennstoffzelle. Die neuen Felder variieren aus dem Nebenstrom, Welten alter Seeds bleiben gleich; alte Spielstände bekommen die Vorkommen und das Platin beim Laden.
 ## Spielmodi und Pacing
 
 **Playtest 21.10.2026.** Die Simulation lief mit eigenen, viel schnelleren Zahlen (Geburt 12 s flach, 2 Nahrung pro Umlauf, Schwellen 15 bis 3600). Ein Spieler, der nur Hütten und Farmen baut, war nach 37 Minuten auf Stufe 10, schneller als einer mit der ganzen Produktionskette. Jetzt liest `src/sim` Geburten, Nahrung, Schwellen und Startvorrat direkt aus `src/data/balance`, damit die beiden nicht wieder auseinanderlaufen. Dazu kommen drei Änderungen:

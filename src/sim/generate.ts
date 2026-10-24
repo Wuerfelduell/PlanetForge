@@ -2,6 +2,7 @@ import {
   BIOMES,
   CRYO,
   GEMS,
+  PLATINUM,
   PEOPLE_IDS,
   PLANET_TYPE_IDS,
   PLANET_TYPES,
@@ -123,6 +124,7 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     const amount = gemRng.int(...GEMS.amount);
     s.deposits.push({ resource: gem, amount, max: amount, infinite: false, byHand: false });
   }
+  placePlatinum(seed, planets);
   // Cryo pods with frozen peoples on free planets, from their own stream as well.
   const cryoRng = new Rng(seedFromString(`${seed}:cryo`));
   for (const p of planets) {
@@ -448,10 +450,26 @@ function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] 
   return out;
 }
 
-const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold"]);
+const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold", "tin", "silver", "bauxite", "ilmenite"]);
+
+/** Platinum fields on asteroids and now and then on other free planets, never on start planets. */
+function placePlatinum(seed: string, planets: PlanetState[]): void {
+  const rng = new Rng(seedFromString(`${seed}:platinum`));
+  for (const p of planets) {
+    if (p.startSlot !== null) continue;
+    if (rng.next() >= (p.type === "asteroid" ? PLATINUM.asteroidChance : PLATINUM.planetChance)) continue;
+    const fitting = p.segments.filter((s) => PLATINUM.biomes.includes(s.biome));
+    const land = p.segments.filter((s) => BIOMES[s.biome].buildable);
+    const pool = fitting.length ? fitting : land;
+    if (!pool.length) continue;
+    const s = rng.pick(pool);
+    const amount = rng.int(...PLATINUM.amount);
+    s.deposits.push({ resource: "platinum", amount, max: amount, infinite: false, byHand: false });
+  }
+}
 
 function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
-  // Tinkering deposits vary from a side stream so worlds of older seeds stay the same.
+  // Tinkering deposits and the newer ores vary from a side stream so worlds of older seeds stay the same.
   const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
     // ±25 % variation per segment.
@@ -529,6 +547,8 @@ export function upgradeState(state: unknown): GameState | null {
     }
     if (s.queues[planet.id]) s.queues[planet.id] = s.queues[planet.id]!.filter((q) => (q.building as string) !== "market");
   }
+  // Platinum came later too: worlds without any get their fields, the same a new game would have.
+  if (!s.planets.some((p) => p.segments.some((x) => x.deposits.some((d) => d.resource === "platinum")))) placePlatinum(s.seed, s.planets);
   (s as { version: number }).version = 12;
   return s;
 }
