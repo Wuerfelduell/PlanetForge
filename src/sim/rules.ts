@@ -356,8 +356,6 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (to.type === "asteroid" && !asteroidsVisible(state.economies[player.economyId])) return "Dafür braucht es die Entdeckung Weltraumbergbau";
   if (blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
-  const unlockLevel = rocketUnlockLevel(economy, rocket);
-  if (economy.ascension.level < unlockLevel) return `Ab Aufstiegsstufe ${unlockLevel}`;
   // coop: only a faction at war with the team can be attacked (and attacks).
   const factionsInvolved = !!(factionOfEconomy(state, to.economyId) ?? factionOfEconomy(state, from.economyId));
   if (def.versusOnly && state.settings.mode !== "versus" && !factionsInvolved) return "Angriffe gibt es nur im Gegeneinander-Modus";
@@ -439,10 +437,6 @@ export function rocketCapacity(economy: EconomyState | undefined, rocket: Rocket
   return modified(economy, "rocketCapacity", ROCKETS[rocket].capacity);
 }
 
-export function rocketUnlockLevel(economy: EconomyState | undefined, rocket: RocketId): number {
-  // Rocketry: combat rockets one level earlier.
-  return rocket === "combat" && hasUnlock(economy, "rocket-combat-early") ? ROCKETS.combat.unlockLevel - 1 : ROCKETS[rocket].unlockLevel;
-}
 
 /** Bonus on the defenders' rolls on a planet. */
 export function planetDefense(state: GameState, planet: PlanetState): number {

@@ -1,4 +1,4 @@
-import { BUILDINGS, RECIPES, RESOURCE_IDS, ROCKETS, RULES, type BuildingId, type ResourceId } from "./content";
+import { BUILDINGS, RECIPES, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
 import {
   activeFactions,
   atWar,
@@ -35,7 +35,6 @@ import {
   playerById,
   population,
   rocketCapacity,
-  rocketUnlockLevel,
   segmentOutput,
   segmentRecipe,
   unitsOn,
@@ -47,6 +46,11 @@ import { launch } from "./space";
 import { TERRAFORM, terraform, terraformBlocker } from "./terraform";
 import { cycleOf } from "./rules";
 import type { EconomyState, FactionState, GameEvent, GameState, PlanetState, PlayerState, SegmentState, TerraformKind } from "./state";
+
+/** AI factions attack from this ascension level on (it was the combat rocket's old unlock level). */
+const AI_ATTACK_LEVEL = 3;
+/** AI factions found colonies from this level on (the settler rocket's old unlock level). */
+const AI_EXPAND_LEVEL = 4;
 
 /**
  * The AI factions' turn, once per cycle: each one runs its economy (workers, buildings,
@@ -355,7 +359,8 @@ function mood(state: GameState, faction: FactionState, economy: EconomyState, rn
 
   const canOffer = state.tick >= faction.nextOfferTick && !faction.offer;
   const level = economy.ascension.level;
-  const armed = level >= rocketUnlockLevel(economy, "combat") && state.planets.some((p) => p.economyId === economy.id && p.segments.some((s) => s.building === "launchpad"));
+  // AI factions still wait for some growth before they attack, though rockets need no level.
+  const armed = level >= AI_ATTACK_LEVEL && state.planets.some((p) => p.economyId === economy.id && p.segments.some((s) => s.building === "launchpad"));
   const truce = state.tick < faction.truceUntilTick;
 
   switch (faction.stance) {
@@ -442,7 +447,7 @@ function attack(state: GameState, faction: FactionState, player: PlayerState, pl
 
 /** Colonizes the nearest free planet once the home planet is well populated. */
 function expand(state: GameState, faction: FactionState, player: PlayerState, economy: EconomyState, planets: PlanetState[], events: GameEvent[]): void {
-  if (economy.ascension.level < ROCKETS.colony.unlockLevel) return;
+  if (economy.ascension.level < AI_EXPAND_LEVEL) return;
   const capacity = rocketCapacity(economy, "colony");
   const asteroids = asteroidsVisible(economy);
   for (const from of planets) {

@@ -847,7 +847,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     category: "space",
     description: "Schickt Raketen mit Einwohnern zu anderen Planeten.",
     cost: { wood: 25, stone: 15 },
-    unlockLevel: 2,
+    unlockLevel: 0,
     allowedBiomes: LAND,
     workers: 0,
   },
@@ -1054,7 +1054,6 @@ export interface RocketDef {
   icon: string;
   /** Paid on every launch; the rocket is used up on landing. */
   cost: Partial<Record<ResourceId, number>>;
-  unlockLevel: number;
   capacity: number;
   /** Fuel = ceil(takeoff + distance × (perDistance + perPassenger × passengers)). */
   fuel: { resource: ResourceId; takeoff: number; perDistance: number; perPassenger: number };
@@ -1071,12 +1070,12 @@ export interface RocketDef {
 export const ROCKET_IDS = ["colony", "combat", "starship"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
+// Seb: flying has no level limit; launch pad, rocket cost and fuel are the only gates.
 export const ROCKETS: Record<RocketId, RocketDef> = {
   colony: {
     name: "Siedlerrakete",
     icon: "🚀",
     cost: { planks: 20, iron: 15, tools: 5, cloth: 3 },
-    unlockLevel: 4,
     capacity: 3,
     fuel: { resource: "fuel", takeoff: 6, perDistance: 1.5, perPassenger: 1 },
     secondsPerDistance: 3,
@@ -1086,7 +1085,6 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     name: "Kampfrakete",
     icon: "⚔️",
     cost: { iron: 20, planks: 15, tools: 5 },
-    unlockLevel: 3,
     capacity: 4,
     fuel: { resource: "fuel", takeoff: 6, perDistance: 1.5, perPassenger: 0.75 },
     secondsPerDistance: 4,
@@ -1098,7 +1096,6 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     name: "Sternenschiff",
     icon: "🛸",
     cost: { computer: 2, aetherite: 10, steel: 20, concrete: 10 },
-    unlockLevel: 8,
     capacity: 6,
     fuel: { resource: "uranium", takeoff: 2, perDistance: 0.2, perPassenger: 0.1 },
     secondsPerDistance: 1.5,

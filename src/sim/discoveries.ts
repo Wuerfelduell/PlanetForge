@@ -25,7 +25,7 @@ export const SUPPORTED_STATS = [
 ] as const;
 export type StatId = (typeof SUPPORTED_STATS)[number];
 /** Unlocked actions the simulation implements. */
-const SUPPORTED_ACTIONS = ["rocket-combat-early", "colonize-asteroid"] as const;
+const SUPPORTED_ACTIONS = ["colonize-asteroid"] as const;
 
 interface Modifier {
   stat: string;
