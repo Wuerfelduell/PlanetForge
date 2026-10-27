@@ -2,6 +2,7 @@ import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 import type { GameSession, SendResult } from "../client/session";
 import { advanceWithEvents, applyCommand, type Command, type GameEvent, type GameState } from "../sim";
 import type { ChatMessage } from "./chat";
+import { unpack } from "./pack";
 import { ensureSignedIn, supabase } from "./supabase";
 
 /** How often the lead client tells the server someone is online, so the live game clock keeps running. */
@@ -14,7 +15,9 @@ type ServerReply =
 
 interface StateMessage {
   version: number;
-  state: GameState;
+  /** Gzipped + base64 (see pack.ts); older servers sent `state` instead. */
+  packed?: string;
+  state?: GameState;
   events: GameEvent[];
   by: string | null;
 }
@@ -70,8 +73,11 @@ export class NetworkSession implements GameSession {
 
     channel.on("broadcast", { event: "state" }, ({ payload }) => {
       const msg = payload as StateMessage;
-      if (msg.by !== session.playerId) session.pendingEvents.push(...(msg.events ?? []));
-      session.accept(msg.version, msg.state);
+      void (msg.packed ? unpack<GameState>(msg.packed) : Promise.resolve(msg.state)).then((state) => {
+        if (!state) return;
+        if (msg.by !== session.playerId) session.pendingEvents.push(...(msg.events ?? []));
+        session.accept(msg.version, state);
+      });
     });
     channel.on("broadcast", { event: "chat" }, ({ payload }) => session.onChat(payload as ChatMessage));
     channel.on("presence", { event: "sync" }, () => {
