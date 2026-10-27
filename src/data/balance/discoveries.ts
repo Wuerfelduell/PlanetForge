@@ -129,9 +129,8 @@ export const DISCOVERIES = {
   rocketry: {
     name: "Raketentechnik",
     description:
-      "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr. Gegeneinander: Kampfrakete schon ab Stufe 2, +1 auf Angriffswürfe.",
+      "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr. Gegeneinander: +1 auf Angriffswürfe.",
     minLevel: 2,
-    unlocks: { actions: ["rocket-combat-early"] },
     modifiers: [
       { stat: "rocketFuel", mul: 0.75 },
       { stat: "rocketCapacity", add: 1 },

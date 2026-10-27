@@ -63,14 +63,14 @@ function setIdle(g: GameState, playerId: string, idle: boolean): GameState {
 }
 
 describe("rockets and colonies", () => {
-  it("needs a launch pad and ascension level 4", () => {
+  it("needs a launch pad, but no ascension level", () => {
     const g = createGame("pad", [P1], { now: 0 });
     const home = homePlanet(g, P1.id)!;
     const cmd: Command = { type: "launch", planetId: home.id, to: freePlanet(g).id, rocket: "colony", count: 1 };
     expect(applyCommand(g, P1.id, cmd, 0)).toEqual({ ok: false, error: "Dafür braucht es eine Startrampe" });
     const low = prepare(g);
-    economyOfPlayer(low, P1.id)!.ascension.level = 1;
-    expect(applyCommand(low, P1.id, cmd, 0)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 4" });
+    economyOfPlayer(low, P1.id)!.ascension.level = 0;
+    expect(applyCommand(low, P1.id, cmd, 0).ok).toBe(true);
   });
 
   it("flies idle inhabitants to a free planet and founds a colony there", () => {

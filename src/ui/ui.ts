@@ -752,10 +752,7 @@ export class Ui {
   private launchButtons(state: GameState, planet: PlanetState, to: PlanetState, from = ""): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const idle = idleUnits(state, planet, this.playerId).length;
-    const level = economyOf(state, planet)?.ascension.level ?? 0;
-    // The starship joins the settler rocket once it is unlocked.
-    const rockets: RocketId[] =
-      to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : level >= ROCKETS.starship.unlockLevel ? ["colony", "starship"] : ["colony"];
+    const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony", "starship"];
     return rockets
       .map((rocket) => {
         const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));

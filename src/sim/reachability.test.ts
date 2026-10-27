@@ -72,10 +72,10 @@ describe("reachability", () => {
     }
   });
 
-  it("every rocket can be built and fueled at its unlock level", () => {
+  it("every rocket can be built and fueled at some level (flying itself has no level limit)", () => {
     for (const [id, r] of Object.entries(ROCKETS)) {
       for (const c of [...Object.keys(r.cost), r.fuel.resource]) {
-        expect(resource.get(c as ResourceId) ?? Infinity, `${id}: ${c}`).toBeLessThanOrEqual(r.unlockLevel);
+        expect(resource.get(c as ResourceId) ?? Infinity, `${id}: ${c}`).toBeLessThan(Infinity);
       }
     }
   });
