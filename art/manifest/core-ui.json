@@ -109,6 +109,59 @@
       ],
       "phase": "P1",
       "tintable": false
+    },
+    {
+      "id": "fx.quake",
+      "category": "fx",
+      "src": "art/src/fx/quake-f{f}.svg",
+      "out": "public/assets/sprites/fx/quake-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "parts": [
+        "cracks",
+        "dust",
+        "rocks"
+      ],
+      "tags": [
+        "quake",
+        "animation",
+        "once"
+      ],
+      "phase": "P1",
+      "fps": 10
+    },
+    {
+      "id": "fx.magma-burst",
+      "category": "fx",
+      "src": "art/src/fx/magma-burst-f{f}.svg",
+      "out": "public/assets/sprites/fx/magma-burst-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "parts": [
+        "glow",
+        "magma"
+      ],
+      "tags": [
+        "magma-burst",
+        "animation",
+        "once"
+      ],
+      "phase": "P1",
+      "fps": 10
     }
   ]
 }

@@ -4,7 +4,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Keep each numbered delivery checkpoint independently reproducible.
-const RELEASE = 3;
+const RELEASE = 4;
 const assets = [];
 const p = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
@@ -85,11 +85,86 @@ function drillBadge() {
     p('M24 30 L40 25 M24 39 L40 34 M25 48 L40 43 M29 55 L36 52', 'none', 'stroke-width="3"') +
     shine('M26 25 V28 M27 34 V36', 1.5) +
     p('M29 55 L32 60 L35 55Z', C('ascension'), 'stroke-width="1"') + shine('M31 55 L32 57', 1);
-  return `<defs>${defs}</defs>` + g('glow', ellipse(32, 38, 30, 26, 'url(#drill-glow)', 'stroke="none"')) + g('drill', bit + cap);
+  return `<defs>${defs}</defs>` + g('glow', ellipse(32, 37, 30, 24, 'url(#drill-glow)', 'stroke="none"')) + g('drill', bit + cap);
 }
 if (RELEASE >= 3) emit('space.planet-core-drill-badge', 'space', 'planet-core-drill-badge', drillBadge(), 64, {
   anchor: [.5, 1], tintable: false, parts: ['drill', 'glow'], tags: ['star-map', 'core-reached'],
 });
+
+// The scalloped dust vocabulary comes from gen-buildings.mjs's dust/explosion
+// puff. Keep it local so this generator never runs or mutates another group.
+function dustPuff(x, y, scale, opacity, token = 'sand') {
+  return `<g transform="translate(${x} ${y}) scale(${scale}) translate(-64 -95)" opacity="${opacity}" stroke-width="${round(6 / scale)}">` +
+    p('M30 95C10 94 10 66 27 63C20 39 47 29 60 44C75 23 103 39 98 61C122 61 120 94 100 95Z', C(token)) +
+    shine('M34 62Q32 48 46 47', round(3 / scale)) + '</g>';
+}
+function pebble(x, y, angle, scale = 1) {
+  return `<g transform="translate(${x} ${y}) rotate(${angle}) scale(${scale})">` +
+    p('M-8 6 L-10 -3 Q-10 -7 -4 -8 L6 -9 Q10 -7 10 -2 L8 7 Q0 12 -8 6Z', C('rock')) +
+    p('M4 -7 L9 -3 L7 6 L0 8Z', C('rock-dark'), 'stroke="none"') + shine('M-5 -3 L-1 -5', 3) + '</g>';
+}
+function quake(f) {
+  const index = f - 1, reach = [45, 74, 98, 108][index], opacity = [1, 1, .9, .4][index];
+  const left = 128 - reach, right = 128 + reach;
+  const plate = p(`M${left} 231 Q${left + 12} 219 95 219 H161 Q${right - 12} 219 ${right} 231 Q${right + 2} 237 ${right - 8} 237 H${left + 8} Q${left - 2} 237 ${left} 231Z`, C('rock-dark')) +
+    p(`M${left + 7} 228 Q80 222 113 225 M146 224 Q174 222 ${right - 8} 229`, 'none', `stroke="${C('rock')}" stroke-width="3"`);
+  // Each frame extends the same central fissure; branch tips grow outward.
+  const cracks = 'M128 237 L120 230 L133 224 L126 219' +
+    (f >= 2 ? ' M121 230 L98 228 L89 222 M133 224 L155 229 L168 224' : '') +
+    (f >= 3 ? ' M98 228 L75 233 L61 228 L43 232 M168 224 L181 231 L199 227 L214 232 M155 229 L162 236' : '') +
+    (f === 4 ? ' M43 232 L29 234 M214 232 L230 234' : '');
+  const spread = [0, 10, 22, 31][index], puffScale = [.3, .5, .6, .8][index], puffOpacity = [.5, .9, .6, .2][index];
+  const dust = dustPuff(82 - spread, 231 - index * 5, puffScale, puffOpacity) +
+    dustPuff(176 + spread, 232 - index * 4, round(puffScale * .8), puffOpacity, 'paper');
+  const rocks = [
+    [[109, 212, -10], [151, 217, 15], [129, 209, 0]],
+    [[91, 181, -35], [174, 194, 45], [136, 168, 25]],
+    [[70, 193, -65], [194, 205, 80], [146, 178, 65]],
+    [[54, 223, -100], [207, 227, 110], [157, 228, 105]],
+  ][index].map(([x, y, a], i) => pebble(x, y, a, i === 2 ? .7 : 1)).join('');
+  return g('cracks', plate + p(cracks, 'none', 'stroke-width="5"'), `opacity="${opacity}"`) +
+    g('dust', dust) + g('rocks', rocks, `opacity="${f === 4 ? .5 : 1}"`);
+}
+function magmaBlob(x, y, r, angle) {
+  const d = `M${-r} 0 C${-r} ${-r} ${round(-r * .2)} ${round(-r * 1.1)} ${round(-r * .2)} ${round(-r * 1.7)} Q${round(r * 1.3)} ${-r} ${r} 4 Q${round(r * .8)} ${r} 0 ${r} Q${-r} ${r} ${-r} 0Z`;
+  return `<g transform="translate(${x} ${y}) rotate(${angle})">` + p(d, C('lava')) +
+    ellipse(-2, 0, round(r * .6), round(r * .7), C('ascension'), 'stroke="none"') +
+    ellipse(round(-r * .3), round(-r * .3), round(r * .3), round(r * .4), C('energy'), 'stroke="none"') + '</g>';
+}
+function magmaBurst(f) {
+  const index = f - 1, glowOpacity = [.5, .8, .6, .2][index];
+  const defs = `<radialGradient id="magma-glow"><stop stop-color="${C('energy')}" stop-opacity="0.4"/><stop offset="0.5" stop-color="${C('ascension')}" stop-opacity="0.2"/><stop offset="1" stop-color="${C('ascension')}" stop-opacity="0"/></radialGradient>`;
+  const glow = ellipse(128, 177, 104, 62, 'url(#magma-glow)', `stroke="none" opacity="${glowOpacity}"`);
+  const pool = p('M89 237 Q80 230 96 225 Q112 220 127 224 Q146 219 160 225 Q179 233 164 237Z', C('lava')) +
+    ellipse(127, 228, 25, 4, C('ascension'), 'stroke="none"');
+  const jets = [
+    'M105 230 Q117 218 116 201 Q112 181 125 176 Q140 174 137 190 Q132 210 153 229Z',
+    'M101 230 Q122 204 112 177 Q102 157 115 142 Q126 131 119 113 Q115 101 128 100 Q147 102 141 122 Q135 141 148 154 Q162 172 148 193 Q141 210 159 230Z',
+    'M101 230 Q113 217 108 204 Q102 189 115 188 Q127 188 128 205 Q129 182 141 180 Q154 182 147 201 Q140 216 160 230Z',
+    'M67 237 Q57 233 67 227 L85 228 Q96 224 92 215 Q88 207 95 207 Q105 208 104 224 Q120 216 137 226 Q153 218 160 205 Q165 199 169 205 Q173 212 165 225 L195 228 Q206 233 194 237Z',
+  ];
+  const innerJets = [
+    'M118 226 Q128 211 124 193 Q134 204 139 226Z',
+    'M115 226 Q133 205 124 180 Q114 161 129 149 Q143 166 135 183 Q129 207 146 226Z',
+    'M119 226 Q124 214 119 202 Q133 211 136 226Z',
+    'M81 232 Q109 224 127 231 Q150 227 181 232Z',
+  ];
+  const drops = [
+    [[102, 182, 7, -25], [150, 193, 8, 35]],
+    [[87, 139, 12, -35], [166, 153, 10, 35], [141, 75, 9, -5]],
+    [[68, 163, 13, -65], [184, 176, 12, 60], [131, 105, 16, 20]],
+    [[53, 222, 7, -95], [205, 224, 8, 85], [139, 204, 10, 65]],
+  ][index].map(args => magmaBlob(...args)).join('');
+  const motion = f === 1 ? '' : p(f === 2 ? 'M78 167 L73 155 M173 182 L180 168 M144 104 L147 93' :
+    f === 3 ? 'M57 134 L61 143 M192 148 L187 158 M126 72 L128 80' : 'M48 205 L50 211 M211 207 L208 215 M133 181 L135 190', 'none', `stroke="${C('ascension')}" stroke-width="3" opacity="0.6"`);
+  return `<defs>${defs}</defs>` + g('glow', glow) + g('magma', pool + p(jets[index], C('lava')) +
+    p(innerJets[index], C('energy'), 'stroke="none"') + drops + motion, `opacity="${f === 4 ? .7 : 1}"`);
+}
+if (RELEASE >= 4) {
+  for (const [name, draw, parts] of [['quake', quake, ['cracks', 'dust', 'rocks']], ['magma-burst', magmaBurst, ['glow', 'magma']]]) {
+    emit(`fx.${name}`, 'fx', name, draw, 256, {anchor: [.5, .9375], frames: 4, fps: 10, parts, tags: [name, 'animation', 'once']});
+  }
+}
 
 write('art/manifest/core-ui.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`Core and interior art: ${assets.length} ids generated (release ${RELEASE}).`);
