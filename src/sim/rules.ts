@@ -304,6 +304,41 @@ export function ascensionPerCycle(state: GameState, people: number, upgrades: nu
   return { people: people * ASCENSION.pointsPerCitizenPerMinute * perMinute, upgrades: upgrades * ASCENSION.pointsPerUpgradePerMinute * perMinute };
 }
 
+/** Where an economy's ascension points per cycle come from (the cycle adds `total`). */
+export interface AscensionIncome {
+  citizens: number;
+  /** Points from the inhabitants, after discovery bonuses. */
+  people: number;
+  /** Discovery bonus on the inhabitants' points, e.g. 0.1 for +10 %. */
+  bonus: number;
+  /** Building stages above the first, and the points they bring. */
+  stages: number;
+  upgrades: number;
+  /** Bell tower, monument, crystal palace and the like. */
+  buildings: number;
+  total: number;
+}
+
+/** `residents` overrides the head count (the cycle uses the one taken before births and deaths). */
+export function ascensionIncome(state: GameState, economy: EconomyState, residents?: number): AscensionIncome {
+  let citizens = 0;
+  let stages = 0;
+  let buildings = 0;
+  for (const p of state.planets) {
+    if (p.economyId !== economy.id) continue;
+    if (residents === undefined) citizens += Object.values(state.units).filter((u) => u.planetId === p.id).length;
+    for (const s of p.segments) {
+      buildings += buildingStats(s)?.ascension ?? 0;
+      if (s.building) stages += (s.tier ?? 1) - 1;
+    }
+  }
+  if (residents !== undefined) citizens = residents;
+  const earned = ascensionPerCycle(state, citizens, stages);
+  const people = modified(economy, "ascensionPerCycle", earned.people);
+  const bonus = earned.people > 0 ? people / earned.people - 1 : modified(economy, "ascensionPerCycle", 1) - 1;
+  return { citizens, people, bonus, stages, upgrades: earned.upgrades, buildings, total: people + earned.upgrades + buildings };
+}
+
 export function ringDistance(a: number, b: number, n: number): number {
   const d = Math.abs(a - b) % n;
   return Math.min(d, n - d);

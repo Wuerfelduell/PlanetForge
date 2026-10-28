@@ -33,6 +33,9 @@ import {
   workerCount,
   economyOf,
   economyThreshold,
+  ascensionIncome,
+  ascensionPerCycle,
+  type EconomyState,
   RESOURCE_IDS,
   RESOURCES,
   RULES,
@@ -121,6 +124,7 @@ export class Ui {
   private tradeWith: string | null = null;
   /** Full resource list open under the top bar. */
   private showResources = false;
+  private showAscension = false;
   /** Resources that just ran out on a field, until when their "!" shows. */
   private readonly depleted = new Map<ResourceId, number>();
   /** Open tab of the build menu; kept while the player taps from field to field. */
@@ -412,6 +416,11 @@ export class Ui {
         break;
       case "resources":
         this.showResources = !this.showResources;
+        this.showAscension = false;
+        break;
+      case "ascension":
+        this.showAscension = !this.showAscension;
+        this.showResources = false;
         break;
       case "discoveries":
         this.showDiscoveries = !this.showDiscoveries;
@@ -556,9 +565,9 @@ export class Ui {
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
         <span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
-        <span class="level" title="Aufstieg: ${ascension.points}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></span>
+        <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>${this.renderFlights(state, versusButtons)}${list}`;
+      </div>${this.renderFlights(state, versusButtons)}${list}${this.showAscension ? this.renderAscension(state, economy) : ""}`;
     return { chips, controls, rest };
   }
 
@@ -746,6 +755,38 @@ export class Ui {
 
   private playerName(playerId: string): string {
     return this.state?.players.find((p) => p.id === playerId)?.name ?? "Mitspieler";
+  }
+
+  /** The ⭐ panel: where the points come from and how long the next level takes. */
+  private renderAscension(state: GameState, economy: EconomyState): string {
+    const a = economy.ascension;
+    const next = economyThreshold(state, economy, a.level);
+    const income = ascensionIncome(state, economy);
+    const fmt1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("de-DE");
+    const rows = [
+      `<span>👥 ${income.citizens} Einwohner</span><b>+${fmt1(income.people)}</b>`,
+      income.bonus ? `<span class="muted">davon Entdeckungen +${Math.round(income.bonus * 100)} %</span><span></span>` : "",
+      `<span>⬆️ ${income.stages} Ausbaustufe${income.stages === 1 ? "" : "n"}</span><b>+${fmt1(income.upgrades)}</b>`,
+      income.buildings ? `<span>🔔 Sondergebäude</span><b>+${fmt1(income.buildings)}</b>` : "",
+    ].filter(Boolean);
+    let eta = "Höchste Stufe erreicht.";
+    if (next !== null) {
+      const left = Math.max(0, next - a.points);
+      const cycles = income.total > 0 ? Math.ceil(left / income.total) : Infinity;
+      const minutes = Math.ceil((cycles * state.settings.cycleSeconds) / 60);
+      const unlocked = BUILDING_IDS.filter((b) => BUILDINGS[b].unlockLevel === a.level + 1).map((b) => `${BUILDINGS[b].icon} ${BUILDINGS[b].name}`);
+      eta =
+        `Noch <b>${Math.ceil(left)}</b> Punkte bis Stufe ${a.level + 1}` +
+        (Number.isFinite(cycles) ? `: ca. ${cycles} Uml${cycles === 1 ? "auf" : "äufe"} (≈ ${minutes} min)` : "") +
+        `.${unlocked.length ? `<br>Dann neu: ${unlocked.join(", ")}` : ""}`;
+    }
+    return `<div class="res-list ascension">
+      <p><b>⭐ Stufe ${a.level}</b> · ${Math.floor(a.points)}${next !== null ? ` / ${next}` : ""} Punkte</p>
+      <p>Pro Umlauf: <b>+${fmt1(income.total)}</b></p>
+      <div class="asc-rows">${rows.map((r) => `<div>${r}</div>`).join("")}</div>
+      <p>${eta}</p>
+      <p class="muted">Mehr Punkte: mehr Einwohner (jeder +${fmt1(ascensionPerCycle(state, 1, 0).people)} pro Umlauf), Gebäude ausbauen (jede Stufe +${fmt1(ascensionPerCycle(state, 0, 1).upgrades)}), Glockenturm, Monument, Kristallpalast.</p>
+    </div>`;
   }
 
   /** Rocket buttons from one own planet to a target (colony to free or own planets, attacks elsewhere). */
