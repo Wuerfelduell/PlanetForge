@@ -15,6 +15,9 @@ const SUN_SIZE = 0.5;
  * Star map: the sun with its shield shell, the planets on their orbits, rockets in flight and
  * invader fleets. Read-only towards the game like PlanetView; taps report the planet (or "sun").
  */
+/** Star map art of rockets whose sprite id differs from the rocket id. */
+const SHIP_ART: Partial<Record<string, string>> = { homing: "missile-homing", emp: "missile-emp", nuke: "missile-nuke" };
+
 export class SystemView {
   readonly stage = new Container();
   private readonly back = new Graphics();
@@ -230,6 +233,9 @@ export class SystemView {
       const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : artTexture(`planet.planet-${p.type}`);
       if (texture) this.sprite(texture, x, y, r * 2.3);
       else g.circle(x, y, r).fill(PLANET_COLORS[p.type] ?? 0x9aa0b5).stroke({ width: 2, color: 0x1a1d2e });
+      // A drill bit next to planets whose core was reached.
+      const drill = art && state.cores?.some((c) => c.coreOf === p.id) ? artTexture("space.planet-core-drill-badge") : undefined;
+      if (drill) this.sprite(drill, x - r * 0.45, y - r * 0.7, Math.max(10, r * 0.9));
       const owners = state.players.filter((pl) => pl.economyId && pl.economyId === p.economyId);
       if (owners.length) {
         const own = owners.some((pl) => pl.id === me?.id);
@@ -281,8 +287,8 @@ export class SystemView {
       const y = a.y + (b.y - a.y) * t;
       const angle = Math.atan2(b.y - a.y, b.x - a.x);
       // Ship art points right; the launch pad rocket (fallback) points up.
-      // War rockets have their own art (ship.homing, …) once Codex delivers it.
-      const own = art && f.rocket !== "colony" && f.rocket !== "combat" ? artFrames(`ship.${f.rocket}`) : [];
+      // War rockets have their own art (ship.missile-homing, …, ship.dropship).
+      const own = art && f.rocket !== "colony" && f.rocket !== "combat" ? artFrames(`ship.${SHIP_ART[f.rocket] ?? f.rocket}`) : [];
       const ship = own.length ? own : art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
       const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket !== "colony" ? "building.rocket-big" : "building.rocket-small") : undefined;
       if (rocket) this.sprite(rocket, x, y, Math.max(18, k * 0.5), angle + (ship.length ? 0 : Math.PI / 2));

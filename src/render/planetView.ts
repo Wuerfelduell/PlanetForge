@@ -652,8 +652,10 @@ export class PlanetView {
         sprite.scale.set((k * segWidth) / ART_FOOTPRINT);
       } else if (s.building) {
         const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
-        const anim = empty ? undefined : buildingAnim(s.building, s.tier);
-        const texture = anim?.back ?? buildingArt(s.building, empty ? "off" : undefined, s.tier);
+        // After the breakthrough the core drill shows its open, glowing shaft.
+        const open = s.building === "core-drill" && !empty && state.cores?.some((c) => c.coreOf === planet.id) ? artTexture("building.core-drill.open") : undefined;
+        const anim = empty || open ? undefined : buildingAnim(s.building, s.tier);
+        const texture = open ?? anim?.back ?? buildingArt(s.building, empty ? "off" : undefined, s.tier);
         const rotation = mid + Math.PI / 2;
         const scale = (k * segWidth) / ART_FOOTPRINT;
         if (texture) {
