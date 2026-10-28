@@ -1,0 +1,104 @@
+{
+  "assets": [
+    {
+      "id": "building.warpgate",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate.svg",
+      "out": "public/assets/sprites/buildings/warpgate.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warpgate.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate-construction.svg",
+      "out": "public/assets/sprites/buildings/warpgate-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warpgate.off",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate-off.svg",
+      "out": "public/assets/sprites/buildings/warpgate-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
