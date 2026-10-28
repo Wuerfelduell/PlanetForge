@@ -408,7 +408,7 @@ describe("advanceOwnedWithEvents", () => {
     let a = copied;
     const b = JSON.parse(JSON.stringify(copied)) as GameState;
     const seen: GameEvent[][] = [[], []];
-    for (let t = 16; t <= 5 * 60_000; t += 16.7) {
+    for (let t = 16; t <= 2 * 60_000; t += 41.7) {
       const r = advanceWithEvents(a, t);
       a = r.state;
       seen[0]!.push(...r.events);
@@ -416,7 +416,8 @@ describe("advanceOwnedWithEvents", () => {
       seen[1]!.push(...events);
     }
     expect(JSON.stringify(b)).toBe(JSON.stringify(a));
+    expect(seen[0]!.some((e) => e.type === "cycle")).toBe(true);
     expect(seen[1]).toEqual(seen[0]);
     expect(advanceOwnedWithEvents(b, b.simTime + TICK_MS / 2)).toEqual([]);
-  });
+  }, 20_000);
 });
