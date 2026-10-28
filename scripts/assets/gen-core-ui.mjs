@@ -4,7 +4,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Keep each numbered delivery checkpoint independently reproducible.
-const RELEASE = 1;
+const RELEASE = 2;
 const assets = [];
 const p = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
@@ -38,6 +38,43 @@ function coreSun() {
     p('M202 366 Q248 257 356 221', 'none', `stroke="${C('cream')}" stroke-width="18" opacity="0.8"`));
 }
 emit('planet.core-sun', 'planets', 'core-sun', coreSun(), 1024, {phase: 'P0', tags: [], parts: ['body', 'lava-swirl', 'heat-haze']});
+
+function cutawayPlanet() {
+  // A whole round silhouette with one exposed quadrant, concentric mantle,
+  // and a warm core. Both navigation directions use identical planet art.
+  return circle(53, 77, 38, C('water')) +
+    p('M18 63 Q24 44 43 40 L53 51 L44 62 L32 60 L27 76Z', C('grass')) +
+    p('M24 89 L41 83 L49 94 L43 110 Q28 106 24 89Z', C('leaf')) +
+    p('M53 39 A38 38 0 0 1 91 77 H53Z', C('clay')) +
+    p('M53 48 A29 29 0 0 1 82 77 H53Z', C('ascension'), 'stroke-width="1.5"') +
+    p('M53 58 A19 19 0 0 1 72 77 H53Z', C('energy'), 'stroke="none"') +
+    p('M88 82 Q84 108 55 114 Q77 111 79 82Z', C('deep-water'), 'stroke="none"') +
+    circle(53, 77, 13, C('energy')) + circle(50, 74, 7, C('cream'), 'stroke="none"') +
+    shine('M25 57 Q31 48 40 46');
+}
+function navigation(up) {
+  const sky = up ? p('M61 29 Q57 21 67 19 Q68 9 79 11 Q87 10 91 19 Q104 15 108 26 Q116 27 112 35 H64Z', C('snow')) : '';
+  const arrow = up ? 'M78 64 V34 H68 Q63 34 67 29 L84 12 Q87 9 90 12 L107 29 Q111 34 106 34 H96 V64 Q96 69 91 69 H83 Q78 69 78 64Z' :
+    'M78 14 Q78 10 83 10 H91 Q96 10 96 14 V45 H106 Q111 45 107 50 L90 67 Q87 70 84 67 L67 50 Q63 45 68 45 H78Z';
+  return sky + cutawayPlanet() + p(arrow, C('cream')) +
+    p(up ? 'M91 36 V62 H95 V35Z' : 'M91 14 H95 V46 L87 58 L82 53 L87 54 L91 48Z', C('paper'), 'stroke="none"');
+}
+function quakeBadge() {
+  // Existing badge envelope: r=28 on 64px, proportional 1.5px outline.
+  return circle(32, 32, 28, C('ascension')) + circle(32, 32, 23, C('paper'), 'stroke-width="0.8"') +
+    p('M15 37 L23 30 H44 L50 37 L47 49 H18Z', C('rock')) +
+    p('M15 37 H49 L46 49 H18Z', C('rock-dark'), 'stroke="none"') +
+    p('M33 30 L29 36 L35 40 L30 48', 'none', 'stroke-width="2.5"') +
+    p('M20 19 Q18 17 20 15 L26 14 L29 19 L25 24 L21 23Z', C('rock')) +
+    p('M39 25 L41 18 L47 20 L48 25 L44 28Z', C('rock-dark')) +
+    p('M22 26 V28 M43 30 V32', 'none', 'stroke-width="1.5"') +
+    shine('M12 24 Q15 13 26 10', 1.5) + shine('M19 34 H26', 1.5);
+}
+if (RELEASE >= 2) {
+  emit('ui.icon-interior', 'ui', 'icon-interior', navigation(false), 128, {phase: 'P0'});
+  emit('ui.icon-surface', 'ui', 'icon-surface', navigation(true), 128, {phase: 'P0'});
+  emit('ui.badge-quake', 'ui', 'badge-quake', quakeBadge(), 64, {phase: 'P0'});
+}
 
 write('art/manifest/core-ui.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`Core and interior art: ${assets.length} ids generated (release ${RELEASE}).`);

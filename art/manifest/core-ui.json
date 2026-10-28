@@ -21,6 +21,69 @@
       ],
       "tags": [],
       "phase": "P0"
+    },
+    {
+      "id": "ui.icon-interior",
+      "category": "ui",
+      "src": "art/src/ui/icon-interior.svg",
+      "out": "public/assets/sprites/ui/icon-interior.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-interior"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-surface",
+      "category": "ui",
+      "src": "art/src/ui/icon-surface.svg",
+      "out": "public/assets/sprites/ui/icon-surface.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-surface"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-quake",
+      "category": "ui",
+      "src": "art/src/ui/badge-quake.svg",
+      "out": "public/assets/sprites/ui/badge-quake.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-quake"
+      ],
+      "phase": "P0"
     }
   ]
 }
