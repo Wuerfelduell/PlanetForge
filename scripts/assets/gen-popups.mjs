@@ -3,7 +3,7 @@
 // Geometry is authored here; reference vocabulary comes from gen-invaders/menu/ui.
 import {C, svg, round, write} from './common.mjs';
 
-const STAGE = 2;
+const STAGE = 3;
 const assets = [];
 const p = (d, token, extra='') => `<path d="${d}" ${/\bfill=/.test(extra)?'':`fill="${token?C(token):'none'}"`} ${extra}/>`;
 const circle = (x,y,r,token,extra='') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra)?'':`fill="${token?C(token):'none'}"`} ${extra}/>`;
@@ -112,6 +112,41 @@ function lootPopup() {
   return b;
 }
 if(STAGE>=2)emit('popup-loot',512,lootPopup(),['smoke','wreck','debris','crate','metal','crystal','coins'],['popup','celebration','mothership-destroyed','salvage']);
+
+function levelMedallion(state='normal') {
+  const locked=state==='locked',gold=locked?'rock':'energy',edge=locked?'rock-dark':'savanna';
+  const accent=locked?'rock-dark':'ascension',center=locked?'rock':'cream';
+  let b='';
+  if(state==='current')b=`<defs><radialGradient id="level-glow"><stop offset="0.5" stop-color="${C('energy')}" stop-opacity="0"/><stop offset="0.7" stop-color="${C('energy')}" stop-opacity="0.5"/><stop offset="1" stop-color="${C('energy')}" stop-opacity="0"/></radialGradient></defs>`+
+    g(circle(64,64,56,null,'fill="url(#level-glow)" stroke="none"'),'id="halo"');
+  b+=g(circle(64,68,37,edge)+circle(64,65,37,gold)+
+    shadow('M96 47 Q110 78 84 94 Q62 109 39 90 Q57 108 82 99 Q112 88 96 47Z',gold)+
+    circle(64,65,29,center)+line('M43 39 Q53 31 67 32',locked?'snow':'cream',2)+
+    line('M43 46 Q52 38 64 39',locked?'rock-dark':'paper',1.5),'id="medallion"');
+  let laurel='';
+  // Each half is mirrored geometry, but all leaves are lit in screen space.
+  for(const side of [-1,1]) {
+    const stem=`M${64+side*4} 109 Q${64+side*46} 103 ${64+side*43} 63 Q${64+side*42} 37 ${64+side*25} 27`;
+    laurel+=line(stem,'ink',5)+line(stem,edge,2);
+    for(const [x,y,a] of [[36,99,-61],[25,86,-35],[21,70,-12],[23,54,12],[30,39,35],[39,29,57]]) {
+      const sx=side===-1?x:128-x,angle=side===-1?a:-a;
+      const leaf=p('M0 6 Q-11 1 -9 -9 Q2 -9 0 6Z',gold,'stroke-width="2"');
+      laurel+=g(leaf,`transform="translate(${sx} ${y}) rotate(${angle})${side===1?' scale(-1 1)':''}"`);
+      laurel+=circle(sx-2,y-3,1.5,locked?'snow':'cream','stroke="none"');
+    }
+  }
+  b+=g(laurel,'id="laurel"');
+  b+=g(star(64,21,11,accent)+p('M64 10 Q65.5 19.5 75 21 L64 21Z',gold,'stroke="none"')+
+    line('M59 18 L62 14',locked?'snow':'cream',1.5),'id="star"');
+  if(locked)b+=g(p('M57 103 V98 A7 7 0 0 1 71 98 V103',null,'stroke-width="4"')+
+    rect(53,101,22,16,4,'rock-dark')+circle(64,107,2,'snow','stroke="none"')+
+    line('M64 108 V112','snow',1.5)+line('M57 104 H60','rock',1.5),'id="lock"');
+  else b+=g(p('M57 105 Q64 101 71 105 L68 112 H60Z',accent)+shine('M60 106 H63',1.5),'id="knot"');
+  return b;
+}
+if(STAGE>=3)for(const state of ['normal','locked','current'])emit(`ascension-level${state==='normal'?'':'-'+state}`,128,levelMedallion(state),
+  [...(state==='current'?['halo']:[]),'medallion','laurel','star',state==='locked'?'lock':'knot'],
+  ['ascension','level',state,'empty-number-center'],{numberArea:{center:[64,65],radius:26}});
 
 write('art/manifest/popups.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Popup art: stage ${STAGE}, ${assets.length} ids generated.`);

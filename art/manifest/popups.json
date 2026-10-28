@@ -63,6 +63,115 @@
         "salvage"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.ascension-level",
+      "category": "ui",
+      "src": "art/src/ui/ascension-level.svg",
+      "out": "public/assets/sprites/ui/ascension-level.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "medallion",
+        "laurel",
+        "star",
+        "knot"
+      ],
+      "tags": [
+        "ui",
+        "ascension",
+        "level",
+        "normal",
+        "empty-number-center"
+      ],
+      "phase": "P1",
+      "numberArea": {
+        "center": [
+          64,
+          65
+        ],
+        "radius": 26
+      }
+    },
+    {
+      "id": "ui.ascension-level-locked",
+      "category": "ui",
+      "src": "art/src/ui/ascension-level-locked.svg",
+      "out": "public/assets/sprites/ui/ascension-level-locked.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "medallion",
+        "laurel",
+        "star",
+        "lock"
+      ],
+      "tags": [
+        "ui",
+        "ascension",
+        "level",
+        "locked",
+        "empty-number-center"
+      ],
+      "phase": "P1",
+      "numberArea": {
+        "center": [
+          64,
+          65
+        ],
+        "radius": 26
+      }
+    },
+    {
+      "id": "ui.ascension-level-current",
+      "category": "ui",
+      "src": "art/src/ui/ascension-level-current.svg",
+      "out": "public/assets/sprites/ui/ascension-level-current.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "halo",
+        "medallion",
+        "laurel",
+        "star",
+        "knot"
+      ],
+      "tags": [
+        "ui",
+        "ascension",
+        "level",
+        "current",
+        "empty-number-center"
+      ],
+      "phase": "P1",
+      "numberArea": {
+        "center": [
+          64,
+          65
+        ],
+        "radius": 26
+      }
     }
   ]
 }
