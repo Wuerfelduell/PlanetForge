@@ -1,7 +1,7 @@
 // Original late-game toy architecture, drawn entirely from palette-based SVG.
 // Run this generator before npm --prefix scripts/assets run assets:gen.
 // Helpers copied locally from the building/weapon generators; no shared edits.
-import {C, svg, round, write} from './common.mjs';
+import {C, svg, write} from './common.mjs';
 
 let state = 'idle';
 const paint = (token, tone = 0) => C(state !== 'idle' && !['ink','coal','rock','rock-dark','snow'].includes(token)
@@ -94,9 +94,47 @@ function shellArmor(){
   return foot(back+press+front);
 }
 
+function xenoLab(){
+  const dome=path('M41 207Q35 173 55 149Q78 120 128 123Q185 116 208 158Q220 180 215 207L207 225H49Z','paper')+
+    path('M177 133Q207 148 214 180Q220 201 207 223H182Q198 209 198 184Q198 152 177 133Z','paper','stroke="none"',-.18)+
+    // A curved pressure seam and rounded feet keep this a soft research pod.
+    line('M59 166Q71 141 96 139M186 159Q198 177 196 195','rock',4)+
+    line('M48 210Q69 227 101 221M160 222Q184 226 207 211','rock',5)+
+    rim('M50 191Q49 174 60 161')+
+    ellipse(139,133,43,14,'rock-dark')+ellipse(139,131,34,9,'coal','stroke-width="3"');
+  const glow=group('crystal-glow',state==='idle'?
+    path('M104 135L102 85L117 56L132 62L147 24Q151 16 156 25L184 65L177 122L161 147Z','crystal','opacity="0.2" stroke="none"')+
+    ellipse(139,138,43,11,'crystal','opacity="0.3" stroke="none"'):'');
+  const crystal=group('xenocrystal',
+    // Three uneven growth tips, rooted through the collar, never floating.
+    path('M114 135L98 104Q96 100 99 95L110 75Q113 70 117 76L134 102L133 138Z','ok')+
+    path('M113 78L117 110L129 136H116L103 104Z','ok','stroke="none"',.18)+
+    path('M146 136L155 95L176 81Q183 77 181 86L172 120L161 139Z','ok')+
+    path('M167 98L178 86L169 117L157 135Z','ok','stroke="none"',-.18)+
+    path('M123 133L116 91Q115 84 119 77L147 36Q152 29 156 36L171 68Q174 73 172 79L156 133Q141 141 123 133Z','ok')+
+    path('M151 38L147 78L135 135L123 131L120 91Q119 86 123 80Z','ok','stroke="none"',.18)+
+    path('M151 38L169 72L153 131L137 135L147 78Z','ok','stroke="none"',-.18)+
+    line('M147 78L167 73M147 78L123 91','ok',3)+
+    rim('M126 79L143 52')+line('M126 98L130 117','snow',3)+
+    (state==='idle'?line('M160 89L151 118','crystal',4):''));
+  const collar=path('M102 133Q140 147 177 132L175 144Q138 159 104 145Z','rock')+
+    line('M111 140Q133 148 151 145','snow',3)+rivet(164,142);
+  const windows=group('windows',[[62,178,24],[90,186,18],[159,186,18],[184,178,20]].map(([x,y,w])=>
+    rect(x,y,w,19,'rock-dark',8)+rect(x+4,y+4,w-8,11,lit('ok'),4,'stroke="none"')+
+    (state==='idle'?line(`M${x+6} ${y+6}H${x+w-7}`,'snow',2):'')).join(''));
+  const dish=group('dish',line('M65 148L60 115','rock-dark',7)+
+    path('M43 91Q36 112 62 119Q76 120 81 111Z','snow')+
+    path('M44 94Q56 116 77 112','none',`stroke="${paint('rock')}" stroke-width="4"`)+
+    line('M59 106L49 88','rock-dark',3)+circle(48,86,4,lit('crystal'),'stroke-width="3"'));
+  return foot(dome+glow+crystal+collar+windows+
+    rect(115,187,30,38,'rock-dark',12)+rect(120,192,20,32,'paper',8,'stroke-width="3"')+
+    circle(133,210,2,'rock-dark','stroke="none"')+dish);
+}
+
 const definitions = [
   {id:'neutron-bastion',draw:neutronBastion,parts:['sensor'],tags:['defense','neutronium']},
   {id:'shell-armor',draw:shellArmor,parts:['press','plate','finished-plates'],pivot:[101,101],tags:['industry','neutronium','sun-shield']},
+  {id:'xeno-lab',draw:xenoLab,parts:['xenocrystal','crystal-glow','windows','dish'],tags:['science','ascension','xenocrystal']},
 ];
 const assets = [];
 for(const def of definitions)for(const mode of ['idle','construction','off']){
