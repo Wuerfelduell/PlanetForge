@@ -85,6 +85,15 @@ describe("every resource has a use", () => {
     expect(single).toEqual(["sand", "fiber", "tin", "bauxite", "ilmenite"]);
   });
 
+  it("the warp matter keeps a use after its buildings stand", () => {
+    // A recipe or a fuel eats it again and again, so it never just piles up.
+    const ongoing = new Set<ResourceId>();
+    for (const r of Object.values(RECIPES)) for (const k of Object.keys(r.inputs) as ResourceId[]) ongoing.add(k);
+    for (const b of Object.values(BUILDINGS)) if (b.burns) ongoing.add(b.burns.resource);
+    for (const r of Object.values(ROCKETS)) ongoing.add(r.fuel.resource);
+    for (const r of ["antimatter", "neutronium", "xenocrystal"] as ResourceId[]) expect(ongoing.has(r), r).toBe(true);
+  });
+
   it("a treasury turns gold, silver and ätherite into ascension points", () => {
     let g = world(["savanna"]);
     g = build(g, 0, "treasury", 1);

@@ -391,6 +391,23 @@ export function hasBuilding(planet: PlanetState, building: BuildingId): boolean 
   return planet.segments.some((s) => s.building === building);
 }
 
+/** Longest planet name (in characters). */
+export const PLANET_NAME_MAX = 20;
+
+/** A planet name as typed, made safe: no markup or control characters, single spaces, at most PLANET_NAME_MAX characters. */
+export function cleanPlanetName(name: string): string {
+  const plain = name.replace(/[\u0000-\u001f\u007f<>&"'`\\]/g, "").replace(/\s+/g, " ").trim();
+  return Array.from(plain).slice(0, PLANET_NAME_MAX).join("").trim();
+}
+
+/** Why `playerId` cannot rename the planet right now, or null. Only its founder can, while their side still lives there. */
+export function renameBlocker(state: GameState, playerId: string, planet: PlanetState): string | null {
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player || planet.founder !== playerId) return "Nur wer den Planeten zuerst besiedelt hat, kann ihn umbenennen";
+  if (planet.economyId !== player.economyId) return "Der Planet gehört dir nicht mehr";
+  return null;
+}
+
 /**
  * Why `playerId` cannot send a rocket from `from` to `to` with `count` passengers right now, or
  * null. Shared by the launch command and the UI.

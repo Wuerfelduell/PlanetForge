@@ -247,6 +247,8 @@ export interface PlanetState {
   power?: { supply: number; demand: number };
   /** Neighbor sun system (GameState.systems); missing = the home system. */
   system?: number;
+  /** playerId of whoever settled the planet first (the last time it was free); only they may rename it. */
+  founder?: string;
   /** Seconds the core drill has worked so far; gone once it broke through. */
   drill?: number;
   /** The interior of this planet (in GameState.cores): id of the planet around it. */
@@ -322,6 +324,8 @@ export type Command =
   | { type: "diplomacy"; faction: string; action: "war" | "peace" | "alliance" | "merge" }
   /** Answers the faction's open offer. */
   | { type: "answerOffer"; faction: string; accept: boolean }
+  /** Founder only: gives the planet a new name (PLANET_NAME_MAX characters at most). */
+  | { type: "renamePlanet"; planetId: string; name: string }
   | { type: "openLobby" }
   | { type: "closeLobby" }
   | { type: "pause" }
@@ -340,6 +344,7 @@ export type GameEvent =
   | { type: "upgraded"; planetId: string; segment: number; building: BuildingId; tier: number; playerId: string }
   | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
+  | { type: "renamed"; planetId: string; name: string; from: string; playerId: string }
   | { type: "removed"; playerId: string; by: string }
   | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }
   | { type: "lobby"; open: boolean; paused: boolean; playerId: string }
