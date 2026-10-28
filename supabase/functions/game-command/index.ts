@@ -1,8 +1,8 @@
 // Supabase Edge Function: the authority for every game. Runs the shared simulation from src/sim,
-// saves the result with optimistic locking and broadcasts it to room game:<id> (see save_game_state).
+// saves the result with optimistic locking and broadcasts it to room game:<id> (see save_game_packed).
 // Deployed as a bundle: `npm run build:functions` writes dist/index.js next to this file.
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { pack } from "../../../src/net/pack";
+import { pack, unpack } from "../../../src/net/pack";
 import type { GameOptions } from "../../../src/sim/index";
 import { parseRequest, step, userIdFromJwt, type Member } from "./logic";
 
@@ -27,7 +27,9 @@ const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE
 interface LoadedGame {
   id: string;
   version: number;
+  /** Null for saves written since games.packed exists; then `packed` holds it. */
   state: Parameters<typeof step>[0]["state"];
+  packed?: string | null;
   clock_at: string | null;
   /** Missing until the options migration ran. */
   max_players?: number;
@@ -53,9 +55,10 @@ Deno.serve(async (req) => {
     if (!me) return json(req, { ok: false, error: "Du bist nicht in diesem Spiel" }, 403);
     const members: Member[] = game.members.map((m) => ({ playerId: m.player_id, name: m.display_name, people: m.people }));
 
+    const state = game.packed ? await unpack<NonNullable<LoadedGame["state"]>>(game.packed) : game.state;
     const now = Date.now();
     const result = step({
-      state: game.state,
+      state,
       clockAt: game.clock_at ? Date.parse(game.clock_at) : null,
       members,
       playerId: me.player_id,
@@ -63,13 +66,13 @@ Deno.serve(async (req) => {
       now,
       options: { ...game.options, maxPlayers: game.max_players },
     });
-    if (!result.ok) return json(req, { ok: false, error: result.error, version: game.version, state: game.state });
+    if (!result.ok) return json(req, { ok: false, error: result.error, version: game.version, state });
 
-    // The broadcast carries the state packed: unpacked it is over Realtime's 256 KB limit.
-    const { data: version, error } = await admin.rpc("save_game_state", {
+    // Stored and broadcast packed (~40 KB instead of ~320 KB); games.state keeps only the players.
+    const { data: version, error } = await admin.rpc("save_game_packed", {
       p_game: game.id,
       p_expected_version: game.version,
-      p_state: result.state,
+      p_players: result.state.players,
       p_clock_at: new Date(now).toISOString(),
       p_events: result.events,
       p_by: me.player_id,
