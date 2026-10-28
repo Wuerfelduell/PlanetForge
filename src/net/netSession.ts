@@ -198,13 +198,21 @@ export class NetworkSession implements GameSession {
 }
 
 async function invoke(sb: SupabaseClient, body: Record<string, unknown>): Promise<ServerReply> {
-  const { data, error } = await sb.functions.invoke("game-command", { body });
-  if (data && typeof data === "object" && "ok" in data) return data as ServerReply;
+  // packed: the server answers with the packed state it saves anyway (see pack.ts) instead of
+  // serializing the whole state a second time; older servers ignore the flag.
+  const { data, error } = await sb.functions.invoke("game-command", { body: { ...body, packed: true } });
+  if (data && typeof data === "object" && "ok" in data) return unpackReply(data);
   // Non-2xx responses still carry our JSON body in error.context.
   const ctx = (error as { context?: Response } | null)?.context;
   if (ctx && typeof ctx.json === "function") {
     const parsed = await ctx.json().catch(() => null);
-    if (parsed && "ok" in parsed) return parsed as ServerReply;
+    if (parsed && "ok" in parsed) return unpackReply(parsed);
   }
   return { ok: false, error: error?.message ?? "Server nicht erreichbar" };
+}
+
+async function unpackReply(reply: ServerReply & { packed?: string }): Promise<ServerReply> {
+  if (typeof reply.packed !== "string") return reply;
+  const { packed, ...rest } = reply;
+  return { ...rest, state: await unpack<GameState>(packed) } as ServerReply;
 }
