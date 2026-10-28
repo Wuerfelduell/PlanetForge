@@ -1,5 +1,5 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, buildingStats, CORE, coreHazard, planetById, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
+import { BIOMES, buildingStats, CORE, coreHazard, planetById, segmentOutput, TICK_MS, type GameEvent, type GameState, type PlanetState, type ResourceId, type UnitState } from "../sim";
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
@@ -508,8 +508,9 @@ export class PlanetView {
     if (planet.economyId === null || planet.segments.length !== this.segmentCount) return;
     const size = this.segmentWidth() * 0.45;
     let sounded = false;
+    const crews = crewsOf(state, planet);
     planet.segments.forEach((s, i) => {
-      const workers = workerCount(state, planet, i);
+      const workers = crews[i]?.length ?? 0;
       if (!s.revealed || workers === 0) return;
       for (const [resource, perSecond] of Object.entries(segmentOutput(planet, s, workers)) as [ResourceId, number][]) {
         const key = `${i}:${resource}`;
@@ -626,6 +627,7 @@ export class PlanetView {
       sprite.rotation = i * step + Math.PI / 2;
     };
     const multiplayer = state.players.length > 1;
+    const crews = crewsOf(state, planet);
 
     planet.segments.forEach((s, i) => {
       const mid = i * step;
@@ -651,7 +653,7 @@ export class PlanetView {
         sprite.rotation = mid + Math.PI / 2;
         sprite.scale.set((k * segWidth) / ART_FOOTPRINT);
       } else if (s.building) {
-        const empty = buildingStats(s)!.workers > 0 && workerCount(state, planet, i) === 0;
+        const empty = buildingStats(s)!.workers > 0 && !crews[i]?.length;
         // After the breakthrough the core drill shows its open, glowing shaft.
         const open = s.building === "core-drill" && !empty && state.cores?.some((c) => c.coreOf === planet.id) ? artTexture("building.core-drill.open") : undefined;
         const anim = empty || open ? undefined : buildingAnim(s.building, s.tier);
@@ -733,7 +735,7 @@ export class PlanetView {
       }
 
       // Working inhabitants stand in front, each in their people's look.
-      const workers = Object.values(state.units).filter((u) => u.planetId === planet.id && u.segment === i);
+      const workers = crews[i] ?? [];
       workers.forEach((u, w) => {
         const frame = 1 + ((Math.floor(state.tick / 5) + w) % 2);
         const texture = artTexture(`people.${u.people}.citizen.work.f${frame}`) ?? artTexture(`people.${u.people}.citizen.idle.f1`);
@@ -980,4 +982,11 @@ function wrapAngle(a: number): number {
 
 function mod(a: number, n: number): number {
   return ((a % n) + n) % n;
+}
+
+/** The working units of a planet by segment, in creation order: one pass over all units per draw. */
+function crewsOf(state: GameState, planet: PlanetState): UnitState[][] {
+  const crews: UnitState[][] = [];
+  for (const u of Object.values(state.units)) if (u.planetId === planet.id && u.segment !== null) (crews[u.segment] ??= []).push(u);
+  return crews;
 }

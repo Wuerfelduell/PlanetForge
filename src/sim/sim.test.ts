@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addPlayer,
   advance,
+  advanceOwnedWithEvents,
   advanceWithEvents,
   applyCommand,
   createGame,
@@ -398,5 +399,24 @@ describe("simulation", () => {
     const a = play();
     expect(a).toEqual(play());
     expect(JSON.parse(JSON.stringify(a))).toEqual(a);
+  });
+});
+
+describe("advanceOwnedWithEvents", () => {
+  it("matches advanceWithEvents frame by frame, without copying", () => {
+    const copied = createGame("owned", [P1, MO], { now: 0, factions: 2 });
+    let a = copied;
+    const b = JSON.parse(JSON.stringify(copied)) as GameState;
+    const seen: GameEvent[][] = [[], []];
+    for (let t = 16; t <= 5 * 60_000; t += 16.7) {
+      const r = advanceWithEvents(a, t);
+      a = r.state;
+      seen[0]!.push(...r.events);
+      const events = advanceOwnedWithEvents(b, t);
+      seen[1]!.push(...events);
+    }
+    expect(JSON.stringify(b)).toBe(JSON.stringify(a));
+    expect(seen[1]).toEqual(seen[0]);
+    expect(advanceOwnedWithEvents(b, b.simTime + TICK_MS / 2)).toEqual([]);
   });
 });

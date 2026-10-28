@@ -1,6 +1,6 @@
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 import type { GameSession, SendResult } from "../client/session";
-import { advanceWithEvents, applyCommand, type Command, type GameEvent, type GameState } from "../sim";
+import { advanceOwnedWithEvents, applyCommand, type Command, type GameEvent, type GameState } from "../sim";
 import type { ChatMessage } from "./chat";
 import { unpack } from "./pack";
 import { ensureSignedIn, supabase } from "./supabase";
@@ -141,9 +141,11 @@ export class NetworkSession implements GameSession {
 
   update(elapsedMs: number): GameEvent[] {
     this.clock += Math.min(elapsedMs, 1000);
-    const { state, events } = advanceWithEvents(this.state, this.clock);
-    this.state = state;
-    if (!this.inFlight.length && !this.queued.length) this.base = state;
+    // Every state here is the session's own (unpacked or built by applyCommand), so ticks run on it
+    // without a copy. When nothing is pending, state is base: base moves on too, which changes
+    // nothing for later replays (splitting the time into steps gives the same result).
+    const events = advanceOwnedWithEvents(this.state, this.clock);
+    if (!this.inFlight.length && !this.queued.length) this.base = this.state;
     return this.pendingEvents.length ? [...this.pendingEvents.splice(0), ...events] : events;
   }
 
