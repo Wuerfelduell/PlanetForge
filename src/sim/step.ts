@@ -162,6 +162,7 @@ function craft(planet: PlanetState, segment: PlanetState["segments"][number], wo
   for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) {
     economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r });
   }
+  if (recipe.ascension) economy.ascension.points += recipe.ascension * crafts;
 }
 
 /** Starts the first queued build of each planet once it is affordable; drops orders that can no longer fit. */

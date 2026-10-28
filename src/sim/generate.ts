@@ -109,6 +109,12 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     const oilFields = () => p.segments.filter((x) => x.deposits.some((d) => d.resource === "oil")).length;
     for (let tries = 0; tries < 6 && oilFields() < SYSTEM.oilFieldsPerStartPlanet; tries++) placeRareDeposit(oilRng, p.segments, "oil", true, true);
   }
+  // Seb 2026-10-28: dry worlds should hold more oil. Extra fields from yet another stream.
+  const dryRng = new Rng(seedFromString(`${seed}:dryoil`));
+  for (const p of planets) {
+    const extra = SYSTEM.extraOilFields[p.type] ?? 0;
+    for (let i = 0; i < extra; i++) placeRareDeposit(dryRng, p.segments, "oil", p.startSlot !== null, true);
+  }
   // Gems: one field on every start planet, now and then one elsewhere. Own stream as well.
   const gemRng = new Rng(seedFromString(`${seed}:gems`));
   for (const p of planets) {
