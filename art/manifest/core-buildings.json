@@ -183,6 +183,74 @@
       "phase": "P1"
     },
     {
+      "id": "building.support-pillar",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar.svg",
+      "out": "public/assets/sprites/buildings/support-pillar.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.support-pillar.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar-construction.svg",
+      "out": "public/assets/sprites/buildings/support-pillar-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.support-pillar.off",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar-off.svg",
+      "out": "public/assets/sprites/buildings/support-pillar-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.core-drill.open",
       "category": "buildings",
       "src": "art/src/buildings/core-drill-open.svg",

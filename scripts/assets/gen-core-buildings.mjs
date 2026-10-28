@@ -115,9 +115,37 @@ function coreMine() {
   return base() + rock + doorway + rails + cart;
 }
 
+function supportPillar() {
+  // An exposed bearing cap ends in transparent space: no cave ceiling or roof is baked in.
+  return base() +
+    p('M98 42H158Q163 42 163 50V215Q163 223 155 223H101Q93 223 93 215V50Q93 42 98 42Z','rock') +
+    p('M145 45H158Q160 45 160 51V214Q160 220 153 220H142Z','rock-dark','stroke="none"') +
+    // Large masonry blocks retain a readable stone face at phone size.
+    line('M96 87H144M96 143H144M96 195H144','rock-dark',4) +
+    line('M121 45V84M116 146V192','rock-dark',3) +
+    shine('M101 55V72M101 153V173') +
+    rect(86,99,84,20,'coal',7) + rect(86,181,84,17,'coal',6) +
+    line('M94 105H145M95 186H144','rock-dark',4) +
+    // Four broad feet and splayed braces take the load into the 200 px foundation.
+    p('M44 210L88 122Q91 117 96 120L105 126L62 222Z','coal') +
+    p('M212 210L168 122Q165 117 160 120L151 126L194 222Z','coal') +
+    line('M54 208L94 130M202 208L162 130','rock-dark',7) +
+    line('M59 191L83 143','rock',3) +
+    rect(39,211,38,15,'rock-dark',6) + rect(179,211,38,15,'rock-dark',6) +
+    rect(84,211,88,15,'coal',6) + line('M94 217H143','rock-dark',4) +
+    rect(81,40,94,15,'rock-dark',6) + rect(70,24,116,20,'rock',7) +
+    p('M73 35H183V37Q183 43 176 43H80Q73 43 73 35Z','rock-dark','stroke="none"') +
+    shine('M81 30H112') +
+    // Safety lamp is mounted high on the front face, rather than atop a fictitious ceiling.
+    rect(110,59,36,25,'coal',8) + rect(117,65,22,12,lit('ok'),5,'stroke-width="3"') +
+    (state==='off'?'':line('M121 68H130','snow',3)) +
+    [[96,109],[160,109],[95,189],[161,189]].map(([x,y])=>circle(x,y,3,'rock','stroke="none"')).join('');
+}
+
 const buildings = [
   { id: 'core-drill', draw: () => coreDrill(), parts: ['drill'], partPivots: { drill: [110, 170] } },
   { id: 'core-mine', draw: coreMine, parts: ['cart'], partPivots: { cart: [180, 211] } },
+  { id: 'support-pillar', draw: supportPillar, parts: [] },
 ];
 const assets = [];
 function emit(def, mode = 'idle') {
