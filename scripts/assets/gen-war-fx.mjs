@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each numbered delivery remains independently reproducible from its commit.
-const STAGE = 3;
+const STAGE = 4;
 const assets = [];
 const path = (d, token = null, extra = '') => `<path d="${d}" fill="${token ? C(token) : 'none'}" ${extra}/>`;
 const circle = (x, y, r, token, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -79,6 +79,23 @@ function empBadge() {
   return backing + ring + cable + plug + bolt;
 }
 if (STAGE >= 3) emit('ui.badge-emp', 'ui', 'badge-emp', empBadge, {size: 64, tags: ['ui', 'badge-emp']});
+
+function incomingMissileBadge() {
+  const backing = circle(32, 32, 28, 'paper');
+  const radar = circle(32, 40, 17, null, `stroke="${C('danger')}" stroke-width="2.5"`) +
+    circle(32, 40, 13, 'deep-water', 'stroke-width="1.5"') +
+    circle(32, 40, 8, null, `stroke="${C('science')}" stroke-width="1"`) +
+    line('M19 40 H45 M32 27 V53', 'science', 1) +
+    path('M32 40 L42 33 Q47 40 41 47Z', 'science', 'stroke="none" opacity="0.5"') +
+    line('M32 40 L42 33', 'snow', 1) + circle(37, 44, 2, 'energy', 'stroke-width="1"');
+  const fins = path('M28 14 L23 10 Q21 8 21 12 L22 21 L28 23 M36 14 L41 10 Q43 8 43 12 L42 21 L36 23', 'rock-dark', 'stroke-width="1.5"');
+  const missile = fins + path('M28 13 Q32 10 36 13 V23 Q36 28 32 33 Q28 28 28 23Z', 'cream', 'stroke-width="1.5"') +
+    shadow('M34 13 L35 14 V23 Q35 27 32 31 L32 26 Q34 21 34 13Z', 'cream') +
+    path('M28 23 H36 Q36 28 32 33 Q28 28 28 23Z', 'danger', 'stroke-width="1.5"') +
+    shine('M30 15 V20', 1.5) + line('M32 8 V10', 'energy', 2);
+  return backing + radar + missile;
+}
+if (STAGE >= 4) emit('ui.badge-incoming-missile', 'ui', 'badge-incoming-missile', incomingMissileBadge, {size: 64, tags: ['ui', 'badge-incoming-missile']});
 
 write('art/manifest/war-fx.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`War FX: ${assets.length} ids generated (stage ${STAGE}).`);
