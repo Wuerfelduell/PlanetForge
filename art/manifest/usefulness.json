@@ -72,6 +72,76 @@
         "farm-t3-off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.treasury",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury.svg",
+      "out": "public/assets/sprites/buildings/treasury.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.treasury.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury-construction.svg",
+      "out": "public/assets/sprites/buildings/treasury-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.treasury.off",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury-off.svg",
+      "out": "public/assets/sprites/buildings/treasury-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury-off"
+      ],
+      "phase": "P1"
     }
   ]
 }

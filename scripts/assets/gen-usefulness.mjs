@@ -10,6 +10,7 @@ const paint=(token,tone=0)=>C(state==='off'&&!['ink','coal','rock','rock-dark','
 const p=(d,token='none',extra='',tone=0)=>`<path d="${d}" fill="${token==='none'?'none':paint(token,tone)}" ${extra}/>`;
 const rect=(x,y,w,h,token,r=8,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${paint(token)}" ${extra}/>`;
 const circle=(x,y,r,token,extra='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${paint(token)}" ${extra}/>`;
+const ellipse=(x,y,rx,ry,token,extra='')=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${paint(token)}" ${extra}/>`;
 const line=(d,token='ink',width=3,extra='')=>p(d,'none',`stroke="${paint(token)}" stroke-width="${width}" ${extra}`);
 const group=(id,body)=>`<g id="${id}">${body}</g>`;
 const shine=d=>line(d,'cream',4);
@@ -50,6 +51,37 @@ function scaffolding(){return group('scaffolding',post(38,78,159)+post(206,78,15
   line('M46 181L207 127M47 202L199 230','iron',5)+post(176,154,83,'sand')+post(196,154,83,'sand')+
   [166,186,206,226].map(y=>line(`M180 ${y}H200`,'iron',4)).join(''));}
 
+function treasury(){
+  const column=x=>rect(x,132,22,85,'paper',9)+line(`M${x+16} 144V207`,'rock',4)+
+    rect(x-5,129,32,13,'snow',6)+rect(x-5,208,32,15,'snow',6)+shine(`M${x+6} 150V180`);
+  const coin=(x,y)=>ellipse(x,y,11,5,'energy','stroke-width="3"')+line(`M${x-6} ${y-1}H${x}`,'cream',2);
+  const silver=(x,y)=>p(`M${x} ${y}L${x+6} ${y-11}H${x+29}L${x+35} ${y}V${y+7}H${x}Z`,'snow','stroke-width="3"')+
+    p(`M${x} ${y}H${x+35}V${y+7}H${x}Z`,'rock','stroke-width="3"')+
+    line(`M${x+8} ${y-8}H${x+23}`,'cream',3);
+  return rect(48,113,160,111,'rock',18)+line('M194 132V212H62','rock-dark',10)+
+    // Tall stone cupola on a low, wide colonnade; no book roof or palace spires.
+    rect(118,40,20,15,'sand',7)+
+    p('M66 102Q66 53 128 51Q190 53 190 102Z','rock')+
+    p('M128 54Q179 55 187 99H153Q157 72 128 54Z','rock-dark','stroke="none"')+
+    shine('M79 86Q86 65 108 63')+line('M128 55Q105 76 105 99','snow',4)+
+    rect(59,97,138,17,'sand',8)+
+    rect(43,112,170,23,'paper',9)+line('M54 129H202','rock',4)+
+    // Star is fixed in the lintel rather than floating like the monument emblem.
+    p('M128 108L133 117L143 119L136 126L137 137L128 132L119 137L120 126L113 119L123 117Z','energy','stroke-width="3"')+
+    p('M87 222V164Q87 141 128 141Q169 141 169 164V222Z','coal')+
+    // Both heavy door leaves swing out, exposing a broad dark treasure opening.
+    p('M88 151L101 161V217L83 225V164Q83 155 88 151Z','iron')+
+    p('M168 151L155 161V217L173 225V164Q173 155 168 151Z','iron')+
+    line('M91 168V204M164 168V204','sand',4)+
+    group('treasure-glow',(state==='idle'?ellipse(139,190,23,29,'crystal','stroke="none" opacity="0.2"'):'')+
+      p('M126 183L138 163L151 179L146 202L133 204Z',state==='off'?'rock-dark':'crystal','stroke-width="3"')+
+      p('M138 165L140 184L134 201L128 183Z',state==='off'?'rock':'crystal','stroke="none"',.18)+
+      line('M140 184L148 180',state==='off'?'rock':'oil-sheen',3))+
+    silver(126,213)+silver(130,201)+
+    [[109,216],[117,211],[106,205],[113,199],[105,192],[119,219]].map(([x,y])=>coin(x,y)).join('')+
+    column(54)+column(180)+rect(71,220,114,9,'paper',4)+base();
+}
+
 function emit(id,category,stem,body,size=128,extra={}){
   const src=`art/src/${category}/${stem}.svg`;
   write(src,svg(body,size,size,extra.stroke??6*size/256));
@@ -60,6 +92,7 @@ function emit(id,category,stem,body,size=128,extra={}){
 
 for(const def of [
   {id:'farm.t3',file:'farm-t3',draw:farm,parts:['sprinkler','pump-light']},
+  {id:'treasury',file:'treasury',draw:treasury,parts:['treasure-glow']},
 ])for(const mode of ['idle','construction','off']){
   state=mode;
   let body=def.draw();
