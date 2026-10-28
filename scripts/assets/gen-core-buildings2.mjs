@@ -95,9 +95,50 @@ function coreArmor(){return foot(
   line('M213 127L217 132','cream',4)+'</g>');
 }
 
+function steamPuff(x,y){return `<g transform="translate(${x} ${y})">`+
+  p('M-15 15Q-28 14 -27 4Q-27 -5 -18 -8Q-19 -22 -6 -23Q5 -25 10 -15Q24 -18 27 -6Q35 1 27 11Q24 18 10 16Z','snow')+
+  p('M-24 5Q-15 13 -4 8Q9 15 24 4Q31 4 26 11Q22 17 10 14L-14 13Q-23 13 -24 5Z','glacier','stroke="none"')+
+  line('M-16 -7Q-14 -15 -7 -15','cream',4)+'</g>';}
+
+function geothermal(){
+  // A flat plant on an exposed magma puddle, not a reactor dome or glass sphere.
+  // The puddle itself is the 200 px footprint; its outlined bottom is exactly y=240.
+  const pool=ellipse(128,224,97,13,'lava')+
+    ellipse(126,222,86,8,state==='idle'?'ascension':'rock-dark','stroke="none"')+
+    line('M48 223Q65 214 83 221M91 230Q111 223 133 229M166 228Q187 221 207 224',lit('energy'),3);
+  return pool+
+    // Top-level part for steam drift; pivot is midway between stack bases at y=142.
+    group('steam',state==='idle'?steamPuff(82,69)+steamPuff(169,77)+
+      line('M82 93V98M169 101V106','snow',6):'')+
+    rect(66,98,32,44,'rock-dark',10)+rect(153,106,32,36,'rock-dark',10)+
+    rect(61,96,42,13,'snow',6)+rect(148,104,42,13,'snow',6)+
+    line('M74 115V130M161 122V130','rock',5)+
+    rect(62,199,27,27,'rock-dark',8)+rect(167,199,27,27,'rock-dark',8)+
+    rect(57,139,142,77,'paper',19)+
+    p('M182 146Q197 149 196 163V200Q196 212 180 213H76V205H176Q183 205 183 197Z','paper','stroke="none"',-.18)+
+    rect(49,132,158,17,'iron',8)+shine('M60 138H95M65 158V169')+
+    line('M68 186H82M68 196H82M173 163H187M173 174H187','rock-dark',4)+
+    circle(128,179,34,'rock-dark')+circle(128,179,27,'coal')+
+    group('heat-core',
+      (state==='idle'?circle(128,179,23,'ascension','stroke="none" opacity="0.2"'):'')+
+      // Flame-like double tip remains a faceted orange-red crystal, not a flame decal.
+      p('M115 194L110 179L119 164L126 170L133 155L145 176L139 195L127 201Z',lit('lava'),'stroke-width="3"')+
+      p('M133 158L130 180L119 193L114 179L119 168L126 175Z',lit('ascension'),'stroke="none"')+
+      p('M130 180L140 178L136 192L127 198Z',lit('energy'),'stroke="none"')+
+      (state==='idle'?line('M119 176L121 173','cream',3):''))+
+    rivet(128,149)+rivet(98,179)+rivet(158,179)+rivet(128,209)+
+    // Both intake pipes visibly terminate below the molten surface.
+    pipe('M69 180H52Q43 180 43 191V225','rock',10)+
+    pipe('M188 189H205Q214 189 214 201V225','rock',10)+
+    rect(36,204,14,9,'rock-dark',4)+rect(207,208,14,9,'rock-dark',4)+
+    line('M40 190V200M211 201V205','snow',3)+
+    line('M37 227Q43 231 51 227M206 228Q214 232 221 227',lit('energy'),3);
+}
+
 const definitions=[
   {id:'gravity-cannon',draw:gravityCannon,parts:['barrel'],pivot:[94,159],tags:['defense','core-iron','gravity']},
   {id:'core-armor',draw:coreArmor,parts:['plate','vents'],tags:['industry','core-iron','sun-shield']},
+  {id:'power-geothermal',draw:geothermal,parts:['steam','heat-core'],pivot:[128,142],tags:['power','magma','ember-crystal']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){

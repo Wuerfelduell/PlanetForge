@@ -67,6 +67,72 @@
       "phase": "P1"
     },
     {
+      "id": "building.power-geothermal.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-geothermal-back.svg",
+      "out": "public/assets/sprites/buildings/anim/power-geothermal-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-geothermal.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-geothermal-part.svg",
+      "out": "public/assets/sprites/buildings/anim/power-geothermal-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5547000000000001
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-geothermal.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-geothermal-front.svg",
+      "out": "public/assets/sprites/buildings/anim/power-geothermal-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.shell-armor.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/shell-armor-back.svg",
