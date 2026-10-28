@@ -1,0 +1,280 @@
+{
+  "assets": [
+    {
+      "id": "building.neutron-bastion",
+      "category": "buildings",
+      "src": "art/src/buildings/neutron-bastion.svg",
+      "out": "public/assets/sprites/buildings/neutron-bastion.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sensor"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "neutron-bastion",
+        "defense",
+        "neutronium",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.neutron-bastion.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/neutron-bastion-construction.svg",
+      "out": "public/assets/sprites/buildings/neutron-bastion-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sensor",
+        "scaffolding"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "neutron-bastion",
+        "defense",
+        "neutronium",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.neutron-bastion.off",
+      "category": "buildings",
+      "src": "art/src/buildings/neutron-bastion-off.svg",
+      "out": "public/assets/sprites/buildings/neutron-bastion-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sensor"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "neutron-bastion",
+        "defense",
+        "neutronium",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.shell-armor",
+      "category": "buildings",
+      "src": "art/src/buildings/shell-armor.svg",
+      "out": "public/assets/sprites/buildings/shell-armor.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "press",
+        "plate",
+        "finished-plates"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "shell-armor",
+        "industry",
+        "neutronium",
+        "sun-shield",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "press": [
+          101,
+          101
+        ]
+      }
+    },
+    {
+      "id": "building.shell-armor.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/shell-armor-construction.svg",
+      "out": "public/assets/sprites/buildings/shell-armor-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "press",
+        "plate",
+        "finished-plates",
+        "scaffolding"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "shell-armor",
+        "industry",
+        "neutronium",
+        "sun-shield",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "press": [
+          101,
+          101
+        ]
+      }
+    },
+    {
+      "id": "building.shell-armor.off",
+      "category": "buildings",
+      "src": "art/src/buildings/shell-armor-off.svg",
+      "out": "public/assets/sprites/buildings/shell-armor-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "press",
+        "plate",
+        "finished-plates"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "shell-armor",
+        "industry",
+        "neutronium",
+        "sun-shield",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "press": [
+          101,
+          101
+        ]
+      }
+    },
+    {
+      "id": "building.xeno-lab",
+      "category": "buildings",
+      "src": "art/src/buildings/xeno-lab.svg",
+      "out": "public/assets/sprites/buildings/xeno-lab.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "xenocrystal",
+        "crystal-glow",
+        "windows",
+        "dish"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "xeno-lab",
+        "science",
+        "ascension",
+        "xenocrystal",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.xeno-lab.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/xeno-lab-construction.svg",
+      "out": "public/assets/sprites/buildings/xeno-lab-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "xenocrystal",
+        "crystal-glow",
+        "windows",
+        "dish",
+        "scaffolding"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "xeno-lab",
+        "science",
+        "ascension",
+        "xenocrystal",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.xeno-lab.off",
+      "category": "buildings",
+      "src": "art/src/buildings/xeno-lab-off.svg",
+      "out": "public/assets/sprites/buildings/xeno-lab-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "xenocrystal",
+        "crystal-glow",
+        "windows",
+        "dish"
+      ],
+      "tags": [
+        "warp-buildings2",
+        "xeno-lab",
+        "science",
+        "ascension",
+        "xenocrystal",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
