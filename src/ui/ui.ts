@@ -1,3 +1,4 @@
+import { buildingInfoHtml } from "./buildingInfo";
 import {
   adjacencyMultiplier,
   BIOMES,
@@ -182,6 +183,25 @@ export class Ui {
 
   private bicon(building: BuildingId): string {
     return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
+  }
+
+  /** Small ⓘ in the corner of a build button: tapping it shows what the building does. */
+  private infoBadge(building: BuildingId): string {
+    return `<span class="info" data-info="${building}" role="button" aria-label="Was macht ${BUILDINGS[building].name}?">i</span>`;
+  }
+
+  /** Card over the game with everything a building does, made from its data (buildingInfo.ts). */
+  private showBuildingInfo(building: BuildingId): void {
+    document.querySelector(".binfo")?.remove();
+    sfx.play("ui.open");
+    const node = document.createElement("div");
+    node.className = "binfo";
+    node.innerHTML = `<div class="binfo-card">${buildingInfoHtml(building, (r) => this.res(r), this.bicon(building))}<button class="wide" data-close>OK</button></div>`;
+    // Tap anywhere outside the card (or OK) to close.
+    node.addEventListener("pointerup", (e) => {
+      if (e.target === node || (e.target as HTMLElement).closest("[data-close]")) node.remove();
+    });
+    document.body.appendChild(node);
   }
 
   /** The local player, whose people the +/- buttons move. */
@@ -460,6 +480,11 @@ export class Ui {
 
   /** Esc: closes the star map, discoveries, factions or the lists under the top bar. False if none was open. */
   closeOverlay(): boolean {
+    const info = document.querySelector(".binfo");
+    if (info) {
+      info.remove();
+      return true;
+    }
     if (this.mapOpen) return this.press(`[data-action="map"]`);
     if (this.showDiscoveries || this.showFactions) {
       this.showDiscoveries = this.showFactions = false;
@@ -473,6 +498,12 @@ export class Ui {
   }
 
   private onAction(e: Event): void {
+    // The ⓘ on a build button only explains the building, it never builds (works on greyed-out ones too).
+    const info = (e.target as HTMLElement).closest<HTMLElement>("[data-info]");
+    if (info) {
+      this.showBuildingInfo(info.dataset.info as BuildingId);
+      return;
+    }
     const target = (e.target as HTMLElement).closest<HTMLElement>("[data-action]");
     if (!target || target.hasAttribute("disabled")) return;
     const { action, value } = target.dataset;
@@ -1333,7 +1364,7 @@ export class Ui {
           .filter(([r, v]) => economy.resources[r as ResourceId] < (v as number))
           .map(([r]) => RESOURCES[r as ResourceId].name);
         const missing = !locked && short.length ? `<br>Fehlt: ${short.join(", ")}` : "";
-        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
+        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}">${this.infoBadge(s.building!)}<span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
       }
       actions = `${info}${upgrade}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
@@ -1362,7 +1393,7 @@ export class Ui {
           // Missing resources only: offer to queue the build instead of greying it out.
           const queueable = blocker === NOT_AFFORDABLE && !queued;
           return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${blocker && !queueable && !locked ? `${blocker}. ` : ""}${bd.description}">
-              <span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
+              ${this.infoBadge(b)}<span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
         .join("");
