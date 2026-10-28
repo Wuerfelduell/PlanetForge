@@ -1,0 +1,125 @@
+{
+  "assets": [
+    {
+      "id": "building.core-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill.svg",
+      "out": "public/assets/sprites/buildings/core-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/core-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-off.svg",
+      "out": "public/assets/sprites/buildings/core-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.open",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-open.svg",
+      "out": "public/assets/sprites/buildings/core-drill-open.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          117
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "open"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
