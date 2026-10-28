@@ -10,7 +10,7 @@ const HEARTBEAT_MS = 20_000;
 const CATCH_UP_MS = 6_000;
 
 type ServerReply =
-  | { ok: true; version: number; state: GameState; events: GameEvent[] }
+  | { ok: true; version: number; state: GameState; events: GameEvent[]; errors?: string[] }
   | { ok: false; error: string; version?: number; state?: GameState | null };
 
 interface StateMessage {
@@ -22,10 +22,18 @@ interface StateMessage {
   by: string | null;
 }
 
+/** Most commands per request; the server takes up to 30 (MAX_BATCH in game-command). */
+const MAX_BATCH = 30;
+
 /**
  * A game whose authority is the game-command Edge Function. Commands are applied locally right
  * away (prediction) and sent to the server; every saved state comes back to all players over the
  * private Realtime room game:<id> and replaces the local one.
+ *
+ * Only one request per player is in flight: commands made meanwhile wait and go out together as
+ * one batch, so a fast player doesn't queue up many saves that collide with the others'. Until
+ * the server has answered, the player's own commands are replayed on top of every state that
+ * arrives, so moves of other players don't make them flicker away.
  */
 export class NetworkSession implements GameSession {
   /** Server time decides; the speed control has no effect online. */
@@ -41,6 +49,10 @@ export class NetworkSession implements GameSession {
 
   private clock: number;
   private version: number;
+  /** Last state the server saved; `state` is this plus the player's unanswered commands. */
+  private base: GameState;
+  private inFlight: Command[] = [];
+  private queued: Command[] = [];
   private pendingEvents: GameEvent[] = [];
   private heartbeat: ReturnType<typeof setInterval> | undefined;
   private catchUp: ReturnType<typeof setTimeout> | undefined;
@@ -55,6 +67,7 @@ export class NetworkSession implements GameSession {
   ) {
     this.clock = state.simTime;
     this.version = version;
+    this.base = state;
   }
 
   static async open(gameId: string): Promise<NetworkSession> {
@@ -103,20 +116,34 @@ export class NetworkSession implements GameSession {
     const predicted = applyCommand(this.state, this.playerId, cmd, this.clock);
     if (!predicted.ok) return predicted;
     this.state = predicted.state;
-    void invoke(this.sb, { gameId: this.gameId, kind: "command", cmd }).then((reply) => {
-      if (reply.ok) this.accept(reply.version, reply.state);
-      else {
+    this.queued.push(cmd);
+    this.flush();
+    return { ok: true };
+  }
+
+  private flush(): void {
+    if (this.inFlight.length || !this.queued.length) return;
+    this.inFlight = this.queued.splice(0, MAX_BATCH);
+    const body = this.inFlight.length === 1 ? { gameId: this.gameId, kind: "command", cmd: this.inFlight[0] } : { gameId: this.gameId, kind: "commands", cmds: this.inFlight };
+    void invoke(this.sb, body).then((reply) => {
+      this.inFlight = [];
+      if (reply.ok) {
+        if (reply.errors?.length) this.onError(reply.errors[0]);
+        this.accept(reply.version, reply.state, true);
+      } else {
         this.onError(reply.error);
         if (reply.state && reply.version !== undefined) this.accept(reply.version, reply.state, true);
+        else this.rebuild();
       }
+      this.flush();
     });
-    return { ok: true };
   }
 
   update(elapsedMs: number): GameEvent[] {
     this.clock += Math.min(elapsedMs, 1000);
     const { state, events } = advanceWithEvents(this.state, this.clock);
     this.state = state;
+    if (!this.inFlight.length && !this.queued.length) this.base = state;
     return this.pendingEvents.length ? [...this.pendingEvents.splice(0), ...events] : events;
   }
 
@@ -126,17 +153,35 @@ export class NetworkSession implements GameSession {
     await this.sb.removeChannel(this.channel);
   }
 
-  /** Server state wins. `force` also takes an equal version, to undo a rejected prediction. */
+  /**
+   * Server state wins; the player's unanswered commands are replayed on top of it. `force` (a
+   * reply to this player's own request) rebuilds even from an older or equal version, because
+   * the commands it answered must stop being predicted.
+   */
   private accept(version: number, state: GameState, force = false): void {
-    if (version < this.version || (version === this.version && !force)) return;
+    if (version < this.version || (version === this.version && !force)) {
+      if (force) this.rebuild();
+      return;
+    }
     if (!state.players.some((p) => p.id === this.playerId)) {
       void this.close();
       this.onRemoved();
       return;
     }
     this.version = version;
-    this.state = state;
+    this.base = state;
     this.clock = state.simTime;
+    this.rebuild();
+  }
+
+  /** state = base + commands the server hasn't answered yet (dropping ones that no longer apply). */
+  private rebuild(): void {
+    let state = this.base;
+    for (const cmd of [...this.inFlight, ...this.queued]) {
+      const r = applyCommand(state, this.playerId, cmd, this.clock);
+      if (r.ok) state = r.state;
+    }
+    this.state = state;
   }
 
   /** Only the online player with the lowest id sends heartbeats, one per game is enough. */
