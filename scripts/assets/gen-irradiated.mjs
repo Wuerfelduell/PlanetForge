@@ -2,7 +2,7 @@
 // node scripts/assets/gen-irradiated.mjs, then npm --prefix scripts/assets run assets:gen
 import { C, svg, round, write } from './common.mjs';
 
-const STAGE = 1;
+const STAGE = 2;
 const assets = [];
 const path = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const ellipse = (x, y, rx, ry, fill, extra = '') => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${fill}" ${extra}/>`;
@@ -70,6 +70,51 @@ function irradiated(segments) {
 for (const n of [12, 16, 18, 24, 30, 32, 40]) {
   emit(`overlay.irradiated.${n}`, 'biomes', `overlay-irradiated-${n}`, irradiated(n), 1024, [.5, .5], ['overlay']);
 }
+
+function cleanupIcon() {
+  return '<g id="clear-irradiated">' +
+    // A clean green patch and cream sparkle replace the scorched icon's embers.
+    path('M65 107Q70 102 79 104Q87 100 95 104L108 104Q116 106 113 112Q91 118 67 113Q61 111 65 107Z', C('grass')) +
+    line('M72 109Q78 106 84 108', 'cream', 2) +
+    // The barrel's halo is translucent vector geometry, without an SVG filter.
+    ellipse(93, 61, 23, 31, C('uranium'), 'stroke="none" opacity="0.1"') +
+    ellipse(93, 61, 19, 27, C('uranium'), 'stroke="none" opacity="0.2"') +
+    // Chunky tracked robot, matching the cream/steel/science UI vocabulary.
+    '<rect x="20" y="86" width="43" height="17" rx="8" fill="' + C('coal') + '"/>' +
+    ellipse(29, 95, 5, 5, C('rock'), 'stroke-width="1.5"') +
+    ellipse(52, 95, 5, 5, C('rock'), 'stroke-width="1.5"') +
+    line('M37 95H44', 'rock-dark', 2) +
+    '<rect x="24" y="62" width="35" height="29" rx="9" fill="' + C('paper') + '"/>' +
+    path('M49 64H53Q59 64 59 72V82Q59 91 50 91H44Q52 85 49 64Z', C('paper', -.18), 'stroke="none"') +
+    '<rect x="30" y="70" width="17" height="9" rx="4" fill="' + C('science') + '" stroke-width="1.5"/>' +
+    line('M30 84H38', 'rock-dark', 1.5) +
+    line('M39 33L36 24', 'rock-dark', 3) +
+    ellipse(35, 21, 4, 4, C('science')) +
+    '<rect x="21" y="34" width="42" height="29" rx="10" fill="' + C('cream') + '"/>' +
+    path('M55 36Q63 36 63 45V53Q63 63 53 63H47Q58 56 55 36Z', C('paper'), 'stroke="none"') +
+    '<rect x="27" y="42" width="29" height="13" rx="6" fill="' + C('deep-water') + '" stroke-width="1.5"/>' +
+    ellipse(35, 48, 2, 2.5, C('snow'), 'stroke="none"') +
+    ellipse(47, 48, 2, 2.5, C('snow'), 'stroke="none"') +
+    line('M28 39H36', 'cream', 2) +
+    // A bent lifting arm holds the drum clear of the ground, toward screen right.
+    line('M57 77L67 64L80 65', 'ink', 9) +
+    line('M57 77L67 64L80 65', 'rock', 5) +
+    ellipse(67, 64, 5, 5, C('paper'), 'stroke-width="2"') +
+    // Steel drum with luminous green ribs and contents; no lettering or symbols.
+    path('M79 43Q93 36 107 43V79Q107 87 93 87Q79 87 79 79Z', C('rock-dark')) +
+    path('M99 43L107 43V79Q107 86 97 87V45Z', C('rock-dark', -.18), 'stroke="none"') +
+    path('M79 51Q93 57 107 51V57Q93 63 79 57Z', C('uranium'), 'stroke-width="2"') +
+    path('M79 73Q93 79 107 73V79Q93 85 79 79Z', C('uranium'), 'stroke-width="2"') +
+    ellipse(93, 43, 14, 6, C('uranium')) +
+    ellipse(93, 43, 7, 2, C('uranium', -.18), 'stroke="none"') +
+    line('M84 41L89 40', 'cream', 2) +
+    line('M84 62V68', 'snow', 2) +
+    path('M80 59Q76 57 74 62V68Q76 73 81 70L84 67', 'none', 'stroke-width="4"') +
+    line('M77 62V66', 'rock', 2) +
+    path('M100 90Q102 99 110 100Q102 102 100 111Q98 102 90 100Q98 98 100 90Z', C('cream'), 'stroke-width="2"') +
+    line('M69 100L72 97', 'uranium', 2) + '</g>';
+}
+if (STAGE >= 2) emit('ui.icon-clear-irradiated', 'ui', 'icon-clear-irradiated', cleanupIcon(), 128, [.5, .5]);
 
 write('art/manifest/irradiated.json', JSON.stringify({ assets }, null, 2) + '\n');
 console.log(`Irradiated art: stage ${STAGE}, ${assets.length} ids generated.`);
