@@ -2,7 +2,7 @@ import { BUILDINGS, CRYO, PEOPLE_IDS, RESOURCE_IDS, RULES, SUPERNOVA, type Recip
 import { createUnit } from "./units";
 import { placeBuilding } from "./build";
 import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
-import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { buildBlocker, cleanPlanetName, cloneState, renameBlocker, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
 import { decide, factionById, gift, trade, vote } from "./diplomacy";
@@ -100,6 +100,19 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (!state.lobby.open) return "Das Spiel ist geschlossen";
       state.lobby.paused = cmd.type === "pause";
       events.push({ type: "lobby", ...state.lobby, playerId });
+      return null;
+    }
+    case "renamePlanet": {
+      const planet = planetById(state, cmd.planetId);
+      if (!planet) return "Unbekannter Planet";
+      const blocker = renameBlocker(state, playerId, planet);
+      if (blocker) return blocker;
+      const name = cleanPlanetName(String(cmd.name ?? ""));
+      if (!name) return "Der Name ist leer";
+      if (name === planet.name) return null;
+      if (state.planets.some((p) => p !== planet && p.name.toLowerCase() === name.toLowerCase())) return "So heißt schon ein anderer Planet";
+      events.push({ type: "renamed", planetId: planet.id, name, from: planet.name, playerId });
+      planet.name = name;
       return null;
     }
     case "factionTrade":

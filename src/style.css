@@ -394,3 +394,21 @@ ul.owned small { color: var(--muted); }
 .loot-item { padding: 6px 10px; border-radius: 10px; background: var(--surface); font-size: 17px; }
 .loot-item small { color: var(--muted); font-size: 12px; }
 .celebration-card button { background: var(--accent); color: #1b1d36; font-weight: 600; border: 0; border-radius: 10px; }
+/* The 🪐 list: own planets grouped by settler or sun system. */
+#hud .res-list.planets { display: block; font-size: 14px; max-height: 45vh; }
+#hud .res-list.planets p { margin: 4px 0; }
+#hud .res-list.planets .muted { color: var(--muted); font-size: 12px; }
+#hud .res-list.planets .group { margin-top: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+#hud .res-list.planets .toggle { float: right; display: inline-flex; gap: 4px; }
+#hud .res-list.planets .toggle .chip { font-size: 12px; padding: 2px 8px; }
+#hud .res-list.planets .chip.on { outline: 2px solid var(--accent, #ffd166); }
+.planet-row { display: flex; align-items: stretch; gap: 4px; margin: 3px 0; }
+.planet-row .speed { width: 40px; }
+.planet-row .planet-go { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 5px 10px; border: 0; border-radius: 10px; background: var(--surface-2); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.planet-row.here .planet-go { outline: 2px solid var(--accent, #ffd166); }
+.planet-row .planet-go small { color: var(--muted); font-size: 12px; }
+.planet-row .planet-go .short { color: var(--bad); }
+.rename input { width: 100%; box-sizing: border-box; margin: 6px 0; padding: 10px 12px; font: inherit; font-size: 18px; border-radius: 10px; border: 2px solid var(--accent); background: var(--surface); color: inherit; }
+.rename .row { display: flex; gap: 8px; }
+.rename .row button { flex: 1; padding: 10px; }
+.celebration-card button.secondary { background: var(--surface); color: inherit; }
