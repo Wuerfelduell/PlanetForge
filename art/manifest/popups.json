@@ -1,0 +1,36 @@
+{
+  "assets": [
+    {
+      "id": "ui.popup-system-saved",
+      "category": "ui",
+      "src": "art/src/ui/popup-system-saved.svg",
+      "out": "public/assets/sprites/ui/popup-system-saved.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "sun",
+        "face",
+        "shell-base",
+        "shell",
+        "planets",
+        "confetti"
+      ],
+      "tags": [
+        "ui",
+        "popup",
+        "celebration",
+        "system-saved",
+        "sun-shield"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
