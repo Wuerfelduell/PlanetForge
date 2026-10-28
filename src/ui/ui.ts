@@ -109,9 +109,15 @@ export class Ui {
     // pointerup instead of click: the panel re-renders while the player taps, and a click needs
     // the same element under pointerdown and pointerup.
     for (const root of [this.hud, this.panel]) {
+      root.addEventListener("pointerdown", (e) => (this.downAt = { x: e.clientX, y: e.clientY }));
       root.addEventListener("pointerup", (e) => this.onAction(e));
     }
   }
+
+  /** Where the current tap started, to tell a tap from a swipe through the chips. */
+  private downAt = { x: 0, y: 0 };
+  /** The small name bubble over a tapped resource icon. */
+  private resTip: { el: HTMLElement; timer: number } | null = null;
 
   /** Original art is loaded: icons come from the asset pipeline instead of emoji. */
   art = false;
@@ -146,10 +152,33 @@ export class Ui {
     return this.art ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
   }
 
+  private showResTip(icon: HTMLElement): void {
+    if (this.resTip) {
+      clearTimeout(this.resTip.timer);
+      this.resTip.el.remove();
+    }
+    const el = document.createElement("div");
+    el.className = "res-tip";
+    el.textContent = icon.dataset.res ?? "";
+    document.body.append(el);
+    const box = icon.getBoundingClientRect();
+    const half = el.offsetWidth / 2;
+    el.style.left = `${Math.min(window.innerWidth - half - 6, Math.max(half + 6, box.left + box.width / 2))}px`;
+    // Above the icon, below it when there is no room (top bar).
+    const above = box.top - el.offsetHeight - 6;
+    el.style.top = `${above >= 4 ? above : box.bottom + 6}px`;
+    const timer = window.setTimeout(() => {
+      el.remove();
+      if (this.resTip?.el === el) this.resTip = null;
+    }, 1600);
+    this.resTip = { el, timer };
+  }
+
   private res(resource: ResourceId): string {
     // The name as tooltip: planks and bricks look like gold and copper bars (Seb, 2026-10-21).
     const { name, icon } = RESOURCES[resource];
-    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${name}" title="${name}">` : `<span title="${name}">${icon}</span>`;
+    // data-res: tapping the icon shows the name in a small bubble (phones have no hover).
+    return this.art && artTexture(`resource.${resource}`) ? `<img class="ri" src="${resourceIconUrl(resource)}" alt="${name}" title="${name}" data-res="${name}">` : `<span class="re" title="${name}" data-res="${name}">${icon}</span>`;
   }
 
   /** Icon of a field action: Codex art where it exists, else the emoji. */
@@ -360,7 +389,14 @@ export class Ui {
     setTimeout(() => node.remove(), 3000);
   }
 
-  private onAction(e: Event): void {
+  private onAction(e: PointerEvent): void {
+    // A tapped resource icon shows its name. In a price (build, upgrade, launch) that is all it does,
+    // so asking "what is this?" never spends anything; elsewhere (e.g. what a field yields) the tap still counts.
+    const icon = (e.target as HTMLElement).closest<HTMLElement>("[data-res]");
+    if (icon && Math.hypot(e.clientX - this.downAt.x, e.clientY - this.downAt.y) < 12) {
+      this.showResTip(icon);
+      if (icon.closest(".cost")) return;
+    }
     const target = (e.target as HTMLElement).closest<HTMLElement>("[data-action]");
     if (!target || target.hasAttribute("disabled")) return;
     const { action, value } = target.dataset;

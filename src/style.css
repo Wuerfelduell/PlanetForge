@@ -242,6 +242,22 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 button.chip { font: inherit; cursor: pointer; }
 
 img.ri { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+/* Resource icons are tappable for their name (bubble from ui.ts), also in the top bar and in disabled buttons. */
+[data-res] { pointer-events: auto; cursor: help; }
+.res-tip {
+  position: fixed;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--muted);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+  animation: res-tip 0.15s ease-out;
+}
+@keyframes res-tip { from { opacity: 0; transform: translate(-50%, 4px); } }
 img.bi { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
 .build .icon img.bi { width: 40px; height: 40px; }
 
