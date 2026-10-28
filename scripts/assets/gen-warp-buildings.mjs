@@ -47,8 +47,49 @@ function warpgate(){
     glint('M111 203H144M102 215H154M94 228H163');
 }
 
+function exoDrill(){
+  // A slim parallel-rail mast, rather than the deep drill's wide triangular derrick.
+  const crane=pipe('M179 86H207V105','rock',6)+
+    rect(161,77,48,23,'paper',11)+ellipse(173,104,11,5,lit('ok'),'stroke-width="3"')+
+    ellipse(201,104,11,5,lit('ok'),'stroke-width="3"')+glint('M169 83H185')+
+    line('M190 101V135','rock-dark',4)+circle(190,137,6,'rock','stroke-width="3"')+
+    line('M185 141L177 151L181 158M195 141L203 151L199 158','ink',6)+
+    (state==='idle'?line('M165 115H179M195 115H207','ok',3):'');
+  const crates=[151,177,203].map(x=>rect(x,208,22,17,'sand',6)+line(`M${x+5} 219H${x+17}`,'iron',3)).join('');
+  return base()+rect(66,213,82,12,'rock-dark',6)+
+    rect(80,56,14,157,'rock',7)+rect(130,56,14,157,'rock-dark',7)+
+    line('M86 78V188','paper',4)+line('M137 89V182','rock',3)+
+    rect(95,65,34,78,'paper',14)+line('M120 81V125','rock',6)+
+    rect(75,31,74,37,'paper',15)+path('M135 36Q146 38 145 52V59H130Z','rock','stroke="none"')+
+    rect(91,24,42,16,'rock-dark',8)+rect(96,29,32,6,lit('ok'),3,'stroke="none"')+
+    rect(96,84,32,18,'rock-dark',8)+circle(112,93,5,lit('crystal'),'stroke="none"')+
+    glint('M84 42H102')+pipe('M79 60Q58 70 62 113Q63 129 82 131','oil-sheen',6)+
+    (state==='idle'?line('M67 75Q61 93 67 110','ok',3):'')+
+    crane+line('M112 137V158','coal',12)+
+    ellipse(112,232,31,5,'coal','stroke="none"')+
+    group('drill',
+      rect(96,145,32,24,'rock-dark',10)+
+      path('M97 167H127V204Q124 220 112 236Q100 220 97 204Z',lit('crystal'))+
+      path('M113 170H125V203L113 229Z',lit('danger'),'stroke="none"')+
+      [170,189,208].map((y,i)=>path(`M${94+i*4} ${y+2}L${127-i*2} ${y-7}Q${133-i*2} ${y-6} ${132-i*2} ${y+2}L${100+i*3} ${y+12}Z`,lit(i===1?'danger':'ok'),'stroke-width="3"')+
+        line(`M${101+i*3} ${y+3}L${124-i*2} ${y-3}`,state==='idle'?'snow':'rock',3)).join('')+
+      rect(102,151,20,8,lit('ok'),4,'stroke="none"'))+
+    // Open bins expose three resource silhouettes: capsule, cube and crystal.
+    rect(155,186,14,27,'danger',7,'stroke-width="3"')+
+    rect(155,192,14,14,'crystal',5,'stroke="none" opacity="0.5"')+
+    line('M159 190V198','snow',3)+line('M156 205H168','oil-sheen',3)+
+    path('M179 194L188 189L198 194V209L188 214L179 209Z','space-deep','stroke-width="3"')+
+    path('M179 194L188 189L198 194L188 199Z','deep-water','stroke="none"',-.18)+
+    line('M180 195L188 199V211','snow',2)+
+    (state==='idle'?ellipse(214,201,11,16,'crystal','stroke="none" opacity="0.3"'):'')+
+    path('M214 184L222 196L219 210L212 214L207 200Z','ok','stroke-width="3"')+
+    line('M214 189L212 201L214 208','snow',2)+crates+
+    path('M80 234L86 227L94 230M130 231L137 227L143 234','rock','stroke-width="3"');
+}
+
 const definitions=[
   {id:'warpgate',draw:warpgate,part:'portal',pivot:[128,114],tags:['travel','unique']},
+  {id:'exo-drill',draw:exoDrill,part:'drill',pivot:[112,181],tags:['mining','exotic-resources']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){

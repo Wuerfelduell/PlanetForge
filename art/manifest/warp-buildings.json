@@ -99,6 +99,106 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill.svg",
+      "out": "public/assets/sprites/buildings/exo-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/exo-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill-off.svg",
+      "out": "public/assets/sprites/buildings/exo-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
