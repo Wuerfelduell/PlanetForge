@@ -138,6 +138,16 @@ describe("every resource has a use", () => {
     expect(t3!.energy).toBe(-1);
   });
 
+  it("fishery, sawmill and mine at stage 3 yield more with the same crew, for power", () => {
+    for (const b of ["fishery", "sawmill", "mine"] as const) {
+      const [t2, t3] = BUILDINGS[b].upgrades!;
+      expect(t3!.workers, b).toBe(t2!.workers);
+      expect(t3!.energy, b).toBeLessThan(0);
+      const rate = (u: typeof t2) => u!.produces?.perWorker ?? u!.extracts?.perWorker ?? u!.crafts!.speed;
+      expect(rate(t3), b).toBeGreaterThan(rate(t2));
+    }
+  });
+
   it("dry start planets hold more oil than temperate ones", () => {
     const oil = (start: "arid" | "temperate") => {
       const g = createGame("oily", [P1], { now: 0, world: { start } });
