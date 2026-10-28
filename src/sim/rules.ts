@@ -430,6 +430,8 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   const player = playerById(state, playerId);
   const def = ROCKETS[rocket];
   if (!player || !def) return "Unbekannte Rakete";
+  // Interiors are reached through the shaft only, never by rocket.
+  if (from.coreOf !== undefined || to.coreOf !== undefined) return "Ins Planeteninnere fliegt keine Rakete";
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
   // A homing missile may go straight up at the mothership over its own silo.
   const hunt = rocket === "homing" && !!state.invasion?.sieging && state.invasion.target === to.id;
