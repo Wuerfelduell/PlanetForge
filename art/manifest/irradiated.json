@@ -1,0 +1,165 @@
+{
+  "assets": [
+    {
+      "id": "overlay.irradiated.12",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-12.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.16",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-16.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-16.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.24",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-24.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-24.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.32",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-32.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.irradiated.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-irradiated-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-irradiated-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "irradiated",
+        "biomes"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
