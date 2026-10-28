@@ -37,6 +37,7 @@ import {
   ascensionPerCycle,
   type EconomyState,
   RESOURCE_IDS,
+  INVADERS,
   RESOURCES,
   RULES,
   RECIPES,
@@ -179,6 +180,7 @@ export class Ui {
 
   render(state: GameState): void {
     this.state = state;
+    this.celebrateShield(state);
     const planet = state.planets.find((p) => p.id === this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
@@ -283,7 +285,7 @@ export class Ui {
           else if (e.shieldSegment !== null) this.toast(`💥 Hüllensegment ${e.shieldSegment + 1} beschädigt`, "bad");
           break;
         case "invasionDefeated":
-          this.toast(`🏆 Mutterschiff über ${this.targetName(e.target)} zerstört! Wrackteile geborgen.`, "good");
+          this.showLoot(e.target, e.wave, e.loot);
           break;
         case "invasionMoved":
           this.toast(`👾 Die Invasoren ziehen von ${this.targetName(e.from)} weiter nach ${this.targetName(e.target)}! Ankunft in ${this.secondsUntil(e.arrivalTick)} s`, "bad");
@@ -295,7 +297,8 @@ export class Ui {
           this.toast(e.repaired ? `🛠️ Hüllensegment ${e.segment + 1} repariert` : `🌞 Hüllensegment ${e.segment + 1} steht`, "good");
           break;
         case "shieldComplete":
-          this.toast("🌞 Die Schutzhülle ist geschlossen. Das System ist gerettet!", "good");
+          // The celebration comes from the state (sun.saved), so every client sees it, also when
+          // the server state already had the shell closed and no event played here.
           break;
         case "gameOver":
           this.toast(this.resultText(e.result), "supernova" in e.result ? "bad" : "good");
@@ -353,6 +356,51 @@ export class Ui {
           break;
       }
     }
+  }
+
+  /** Game whose closed shell was already celebrated in this session (by seed). */
+  private shieldSeen = "";
+
+  /**
+   * Coop goal reached: a big popup with a fanfare once per game and device. Driven by
+   * state.sun.saved instead of the shieldComplete event, which a client misses when another
+   * player's server reply already contains the last segment.
+   */
+  private celebrateShield(state: GameState): void {
+    if (!state.sun.saved || this.shieldSeen === state.seed) return;
+    this.shieldSeen = state.seed;
+    const key = `planetforge.shieldParty.${state.seed}`;
+    try {
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, "1");
+    } catch {
+      // No storage (private mode): celebrate once per session instead.
+    }
+    const players = state.players.map((p) => p.name).join(", ");
+    this.popup(
+      "🌞",
+      "System gerettet!",
+      `<p>Die Schutzhülle um die Sonne ist geschlossen. Die Supernova ist abgewendet.</p><p class="muted">Geschafft im ${cycleOf(state) + 1}. Planetenumlauf${players ? ` von ${players}` : ""}.</p><p class="muted">Ihr könnt weiterspielen. Haltet die Hülle heil, Invasoren können sie noch beschädigen.</p>`,
+      28,
+    );
+    sfx.play("victory.fanfare");
+  }
+
+  /** Mothership destroyed: what the wreck gave the team. Older servers send no loot, then it is computed. */
+  private showLoot(target: string, wave: number, loot?: Partial<Record<ResourceId, number>>): void {
+    const items = Object.entries(loot ?? Object.fromEntries(Object.entries(INVADERS.reward).map(([r, v]) => [r, v * wave]))) as [ResourceId, number][];
+    const list = items.map(([r, n]) => `<span class="loot-item">${this.res(r)} +${n} <small>${RESOURCES[r].name}</small></span>`).join("");
+    this.popup("🏆", "Mutterschiff zerstört!", `<p>Die Invasoren über ${this.targetName(target)} sind besiegt (Welle ${wave}). Aus dem Wrack geborgen:</p><div class="loot">${list}</div>`, 14);
+  }
+
+  /** Big popup over the game (goal reached, invaders beaten) with a little confetti. */
+  private popup(icon: string, title: string, body: string, confettiCount: number): void {
+    const node = document.createElement("div");
+    node.className = "celebration";
+    const confetti = Array.from({ length: confettiCount }, (_, i) => `<i style="--x:${(i * 37) % 100}vw;--d:${(i % 7) * 0.35}s;--h:${(i * 53) % 360}"></i>`).join("");
+    node.innerHTML = `${confetti}<div class="celebration-card"><div class="celebration-sun">${icon}</div><h2>${title}</h2>${body}<button class="wide" data-close>Weiterspielen</button></div>`;
+    node.querySelector("[data-close]")!.addEventListener("click", () => node.remove());
+    document.body.appendChild(node);
   }
 
   toast(text: string, kind: "info" | "good" | "warn" | "bad" = "info"): void {

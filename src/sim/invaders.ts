@@ -1,4 +1,4 @@
-import { BIOMES, INVADERS, RULES, SUPERNOVA } from "./content";
+import { BIOMES, INVADERS, RULES, SUPERNOVA, type ResourceId } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
 import { buildingStats, economyOf, planetById, planetDefense, planetShield, ticksPerCycle } from "./rules";
@@ -168,8 +168,12 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
   events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment, ...(scorched.length ? { scorched } : {}) });
 
   if (inv.hp <= 0) {
-    for (const [r, v] of Object.entries(INVADERS.reward)) economy.resources[r as keyof typeof economy.resources] += v * inv.wave;
-    events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave });
+    const loot: Partial<Record<ResourceId, number>> = {};
+    for (const [r, v] of Object.entries(INVADERS.reward) as [ResourceId, number][]) {
+      economy.resources[r] += v * inv.wave;
+      loot[r] = v * inv.wave;
+    }
+    events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave, loot });
     endInvasion(state, rng);
   } else if (inv.target === "sun" ? state.tick >= inv.siegeEndTick : !hasResidents(state, inv.target)) {
     // The fleet never gives up on its own (Seb): it can't be fought at the sun, so after a while
