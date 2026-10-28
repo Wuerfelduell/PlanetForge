@@ -55,8 +55,49 @@ function gravityCannon(){
     rect(108,204,33,17,'coal',6)+line('M116 212H133',lit(),4));
 }
 
+// Same rounded point-up die as shell-armor. sun.shield.segment.built currently
+// renders an annular segment, so the workshop hexagon follows that established convention.
+function corePlate(){return group('plate',
+  `<g transform="translate(115 174) scale(1.2)" stroke-width="5">`+
+  p('M-5 -25Q0 -28 5 -25L21 -16Q25 -14 25 -8V8Q25 14 21 16L5 25Q0 28 -5 25L-21 16Q-25 14 -25 8V-8Q-25 -14 -21 -16Z','lava','',-.18)+
+  p('M2 -20L18 -11V10L2 21Z','iron','stroke="none"',-.18)+
+  line('M-18 9V-10L0 -21L18 -10V10L0 21Z',lit(),3)+
+  line('M-15 -9L-5 -3L-8 6L4 11L2 19M-5 -3L5 -8L13 -4',lit(),3)+
+  (state==='idle'?line('M-16 -10L0 -20M-5 -2L-8 5','energy',2):'')+
+  circle(-15,8,2,'rock','stroke="none"')+circle(13,8,2,'rock','stroke="none"')+'</g>');}
+
+function coreArmor(){return foot(
+  // Broad warm forge with a low square canopy; the blue armor hangar is tall/arched.
+  '<g transform="translate(28 0)">'+
+  rect(40,117,144,108,'lava',16,'',-.18)+
+  p('M164 125H180V221H164Z','iron','stroke="none"',-.18)+
+  rect(73,129,85,96,'coal',12)+
+  rect(47,82,24,38,'rock-dark',8)+rect(41,77,36,13,'rock',6)+
+  pipe('M165 126V98H179','rock',7)+
+  group('vents',state==='idle'?
+    line('M55 70Q43 62 55 53Q65 46 56 38M172 86Q159 77 170 67','snow',7):'')+
+  rect(34,108,156,23,'lava',9,'',-.18)+rect(49,101,128,10,'iron',5)+
+  shine('M46 116H73M54 88V98')+rivet(45,120)+rivet(179,120)+
+  // A compact ram over an unmistakable horned anvil holds the cooling plate.
+  rect(102,128,27,16,'rock',6)+rect(91,139,49,11,'rock-dark',5)+
+  p('M77 201H155L145 214H132L137 225H94L99 214H84L69 204Q68 201 77 201Z','rock')+
+  line('M84 208H145','rock-dark',3)+shine('M81 205H100')+
+  corePlate()+
+  rect(47,149,20,56,'iron',8)+line('M53 160H61M53 173H61M53 186H61','coal',4)+
+  seam('M49 216H61L65 207M160 211L169 204L174 214')+
+  '</g><g transform="translate(256 0) scale(-1 1)">'+
+  // Delivery rises on the LEFT, opposite the tall blue workshop's right-hand rail.
+  p('M179 224L202 132Q204 125 211 129L221 135L198 224Z','rock-dark')+
+  line('M184 215L206 139M195 216L216 142','paper',4)+
+  line('M191 188L203 191M197 162L209 165','rock',5)+
+  rect(178,216,32,9,'rock',4)+
+  p('M197 133L206 118Q209 114 213 119L225 135Z','iron')+
+  line('M213 127L217 132','cream',4)+'</g>');
+}
+
 const definitions=[
   {id:'gravity-cannon',draw:gravityCannon,parts:['barrel'],pivot:[94,159],tags:['defense','core-iron','gravity']},
+  {id:'core-armor',draw:coreArmor,parts:['plate','vents'],tags:['industry','core-iron','sun-shield']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){

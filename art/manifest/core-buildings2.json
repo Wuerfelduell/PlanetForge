@@ -96,6 +96,88 @@
           159
         ]
       }
+    },
+    {
+      "id": "building.core-armor",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor.svg",
+      "out": "public/assets/sprites/buildings/core-armor.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-armor.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor-construction.svg",
+      "out": "public/assets/sprites/buildings/core-armor-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents",
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-armor.off",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor-off.svg",
+      "out": "public/assets/sprites/buildings/core-armor-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
