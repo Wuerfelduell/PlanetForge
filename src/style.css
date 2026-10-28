@@ -383,6 +383,8 @@ ul.owned small { color: var(--muted); }
   #hud .chip, #hud .level { padding: 3px 8px; font-size: 13px; }
   #hud .speed { min-width: 40px; min-height: 36px; padding: 4px 8px; font-size: 15px; }
   #hud .chip.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  /* Inside a planet the status line is crowded: words that only repeat an icon go, the planet name stays. */
+  #hud .wide { display: none; }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
   #hud .cycle { flex: none; width: 18px; height: 18px; }
