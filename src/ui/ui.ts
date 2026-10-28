@@ -392,7 +392,7 @@ export class Ui {
     }
     const players = state.players.map((p) => p.name).join(", ");
     this.popup(
-      "🌞",
+      this.heroArt("popup-system-saved", "🌞"),
       "System gerettet!",
       `<p>Die Schutzhülle um die Sonne ist geschlossen. Die Supernova ist abgewendet.</p><p class="muted">Geschafft im ${cycleOf(state) + 1}. Planetenumlauf${players ? ` von ${players}` : ""}.</p><p class="muted">Ihr könnt weiterspielen. Haltet die Hülle heil, Invasoren können sie noch beschädigen.</p>`,
       28,
@@ -404,7 +404,12 @@ export class Ui {
   private showLoot(target: string, wave: number, loot?: Partial<Record<ResourceId, number>>): void {
     const items = Object.entries(loot ?? Object.fromEntries(Object.entries(INVADERS.reward).map(([r, v]) => [r, v * wave]))) as [ResourceId, number][];
     const list = items.map(([r, n]) => `<span class="loot-item">${this.res(r)} +${n} <small>${RESOURCES[r].name}</small></span>`).join("");
-    this.popup("🏆", "Mutterschiff zerstört!", `<p>Die Invasoren über ${this.targetName(target)} sind besiegt (Welle ${wave}). Aus dem Wrack geborgen:</p><div class="loot">${list}</div>`, 14);
+    this.popup(this.heroArt("popup-loot", "🏆"), "Mutterschiff zerstört!", `<p>Die Invasoren über ${this.targetName(target)} sind besiegt (Welle ${wave}). Aus dem Wrack geborgen:</p><div class="loot">${list}</div>`, 14);
+  }
+
+  /** Codex picture on top of a popup, the spinning emoji until the art is loaded. */
+  private heroArt(name: "popup-system-saved" | "popup-loot", emoji: string): string {
+    return this.art && artTexture(`ui.${name}`) ? `<img class="celebration-art" src="assets/sprites/ui/${name}.png" alt="">` : `<div class="celebration-sun">${emoji}</div>`;
   }
 
   /** Big popup over the game (goal reached, invaders beaten) with a little confetti. */
@@ -412,7 +417,7 @@ export class Ui {
     const node = document.createElement("div");
     node.className = "celebration";
     const confetti = Array.from({ length: confettiCount }, (_, i) => `<i style="--x:${(i * 37) % 100}vw;--d:${(i % 7) * 0.35}s;--h:${(i * 53) % 360}"></i>`).join("");
-    node.innerHTML = `${confetti}<div class="celebration-card"><div class="celebration-sun">${icon}</div><h2>${title}</h2>${body}<button class="wide" data-close>Weiterspielen</button></div>`;
+    node.innerHTML = `${confetti}<div class="celebration-card">${icon}<h2>${title}</h2>${body}<button class="wide" data-close>Weiterspielen</button></div>`;
     node.querySelector("[data-close]")!.addEventListener("click", () => node.remove());
     document.body.appendChild(node);
   }
@@ -883,12 +888,27 @@ export class Ui {
         `.${unlocked.length ? `<br>Dann neu: ${unlocked.join(", ")}` : ""}`;
     }
     return `<div class="res-list ascension">
+      ${this.levelStrip(state, economy)}
       <p><b>⭐ Stufe ${a.level}</b> · ${Math.floor(a.points)}${next !== null ? ` / ${next}` : ""} Punkte</p>
       <p>Pro Umlauf: <b>+${fmt1(income.total)}</b></p>
       <div class="asc-rows">${rows.map((r) => `<div>${r}</div>`).join("")}</div>
       <p>${eta}</p>
       <p class="muted">Mehr Punkte: mehr Einwohner (jeder +${fmt1(ascensionPerCycle(state, 1, 0).people)} pro Umlauf), Gebäude ausbauen (jede Stufe +${fmt1(ascensionPerCycle(state, 0, 1).upgrades)}), Glockenturm, Monument, Kristallpalast.</p>
     </div>`;
+  }
+
+  /** Medallions for every ascension level: reached, current (glowing) and locked ones. */
+  private levelStrip(state: GameState, economy: EconomyState): string {
+    if (!this.art || !artTexture("ui.ascension-level")) return "";
+    const level = economy.ascension.level;
+    let max = level;
+    while (max < 50 && economyThreshold(state, economy, max) !== null) max++;
+    const medals = Array.from({ length: max }, (_, i) => {
+      const n = i + 1;
+      const kind = n === level ? "ascension-level-current" : n < level ? "ascension-level" : "ascension-level-locked";
+      return `<span class="medal${n > level ? " locked" : ""}" title="Stufe ${n}"><img src="assets/sprites/ui/${kind}.png" alt=""><b>${n}</b></span>`;
+    });
+    return `<div class="level-strip">${medals.join("")}</div>`;
   }
 
   /** Rocket buttons from one own planet to a target (colony to free or own planets, attacks elsewhere). */
