@@ -101,9 +101,40 @@ function missileDefense(){
   return back+turret+front+base();
 }
 
+function radar(){
+  const mast=group('mast',
+    // Open lattice: broad feet and a narrow neck, with daylight through it.
+    path('M111 106H125L103 224H86Z','rock')+
+    path('M131 106H145L170 224H153Z','rock')+
+    line('M115 128L154 180M141 128L101 180M106 174L156 217M151 174L107 217','ink',11)+
+    line('M115 128L154 180M141 128L101 180M106 174L156 217M151 174L107 217','rock-dark',5)+
+    line('M110 133H146M103 168H153M97 202H161','ink',10)+
+    line('M110 133H146M103 168H153M97 202H161','rock',4)+
+    glint('M113 113L110 124M100 185L96 207')+
+    rect(81,217,94,9,'rock-dark',4));
+  const antenna=group('antenna',
+    rect(118,87,20,20,'rock',7)+ellipse(128,104,22,8,'rock-dark')+
+    // A broad rectangular mesh panel, not a dish, dome or gun barrel.
+    `<g transform="rotate(-8 128 69)">`+
+    rect(50,38,156,62,'rock',12)+rect(57,45,142,48,'deep-water',8,'stroke-width="3"')+
+    line('M82 48V89M108 48V89M134 48V89M160 48V89M186 48V89M61 61H194M61 77H194','science',3)+
+    line('M64 48H185','snow',3)+
+    rect(114,54,26,30,'rock-dark',8)+rect(120,60,14,18,lit('ok'),5,'stroke-width="3"')+
+    rivet(58,91)+rivet(198,91)+glint('M59 43H90')+'</g>');
+  const cabin=group('operator-cabin',rect(45,178,70,47,'paper',12)+
+    path('M104 184H112V223H101Z','paper','stroke="none"',-.18)+
+    rect(40,169,80,14,'clay',7)+glint('M48 174H87')+
+    group('screen',rect(53,189,31,23,'rock-dark',7)+
+      rect(58,194,21,13,lit('ok'),4,'stroke="none"')+
+      (state==='idle'?line('M61 202L65 198L69 202L75 196','cream',2):''))+
+    rect(91,192,16,33,'iron',6)+circle(101,210,2,'cream','stroke="none"'));
+  return mast+antenna+cabin+base();
+}
+
 const definitions=[
   {id:'missile-silo',draw:missileSilo,parts:['rocket','hatches','control-hut','beacon'],pivot:[106,207],tags:['missiles','silo']},
   {id:'missile-defense',draw:missileDefense,parts:['turret','tracking-dish'],pivot:[126,180],tags:['missiles','interceptors','defense']},
+  {id:'radar',draw:radar,parts:['antenna','mast','operator-cabin','screen'],pivot:[128,104],tags:['early-warning','radar']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){
