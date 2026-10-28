@@ -78,13 +78,21 @@ export function idleUnits(state: GameState, planet: PlanetState, owner?: string)
 /** The building on a segment with the values of its current stage, or null. */
 export function buildingStats(segment: SegmentState): BuildingDef | null {
   if (!segment.building) return null;
-  const def = BUILDINGS[segment.building];
+  const def = BUILDING_DEFS.get(segment.building)!;
   const tier = segment.tier ?? 1;
   if (tier <= 1 || !def.upgrades) return def;
-  let stats: BuildingDef = def;
+  // Asked for every field on every tick, so each stage is merged only once. Callers never change it.
+  let stages = stageStats.get(def);
+  if (!stages) stageStats.set(def, (stages = []));
+  let stats = stages[tier];
+  if (stats) return stats;
+  stats = def;
   for (const u of def.upgrades.slice(0, tier - 1)) stats = { ...stats, ...u, cost: def.cost };
-  return stats;
+  return (stages[tier] = stats);
 }
+const stageStats = new Map<BuildingDef, BuildingDef[]>();
+// A Map finds building ids that come out of JSON.parse much faster than the BUILDINGS object.
+const BUILDING_DEFS = new Map(Object.entries(BUILDINGS)) as Map<string, BuildingDef>;
 
 /** Everything paid for a segment's building so far: build cost plus every upgrade. */
 export function paidFor(segment: SegmentState): Partial<Record<ResourceId, number>> {
@@ -113,10 +121,10 @@ export function upgradeBlocker(state: GameState, planet: PlanetState, segment: S
   return null;
 }
 
-export function housing(state: GameState, planet: PlanetState): number {
+/** `peoples`: how many owners have units on the planet, when the caller has counted them already. */
+export function housing(state: GameState, planet: PlanetState, peoples = new Set(unitsOn(state, planet.id).map((u) => u.owner)).size): number {
   if (planet.economyId === null) return 0;
   // Every additional people on a shared planet brings its own shelter for the inhabitants it arrives with.
-  const peoples = new Set(unitsOn(state, planet.id).map((u) => u.owner)).size;
   const total = RULES.baseHousing + Math.max(0, peoples - 1) * RULES.coopJoinPopulation + housedInBuildings(state, planet);
   return Math.floor(total + 1e-9);
 }
