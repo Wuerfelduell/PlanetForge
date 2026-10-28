@@ -244,12 +244,17 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
 }
 
 /** Production per second of one segment with `workers` working on it, before starvation. `economy` adds discovery bonuses. */
+/** Food comes out a bit faster than everything else (RULES.foodOutputMul). */
+export function foodOutputMul(resource: ResourceId): number {
+  return resource === "food" ? RULES.foodOutputMul : 1;
+}
+
 export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment);
   const def = buildingStats(segment);
-  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource });
+  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource }) * foodOutputMul(resource);
   if (def?.produces) {
     const r = def.produces.resource;
     out[r] = def.produces.perWorker * workers * mult * bonus(r);
@@ -266,7 +271,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   }
   if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
-    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
+    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers * foodOutputMul(d.resource);
   }
   return out;
 }

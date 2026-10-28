@@ -1415,6 +1415,7 @@ export const RULES = {
   handWorkersPerSegment: 2,
   handRatePerWorker: 0.3,
   starvingRateFactor: 0.5,
+  foodOutputMul: BALANCE_RULES.foodOutputMul,
   /**
    * Births, food upkeep and ascension thresholds come from src/data/balance (MODES, RULES), see
    * rules.ts: secondsPerBirth, foodUpkeepPerCycle, nextLevelThreshold. Playtest 2026-10-21: the

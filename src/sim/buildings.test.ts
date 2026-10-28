@@ -134,8 +134,8 @@ describe("power grid", () => {
     g = build(g, 0, "hydro-farm", 2);
     const food = econ(g).resources.food;
     g = run(g, 10);
-    // 2 workers / 5 s per craft × 2 food × 0.25 (no power).
-    expect(econ(g).resources.food - food).toBeCloseTo(10 * (2 / 5) * 2 * RULES.energy.unpoweredMul, 0);
+    // 2 workers / 5 s per craft × 2 food × 0.25 (no power) × the food bonus.
+    expect(econ(g).resources.food - food).toBeCloseTo(10 * (2 / 5) * 2 * RULES.energy.unpoweredMul * RULES.foodOutputMul, 1);
   });
 
   it("hunger does not slow down food, so a hungry people can eat its way out", () => {
