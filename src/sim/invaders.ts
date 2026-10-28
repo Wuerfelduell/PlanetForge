@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, INVADERS, RULES, SUPERNOVA, WARP, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, CORE, INVADERS, RULES, SUPERNOVA, WARP, type ResourceId } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
 import { buildingStats, economyOf, planetById, planetDefense, planetShield, systemOf, ticksPerCycle } from "./rules";
@@ -169,13 +169,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
   events.push({ type: "siege", target: inv.target, damage, hp: inv.hp, defenderLosses, destroyed, killed, shieldSegment, ...(scorched.length ? { scorched } : {}) });
 
   if (inv.hp <= 0) {
-    const loot: Partial<Record<ResourceId, number>> = {};
-    for (const [r, v] of Object.entries(INVADERS.reward) as [ResourceId, number][]) {
-      economy.resources[r] += v * inv.wave;
-      loot[r] = v * inv.wave;
-    }
-    events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave, loot });
-    endInvasion(state, rng);
+    defeated(state, economy, inv, rng, events);
   } else if (inv.target === "sun" ? state.tick >= inv.siegeEndTick : !hasResidents(state, inv.target)) {
     // The fleet never gives up on its own (Seb): it can't be fought at the sun, so after a while
     // it moves on to a populated planet; an emptied planet is left for the next populated one.
@@ -186,12 +180,42 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
 /** Neutronium plates on the shield (WARP): share of shield damage they take away. */
 function shellArmor(state: GameState, economy: EconomyState): number {
   let armor = 0;
-  for (const p of state.planets) if (p.economyId === economy.id) for (const s of p.segments) armor += (s.building && BUILDINGS[s.building].shellArmor) || 0;
-  return Math.min(WARP.maxShellArmor, armor);
+  let core = 0;
+  for (const p of state.planets) {
+    if (p.economyId !== economy.id) continue;
+    for (const s of p.segments) {
+      armor += (s.building && BUILDINGS[s.building].shellArmor) || 0;
+      core += (s.building && BUILDINGS[s.building].coreArmor) || 0;
+    }
+  }
+  // Core iron plates (CORE) come on top of the neutronium ones.
+  return Math.min(WARP.maxShellArmor, armor) + Math.min(CORE.maxCoreArmor, core);
 }
 
 function hasResidents(state: GameState, planetId: string): boolean {
   return Object.values(state.units).some((u) => u.planetId === planetId);
+}
+
+function defeated(state: GameState, economy: EconomyState, inv: Invasion, rng: Rng, events: GameEvent[]): void {
+  const loot: Partial<Record<ResourceId, number>> = {};
+  for (const [r, v] of Object.entries(INVADERS.reward) as [ResourceId, number][]) {
+    economy.resources[r] += v * inv.wave;
+    loot[r] = v * inv.wave;
+  }
+  events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave, loot });
+  endInvasion(state, rng);
+}
+
+/** A homing missile hit the besieging mothership; it may go down at once. */
+export function damageInvasion(state: GameState, damage: number, events: GameEvent[]): void {
+  const inv = state.invasion;
+  const economy = teamEconomy(state);
+  if (!inv || !economy) return;
+  inv.hp = Math.max(0, inv.hp - damage);
+  if (inv.hp > 0) return;
+  const rng = new Rng(state.rng);
+  defeated(state, economy, inv, rng, events);
+  state.rng = rng.seed;
 }
 
 function moveOn(state: GameState, economy: EconomyState, inv: Invasion, rng: Rng, events: GameEvent[]): void {

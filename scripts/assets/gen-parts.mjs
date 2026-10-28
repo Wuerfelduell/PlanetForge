@@ -7,6 +7,13 @@ import {read,write,round} from './common.mjs';
 export const PARTS = {
  'building.core-drill':{file:'core-drill',part:'drill',pivot:[110,170]},
  'building.core-mine':{file:'core-mine',part:'cart',pivot:[180,211]},
+ 'building.quantum-lab':{file:'quantum-lab',part:'rings',pivot:[128,108]},
+ 'building.warp-core':{file:'warp-core',part:'core',pivot:[128,127]},
+ 'building.gravity-cannon':{file:'gravity-cannon',part:'barrel',pivot:[94,159]},
+ 'building.power-geothermal':{file:'power-geothermal',part:'steam',pivot:[128,142]},
+ 'building.radar':{file:'radar',part:'antenna',pivot:[128,104]},
+ 'building.missile-defense':{file:'missile-defense',part:'turret',pivot:[126,180]},
+ 'building.missile-silo':{file:'missile-silo',part:'rocket',pivot:[106,207]},
  'building.shell-armor':{file:'shell-armor',part:'press',pivot:[101,101]},
  'building.warpgate':{file:'warpgate',part:'portal',pivot:[128,114]},
  'building.exo-drill':{file:'exo-drill',part:'drill',pivot:[112,181]},

@@ -209,6 +209,36 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .build { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; }
 .build .icon { font-size: 24px; }
 .build .cost { font-size: 13px; color: var(--muted); }
+/* ⓘ in the corner of a build button: what the building does, without building it (also on greyed-out ones). */
+.build { position: relative; }
+.build .info {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font: italic 700 13px/20px Georgia, serif;
+  text-align: center;
+  pointer-events: auto;
+  cursor: help;
+}
+.build .info::before { content: ""; position: absolute; inset: -8px; } /* bigger tap area */
+.binfo { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); }
+.binfo-card { width: min(420px, 100%); max-height: 85vh; overflow-y: auto; background: var(--surface-2); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.4; }
+.binfo-card p { margin: 6px 0; }
+.binfo-card ul { margin: 6px 0; padding-left: 18px; }
+.binfo-card li { margin: 3px 0; }
+.binfo-card small { color: var(--muted); }
+.binfo-card .good { color: var(--good); }
+.binfo-card .bad { color: var(--bad); }
+.binfo-head { display: flex; align-items: center; gap: 10px; }
+.binfo-head .icon { font-size: 32px; }
+.binfo-head .icon img.bi { width: 48px; height: 48px; }
+.binfo-head small { display: block; }
+.binfo-sub { font-weight: 700; margin-top: 10px !important; }
 .build .cost .short { color: var(--bad); }
 .power { margin: 6px 0; color: var(--good); font-size: 14px; }
 .power small { color: var(--muted); }
@@ -394,3 +424,21 @@ ul.owned small { color: var(--muted); }
 .loot-item { padding: 6px 10px; border-radius: 10px; background: var(--surface); font-size: 17px; }
 .loot-item small { color: var(--muted); font-size: 12px; }
 .celebration-card button { background: var(--accent); color: #1b1d36; font-weight: 600; border: 0; border-radius: 10px; }
+/* The 🪐 list: own planets grouped by settler or sun system. */
+#hud .res-list.planets { display: block; font-size: 14px; max-height: 45vh; }
+#hud .res-list.planets p { margin: 4px 0; }
+#hud .res-list.planets .muted { color: var(--muted); font-size: 12px; }
+#hud .res-list.planets .group { margin-top: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+#hud .res-list.planets .toggle { float: right; display: inline-flex; gap: 4px; }
+#hud .res-list.planets .toggle .chip { font-size: 12px; padding: 2px 8px; }
+#hud .res-list.planets .chip.on { outline: 2px solid var(--accent, #ffd166); }
+.planet-row { display: flex; align-items: stretch; gap: 4px; margin: 3px 0; }
+.planet-row .speed { width: 40px; }
+.planet-row .planet-go { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 5px 10px; border: 0; border-radius: 10px; background: var(--surface-2); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.planet-row.here .planet-go { outline: 2px solid var(--accent, #ffd166); }
+.planet-row .planet-go small { color: var(--muted); font-size: 12px; }
+.planet-row .planet-go .short { color: var(--bad); }
+.rename input { width: 100%; box-sizing: border-box; margin: 6px 0; padding: 10px 12px; font: inherit; font-size: 18px; border-radius: 10px; border: 2px solid var(--accent); background: var(--surface); color: inherit; }
+.rename .row { display: flex; gap: 8px; }
+.rename .row button { flex: 1; padding: 10px; }
+.celebration-card button.secondary { background: var(--surface); color: inherit; }

@@ -1,4 +1,4 @@
-import { BUILDINGS, RECIPES, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
+import { BUILDINGS, MISSILES, RECIPES, RESOURCE_IDS, RULES, type BuildingId, type ResourceId, type RocketId } from "./content";
 import {
   activeFactions,
   atWar,
@@ -32,6 +32,8 @@ import {
   paidFor,
   planetDefense,
   planetDistance,
+  planetShield,
+  ringDistance,
   playerById,
   population,
   rocketCapacity,
@@ -387,7 +389,7 @@ function mood(state: GameState, faction: FactionState, economy: EconomyState, rn
       return;
     }
     case "war": {
-      if (!canOffer) return;
+      if (!canOffer || state.tick < (faction.noPeaceUntilTick ?? 0)) return;
       const losing = own < team * 0.6;
       const long = state.tick - faction.stanceTick >= cycles(state, 20);
       if ((losing || long) && faction.attitude > -70) makeOffer(state, faction, "peace", events);
@@ -433,6 +435,7 @@ function attack(state: GameState, faction: FactionState, player: PlayerState, pl
     .filter((p) => atWar(state, p.economyId, economy.id))
     .map((p) => ({ p, defense: idleUnits(state, p).filter((u) => !playerById(state, u.owner)?.ai).length + planetDefense(state, p) }))
     .sort((a, b) => a.defense - b.defense);
+  fireMissile(state, faction, player, planets, targets.map((t) => t.p), events);
   for (const from of planets) {
     const capacity = rocketCapacity(economy, "combat");
     const count = Math.min(capacity, idleUnits(state, from, player.id).length - 1);
@@ -443,6 +446,35 @@ function attack(state: GameState, faction: FactionState, player: PlayerState, pl
       if (rng.next() < 0.25) return;
       launch(state, player, from, to, "combat", count, events);
       return;
+    }
+  }
+}
+
+/** Defenses a homing missile goes for first, most annoying first. */
+const MISSILE_TARGETS: BuildingId[] = ["shield-generator", "missile-defense", "flak", "neutron-bastion", "watchtower", "battery"];
+
+/**
+ * At war from MISSILES.aiLevel on: one missile with every attack. A shield gets an EMP, otherwise
+ * a homing missile takes out the best defense; warlords nuke the busiest part of the planet.
+ */
+function fireMissile(state: GameState, faction: FactionState, player: PlayerState, planets: PlanetState[], targets: PlanetState[], events: GameEvent[]): void {
+  const economy = state.economies[player.economyId]!;
+  if (economy.ascension.level < MISSILES.aiLevel) return;
+  for (const to of targets) {
+    const n = to.segments.length;
+    const built = (i: number) => to.segments.filter((s) => s.building && ringDistance(s.index, i, n) <= MISSILES.nukeRadius).length;
+    const busiest = to.segments.reduce((a, b) => (built(b.index) > built(a.index) ? b : a)).index;
+    const defense = MISSILE_TARGETS.map((b) => to.segments.find((s) => s.building === b)).find(Boolean);
+    const shots: [RocketId, number | undefined][] = [];
+    if (faction.personality === "warlord") shots.push(["nuke", busiest]);
+    if (planetShield(state, to) > 0) shots.push(["emp", undefined]);
+    if (defense) shots.push(["homing", defense.index]);
+    for (const [rocket, segment] of shots) {
+      for (const from of planets) {
+        if (launchBlocker(state, player.id, from, to, rocket, 0, segment)) continue;
+        launch(state, player, from, to, rocket, 0, events, segment);
+        return;
+      }
     }
   }
 }

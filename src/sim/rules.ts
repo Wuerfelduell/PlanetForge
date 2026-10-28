@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, CRYO, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, WARP, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, CORE, CRYO, MISSILES, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, WARP, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { atWar, factionOfEconomy } from "./diplomacy";
 import { ASCENSION } from "../data/balance/progression";
@@ -26,8 +26,9 @@ export function playerById(state: GameState, id: string): PlayerState | undefine
   return state.players.find((p) => p.id === id);
 }
 
+/** A planet, or a planet interior (GameState.cores). */
 export function planetById(state: GameState, id: string): PlanetState | undefined {
-  return state.planets.find((p) => p.id === id);
+  return state.planets.find((p) => p.id === id) ?? state.cores?.find((p) => p.id === id);
 }
 
 export function economyOf(state: GameState, planet: PlanetState): EconomyState | undefined {
@@ -228,6 +229,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (def.unique && hasBuilding(planet, building)) return "Nur eins pro Planet";
+  if (building === "core-drill" && planet.type === "asteroid") return "Asteroiden haben keinen Kern";
   if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
@@ -244,12 +246,17 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
 }
 
 /** Production per second of one segment with `workers` working on it, before starvation. `economy` adds discovery bonuses. */
+/** Food comes out a bit faster than everything else (RULES.foodOutputMul). */
+export function foodOutputMul(resource: ResourceId): number {
+  return resource === "food" ? RULES.foodOutputMul : 1;
+}
+
 export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment);
   const def = buildingStats(segment);
-  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource });
+  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource }) * foodOutputMul(resource);
   if (def?.produces) {
     const r = def.produces.resource;
     out[r] = def.produces.perWorker * workers * mult * bonus(r);
@@ -266,7 +273,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   }
   if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
-    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers;
+    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers * foodOutputMul(d.resource);
   }
   return out;
 }
@@ -325,7 +332,8 @@ export function ascensionIncome(state: GameState, economy: EconomyState, residen
   let citizens = 0;
   let stages = 0;
   let buildings = 0;
-  for (const p of state.planets) {
+  // Interiors count too: their workers and their building stages.
+  for (const p of [...state.planets, ...(state.cores ?? [])]) {
     if (p.economyId !== economy.id) continue;
     if (residents === undefined) citizens += Object.values(state.units).filter((u) => u.planetId === p.id).length;
     for (const s of p.segments) {
@@ -367,16 +375,17 @@ export interface FlightPlan {
   seconds: number;
 }
 
-export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId, passengers: number, economy?: EconomyState): FlightPlan {
+/** `ai`: an AI faction pays the rocket's aiCost (if it has one) instead of its cost. */
+export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId, passengers: number, economy?: EconomyState, ai = false): FlightPlan {
   const def = ROCKETS[rocket];
   const distance = planetDistance(from, to);
-  const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
+  const cost: Partial<Record<ResourceId, number>> = { ...(ai && def.aiCost ? def.aiCost : def.cost) };
   const fuel = Math.ceil(modified(economy, "rocketFuel", def.fuel.takeoff + distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
   // Short of the main fuel (warp ship without antimatter): burn the replacement instead.
   if (def.altFuel && economy && economy.resources[def.fuel.resource] < fuel + (cost[def.fuel.resource] ?? 0)) {
     cost[def.altFuel.resource] = (cost[def.altFuel.resource] ?? 0) + fuel * def.altFuel.mul;
   } else cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
-  const seconds = def.warp ? WARP.seconds : Math.round(distance * def.secondsPerDistance);
+  const seconds = def.warp ? WARP.seconds * (hasBuilding(from, "warp-core") ? CORE.warpCoreMul : 1) : Math.round(distance * def.secondsPerDistance);
   return { distance, cost, seconds: Math.max(1, seconds) };
 }
 
@@ -388,27 +397,56 @@ export function hasBuilding(planet: PlanetState, building: BuildingId): boolean 
   return planet.segments.some((s) => s.building === building);
 }
 
+/** Longest planet name (in characters). */
+export const PLANET_NAME_MAX = 20;
+
+/** A planet name as typed, made safe: no markup or control characters, single spaces, at most PLANET_NAME_MAX characters. */
+export function cleanPlanetName(name: string): string {
+  const plain = name.replace(/[\u0000-\u001f\u007f<>&"'`\\]/g, "").replace(/\s+/g, " ").trim();
+  return Array.from(plain).slice(0, PLANET_NAME_MAX).join("").trim();
+}
+
+/** Why `playerId` cannot rename the planet right now, or null. Only its founder can, while their side still lives there. */
+export function renameBlocker(state: GameState, playerId: string, planet: PlanetState): string | null {
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player || planet.founder !== playerId) return "Nur wer den Planeten zuerst besiedelt hat, kann ihn umbenennen";
+  if (planet.economyId !== player.economyId) return "Der Planet gehört dir nicht mehr";
+  return null;
+}
+
 /**
  * Why `playerId` cannot send a rocket from `from` to `to` with `count` passengers right now, or
  * null. Shared by the launch command and the UI.
  */
-export function launchBlocker(state: GameState, playerId: string, from: PlanetState, to: PlanetState, rocket: RocketId, count: number): string | null {
+export function launchBlocker(state: GameState, playerId: string, from: PlanetState, to: PlanetState, rocket: RocketId, count: number, segment?: number): string | null {
   const player = playerById(state, playerId);
   const def = ROCKETS[rocket];
   if (!player || !def) return "Unbekannte Rakete";
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
-  if (from.id === to.id) return "Ziel ist der Startplanet";
+  // A homing missile may go straight up at the mothership over its own silo.
+  const hunt = rocket === "homing" && !!state.invasion?.sieging && state.invasion.target === to.id;
+  if (from.id === to.id && !hunt) return "Ziel ist der Startplanet";
   const warp = systemOf(from) !== systemOf(to);
+  if (warp && def.unmanned) return "Raketen ohne Besatzung fliegen nur im eigenen Sonnensystem";
   if (warp && !def.warp) return "In andere Sonnensysteme kommt nur das Warpschiff";
   if (!warp && def.warp) return "Das Warpschiff fliegt nur in andere Sonnensysteme";
-  if (def.warp ? !hasBuilding(from, "warpgate") : !hasBuilding(from, "launchpad")) return def.warp ? "Dafür braucht es ein Warptor" : "Dafür braucht es eine Startrampe";
+  if (def.unmanned) {
+    // AI factions keep their missiles in an arsenal (they never build the late chains).
+    if (!player.ai) {
+      const silos = from.segments.filter((s) => buildingStats(s)?.silo && workerCount(state, from, s.index) > 0);
+      if (!silos.length) return "Dafür braucht es ein besetztes Raketensilo";
+      if (rocket === "nuke" && !silos.some((s) => (s.reloadUntilTick ?? 0) <= state.tick)) return "Das Silo lädt noch die nächste Atomrakete";
+    }
+  } else if (def.warp ? !hasBuilding(from, "warpgate") : !hasBuilding(from, "launchpad")) return def.warp ? "Dafür braucht es ein Warptor" : "Dafür braucht es eine Startrampe";
+  if (def.unlockLevel && state.economies[player.economyId]!.ascension.level < def.unlockLevel) return `${def.name} ab Stufe ${def.unlockLevel}`;
   if (to.type === "asteroid" && !asteroidsVisible(state.economies[player.economyId])) return "Dafür braucht es die Entdeckung Weltraumbergbau";
-  if (blockaded(state, from)) return BLOCKADED;
+  if (!def.unmanned && blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
+  if (def.unmanned) return missileBlocker(state, player, from, to, rocket, count, segment);
   // coop: only a faction at war with the team can be attacked (and attacks).
   const factionsInvolved = !!(factionOfEconomy(state, to.economyId) ?? factionOfEconomy(state, from.economyId));
   if (def.versusOnly && state.settings.mode !== "versus" && !factionsInvolved) return "Angriffe gibt es nur im Gegeneinander-Modus";
-  if (rocket === "combat" && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
+  if (def.attack && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
   if (def.versusOnly && state.settings.mode !== "versus" && !atWar(state, from.economyId, to.economyId)) return "Dafür müsste Krieg herrschen";
   if (def.warp && to.economyId !== null && to.economyId !== player.economyId) return "Dort lebt schon jemand";
   if (rocket === "colony" && state.settings.mode !== "versus" && to.economyId !== null && to.economyId !== player.economyId) return "Dort lebt schon jemand";
@@ -420,6 +458,55 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (plan.distance > def.maxRange) return "Zu weit weg";
   if (!canPay(economy, plan.cost)) return NOT_AFFORDABLE;
   return null;
+}
+
+/** The rest of launchBlocker for missiles: targets, aim, start protection and the price. */
+function missileBlocker(state: GameState, player: PlayerState, from: PlanetState, to: PlanetState, rocket: RocketId, count: number, segment?: number): string | null {
+  const def = ROCKETS[rocket];
+  const economy = state.economies[player.economyId]!;
+  if (count !== 0) return "Raketen fliegen ohne Besatzung";
+  const aimed = rocket === "homing" || rocket === "nuke";
+  if (aimed && to.economyId !== player.economyId && (segment === undefined || !Number.isInteger(segment) || segment < 0 || segment >= to.segments.length)) return "Erst ein Zielfeld wählen";
+  if (to.economyId === player.economyId) {
+    // Homing missiles also hunt the mothership besieging an own planet (any mode).
+    if (rocket !== "homing") return "Das ist dein eigener Planet";
+    if (!state.invasion?.sieging || state.invasion.target !== to.id) return "Hier ist kein Mutterschiff zum Abschießen";
+  } else {
+    if (to.economyId === null) return "Dort lebt niemand";
+    const factionsInvolved = !!(factionOfEconomy(state, to.economyId) ?? factionOfEconomy(state, from.economyId));
+    if (state.settings.mode !== "versus" && !factionsInvolved) return "Angriffe gibt es nur im Gegeneinander-Modus";
+    if (state.settings.mode !== "versus" && !atWar(state, from.economyId, to.economyId)) return "Dafür müsste Krieg herrschen";
+    if (rocket === "nuke" && to.startSlot !== null && cycleOf(state) < MISSILES.startProtectionCycles) return `Startplaneten sind die ersten ${MISSILES.startProtectionCycles} Umläufe vor Atomraketen sicher`;
+  }
+  const plan = flightPlan(from, to, rocket, 0, economy, player.ai);
+  if (plan.distance > def.maxRange) return "Zu weit weg";
+  if (!canPay(economy, plan.cost)) return NOT_AFFORDABLE;
+  return null;
+}
+
+/** An EMP still shuts the planet down. */
+export function empActive(state: GameState, planet: PlanetState): boolean {
+  return (planet.empUntilTick ?? 0) > state.tick;
+}
+
+/** Missiles the planet's worked missile defense can still down this cycle (0 under an EMP). */
+export function missileDefenseLeft(state: GameState, planet: PlanetState): number {
+  if (empActive(state, planet)) return 0;
+  let total = 0;
+  for (const s of planet.segments) {
+    const stats = buildingStats(s);
+    if (stats?.antiMissile) total += stats.antiMissile * workerCount(state, planet, s.index);
+  }
+  const used = planet.intercepts?.cycle === cycleOf(state) ? planet.intercepts.count : 0;
+  return Math.max(0, total - used);
+}
+
+/** A worked radar of this economy stands somewhere in the sun system. */
+export function radarIn(state: GameState, economyId: string | null | undefined, system: number): boolean {
+  if (!economyId) return false;
+  return state.planets.some(
+    (p) => p.economyId === economyId && systemOf(p) === system && !empActive(state, p) && p.segments.some((s) => buildingStats(s)?.radar && workerCount(state, p, s.index) > 0),
+  );
 }
 
 /** Player whose people a unit counts for: captives still count for the player they came from. */
@@ -502,9 +589,11 @@ export function planetDefense(state: GameState, planet: PlanetState): number {
 /** Attackers downed on arrival at a planet, before the dice: pitfalls and worked flak. */
 export function planetIntercept(state: GameState, planet: PlanetState): number {
   let total = 0;
+  // An EMP silences everything manned (flak); pits and walls still stand.
+  const emp = empActive(state, planet);
   for (const s of planet.segments) {
     const stats = buildingStats(s);
-    if (stats?.intercept) total += stats.intercept * (stats.workers > 0 ? workerCount(state, planet, s.index) : 1);
+    if (stats?.intercept && !(emp && stats.workers > 0)) total += stats.intercept * (stats.workers > 0 ? workerCount(state, planet, s.index) : 1);
   }
   return Math.min(RULES.maxIntercept, total);
 }
@@ -521,6 +610,7 @@ export function planetAttackBonus(state: GameState, planet: PlanetState): number
 
 /** Strength of a worked shield generator on the planet, 0 without one. */
 export function planetShield(state: GameState, planet: PlanetState): number {
+  if (empActive(state, planet)) return 0;
   let best = 0;
   for (const s of planet.segments) {
     const stats = buildingStats(s);
@@ -531,7 +621,8 @@ export function planetShield(state: GameState, planet: PlanetState): number {
 
 /** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
 export function needsSuits(planet: PlanetState): boolean {
-  return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;
+  // Down inside a planet the deep suit does it (CORE).
+  return planet.startSlot === null && !planet.coreOf && !PLANET_TYPES[planet.type].breathable;
 }
 
 /**
