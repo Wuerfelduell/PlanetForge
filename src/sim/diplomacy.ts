@@ -246,6 +246,7 @@ export function proposalBlocker(state: GameState, faction: FactionState, action:
   if (action === "war") return faction.stance === "war" ? "Ihr seid schon im Krieg" : null;
   if (state.tick < faction.nextProposalTick) return "Sie wollen gerade nicht verhandeln. Versuch es später";
   if (action === "peace" && faction.stance !== "war") return "Ihr habt keinen Krieg";
+  if (action === "peace" && state.tick < (faction.noPeaceUntilTick ?? 0)) return "Nach der Atomrakete wollen sie keinen Frieden. Später vielleicht";
   if (action === "alliance" && faction.stance === "allied") return "Ihr seid schon verbündet";
   if (action === "alliance" && faction.stance === "war") return "Erst Frieden schließen";
   if (action === "merge" && faction.stance !== "allied") return "Nur Verbündete schließen sich an";
@@ -330,6 +331,7 @@ export function propose(state: GameState, player: PlayerState, faction: FactionS
   switch (action) {
     case "peace":
       if (faction.stance !== "war") return "Ihr habt keinen Krieg";
+      if (state.tick < (faction.noPeaceUntilTick ?? 0)) return "Nach der Atomrakete wollen sie keinen Frieden. Später vielleicht";
       accepted = faction.attitude >= FACTIONS.peaceAttitude || own < team * 0.6;
       if (accepted) {
         shiftAttitude(faction, 10);

@@ -1,0 +1,283 @@
+{
+  "assets": [
+    {
+      "id": "building.gravity-cannon",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    },
+    {
+      "id": "building.gravity-cannon.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon-construction.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    },
+    {
+      "id": "building.gravity-cannon.off",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon-off.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    },
+    {
+      "id": "building.core-armor",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor.svg",
+      "out": "public/assets/sprites/buildings/core-armor.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-armor.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor-construction.svg",
+      "out": "public/assets/sprites/buildings/core-armor-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents",
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-armor.off",
+      "category": "buildings",
+      "src": "art/src/buildings/core-armor-off.svg",
+      "out": "public/assets/sprites/buildings/core-armor-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "plate",
+        "vents"
+      ],
+      "tags": [
+        "core-buildings2",
+        "industry",
+        "core-iron",
+        "sun-shield",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-geothermal",
+      "category": "buildings",
+      "src": "art/src/buildings/power-geothermal.svg",
+      "out": "public/assets/sprites/buildings/power-geothermal.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam",
+        "heat-core"
+      ],
+      "tags": [
+        "core-buildings2",
+        "power",
+        "magma",
+        "ember-crystal",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "steam": [
+          128,
+          142
+        ]
+      }
+    },
+    {
+      "id": "building.power-geothermal.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-geothermal-construction.svg",
+      "out": "public/assets/sprites/buildings/power-geothermal-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam",
+        "heat-core",
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings2",
+        "power",
+        "magma",
+        "ember-crystal",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "steam": [
+          128,
+          142
+        ]
+      }
+    },
+    {
+      "id": "building.power-geothermal.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-geothermal-off.svg",
+      "out": "public/assets/sprites/buildings/power-geothermal-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "steam",
+        "heat-core"
+      ],
+      "tags": [
+        "core-buildings2",
+        "power",
+        "magma",
+        "ember-crystal",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "steam": [
+          128,
+          142
+        ]
+      }
+    }
+  ]
+}

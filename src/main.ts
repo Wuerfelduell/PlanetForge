@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { cycleOf, homePlanet, type GameEvent } from "./sim";
+import { cycleOf, homePlanet, planetById, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { ChatPanel } from "./net/chat";
@@ -81,7 +81,7 @@ async function boot(): Promise<void> {
   // What the player is looking at, for chat pins.
   const focus = { planetId: "", segment: 0 };
   function showPlanet(planetId: string): void {
-    const planet = session.state.planets.find((p) => p.id === planetId);
+    const planet = planetById(session.state, planetId);
     if (!planet) return;
     focus.planetId = planet.id;
     ui.setPlanet(planet.id);
@@ -275,6 +275,7 @@ window.addEventListener("pointerdown", () => sfx.unlock(), { once: true, capture
 
 /** Sounds for events that are not tied to a spot on the planet (those play in PlanetView). */
 const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
+  missileHit: "build.demolish",
   born: "citizen.born",
   levelUp: "ascension.levelup",
   depleted: "alert.warning",
@@ -316,7 +317,7 @@ function playEventSounds(events: GameEvent[]): void {
 /** Tense music while the own people fight or invaders besiege the planet, calm again once they are gone. */
 function updateMusicMood(events: GameEvent[], playerId: string): void {
   for (const e of events) {
-    if (e.type === "battle" && (e.attacker === playerId || e.defender === playerId)) music.alert();
+    if ((e.type === "battle" || e.type === "missileHit") && e.attacker !== e.defender && (e.attacker === playerId || e.defender === playerId)) music.alert();
     else if (e.type === "invasionArrived" || e.type === "siege") music.alert();
     else if (e.type === "invasionDefeated") music.setMood("calm");
   }
