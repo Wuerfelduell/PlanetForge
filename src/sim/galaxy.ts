@@ -123,6 +123,7 @@ function settlePeople(state: GameState, system: StarSystemState, homes: PlanetSt
   const people = free.length ? rng.pick(free) : PEOPLE_IDS[n % PEOPLE_IDS.length]!;
   homes.forEach((planet, i) => {
     planet.economyId = economyId;
+    planet.founder = id;
     for (const s of planet.segments) if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
     for (let u = 0; u < (i === 0 ? WARP.people.main : WARP.people.other); u++) createUnit(state, id, people, planet.id);
   });

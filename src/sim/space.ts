@@ -59,7 +59,7 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
     }
     if (planet.economyId === null || planet.economyId === player.economyId) {
       const colonized = planet.economyId === null;
-      if (colonized) colonize(planet, player.economyId, events);
+      if (colonized) colonize(planet, player, events);
       for (const u of flight.units) state.units[u.id] = { ...u, planetId: planet.id, segment: null };
       events.push({ type: "landed", flightId: flight.id, playerId: player.id, planetId: planet.id, count: flight.units.length, colonized });
     } else {
@@ -74,8 +74,9 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
   }
 }
 
-function colonize(planet: PlanetState, economyId: string, events: GameEvent[]): void {
-  planet.economyId = economyId;
+function colonize(planet: PlanetState, player: PlayerState, events: GameEvent[]): void {
+  planet.economyId = player.economyId;
+  planet.founder = player.id;
   planet.birthProgress = 0;
   // Land on segment 0, where the wheel starts, so the new colony is in view.
   const site = planet.segments[0]!;
