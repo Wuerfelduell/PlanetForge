@@ -4,7 +4,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Keep each numbered delivery checkpoint independently reproducible.
-const RELEASE = 2;
+const RELEASE = 3;
 const assets = [];
 const p = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
@@ -75,6 +75,21 @@ if (RELEASE >= 2) {
   emit('ui.icon-surface', 'ui', 'icon-surface', navigation(true), 128, {phase: 'P0'});
   emit('ui.badge-quake', 'ui', 'badge-quake', quakeBadge(), 64, {phase: 'P0'});
 }
+
+function drillBadge() {
+  const defs = `<radialGradient id="drill-glow"><stop offset="0.2" stop-color="${C('energy')}" stop-opacity="0.6"/><stop offset="0.5" stop-color="${C('ascension')}" stop-opacity="0.3"/><stop offset="1" stop-color="${C('ascension')}" stop-opacity="0"/></radialGradient>`;
+  const cap = `<rect x="20" y="8" width="24" height="14" rx="5" fill="${C('clay')}"/>` +
+    p('M38 10 H43 V17 Q43 22 38 22 H34Z', C('clay', -.18), 'stroke="none"') + shine('M24 12 H33', 1.5);
+  const bit = p('M23 22 H41 L40 46 Q38 53 32 61 Q26 53 24 46Z', C('rock')) +
+    p('M35 23 H40 L39 46 L32 59 L32 49Z', C('rock-dark'), 'stroke="none"') +
+    p('M24 30 L40 25 M24 39 L40 34 M25 48 L40 43 M29 55 L36 52', 'none', 'stroke-width="3"') +
+    shine('M26 25 V28 M27 34 V36', 1.5) +
+    p('M29 55 L32 60 L35 55Z', C('ascension'), 'stroke-width="1"') + shine('M31 55 L32 57', 1);
+  return `<defs>${defs}</defs>` + g('glow', ellipse(32, 38, 30, 26, 'url(#drill-glow)', 'stroke="none"')) + g('drill', bit + cap);
+}
+if (RELEASE >= 3) emit('space.planet-core-drill-badge', 'space', 'planet-core-drill-badge', drillBadge(), 64, {
+  anchor: [.5, 1], tintable: false, parts: ['drill', 'glow'], tags: ['star-map', 'core-reached'],
+});
 
 write('art/manifest/core-ui.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`Core and interior art: ${assets.length} ids generated (release ${RELEASE}).`);

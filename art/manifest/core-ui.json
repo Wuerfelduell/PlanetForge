@@ -84,6 +84,31 @@
         "badge-quake"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "space.planet-core-drill-badge",
+      "category": "space",
+      "src": "art/src/space/planet-core-drill-badge.svg",
+      "out": "public/assets/sprites/space/planet-core-drill-badge.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        1
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "glow"
+      ],
+      "tags": [
+        "star-map",
+        "core-reached"
+      ],
+      "phase": "P1",
+      "tintable": false
     }
   ]
 }
