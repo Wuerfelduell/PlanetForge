@@ -28,6 +28,72 @@
         "loop"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "space.sun-nebula",
+      "category": "space",
+      "src": "art/src/space/sun-nebula.svg",
+      "out": "public/assets/sprites/space/sun-nebula.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-neutron",
+      "category": "space",
+      "src": "art/src/space/sun-neutron.svg",
+      "out": "public/assets/sprites/space/sun-neutron.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-crystal",
+      "category": "space",
+      "src": "art/src/space/sun-crystal.svg",
+      "out": "public/assets/sprites/space/sun-crystal.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
     }
   ]
 }
