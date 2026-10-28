@@ -6,6 +6,8 @@ import {
   BUILDING_CATEGORY_IDS,
   BUILDING_IDS,
   BUILDINGS,
+  systemOf,
+  WARP,
   type BuildingCategory,
   GEMS,
   cycleOf,
@@ -135,10 +137,19 @@ export class Ui {
   private mapOpen = false;
   /** Read by the star map to highlight the same planet. */
   mapTarget: string | null = null;
+  /** Sun system shown on the star map: 0 = home, 1 … = neighbor systems, -1 = the galaxy. */
+  mapSystem = 0;
 
   /** A planet or the sun was tapped on the star map. */
   selectMapTarget(id: string): void {
     this.mapTarget = id;
+    this.lastPanel = "";
+  }
+
+  /** Shows another sun system (or the galaxy, -1) on the star map. */
+  private selectSystem(system: number): void {
+    this.mapSystem = system;
+    this.mapTarget = system === -1 || !this.state?.systems ? null : this.mapTarget;
     this.lastPanel = "";
   }
 
@@ -346,6 +357,9 @@ export class Ui {
           break;
         case "factionEliminated":
           this.toast(`💀 ${this.factionName(e.faction)} sind ausgelöscht`, "warn");
+          break;
+        case "systemsFound":
+          this.toast(`🌀 Das Warptor ortet ${e.count} Nachbarsysteme, ${e.inhabited === 1 ? "eins davon ist" : `${e.inhabited} davon sind`} bewohnt. Öffne die Karte → 🌌 Galaxie.`, "good");
           break;
         case "cycle":
         case "built":
@@ -572,8 +586,16 @@ export class Ui {
         this.lastHud = NO_HUD;
         this.actions.showMap(this.mapOpen);
         break;
-      case "mapTarget":
+      case "mapTarget": {
+        // A planet picked from a list may lie in another system: show that one.
+        const planet = this.state?.planets.find((p) => p.id === value);
+        if (planet && systemOf(planet) !== this.mapSystem) this.mapSystem = systemOf(planet);
         this.selectMapTarget(value!);
+        this.actions.showMap(true);
+        break;
+      }
+      case "system":
+        this.selectSystem(Number(value));
         this.actions.showMap(true);
         break;
       case "view":
@@ -661,7 +683,7 @@ export class Ui {
       const title = economy.offer ? "Entdeckung wählen" : `${economy.discoveries.length} Entdeckungen`;
       chips.push(`<button class="chip${economy.offer ? " glow" : ""}" data-action="discoveries" title="${title}">${label}</button>`);
     }
-    if (state.settings.factions > 0) {
+    if (state.factions.length > 0) {
       const live = state.factions.filter((f) => !f.eliminated && f.stance !== "merged");
       const offers = live.filter((f) => f.offer && f.offer.expiresTick > state.tick).length;
       const war = live.some((f) => f.stance === "war");
@@ -873,7 +895,7 @@ export class Ui {
   private launchButtons(state: GameState, planet: PlanetState, to: PlanetState, from = ""): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const idle = idleUnits(state, planet, this.playerId).length;
-    const rockets: RocketId[] = to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony", "starship"];
+    const rockets: RocketId[] = systemOf(planet) !== systemOf(to) ? ["warp"] : to.economyId !== null && to.economyId !== me?.economyId ? ["combat"] : ["colony", "starship"];
     return rockets
       .map((rocket) => {
         const count = Math.max(1, Math.min(rocketCapacity(economyOf(state, planet), rocket), idle));
@@ -907,16 +929,76 @@ export class Ui {
   private renderLaunches(state: GameState, planet: PlanetState): string {
     const idle = idleUnits(state, planet, this.playerId).length;
     const rows = this.visiblePlanets(state)
-      .filter((p) => p.id !== planet.id)
+      .filter((p) => p.id !== planet.id && systemOf(p) === systemOf(planet))
       .map((to) => `<div class="target"><span>🪐 ${to.name} <small>${this.planetStatus(state, to)} · ${to.segments.length} Felder</small></span>${this.launchButtons(state, planet, to)}</div>`)
       .join("");
     return `<p class="muted">${BUILDINGS.launchpad.description} Es fliegen freie Einwohner (${idle} frei).</p><div class="targets">${rows}</div>${this.renderShield(state, planet)}`;
   }
 
+  /** Warp gate: the free planets of the other systems, by system, with the warp ship. */
+  private renderWarps(state: GameState, planet: PlanetState): string {
+    const idle = idleUnits(state, planet, this.playerId).length;
+    const me = state.players.find((p) => p.id === this.playerId);
+    let html = `<p class="muted">${BUILDINGS.warpgate.description} Es fliegen freie Einwohner (${idle} frei).</p>`;
+    for (const sys of [{ index: 0, name: "Heimatsystem" }, ...(state.systems ?? [])]) {
+      if (sys.index === systemOf(planet)) continue;
+      const targets = state.planets.filter((p) => systemOf(p) === sys.index && (p.economyId === null || p.economyId === me?.economyId) && (p.type !== "asteroid" || this.visiblePlanets(state).includes(p)));
+      if (!targets.length) continue;
+      html += `<p><b>${this.systemLabel(state, sys.index)}</b></p><div class="targets">${targets
+        .map((to) => `<div class="target"><span>🪐 ${to.name} <small>${this.planetStatus(state, to)} · ${to.segments.length} Felder${this.exotics(to)}</small></span>${this.launchButtons(state, planet, to)}</div>`)
+        .join("")}</div>`;
+    }
+    return html;
+  }
+
+  /** Name of a sun system with what it is known for. */
+  private systemLabel(state: GameState, index: number): string {
+    if (index === 0) return "☀️ Heimatsystem";
+    const sys = state.systems?.find((s) => s.index === index);
+    if (!sys) return "?";
+    const faction = sys.faction ? state.factions.find((f) => f.id === sys.faction) : undefined;
+    const people = faction && !faction.eliminated && faction.stance !== "merged" ? ` · ${STANCE_NAMES[faction.stance].icon} ${faction.name}` : "";
+    return `✨ ${sys.name} ${sys.specialties.map((r) => this.res(r)).join("")}${people}`;
+  }
+
+  /** Exotic matter on a planet, as icons. */
+  private exotics(planet: PlanetState): string {
+    const found = new Set<ResourceId>();
+    for (const s of planet.segments) for (const d of s.deposits) if ((WARP.specialties.flat() as ResourceId[]).includes(d.resource) && d.amount > 0) found.add(d.resource);
+    return found.size ? ` · ${[...found].map((r) => this.res(r)).join("")}` : "";
+  }
+
+  /** Chips to switch the star map between the home system, the neighbor systems and the galaxy. */
+  private renderSystemTabs(state: GameState): string {
+    if (!state.systems) return "";
+    const chip = (index: number, label: string) => `<button class="chip${this.mapSystem === index ? " on" : ""}" data-action="system" data-value="${index}">${label}</button>`;
+    return `<div class="choices">${chip(-1, "🌌 Galaxie")}${chip(0, "☀️ Heimat")}${state.systems.map((s) => chip(s.index, `${s.faction ? "👽" : "✨"} ${s.name}`)).join("")}</div>`;
+  }
+
+  /** Galaxy panel: the systems, who lives there and what they hold. */
+  private renderGalaxy(state: GameState): string {
+    const target = this.mapTarget?.startsWith("sys:") ? Number(this.mapTarget.slice(4)) : null;
+    const rows = [0, ...(state.systems ?? []).map((s) => s.index)]
+      .filter((i) => target === null || i === target)
+      .map((i) => {
+        const planets = state.planets.filter((p) => systemOf(p) === i && p.type !== "asteroid");
+        const own = planets.filter((p) => this.isMine(p.id)).length;
+        return `<div class="target"><span>${this.systemLabel(state, i)} <small>${planets.length} Planeten${own ? ` · ${own} eigene` : ""}</small></span><button class="build" data-action="system" data-value="${i}">🔍 Ansehen</button></div>`;
+      })
+      .join("");
+    const hint = target === null ? `<p class="muted">Tippe auf ein System. Hin kommt man nur mit dem Warpschiff vom Warptor. ✨ unbewohnt, 👽 ein fremdes Volk lebt dort.</p>` : "";
+    return `${hint}<div class="targets">${rows}</div>`;
+  }
+
   /** Star map panel: what was tapped, and the flights that can go there from own launch pads. */
   private renderMap(state: GameState): string {
-    const pads = this.ownPlanets().filter((p) => hasBuilding(p, "launchpad"));
-    let html = `<h2>🌌 Sternsystem <button class="speed" data-action="map" title="Zurück zum Planeten">✕</button></h2>`;
+    if (!state.systems && this.mapSystem !== 0) this.mapSystem = 0;
+    const system = this.mapSystem;
+    const pads = this.ownPlanets().filter((p) => hasBuilding(p, "launchpad") && systemOf(p) === system);
+    const gates = this.ownPlanets().filter((p) => hasBuilding(p, "warpgate") && systemOf(p) !== system);
+    const title = system === -1 ? "🌌 Galaxie" : system === 0 ? "🌌 Sternsystem" : this.systemLabel(state, system);
+    let html = `<h2>${title} <button class="speed" data-action="map" title="Zurück zum Planeten">✕</button></h2>${this.renderSystemTabs(state)}`;
+    if (system === -1) return html + this.renderGalaxy(state);
     const target = this.mapTarget;
     if (target === "sun") {
       const nova = novaTickNow(state);
@@ -930,16 +1012,19 @@ export class Ui {
       }
       return html;
     }
-    const planet = state.planets.find((p) => p.id === target);
+    const planet = state.planets.find((p) => p.id === target && systemOf(p) === system);
     if (!planet) {
       const list = this.visiblePlanets(state)
+        .filter((p) => systemOf(p) === system)
         .map((p) => `<button class="chip" data-action="mapTarget" data-value="${p.id}">${p.type === "asteroid" ? "🪨" : "🪐"} ${p.name} <small>${this.planetStatus(state, p)}</small></button>`)
         .join("");
-      return `${html}<p class="muted">Tippe auf einen Planeten oder die Sonne.</p><div class="choices">${list}</div>`;
+      return `${html}<p class="muted">Tippe auf einen Planeten${system === 0 ? " oder die Sonne" : ""}.</p><div class="choices">${list}</div>`;
     }
     const people = Object.values(state.units).filter((u) => u.planetId === planet.id).length;
-    html += `<div class="target"><span>${planet.type === "asteroid" ? "🪨" : "🪐"} <b>${planet.name}</b> <small>${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder · ${this.planetStatus(state, planet)}${people ? ` · ${people} Einwohner` : ""}</small></span><button class="build" data-action="view" data-value="${planet.id}">🔍 Ansehen</button></div>`;
-    const from = pads.filter((p) => p.id !== planet.id);
+    html += `<div class="target"><span>${planet.type === "asteroid" ? "🪨" : "🪐"} <b>${planet.name}</b> <small>${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder · ${this.planetStatus(state, planet)}${people ? ` · ${people} Einwohner` : ""}${this.exotics(planet)}</small></span><button class="build" data-action="view" data-value="${planet.id}">🔍 Ansehen</button></div>`;
+    // Warp ships from gates in other systems go to free or own planets.
+    const mine = planet.economyId === null || this.isMine(planet.id);
+    const from = [...pads.filter((p) => p.id !== planet.id), ...(mine ? gates : [])];
     if (from.length) {
       html += `<div class="targets">${from.map((p) => `<div class="target"><span>von ${p.name} <small>${idleUnits(state, p, this.playerId).length} frei</small></span>${this.launchButtons(state, p, planet, p.id)}</div>`).join("")}</div>`;
     } else if (!this.isMine(planet.id)) {
@@ -1109,7 +1194,9 @@ export class Ui {
       const info =
         s.building === "launchpad"
           ? this.renderLaunches(state, planet)
-          : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}`;
+          : s.building === "warpgate"
+            ? this.renderWarps(state, planet)
+            : `<p class="muted">${def.description}</p>${this.renderPower(state, planet, s)}`;
       const next = nextUpgrade(s);
       let upgrade = "";
       if (next) {

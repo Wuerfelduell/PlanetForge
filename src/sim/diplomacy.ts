@@ -474,7 +474,7 @@ export function checkFactionEliminations(state: GameState, events: GameEvent[]):
 
 /** With factions around, a team without any inhabitants has lost: the strongest faction wins. */
 export function checkTeamWipe(state: GameState, events: GameEvent[]): void {
-  if (state.result || state.settings.factions === 0) return;
+  if (state.result || state.factions.length === 0) return;
   const humans = state.players.filter((p) => !p.ai);
   if (humans.length === 0 || humans.some((p) => peopleOf(state, p.id) > 0)) return;
   const winner = activeFactions(state)

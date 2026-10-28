@@ -271,7 +271,7 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   return { ok: true, state: next };
 }
 
-function newEconomy(id: string): EconomyState {
+export function newEconomy(id: string): EconomyState {
   return {
     id,
     resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
@@ -376,7 +376,7 @@ function startRarePackages(rng: Rng, maxPlayers: number): ResourceId[][] {
   return Array.from({ length: maxPlayers }, (_, slot) => patterns[slot % patterns.length]!.slice(0, SYSTEM.rarePerStartPlanet));
 }
 
-function placeRareDeposit(
+export function placeRareDeposit(
   rng: Rng,
   segments: SegmentState[],
   resource: ResourceId,
@@ -414,7 +414,7 @@ function placeRareDeposit(
   }
 }
 
-function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges = false): BiomeId[] {
+export function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges = false): BiomeId[] {
   const r = RULES.startRevealRadius;
   // The visible start area always offers wood, food and stone, so every seed is playable.
   // Three forests (playtest: two built over meant no wood ever again). The old draw stays so
@@ -436,7 +436,7 @@ function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges
 }
 
 /** Biomes in runs of 1–3 equal segments, drawn by the planet type's weights. */
-function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] {
+export function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] {
   const weights = Object.entries(PLANET_TYPES[type].biomeWeights) as [BiomeId, number][];
   const total = weights.reduce((sum, [, w]) => sum + w, 0);
   const draw = (): BiomeId => {
@@ -474,7 +474,7 @@ function placePlatinum(seed: string, planets: PlanetState[]): void {
   }
 }
 
-function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
+export function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
   // Tinkering deposits and the newer ores vary from a side stream so worlds of older seeds stay the same.
   const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
@@ -495,7 +495,7 @@ function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
 
 const SYLLABLES = ["ka", "lo", "mi", "ra", "ven", "tu", "sel", "dor", "ny", "quo", "bri", "za", "fen", "ol", "ix", "mar", "pe", "su"];
 
-function planetName(rng: Rng): string {
+export function planetName(rng: Rng): string {
   const parts = rng.int(2, 3);
   let name = "";
   for (let i = 0; i < parts; i++) name += rng.pick(SYLLABLES);
@@ -508,7 +508,7 @@ function pickDistinct<T>(rng: Rng, items: readonly T[], count: number): T[] {
   return copy.slice(0, Math.min(count, copy.length));
 }
 
-function shuffle<T>(items: T[], rng: Rng): void {
+export function shuffle<T>(items: T[], rng: Rng): void {
   for (let i = items.length - 1; i > 0; i--) {
     const j = rng.int(0, i);
     [items[i], items[j]] = [items[j]!, items[i]!];

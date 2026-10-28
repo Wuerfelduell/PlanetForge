@@ -57,7 +57,7 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
     }
   }
   checkEliminations(state, events);
-  if (state.settings.factions > 0) {
+  if (state.factions.length > 0) {
     checkFactionEliminations(state, events);
     checkTeamWipe(state, events);
   }
@@ -157,7 +157,7 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
     for (const u of flight.units.slice(attackerLosses)) state.units[u.id] = { ...u, planetId: planet.id, segment: null };
   }
   events.push({ type: "battle", planetId: planet.id, attacker: attacker.id, defender: defenderId, attackerLosses, defenderLosses, won, captured, ...(intercepted ? { intercepted } : {}) });
-  if (state.settings.factions > 0) onBattle(state, attacker, loserEconomy.id, won, events);
+  if (state.factions.length > 0) onBattle(state, attacker, loserEconomy.id, won, events);
 }
 
 function mainOwner(units: UnitState[]): string | undefined {

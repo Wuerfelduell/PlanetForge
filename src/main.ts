@@ -253,6 +253,7 @@ async function boot(): Promise<void> {
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     map.selected = ui.mapTarget;
+    map.system = ui.mapSystem;
     map.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
     if (uiTimer > 200) {
@@ -302,6 +303,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   factionDeclined: "diplomacy.angry",
   factionMerged: "coop.join",
   factionEliminated: "coop.leave",
+  systemsFound: "discovery.unlock",
 };
 
 function playEventSounds(events: GameEvent[]): void {
