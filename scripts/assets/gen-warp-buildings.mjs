@@ -87,9 +87,49 @@ function exoDrill(){
     path('M80 234L86 227L94 230M130 231L137 227L143 234','rock','stroke-width="3"');
 }
 
+function antimatterReactor(){
+  // A glass vessel above a low drum; stationary clamps remain in front of the core layer.
+  const sphere=circle(128,94,61,'glacier')+
+    path('M173 55Q200 104 161 141Q126 166 87 132Q131 148 158 117Q178 93 173 55Z','science','stroke="none"')+
+    (state==='idle'?
+      circle(128,94,40,'crystal','stroke="none" opacity="0.3"')+
+      path('M107 61C143 46 170 75 162 104C155 134 122 137 105 117C91 98 104 77 122 79C142 81 146 101 133 109C144 86 116 85 114 103C114 119 141 122 149 102C157 82 139 65 119 69Z','danger','stroke="none"')+
+      path('M107 61C143 46 170 75 162 104C155 134 122 137 105 117C91 98 104 77 122 79C142 81 146 101 133 109C144 86 116 85 114 103C114 119 141 122 149 102C157 82 139 65 119 69Z','crystal','stroke="none" opacity="0.5"')+
+      line('M121 64C148 59 162 82 155 101M108 100Q109 118 127 120','danger',5)+
+      line('M119 68Q133 63 144 76M114 108Q117 115 124 115','snow',4)+
+      circle(130,96,7,'danger','stroke="none"')+circle(127,93,3,'snow','stroke="none"'):
+      circle(128,94,24,'coal')+line('M114 101Q120 114 134 107','rock-dark',4))+
+    line('M81 81Q85 55 111 48','tint-white',6)+circle(79,94,3,'snow','stroke="none"');
+  return base()+
+    // Heavy power leads terminate on the foundation inside the 200 px footprint.
+    pipe('M74 175Q40 164 40 191V211Q40 220 55 220H75','oil-sheen',12)+
+    pipe('M182 175Q215 168 215 192V214Q215 222 200 222H180','rock-dark',12)+
+    line('M40 191V205',lit('crystal'),5)+line('M215 193V205',lit('danger'),5)+
+    rect(50,214,26,12,'rock',5)+rect(181,216,26,10,'rock',5)+
+    path('M54 174Q54 153 128 153Q202 153 202 174V204Q202 228 128 228Q54 228 54 204Z','paper')+
+    path('M181 177V204Q172 218 132 219','none',`stroke="${paint('rock')}" stroke-width="12"`)+
+    ellipse(128,174,74,20,'rock-dark')+ellipse(128,167,57,16,'rock')+
+    rect(105,144,46,28,'rock-dark',10)+
+    path('M68 72L57 54Q53 47 60 42L70 35Q76 31 82 39L94 58Z','rock')+
+    path('M162 58L174 39Q180 31 186 35L196 42Q203 47 199 54L188 72Z','rock-dark')+
+    glint('M63 48L72 42')+
+    group('core',sphere)+
+    // Broad curved magnetic jaws embrace the glass, with small lit contact pads.
+    path('M89 157Q57 147 55 113Q54 103 64 102H75Q83 103 83 113Q85 132 101 136Z','paper')+
+    path('M167 157Q199 147 201 113Q202 103 192 102H181Q173 103 173 113Q171 132 155 136Z','rock')+
+    rect(58,101,25,19,'rock-dark',8)+rect(173,101,25,19,'rock-dark',8)+
+    line('M64 108H77',lit('crystal'),5)+line('M179 108H192',lit('danger'),5)+
+    glint('M65 127Q69 140 83 145')+
+    rect(91,153,74,20,'rock-dark',10)+rect(105,158,46,8,lit('crystal'),4,'stroke="none"')+
+    rect(107,188,42,34,'rock-dark',11)+circle(128,204,9,lit('danger'),'stroke-width="3"')+
+    line('M69 189V202M81 191V207M175 191V207M187 189V202','rock-dark',4)+
+    glint('M63 179V185');
+}
+
 const definitions=[
   {id:'warpgate',draw:warpgate,part:'portal',pivot:[128,114],tags:['travel','unique']},
   {id:'exo-drill',draw:exoDrill,part:'drill',pivot:[112,181],tags:['mining','exotic-resources']},
+  {id:'power-antimatter',draw:antimatterReactor,part:'core',pivot:[128,94],tags:['power','antimatter']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){

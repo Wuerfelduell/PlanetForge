@@ -133,6 +133,72 @@
       "phase": "P1"
     },
     {
+      "id": "building.power-antimatter.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-antimatter-back.svg",
+      "out": "public/assets/sprites/buildings/anim/power-antimatter-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-antimatter-part.svg",
+      "out": "public/assets/sprites/buildings/anim/power-antimatter-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.36719999999999997
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/power-antimatter-front.svg",
+      "out": "public/assets/sprites/buildings/anim/power-antimatter-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.ion-cannon.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/ion-cannon-back.svg",

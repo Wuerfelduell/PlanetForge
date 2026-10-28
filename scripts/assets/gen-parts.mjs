@@ -7,6 +7,7 @@ import {read,write,round} from './common.mjs';
 export const PARTS = {
  'building.warpgate':{file:'warpgate',part:'portal',pivot:[128,114]},
  'building.exo-drill':{file:'exo-drill',part:'drill',pivot:[112,181]},
+ 'building.power-antimatter':{file:'power-antimatter',part:'core',pivot:[128,94]},
  'building.ion-cannon':{file:'ion-cannon',part:'barrel',pivot:[92,151]},
  'building.shield-generator':{file:'shield-generator',part:'orb',pivot:[128,82]},
  'building.missile-launcher':{file:'missile-launcher',part:'rack',pivot:[128,165]},

@@ -199,6 +199,106 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter-construction.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter-off.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
