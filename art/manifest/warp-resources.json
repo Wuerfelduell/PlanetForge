@@ -1,0 +1,139 @@
+{
+  "assets": [
+    {
+      "id": "resource.antimatter",
+      "category": "resources",
+      "src": "art/src/resources/antimatter.svg",
+      "out": "public/assets/sprites/resources/antimatter.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "antimatter"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.antimatter.mini",
+      "category": "resources",
+      "src": "art/src/resources/antimatter-mini.svg",
+      "out": "public/assets/sprites/resources/antimatter-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "antimatter",
+        "mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.neutronium",
+      "category": "resources",
+      "src": "art/src/resources/neutronium.svg",
+      "out": "public/assets/sprites/resources/neutronium.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "neutronium"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.neutronium.mini",
+      "category": "resources",
+      "src": "art/src/resources/neutronium-mini.svg",
+      "out": "public/assets/sprites/resources/neutronium-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "neutronium",
+        "mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.xenocrystal",
+      "category": "resources",
+      "src": "art/src/resources/xenocrystal.svg",
+      "out": "public/assets/sprites/resources/xenocrystal.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "xenocrystal"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.xenocrystal.mini",
+      "category": "resources",
+      "src": "art/src/resources/xenocrystal-mini.svg",
+      "out": "public/assets/sprites/resources/xenocrystal-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "warp-resources",
+        "rare",
+        "xenocrystal",
+        "mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

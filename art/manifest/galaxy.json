@@ -1,0 +1,194 @@
+{
+  "assets": [
+    {
+      "id": "ship.warp",
+      "category": "space",
+      "src": "art/src/space/ship-warp-f{f}.svg",
+      "out": "public/assets/sprites/space/ship-warp-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 6,
+      "parts": [
+        "hull",
+        "exhaust",
+        "engine-anchor"
+      ],
+      "tags": [
+        "star-map",
+        "ship",
+        "nose-right",
+        "flight",
+        "loop"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-nebula",
+      "category": "space",
+      "src": "art/src/space/sun-nebula.svg",
+      "out": "public/assets/sprites/space/sun-nebula.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-neutron",
+      "category": "space",
+      "src": "art/src/space/sun-neutron.svg",
+      "out": "public/assets/sprites/space/sun-neutron.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.sun-crystal",
+      "category": "space",
+      "src": "art/src/space/sun-crystal.svg",
+      "out": "public/assets/sprites/space/sun-crystal.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "rays",
+        "core"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.galaxy-bg",
+      "category": "space",
+      "src": "art/src/space/galaxy-bg.svg",
+      "out": "public/assets/sprites/space/galaxy-bg.png",
+      "viewBox": [
+        1024,
+        2048
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "background"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.galaxy-system",
+      "category": "space",
+      "src": "art/src/space/galaxy-system.svg",
+      "out": "public/assets/sprites/space/galaxy-system.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "orbits",
+        "star"
+      ],
+      "tags": [
+        "star-map",
+        "system",
+        "tintable"
+      ],
+      "phase": "P1",
+      "tintable": true
+    },
+    {
+      "id": "space.galaxy-system-alien",
+      "category": "space",
+      "src": "art/src/space/galaxy-system-alien.svg",
+      "out": "public/assets/sprites/space/galaxy-system-alien.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "planet",
+        "flag"
+      ],
+      "tags": [
+        "star-map",
+        "system",
+        "inhabited",
+        "overlay"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.warp-lane",
+      "category": "space",
+      "src": "art/src/space/warp-lane.svg",
+      "out": "public/assets/sprites/space/warp-lane.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "dot"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

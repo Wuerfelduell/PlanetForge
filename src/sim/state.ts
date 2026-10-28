@@ -55,6 +55,22 @@ export interface GameState {
   log: LogEntry[];
   /** AI factions (coop with settings.factions > 0): neighbors in the system to trade, ally or fight with. */
   factions: FactionState[];
+  /** Neighbor sun systems behind the warp gate (index 1 …); missing until the first warp gate is built. */
+  systems?: StarSystemState[];
+}
+
+/** A neighbor sun system (WARP). Its planets live in `planets` with `system` set to its index. */
+export interface StarSystemState {
+  /** 1 … WARP.systems; the home system is 0 and has no entry. */
+  index: number;
+  name: string;
+  sun: string;
+  /** Exotic matter found there. */
+  specialties: ResourceId[];
+  /** Position on the galaxy map, home at (0, 0). */
+  position: { x: number; y: number };
+  /** Id of the foreign people (AI faction) living there, if any. */
+  faction: string | null;
 }
 
 export interface GameSettings {
@@ -224,6 +240,8 @@ export interface PlanetState {
   segments: SegmentState[];
   /** Power grid of the last tick; missing while nothing on the planet makes or uses power. */
   power?: { supply: number; demand: number };
+  /** Neighbor sun system (GameState.systems); missing = the home system. */
+  system?: number;
 }
 
 export interface SegmentState {
@@ -347,7 +365,9 @@ export type GameEvent =
   /** `from` is the faction (a present to its ally) or the player who gave. */
   | { type: "factionGift"; faction: string; from: string; resource: ResourceId; amount: number }
   | { type: "factionMerged"; faction: string; playerId: string; units: number; planets: number }
-  | { type: "factionEliminated"; faction: string };
+  | { type: "factionEliminated"; faction: string }
+  /** The first warp gate found the neighbor systems. */
+  | { type: "systemsFound"; count: number; inhabited: number };
 
 export type LogEntry = { tick: number; event: GameEvent };
 

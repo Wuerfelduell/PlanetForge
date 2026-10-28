@@ -1,0 +1,189 @@
+{
+  "assets": [
+    {
+      "id": "building.farm.t3",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t3.svg",
+      "out": "public/assets/sprites/buildings/farm-t3.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sprinkler",
+        "pump-light"
+      ],
+      "tags": [
+        "usefulness",
+        "farm-t3"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.farm.t3.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t3-construction.svg",
+      "out": "public/assets/sprites/buildings/farm-t3-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sprinkler",
+        "pump-light",
+        "scaffolding"
+      ],
+      "tags": [
+        "usefulness",
+        "farm-t3-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.farm.t3.off",
+      "category": "buildings",
+      "src": "art/src/buildings/farm-t3-off.svg",
+      "out": "public/assets/sprites/buildings/farm-t3-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "sprinkler",
+        "pump-light"
+      ],
+      "tags": [
+        "usefulness",
+        "farm-t3-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.treasury",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury.svg",
+      "out": "public/assets/sprites/buildings/treasury.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.treasury.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury-construction.svg",
+      "out": "public/assets/sprites/buildings/treasury-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow",
+        "scaffolding"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury-construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.treasury.off",
+      "category": "buildings",
+      "src": "art/src/buildings/treasury-off.svg",
+      "out": "public/assets/sprites/buildings/treasury-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "treasure-glow"
+      ],
+      "tags": [
+        "usefulness",
+        "treasury-off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.fuel",
+      "category": "resources",
+      "src": "art/src/resources/fuel.svg",
+      "out": "public/assets/sprites/resources/fuel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "usefulness",
+        "fuel"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.fuel.mini",
+      "category": "resources",
+      "src": "art/src/resources/fuel-mini.svg",
+      "out": "public/assets/sprites/resources/fuel-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "usefulness",
+        "fuel-mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
