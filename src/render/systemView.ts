@@ -1,5 +1,5 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { asteroidsVisible, factionOfEconomy, INVADERS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, type GameState } from "../sim";
+import { asteroidsVisible, factionOfEconomy, INVADERS, radarIn, ROCKETS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, type GameState } from "../sim";
 import { artFrames, artTexture, hasArt } from "./art";
 
 const TAP_SLOP_PX = 10;
@@ -267,18 +267,23 @@ export class SystemView {
     const here = (id: string) => (id === "sun" ? home : planets.some((p) => p.id === id));
     for (const f of state.flights) {
       if (!here(f.from) || !here(f.to)) continue;
+      // Enemy missiles fly unseen unless a manned radar of ours watches this system.
+      const owner = state.players.find((p) => p.id === f.owner);
+      if (ROCKETS[f.rocket].unmanned && owner?.economyId !== me?.economyId && !radarIn(state, me?.economyId, system)) continue;
       const a = this.at(state, f.from);
       const b = this.at(state, f.to);
       const t = Math.min(1, Math.max(0, (state.tick - f.launchTick) / Math.max(1, f.arrivalTick - f.launchTick)));
       const mine = f.owner === this.playerId;
-      const hostile = !mine && state.planets.some((p) => p.id === f.to && p.economyId === me?.economyId) && f.rocket === "combat";
+      const hostile = !mine && state.planets.some((p) => p.id === f.to && p.economyId === me?.economyId) && (ROCKETS[f.rocket].attack || ROCKETS[f.rocket].unmanned);
       const color = hostile ? 0xff5c5c : mine ? 0x7bf0a0 : 0xb8bedc;
       dotted(lines, a.x, a.y, b.x, b.y, color, Math.max(4, k * 0.12));
       const x = a.x + (b.x - a.x) * t;
       const y = a.y + (b.y - a.y) * t;
       const angle = Math.atan2(b.y - a.y, b.x - a.x);
       // Ship art points right; the launch pad rocket (fallback) points up.
-      const ship = art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
+      // War rockets have their own art (ship.homing, …) once Codex delivers it.
+      const own = art && f.rocket !== "colony" && f.rocket !== "combat" ? artFrames(`ship.${f.rocket}`) : [];
+      const ship = own.length ? own : art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
       const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket !== "colony" ? "building.rocket-big" : "building.rocket-small") : undefined;
       if (rocket) this.sprite(rocket, x, y, Math.max(18, k * 0.5), angle + (ship.length ? 0 : Math.PI / 2));
       else {

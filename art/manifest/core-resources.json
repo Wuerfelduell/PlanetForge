@@ -1,0 +1,184 @@
+{
+  "assets": [
+    {
+      "id": "resource.core-iron",
+      "category": "resources",
+      "src": "art/src/resources/core-iron.svg",
+      "out": "public/assets/sprites/resources/core-iron.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "core-iron",
+        "rare-ore"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.core-iron.mini",
+      "category": "resources",
+      "src": "art/src/resources/core-iron-mini.svg",
+      "out": "public/assets/sprites/resources/core-iron-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "core-iron",
+        "rare-ore",
+        "mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ember-crystal",
+      "category": "resources",
+      "src": "art/src/resources/ember-crystal.svg",
+      "out": "public/assets/sprites/resources/ember-crystal.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "ember-crystal",
+        "rare-ore"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.ember-crystal.mini",
+      "category": "resources",
+      "src": "art/src/resources/ember-crystal-mini.svg",
+      "out": "public/assets/sprites/resources/ember-crystal-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "ember-crystal",
+        "rare-ore",
+        "mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.deep-quartz",
+      "category": "resources",
+      "src": "art/src/resources/deep-quartz.svg",
+      "out": "public/assets/sprites/resources/deep-quartz.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "deep-quartz",
+        "rare-ore"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.deep-quartz.mini",
+      "category": "resources",
+      "src": "art/src/resources/deep-quartz-mini.svg",
+      "out": "public/assets/sprites/resources/deep-quartz-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "deep-quartz",
+        "rare-ore",
+        "mini"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.deep-suit",
+      "category": "resources",
+      "src": "art/src/resources/deep-suit.svg",
+      "out": "public/assets/sprites/resources/deep-suit.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "deep-suit",
+        "equipment"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.deep-suit.mini",
+      "category": "resources",
+      "src": "art/src/resources/deep-suit-mini.svg",
+      "out": "public/assets/sprites/resources/deep-suit-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "deep-core",
+        "deep-suit",
+        "equipment",
+        "mini"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

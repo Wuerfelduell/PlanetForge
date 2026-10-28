@@ -1,0 +1,167 @@
+{
+  "assets": [
+    {
+      "id": "planet.core-sun",
+      "category": "planets",
+      "src": "art/src/planets/core-sun.svg",
+      "out": "public/assets/sprites/planets/core-sun.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body",
+        "lava-swirl",
+        "heat-haze"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-interior",
+      "category": "ui",
+      "src": "art/src/ui/icon-interior.svg",
+      "out": "public/assets/sprites/ui/icon-interior.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-interior"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.icon-surface",
+      "category": "ui",
+      "src": "art/src/ui/icon-surface.svg",
+      "out": "public/assets/sprites/ui/icon-surface.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-surface"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "ui.badge-quake",
+      "category": "ui",
+      "src": "art/src/ui/badge-quake.svg",
+      "out": "public/assets/sprites/ui/badge-quake.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-quake"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "space.planet-core-drill-badge",
+      "category": "space",
+      "src": "art/src/space/planet-core-drill-badge.svg",
+      "out": "public/assets/sprites/space/planet-core-drill-badge.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        1
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "glow"
+      ],
+      "tags": [
+        "star-map",
+        "core-reached"
+      ],
+      "phase": "P1",
+      "tintable": false
+    },
+    {
+      "id": "fx.quake",
+      "category": "fx",
+      "src": "art/src/fx/quake-f{f}.svg",
+      "out": "public/assets/sprites/fx/quake-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "parts": [
+        "cracks",
+        "dust",
+        "rocks"
+      ],
+      "tags": [
+        "quake",
+        "animation",
+        "once"
+      ],
+      "phase": "P1",
+      "fps": 10
+    },
+    {
+      "id": "fx.magma-burst",
+      "category": "fx",
+      "src": "art/src/fx/magma-burst-f{f}.svg",
+      "out": "public/assets/sprites/fx/magma-burst-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 4,
+      "parts": [
+        "glow",
+        "magma"
+      ],
+      "tags": [
+        "magma-burst",
+        "animation",
+        "once"
+      ],
+      "phase": "P1",
+      "fps": 10
+    }
+  ]
+}

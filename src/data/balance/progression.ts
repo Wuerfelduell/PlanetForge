@@ -34,6 +34,8 @@ export const RULES = {
   /** Production multiplier while starving. A second starving cycle in a row kills one citizen. */
   starvingRateFactor: 0.5,
   starvationDeathAfterCycles: 2,
+  /** Seb 2026-10-28: every source of food makes 10 % more (fields, farms, greenhouses, gathering). */
+  foodOutputMul: 1.1,
   birthFoodCost: 15,
   /**
    * Food does not pile up forever (playtest: 60 000 food unused): what is above

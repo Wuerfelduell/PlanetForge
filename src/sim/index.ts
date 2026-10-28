@@ -21,3 +21,4 @@ export { activeFactions, atWar, attitudeLabel, bundleSize, FACTIONS, factionById
 export { discoveryCost, discoveryDescription, discoveryName, modified, OFFERABLE, type DiscoveryId } from "./discoveries";
 export { advance, advanceWithEvents } from "./step";
 export { nextRandom, Rng, seedFromString } from "./rng";
+export { allPlanets, coreAccessBlocker, coreHazard, coreOf, coreWorkers, drillProgress, freeDeepSuits, shaftOpen, surfaceOf } from "./core";
