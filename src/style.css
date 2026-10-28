@@ -209,6 +209,36 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .build { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; }
 .build .icon { font-size: 24px; }
 .build .cost { font-size: 13px; color: var(--muted); }
+/* ⓘ in the corner of a build button: what the building does, without building it (also on greyed-out ones). */
+.build { position: relative; }
+.build .info {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font: italic 700 13px/20px Georgia, serif;
+  text-align: center;
+  pointer-events: auto;
+  cursor: help;
+}
+.build .info::before { content: ""; position: absolute; inset: -8px; } /* bigger tap area */
+.binfo { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); }
+.binfo-card { width: min(420px, 100%); max-height: 85vh; overflow-y: auto; background: var(--surface-2); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.4; }
+.binfo-card p { margin: 6px 0; }
+.binfo-card ul { margin: 6px 0; padding-left: 18px; }
+.binfo-card li { margin: 3px 0; }
+.binfo-card small { color: var(--muted); }
+.binfo-card .good { color: var(--good); }
+.binfo-card .bad { color: var(--bad); }
+.binfo-head { display: flex; align-items: center; gap: 10px; }
+.binfo-head .icon { font-size: 32px; }
+.binfo-head .icon img.bi { width: 48px; height: 48px; }
+.binfo-head small { display: block; }
+.binfo-sub { font-weight: 700; margin-top: 10px !important; }
 .build .cost .short { color: var(--bad); }
 .power { margin: 6px 0; color: var(--good); font-size: 14px; }
 .power small { color: var(--muted); }
