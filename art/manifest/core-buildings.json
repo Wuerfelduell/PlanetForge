@@ -1,0 +1,284 @@
+{
+  "assets": [
+    {
+      "id": "building.core-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill.svg",
+      "out": "public/assets/sprites/buildings/core-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/core-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-off.svg",
+      "out": "public/assets/sprites/buildings/core-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          170
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine",
+      "category": "buildings",
+      "src": "art/src/buildings/core-mine.svg",
+      "out": "public/assets/sprites/buildings/core-mine.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart"
+      ],
+      "partPivots": {
+        "cart": [
+          180,
+          211
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-mine",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/core-mine-construction.svg",
+      "out": "public/assets/sprites/buildings/core-mine-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "cart": [
+          180,
+          211
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-mine",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine.off",
+      "category": "buildings",
+      "src": "art/src/buildings/core-mine-off.svg",
+      "out": "public/assets/sprites/buildings/core-mine-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "cart"
+      ],
+      "partPivots": {
+        "cart": [
+          180,
+          211
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-mine",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.support-pillar",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar.svg",
+      "out": "public/assets/sprites/buildings/support-pillar.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.support-pillar.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar-construction.svg",
+      "out": "public/assets/sprites/buildings/support-pillar-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.support-pillar.off",
+      "category": "buildings",
+      "src": "art/src/buildings/support-pillar-off.svg",
+      "out": "public/assets/sprites/buildings/support-pillar-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "core-buildings",
+        "support-pillar",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.open",
+      "category": "buildings",
+      "src": "art/src/buildings/core-drill-open.svg",
+      "out": "public/assets/sprites/buildings/core-drill-open.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          110,
+          117
+        ]
+      },
+      "tags": [
+        "core-buildings",
+        "core-drill",
+        "open"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

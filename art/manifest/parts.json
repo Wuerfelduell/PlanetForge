@@ -1,6 +1,138 @@
 {
   "assets": [
     {
+      "id": "building.core-drill.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-drill-back.svg",
+      "out": "public/assets/sprites/buildings/anim/core-drill-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-drill-part.svg",
+      "out": "public/assets/sprites/buildings/anim/core-drill-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.42969999999999997,
+        0.6641
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-drill.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-drill-front.svg",
+      "out": "public/assets/sprites/buildings/anim/core-drill-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-mine-back.svg",
+      "out": "public/assets/sprites/buildings/anim/core-mine-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-mine-part.svg",
+      "out": "public/assets/sprites/buildings/anim/core-mine-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.7031000000000001,
+        0.8242
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.core-mine.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/core-mine-front.svg",
+      "out": "public/assets/sprites/buildings/anim/core-mine-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.quantum-lab.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/quantum-lab-back.svg",
