@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each numbered delivery remains independently reproducible from its commit.
-const STAGE = 2;
+const STAGE = 3;
 const assets = [];
 const path = (d, token = null, extra = '') => `<path d="${d}" fill="${token ? C(token) : 'none'}" ${extra}/>`;
 const circle = (x, y, r, token, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -64,6 +64,21 @@ function empPulse(frame) {
   return defs + `<g opacity="${alpha}">${ring}${sparks}</g>`;
 }
 if (STAGE >= 2) emit('fx.emp-pulse', 'fx', 'emp-pulse', empPulse, {frames: 4, fps: 10, tags: ['emp-pulse', 'animation', 'once']});
+
+function empBadge() {
+  const backing = circle(32, 32, 28, 'paper');
+  const ring = circle(32, 32, 20, null, 'stroke-width="3.5" stroke-dasharray="18 6 12 6"') +
+    circle(32, 32, 20, null, `stroke="${C('science')}" stroke-width="2" stroke-dasharray="18 6 12 6"`) +
+    line('M13 19 L17 23 M46 16 L43 20 M48 46 L44 43', 'science', 2);
+  const cable = line('M25 39 V43 Q25 48 32 48 H36', 'ink', 5) + line('M25 39 V43 Q25 48 32 48 H36', 'rock-dark', 2.5);
+  const plug = line('M20 25 V17 M29 25 V17', 'ink', 5) + line('M20 24 V17 M29 24 V17', 'rock', 2) +
+    '<rect x="16" y="24" width="18" height="16" rx="5" fill="' + C('rock-dark') + '"/>' +
+    shadow('M29 26 H32 V34 Q32 38 28 38 H22 Q29 36 29 26Z', 'rock-dark') +
+    shine('M19 28 V32', 1.5) + line('M22 36 H28', 'science', 1.5);
+  const bolt = path('M42 22 Q44 19 43 23 L41 31 H48 Q50 31 48 34 L39 44 Q37 46 38 42 L40 36 H35 Q33 36 35 33Z', 'energy', 'stroke-width="1.5"');
+  return backing + ring + cable + plug + bolt;
+}
+if (STAGE >= 3) emit('ui.badge-emp', 'ui', 'badge-emp', empBadge, {size: 64, tags: ['ui', 'badge-emp']});
 
 write('art/manifest/war-fx.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`War FX: ${assets.length} ids generated (stage ${STAGE}).`);

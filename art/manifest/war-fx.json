@@ -45,6 +45,27 @@
         "once"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.badge-emp",
+      "category": "ui",
+      "src": "art/src/ui/badge-emp.svg",
+      "out": "public/assets/sprites/ui/badge-emp.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-emp"
+      ],
+      "phase": "P1"
     }
   ]
 }
