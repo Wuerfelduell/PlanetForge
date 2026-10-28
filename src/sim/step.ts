@@ -103,6 +103,14 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     }
     grids.set(surfaceIds.get(planet.id) ?? planet.id, grid);
   }
+  // An EMP knocks out every power plant of the planet (and its interior) until it wears off.
+  for (const planet of planets) {
+    if (planet.empUntilTick === undefined) continue;
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id);
+    if (planet.empUntilTick > state.tick) {
+      if (grid) grid.supply = 0;
+    } else delete planet.empUntilTick;
+  }
 
   for (const planet of planets) {
     const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];

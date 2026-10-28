@@ -66,6 +66,7 @@ export function terraform(state: GameState, planet: PlanetState, segment: Segmen
   const to = def.to ?? segment.biome;
   if (kind === "clearScorched") {
     delete segment.scorched;
+    delete segment.irradiated;
     delete segment.ruin;
     for (const d of segment.deposits) if (!d.infinite) d.amount = Math.max(d.amount, d.max * TERRAFORM_START_FILL);
   } else if (to !== segment.biome) {

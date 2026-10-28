@@ -179,9 +179,9 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   if (cmd.type === "launch") {
     const to = planetById(state, cmd.to);
     if (!to) return "Unbekanntes Ziel";
-    const blocker = launchBlocker(state, playerId, planet, to, cmd.rocket, cmd.count);
+    const blocker = launchBlocker(state, playerId, planet, to, cmd.rocket, cmd.count, cmd.segment);
     if (blocker) return blocker;
-    launch(state, player, planet, to, cmd.rocket, cmd.count, events);
+    launch(state, player, planet, to, cmd.rocket, cmd.count, events, cmd.segment);
     return null;
   }
   const segment = checkSegment(player, planet, cmd.segment);
