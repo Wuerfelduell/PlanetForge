@@ -94,6 +94,101 @@
       ],
       "tags": [],
       "phase": "P1"
+    },
+    {
+      "id": "space.galaxy-bg",
+      "category": "space",
+      "src": "art/src/space/galaxy-bg.svg",
+      "out": "public/assets/sprites/space/galaxy-bg.png",
+      "viewBox": [
+        1024,
+        2048
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "background"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "space.galaxy-system",
+      "category": "space",
+      "src": "art/src/space/galaxy-system.svg",
+      "out": "public/assets/sprites/space/galaxy-system.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "glow",
+        "orbits",
+        "star"
+      ],
+      "tags": [
+        "star-map",
+        "system",
+        "tintable"
+      ],
+      "phase": "P1",
+      "tintable": true
+    },
+    {
+      "id": "space.galaxy-system-alien",
+      "category": "space",
+      "src": "art/src/space/galaxy-system-alien.svg",
+      "out": "public/assets/sprites/space/galaxy-system-alien.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "planet",
+        "flag"
+      ],
+      "tags": [
+        "star-map",
+        "system",
+        "inhabited",
+        "overlay"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "space.warp-lane",
+      "category": "space",
+      "src": "art/src/space/warp-lane.svg",
+      "out": "public/assets/sprites/space/warp-lane.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "dot"
+      ],
+      "tags": [
+        "star-map"
+      ],
+      "phase": "P1"
     }
   ]
 }

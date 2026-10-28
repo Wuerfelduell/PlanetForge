@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Keep each delivery checkpoint reproducible from its commit.
-const STAGE = 2;
+const STAGE = 3;
 const assets = [];
 const path = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
@@ -103,6 +103,60 @@ function crystalSun() {
   return sunDefs('ok') + group('glow', glow) + group('rays', rays) + group('core', core);
 }
 if (STAGE >= 2) for (const [name, draw] of [['nebula', nebulaSun], ['neutron', neutronSun], ['crystal', crystalSun]]) emit(`space.sun-${name}`, `sun-${name}`, draw, {size: [1024, 1024], parts: ['glow', 'rays', 'core']});
+
+function galaxyBackground() {
+  const defs = `<defs><linearGradient id="space-bg" x2="0" y2="1"><stop stop-color="${C('space-deep')}"/><stop offset="1" stop-color="${C('space')}"/></linearGradient>${halo('galaxy-haze', 'crystal', .1)}${halo('galaxy-core', 'science', .2)}<radialGradient id="galaxy-arm" gradientUnits="userSpaceOnUse" cx="512" cy="1024" r="620" gradientTransform="translate(512 1024) scale(1 1.6) translate(-512 -1024)"><stop stop-color="${C('science')}" stop-opacity="0.3"/><stop offset="0.5" stop-color="${C('crystal')}" stop-opacity="0.2"/><stop offset="1" stop-color="${C('crystal')}" stop-opacity="0"/></radialGradient></defs>`;
+  let body = path('M0 0 H1024 V2048 H0Z', 'url(#space-bg)', 'stroke="none"') +
+    ellipse(512, 1024, 510, 910, 'url(#galaxy-haze)', 'stroke="none"');
+  // Broad translucent strokes feather the arms without sharp dust lanes,
+  // point stars, filters or noise competing with system markers.
+  for (let arm = 0; arm < 2; arm++) {
+    let d = '';
+    for (let i = 0; i <= 32; i++) {
+      const t = i / 32 * 4.8, r = 40 + 86 * t, angle = t + arm * Math.PI - 1.2;
+      d += `${i ? ' L' : 'M'}${round(512 + Math.cos(angle) * r)} ${round(1024 + Math.sin(angle) * r * 1.6)}`;
+    }
+    let softArm = '';
+    for (let width = 180; width >= 20; width -= 8) softArm += path(d, 'none', `stroke="url(#galaxy-arm)" stroke-width="${width}" opacity="0.1"`);
+    body += `<g opacity="0.2">${softArm}</g>`;
+  }
+  body += ellipse(512, 1024, 198, 310, 'url(#galaxy-core)', 'stroke="none"');
+  return defs + group('background', body);
+}
+function systemMarker() {
+  const defs = `<defs>${halo('marker-glow', 'tint-white', .4)}</defs>`;
+  let orbits = '';
+  for (const angle of [-24, 32]) orbits += ellipse(64, 64, 43, 16, 'none', `transform="rotate(${angle} 64 64)" stroke-width="4"`) +
+    ellipse(64, 64, 43, 16, 'none', `transform="rotate(${angle} 64 64)" stroke="${C('tint-white')}" stroke-width="1.5" opacity="0.7"`);
+  const star = path('M61 39 Q64 31 67 39 L73 53 Q74 55 77 56 L91 61 Q99 64 91 67 L77 72 Q74 73 73 76 L67 90 Q64 98 61 90 L55 76 Q54 73 51 72 L37 67 Q29 64 37 61 L51 56 Q54 55 55 53Z', C('tint-white')) +
+    path('M68 43 L73 53 Q74 55 77 56 L91 61 Q99 64 91 67 L77 72 Q74 73 73 76 L67 90 Q64 98 61 90 L60 86 Q74 68 68 43Z', C('snow'), 'stroke="none"') +
+    shine('M60 48 L57 56', 1.5);
+  return defs + group('glow', circle(64, 64, 59, 'url(#marker-glow)', 'stroke="none"')) + group('orbits', orbits) +
+    group('star', star) + circle(27, 83, 4, C('tint-white'), 'stroke-width="1.5"') + circle(100, 84, 3, C('tint-white'), 'stroke-width="1.5"');
+}
+function alienBadge() {
+  // All painted pixels, including the outline, stay in x >= 64, y <= 64.
+  const planet = circle(92, 45, 15, C('ok')) +
+    path('M100 33 A15 15 0 0 1 81 55 Q103 56 100 33Z', C('ok', -.18), 'stroke="none"') +
+    path('M79 39 Q84 31 91 32 L96 38 L90 42 L86 39Z', C('science'), 'stroke-width="1.5"') + shine('M81 41 Q82 36 86 35', 1.5);
+  const flag = line('M92 45 V13', 'ink', 4) + line('M92 44 V14', 'cream', 1.5) +
+    path('M93 14 Q99 10 106 14 Q112 18 118 14 V29 Q111 33 105 29 Q99 25 93 29Z', C('crystal')) +
+    shine('M97 16 Q101 15 105 17', 1.5) + circle(105, 22, 2.5, C('cream'), 'stroke="none"');
+  return group('planet', planet) + group('flag', flag);
+}
+function warpLane() {
+  const defs = `<defs>${halo('lane-glow', 'crystal', .5)}</defs>`;
+  const dash = ellipse(32, 32, 29, 19, 'url(#lane-glow)', 'stroke="none"') +
+    '<rect x="17" y="27" width="30" height="10" rx="5" fill="' + C('crystal') + '"/>' +
+    line('M22 30 H42', 'science', 3) + line('M22 29 H31', 'snow', 1.5);
+  return defs + group('dot', dash);
+}
+if (STAGE >= 3) {
+  emit('space.galaxy-bg', 'galaxy-bg', galaxyBackground, {size: [1024, 2048], parts: ['background']});
+  emit('space.galaxy-system', 'galaxy-system', systemMarker, {parts: ['glow', 'orbits', 'star'], tags: ['star-map', 'system', 'tintable'], tintable: true});
+  emit('space.galaxy-system-alien', 'galaxy-system-alien', alienBadge, {parts: ['planet', 'flag'], tags: ['star-map', 'system', 'inhabited', 'overlay']});
+  emit('space.warp-lane', 'warp-lane', warpLane, {size: [64, 64], parts: ['dot'], tags: ['star-map']});
+}
 
 write('art/manifest/galaxy.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`Galaxy art: ${assets.length} ids generated (stage ${STAGE}).`);
