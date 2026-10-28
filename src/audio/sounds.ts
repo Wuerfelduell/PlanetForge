@@ -136,6 +136,17 @@ export const SOUNDS = {
     ],
     gain: 0.6,
   },
+  'victory.fanfare': {
+    layers: [
+      { wave: 'triangle', freq: 392, notes: [0, 0, 0, 5, 9, 12], step: 0.13, release: 0.5 },
+      { wave: 'triangle', freq: 523, at: 0.8, attack: 0.05, hold: 0.9, release: 1.2, vibrato: { rate: 5, depth: 0.12 } },
+      { wave: 'sine', freq: 659, at: 0.8, attack: 0.08, hold: 0.9, release: 1.2, volume: 0.6 },
+      { wave: 'sine', freq: 784, at: 0.8, attack: 0.1, hold: 0.9, release: 1.2, volume: 0.5 },
+      { wave: 'sine', freq: 131, at: 0.8, attack: 0.2, hold: 0.8, release: 1.2, volume: 0.6 },
+      { wave: 'noise', freq: 6000, to: 12000, at: 0.8, attack: 0.1, release: 1.4, lowpass: 3000, volume: 0.2 },
+    ],
+    gain: 0.65,
+  },
   'discovery.unlock': {
     layers: [
       { wave: 'sine', freq: 659, notes: [0, 7, 12, 19], step: 0.08, release: 0.6, vibrato: { rate: 6, depth: 0.15 } },

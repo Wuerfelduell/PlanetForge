@@ -328,7 +328,7 @@ export type GameEvent =
   | { type: "invasionSpotted"; target: string; wave: number; arrivalTick: number }
   | { type: "invasionArrived"; target: string; wave: number }
   | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
-  | { type: "invasionDefeated"; target: string; wave: number }
+  | { type: "invasionDefeated"; target: string; wave: number; /** What the wreck gave the team (missing in older events). */ loot?: Partial<Record<ResourceId, number>> }
   | { type: "suffocated"; planetId: string; left: number }
   | { type: "thawed"; planetId: string; segment: number; people: PeopleId; count: number; playerId: string }
   | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
