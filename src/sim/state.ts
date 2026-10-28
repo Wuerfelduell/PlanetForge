@@ -57,6 +57,11 @@ export interface GameState {
   factions: FactionState[];
   /** Neighbor sun systems behind the warp gate (index 1 …); missing until the first warp gate is built. */
   systems?: StarSystemState[];
+  /**
+   * Planet interiors opened by a core drill (CORE). Kept apart from `planets` so the star map,
+   * flights and invaders never see them; planetById finds them all the same.
+   */
+  cores?: PlanetState[];
 }
 
 /** A neighbor sun system (WARP). Its planets live in `planets` with `system` set to its index. */
@@ -242,6 +247,10 @@ export interface PlanetState {
   power?: { supply: number; demand: number };
   /** Neighbor sun system (GameState.systems); missing = the home system. */
   system?: number;
+  /** Seconds the core drill has worked so far; gone once it broke through. */
+  drill?: number;
+  /** The interior of this planet (in GameState.cores): id of the planet around it. */
+  coreOf?: string;
 }
 
 export interface SegmentState {
@@ -367,7 +376,12 @@ export type GameEvent =
   | { type: "factionMerged"; faction: string; playerId: string; units: number; planets: number }
   | { type: "factionEliminated"; faction: string }
   /** The first warp gate found the neighbor systems. */
-  | { type: "systemsFound"; count: number; inhabited: number };
+  | { type: "systemsFound"; count: number; inhabited: number }
+  /** A core drill broke through: `coreId` is the new interior of `planetId`. */
+  | { type: "coreOpened"; planetId: string; coreId: string; playerId: string }
+  /** Danger inside a planet: a quake killed a worker, or a magma burst hit a building (and maybe a worker). */
+  | { type: "quake"; planetId: string; segment: number; killed: number }
+  | { type: "eruption"; planetId: string; segment: number; killed: number; building: BuildingId | null; wrecked: boolean };
 
 export type LogEntry = { tick: number; event: GameEvent };
 

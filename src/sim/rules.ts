@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, CRYO, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, WARP, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, CORE, CRYO, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, WARP, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { atWar, factionOfEconomy } from "./diplomacy";
 import { ASCENSION } from "../data/balance/progression";
@@ -26,8 +26,9 @@ export function playerById(state: GameState, id: string): PlayerState | undefine
   return state.players.find((p) => p.id === id);
 }
 
+/** A planet, or a planet interior (GameState.cores). */
 export function planetById(state: GameState, id: string): PlanetState | undefined {
-  return state.planets.find((p) => p.id === id);
+  return state.planets.find((p) => p.id === id) ?? state.cores?.find((p) => p.id === id);
 }
 
 export function economyOf(state: GameState, planet: PlanetState): EconomyState | undefined {
@@ -228,6 +229,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (def.unique && hasBuilding(planet, building)) return "Nur eins pro Planet";
+  if (building === "core-drill" && planet.type === "asteroid") return "Asteroiden haben keinen Kern";
   if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
@@ -325,7 +327,8 @@ export function ascensionIncome(state: GameState, economy: EconomyState, residen
   let citizens = 0;
   let stages = 0;
   let buildings = 0;
-  for (const p of state.planets) {
+  // Interiors count too: their workers and their building stages.
+  for (const p of [...state.planets, ...(state.cores ?? [])]) {
     if (p.economyId !== economy.id) continue;
     if (residents === undefined) citizens += Object.values(state.units).filter((u) => u.planetId === p.id).length;
     for (const s of p.segments) {
@@ -376,7 +379,7 @@ export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId,
   if (def.altFuel && economy && economy.resources[def.fuel.resource] < fuel + (cost[def.fuel.resource] ?? 0)) {
     cost[def.altFuel.resource] = (cost[def.altFuel.resource] ?? 0) + fuel * def.altFuel.mul;
   } else cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
-  const seconds = def.warp ? WARP.seconds : Math.round(distance * def.secondsPerDistance);
+  const seconds = def.warp ? WARP.seconds * (hasBuilding(from, "warp-core") ? CORE.warpCoreMul : 1) : Math.round(distance * def.secondsPerDistance);
   return { distance, cost, seconds: Math.max(1, seconds) };
 }
 
@@ -531,7 +534,8 @@ export function planetShield(state: GameState, planet: PlanetState): number {
 
 /** Settlers here need space suits: no breathable air, and not a start planet (those have a dome). */
 export function needsSuits(planet: PlanetState): boolean {
-  return planet.startSlot === null && !PLANET_TYPES[planet.type].breathable;
+  // Down inside a planet the deep suit does it (CORE).
+  return planet.startSlot === null && !planet.coreOf && !PLANET_TYPES[planet.type].breathable;
 }
 
 /**

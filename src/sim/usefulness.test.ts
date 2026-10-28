@@ -78,11 +78,11 @@ describe("every resource has a use", () => {
     for (const r of Object.values(RECIPES)) add(r.inputs);
     for (const r of Object.values(ROCKETS)) add({ ...r.cost, [r.fuel.resource]: 1 });
     add(SUPERNOVA.segmentCost);
-    // Spent outside these tables: food (upkeep), science (discoveries), suits (breathing).
-    const elsewhere = new Set<ResourceId>(["food", "science", "suits"]);
+    // Spent outside these tables: food (upkeep), science (discoveries), suits (breathing), deep suits (worn inside planets).
+    const elsewhere = new Set<ResourceId>(["food", "science", "suits", "deep-suit"]);
     const single = RESOURCE_IDS.filter((r) => !elsewhere.has(r) && (uses.get(r) ?? 0) < 2);
-    // Raw goods with exactly one recipe that turns them into something widely used, and platinum.
-    expect(single).toEqual(["sand", "fiber", "tin", "bauxite", "ilmenite", "platinum"]);
+    // Raw goods with exactly one recipe that turns them into something widely used.
+    expect(single).toEqual(["sand", "fiber", "tin", "bauxite", "ilmenite"]);
   });
 
   it("a treasury turns gold, silver and ätherite into ascension points", () => {

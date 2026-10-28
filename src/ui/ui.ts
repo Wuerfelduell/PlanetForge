@@ -80,6 +80,15 @@ import {
   TEAM_ECONOMY,
   tradeQuote,
   type FactionState,
+  CORE,
+  coreAccessBlocker,
+  coreHazard,
+  coreOf,
+  coreWorkers,
+  drillProgress,
+  planetById,
+  shaftOpen,
+  surfaceOf,
 } from "../sim";
 import { currentHint } from "./hints";
 import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
@@ -174,6 +183,11 @@ export class Ui {
     return this.art && kind === "clearScorched" && artTexture("ui.icon-clear-scorched") ? `<img class="bi" src="assets/sprites/ui/icon-clear-scorched.png" alt="${emoji}">` : emoji;
   }
 
+  /** UI icon from the art (ui.<name>) once Codex drew it, else the emoji. */
+  private uicon(name: string, emoji: string): string {
+    return this.art && artTexture(`ui.${name}`) ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
+  }
+
   private bicon(building: BuildingId): string {
     return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
   }
@@ -192,7 +206,7 @@ export class Ui {
   render(state: GameState): void {
     this.state = state;
     this.celebrateShield(state);
-    const planet = state.planets.find((p) => p.id === this.planetId);
+    const planet = planetById(state, this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
     // Three parts, so the resource strip stays the same element and keeps its scroll position
@@ -228,6 +242,18 @@ export class Ui {
           break;
         case "thawed":
           if (this.isMine(e.planetId)) this.toast(`🧊 ${e.count} ${PEOPLES[e.people].name} aufgetaut! Sie wohnen jetzt auf ${this.planetName(e.planetId)}.`, "good");
+          break;
+        case "coreOpened":
+          if (this.isMine(e.planetId)) this.toast(`🕳️ Durchbruch! Die Kernbohrung auf ${this.planetName(e.planetId)} hat das Planeteninnere erreicht. Tippe auf ⬇ Inneres.`, "good");
+          break;
+        case "quake":
+          if (this.isMine(e.planetId)) this.toast(`💥 Beben im Inneren von ${this.planetName(e.planetId)}: ein Arbeiter ist verschüttet, sein Tiefenanzug ist verloren. Stützpfeiler helfen.`, "bad");
+          break;
+        case "eruption":
+          if (this.isMine(e.planetId)) {
+            const what = e.building ? `${BUILDINGS[e.building].name} ${e.wrecked ? "zerstört" : "beschädigt"}` : "";
+            this.toast(`🌋 Magmaausbruch im Inneren von ${this.planetName(e.planetId)}${what ? `: ${what}` : ""}${e.killed ? ", ein Arbeiter ist umgekommen" : ""}.`, "bad");
+          }
           break;
         case "suffocated":
           if (this.isMine(e.planetId)) this.toast(`🧑‍🚀 Keine Raumanzüge mehr: ein Siedler auf ${this.planetName(e.planetId)} ist erstickt. Eine Werkstatt (Stufe 2) näht neue.`, "bad");
@@ -498,6 +524,16 @@ export class Ui {
         this.actions.send({ type: "launch", planetId: from || this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
         break;
       }
+      case "interior":
+      case "surface": {
+        // Down into the planet and back up (CORE).
+        const state = this.state;
+        const planet = state && planetById(state, this.planetId);
+        if (!state || !planet) break;
+        const to = action === "interior" ? coreOf(state, planet) : surfaceOf(state, planet);
+        if (to && to.id !== planet.id) this.actions.showPlanet(to.id);
+        break;
+      }
       case "planet": {
         const own = this.ownPlanets();
         const next = own[(own.findIndex((p) => p.id === this.planetId) + 1) % own.length];
@@ -655,11 +691,20 @@ export class Ui {
       `<button class="speed${paused ? " on" : ""}" data-action="speed" data-value="${paused ? pace : 0}" title="${paused ? "Weiter" : "Pause"}">${paused ? "▶" : "⏸"}</button>` +
       `<button class="speed${pace === 3 ? " on" : ""}" data-action="speed" data-value="${pace === 3 ? 1 : 3}" title="Tempo">${pace}×</button>`;
     const own = this.ownPlanets();
-    const planetChip = !own.some((p) => p.id === planet.id)
-      ? `<span class="chip name" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
-      : own.length > 1
-        ? `<button class="chip name" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
-        : `<span class="chip name" title="Planet">🪐 ${planet.name}</span>`;
+    // Inside a planet (CORE) the chip names the planet around it, with a way back up.
+    const surface = surfaceOf(state, planet);
+    const inside = planet.coreOf !== undefined;
+    const name = inside ? `${surface.name} <small>Inneres</small>` : planet.name;
+    const planetChip = (!own.some((p) => p.id === surface.id)
+      ? `<span class="chip name" title="Planet">🪐 ${name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
+      : own.length > 1 && !inside
+        ? `<button class="chip name" data-action="planet" title="Nächster eigener Planet">🪐 ${name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
+        : `<span class="chip name" title="Planet">🪐 ${name}</span>`) +
+      (inside
+        ? `<button class="chip glow" data-action="surface" title="Zurück an die Oberfläche (I)">${this.uicon("icon-surface", "⬆")} Oberfläche</button>`
+        : coreOf(state, planet)
+          ? `<button class="chip" data-action="interior" title="Ins Planeteninnere (I)">${this.uicon("icon-interior", "⬇")} Inneres</button>`
+          : "");
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
     const versusButtons = duel
@@ -670,7 +715,9 @@ export class Ui {
       <div class="row status main">
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
-        <span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>
+        ${inside
+          ? `<span class="chip" title="Arbeiter im Inneren / Tiefenanzüge">${this.res("deep-suit")} ${planet.economyId ? coreWorkers(state, planet.economyId).length : 0}/${Math.floor(economy.resources["deep-suit"])} <small>${idleUnits(state, surface, this.playerId).length} frei oben</small></span>`
+          : `<span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>`}
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
@@ -853,11 +900,15 @@ export class Ui {
   }
 
   private isMine(planetId: string): boolean {
-    return this.ownPlanets().some((p) => p.id === planetId);
+    const planet = this.state && planetById(this.state, planetId);
+    // A planet interior is ours when its planet is.
+    return !!planet && this.ownPlanets().some((p) => p.id === surfaceOf(this.state!, planet).id);
   }
 
   private planetName(planetId: string): string {
-    return this.state?.planets.find((p) => p.id === planetId)?.name ?? "?";
+    const planet = this.state && planetById(this.state, planetId);
+    if (!planet) return "?";
+    return planet.coreOf ? `${surfaceOf(this.state!, planet).name} (Inneres)` : planet.name;
   }
 
   private playerName(playerId: string): string {
@@ -1151,7 +1202,7 @@ export class Ui {
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
-        const tag = deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : d.resource === "platinum" ? `<small>Tiefbohrer</small>` : "";
+        const tag = planet.coreOf ? `<small>Kernmine</small>` : deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : d.resource === "platinum" ? `<small>Tiefbohrer</small>` : "";
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
     };
@@ -1171,7 +1222,7 @@ export class Ui {
       ? `<div class="workers">
           <button class="round" data-action="assign" data-value="-1" ${workerCount(state, planet, s.index, this.playerId) > 0 ? "" : "disabled"}>－</button>
           <span>👤 ${workerCount(state, planet, s.index)}/${cap}${workerCount(state, planet, s.index) !== workerCount(state, planet, s.index, this.playerId) ? ` <small>(${workerCount(state, planet, s.index, this.playerId)} von dir)</small>` : ""}</span>
-          <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, planet, this.playerId).length > 0 ? "" : "disabled"}>＋</button>
+          <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, surfaceOf(state, planet), this.playerId).length > 0 && !(planet.coreOf && coreAccessBlocker(state, planet, 1)) ? "" : "disabled"} title="${planet.coreOf ? (coreAccessBlocker(state, planet, 1) ?? "Ein freier Einwohner fährt im Tiefenanzug hinunter") : ""}">＋</button>
           <span class="rate">${rate}${mult !== 1 ? ` <small>Nachbarn ×${mult.toFixed(2)}</small>` : ""}${toolFactor(s, economy) < 1 ? ` <small>🔧 ohne Werkzeug langsamer</small>` : ""}</span>
         </div>`
       : "";
@@ -1276,7 +1327,25 @@ export class Ui {
     const cryo = pod
       ? `<p class="muted">🧊 Eine Kryokapsel: ${pod.count} eingefrorene ${PEOPLES[pod.people].icon} ${PEOPLES[pod.people].name} schlafen hier.</p><button class="build" data-action="thaw" ${thawBlock ? `disabled title="${thawBlock}"` : ""}><span class="icon">🧊</span><span class="name">Auftauen: ${pod.count} neue Einwohner</span><span class="cost">${thawCost}</span></button>`
       : "";
-    return `<h2>${title}</h2>${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
+    return `<h2>${title}</h2>${this.renderDepths(state, planet, s)}${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
+  }
+
+  /** Planet interior (CORE): the drill's progress on the surface, the dangers and suits inside. */
+  private renderDepths(state: GameState, planet: PlanetState, s: PlanetState["segments"][number]): string {
+    if (s.building === "core-drill" && !planet.coreOf) {
+      if (coreOf(state, planet)) return `<p class="power">🕳️ Durchgebrochen. <button data-action="interior">⬇ Ins Innere</button></p>`;
+      const p = drillProgress(planet);
+      return `<p class="power">🕳️ Bohrt in die Tiefe: ${Math.floor(p * 100)} % <span class="bar"><span style="width:${Math.round(p * 100)}%"></span></span></p>`;
+    }
+    if (!planet.coreOf) return "";
+    const economy = economyOf(state, planet);
+    const used = planet.economyId ? coreWorkers(state, planet.economyId).length : 0;
+    const suits = `${this.res("deep-suit")} ${used}/${Math.floor(economy?.resources["deep-suit"] ?? 0)} Tiefenanzüge getragen`;
+    const { quake, eruption } = coreHazard(planet, s);
+    const risk = [quake ? `Beben ${Math.round(quake * 100)} %` : "", eruption ? `Magma ${Math.round(eruption * 100)} %` : ""].filter(Boolean).join(", ");
+    const shut = shaftOpen(state, planet) ? "" : `<p class="power short">🕳️ Die Kernbohrung oben fehlt: niemand kommt hinunter, die Arbeit steht still.</p>`;
+    const warn = quake >= CORE.warnFrom || eruption >= CORE.warnFrom ? " short" : "";
+    return `${shut}<p class="power${warn}">${risk ? `⚠️ Gefahr je Umlauf: ${risk}. ` : ""}<small>${suits}</small></p>`;
   }
 }
 
