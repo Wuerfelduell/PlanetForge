@@ -368,6 +368,12 @@ export class PlanetView {
     this.setSelected(index);
   }
 
+  /** Keyboard: the next field to the right (+1) or left (-1). */
+  turn(step: number): void {
+    const n = this.segmentCount;
+    if (n) this.select((((this.selected + step) % n) + n) % n);
+  }
+
   update(state: GameState, deltaMs: number): void {
     if (!this.drag) {
       const k = Math.min(1, deltaMs / 80);

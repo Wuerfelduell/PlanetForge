@@ -3,6 +3,7 @@ import type { Sfx } from "../audio/sfx";
 import { readName, writeName } from "../net/menu";
 import { PEOPLE_IDS, PLANET_TYPE_IDS, PLANET_TYPES, SYSTEM, WORLD_LIMITS, type PeopleId, type WorldOptions } from "../sim";
 import { isPeopleId, peopleArt, peoplePickerHtml } from "./peoplePicker";
+import { KEY_HELP } from "./keyboard";
 import "./mainMenu.css";
 
 /**
@@ -125,6 +126,23 @@ export class MainMenu {
     if (!wasOpen && this.actions.current()) this.saved = this.actions.save();
     this.render();
     if (!wasOpen) this.actions.onToggle(true);
+  }
+
+  /** Esc: one screen back, or back to the game from the top screen. */
+  back(): void {
+    if (this.busy) return;
+    if (this.screen !== this.base) {
+      this.sfx.play("ui.close");
+      this.toBase();
+    } else if (this.actions.current()) this.close();
+  }
+
+  private toBase(): void {
+    this.error = "";
+    this.confirmNew = false;
+    this.screen = this.base;
+    if (this.base === "home") this.slot = undefined;
+    this.render();
   }
 
   /** New-game screen preset to a cloud slot (from the online menu's free slots). */
@@ -274,6 +292,10 @@ export class MainMenu {
         <input type="range" data-set="sfxVolume" min="0" max="100" step="5" value="${Math.round(s.volume * 100)}" ${s.muted ? "disabled" : ""} aria-label="Geräusch-Lautstärke">
       </div>
       <p class="menu-note">Alles wird in diesem Browser gespeichert.</p>
+      <details class="menu-keys"${matchMedia("(pointer: fine)").matches ? " open" : ""}>
+        <summary>⌨️ Tastatur am PC</summary>
+        <dl>${KEY_HELP.map(([keys, what]) => `<dt>${keys}</dt><dd>${what}</dd>`).join("")}</dl>
+      </details>
       <div class="menu-actions"><button data-go="back">Zurück</button></div>`;
   }
 
@@ -331,11 +353,7 @@ export class MainMenu {
         this.render();
         break;
       case "back":
-        this.error = "";
-        this.confirmNew = false;
-        this.screen = this.base;
-        if (this.base === "home") this.slot = undefined;
-        this.render();
+        this.toBase();
         break;
       case "online":
         this.actions.openOnline();

@@ -80,6 +80,7 @@ import {
 } from "../sim";
 import { currentHint } from "./hints";
 import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
+import { sfx } from "../audio/sfx";
 
 export interface UiActions {
   send(cmd: Command): void;
@@ -362,6 +363,37 @@ export class Ui {
     while (this.toasts.children.length > 3) this.toasts.firstElementChild!.remove();
     setTimeout(() => node.classList.add("out"), 2600);
     setTimeout(() => node.remove(), 3000);
+  }
+
+  get mapIsOpen(): boolean {
+    return this.mapOpen;
+  }
+
+  /** Keyboard shortcut: does what tapping this button (or the first one matching) would. False if there is none. */
+  press(target: string | HTMLElement): boolean {
+    const el = typeof target === "string" ? this.hud.querySelector<HTMLElement>(target) ?? this.panel.querySelector<HTMLElement>(target) : target;
+    if (!el) return false;
+    if (el.hasAttribute("disabled")) {
+      sfx.play("ui.error");
+      return true;
+    }
+    this.onAction({ target: el } as unknown as Event);
+    if (this.state) this.render(this.state);
+    return true;
+  }
+
+  /** Esc: closes the star map, discoveries, factions or the lists under the top bar. False if none was open. */
+  closeOverlay(): boolean {
+    if (this.mapOpen) return this.press(`[data-action="map"]`);
+    if (this.showDiscoveries || this.showFactions) {
+      this.showDiscoveries = this.showFactions = false;
+      this.lastPanel = "";
+    } else if (this.showAscension || this.showResources) {
+      this.showAscension = this.showResources = false;
+      this.lastHud = NO_HUD;
+    } else return false;
+    if (this.state) this.render(this.state);
+    return true;
   }
 
   private onAction(e: Event): void {

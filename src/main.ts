@@ -11,6 +11,7 @@ import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
 import { mountLayoutControls } from "./ui/layoutControls";
+import { mountKeyboard } from "./ui/keyboard";
 import { music } from "./audio/music";
 import { unlockMusicOnFirstGesture } from "./audio/musicControl";
 import { MainMenu, worldOptions, type NewGameOptions } from "./ui/mainMenu";
@@ -201,6 +202,16 @@ async function boot(): Promise<void> {
   );
   // An invite link (?join=CODE) opens the online menu on top of it.
   menu.open();
+  mountKeyboard({
+    ui,
+    turn: (step) => view.turn(step),
+    menuOpen: () => menu.isOpen,
+    menuBack: () => menu.back(),
+    openMenu(screen) {
+      menu.open("pause");
+      if (screen === "settings") menu.open("settings");
+    },
+  });
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
