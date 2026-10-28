@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.shell-armor.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shell-armor-back.svg",
+      "out": "public/assets/sprites/buildings/anim/shell-armor-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.shell-armor.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shell-armor-part.svg",
+      "out": "public/assets/sprites/buildings/anim/shell-armor-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.3945,
+        0.3945
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.shell-armor.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/shell-armor-front.svg",
+      "out": "public/assets/sprites/buildings/anim/shell-armor-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.ion-cannon.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/ion-cannon-back.svg",
