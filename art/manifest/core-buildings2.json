@@ -1,0 +1,101 @@
+{
+  "assets": [
+    {
+      "id": "building.gravity-cannon",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "idle"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    },
+    {
+      "id": "building.gravity-cannon.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon-construction.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel",
+        "scaffolding"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "construction"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    },
+    {
+      "id": "building.gravity-cannon.off",
+      "category": "buildings",
+      "src": "art/src/buildings/gravity-cannon-off.svg",
+      "out": "public/assets/sprites/buildings/gravity-cannon-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "barrel"
+      ],
+      "tags": [
+        "core-buildings2",
+        "defense",
+        "core-iron",
+        "gravity",
+        "off"
+      ],
+      "phase": "P1",
+      "partPivots": {
+        "barrel": [
+          94,
+          159
+        ]
+      }
+    }
+  ]
+}
