@@ -14,6 +14,7 @@ export const PARTS = {
  'building.observatory':{file:'observatory',part:'dome',pivot:[128,145]},
  'building.sawmill.t1':{file:'sawmill-t1',part:'blade',pivot:[152,166]},
  'building.sawmill.t2':{file:'sawmill-t2',part:'blade',pivot:[145,151]},
+ 'building.sawmill.t3':{file:'sawmill-t3',part:'blade',pivot:[143,145]},
  'building.battery':{file:'battery',part:'barrel',pivot:[128,150]},
  'building.power-wind':{file:'power-wind',part:'blades',pivot:[128,99]},
  'building.air-filter':{file:'air-filter',part:'fan',pivot:[128,129]},

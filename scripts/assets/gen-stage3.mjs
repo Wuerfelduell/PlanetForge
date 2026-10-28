@@ -54,6 +54,53 @@ function fishery(){
     base();
 }
 
+// Same sixteen chunky teeth as the existing sawmills, with a larger steel disc.
+function sawBlade(x,y,r){
+  const at=(radius,angle)=>`${round(x+radius*Math.cos(angle*Math.PI/180))} ${round(y+radius*Math.sin(angle*Math.PI/180))}`;
+  let d='';
+  for(let i=0;i<16;i++){
+    const a=i*22.5;
+    d+=`${i?'L':'M'}${at(r-6,a)}L${at(r,a+5)}L${at(r,a+13)}L${at(r-6,a+17)}`;
+  }
+  return group('blade',path(d+'Z','rock')+circle(x,y,r-12,'snow','stroke-width="3"')+
+    [0,120,240].map(a=>`<g transform="rotate(${a} ${x} ${y})">${line(`M${x+12} ${y-4}Q${x+22} ${y} ${x+22} ${y+9}`,'rock-dark',3)}</g>`).join('')+
+    circle(x,y,10,'rock-dark','stroke-width="3"')+circle(x-3,y-3,3,'snow','stroke="none"')+
+    glint(`M${x-r+14} ${y-15}Q${x-r+20} ${y-30} ${x-12} ${y-31}`));
+}
+
+function sawmill(){
+  return rect(48,77,163,147,'sand',14)+
+    shade('M198 92V211H62','sand',9)+
+    line('M68 92V217M97 92V217M126 92V217M155 92V217M184 92V217','iron',3)+
+    post(39,77,148,'rock')+post(205,77,148,'rock')+
+    // Retain the wide clay gable and warm vertical timber of sawmill.t2.
+    path('M31 81Q24 77 32 69L115 28Q128 20 141 28L224 69Q232 77 225 81Q128 93 31 81Z','clay')+
+    shade('M217 74Q128 85 42 77','clay',7)+glint('M49 65L115 33')+
+    rect(105,56,48,23,'rock',8)+line('M114 64H144M114 71H144','rock-dark',3)+
+    rect(60,103,29,29,'iron',8)+lamp(64,107,21,21)+
+    rect(184,105,34,51,'rock',9)+lamp(189,111,24,17)+
+    circle(196,142,3,active('ok'),'stroke="none"')+line('M205 138V146','rock-dark',3)+
+    cable('M201 157V170Q201 178 190 178H168M48 223H39V194Q39 187 49 183M68 143V137Q68 130 78 130H91')+
+    rect(39,145,48,42,'science',11)+shade('M78 156V177H51','science',6)+
+    line('M48 153H62M48 161H62','deep-water',3)+
+    line('M75 153L142 135M75 178L147 157','coal',6)+
+    // The part is deliberately between the fixed drive and the conveyor/logs.
+    // Exact rotation center: [143,145]. Lower teeth are masked by the front layer.
+    sawBlade(143,145,54)+
+    post(43,211,14,'rock-dark')+post(201,211,14,'rock-dark')+
+    rect(33,202,190,20,'rock-dark',10)+
+    [47,74,101,128,155,182,209].map(x=>circle(x,212,6,'rock','stroke-width="3"')).join('')+
+    line('M44 204H213','paper',3)+
+    path('M56 177H116L128 190L116 203H56Z','iron')+
+    shade('M58 196H118','iron',6)+line('M77 183H107M80 194H115','clay',3)+
+    ellipse(56,190,16,13,'sand')+ellipse(56,190,8,7,'paper','stroke-width="3"')+
+    line('M52 190Q57 184 61 191','iron',2)+
+    // Clearly split boards on the outbound side rather than a second log.
+    rect(166,189,51,13,'iron',5)+rect(161,177,51,12,'sand',5)+
+    line('M169 181H202M175 194H208','iron',3)+
+    rect(129,188,24,15,'rock',6)+glint('M135 192H145')+base();
+}
+
 function scaffolding(){
   return group('scaffolding',post(38,57,180)+post(206,57,180)+
     rect(31,108,194,12,'sand',5)+rect(31,186,194,12,'sand',5)+
@@ -64,6 +111,7 @@ function scaffolding(){
 
 const buildings = [
   {name:'fishery',draw:fishery,parts:[]},
+  {name:'sawmill',draw:sawmill,parts:['blade']},
 ];
 const assets=[];
 for(const def of buildings){
