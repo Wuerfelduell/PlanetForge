@@ -75,8 +75,49 @@ function coreDrill(open = false) {
     line('M43 217H62M151 217H164', 'snow', 3);
 }
 
+function coreMine() {
+  // Low, craggy hot rock and a chamfered blast entrance distinguish the rounded surface mines.
+  const rock = p('M34 225L35 147Q34 134 43 121L55 100L57 79Q58 72 68 74L88 81L109 60Q116 54 123 62L144 81L171 77Q180 76 184 86L192 113L214 130Q222 136 221 150L224 225Z', 'lava', '', -.18) +
+    p('M58 80L88 88L114 65L132 86L115 105L85 101L64 119L40 144L46 124L58 102Z', 'iron', 'stroke="none"') +
+    p('M177 86L189 117L211 134L218 153L221 223H190L179 177L188 150L166 125Z', 'coal', 'stroke="none"') +
+    // Solid colored seams convey heat without gradients or resource-forbidden filters.
+    line('M72 84L79 99L68 115M139 84L153 105L171 109L166 133M202 145L196 162L206 175', lit('lava'), 8) +
+    line('M72 84L79 99L68 115M139 84L153 105L171 109', lit('ascension'), 3) +
+    (state === 'off' ? '' : line('M151 104L161 107M76 99L71 109', 'energy', 3)) +
+    shine('M63 82L70 85M106 73L115 65');
+  const doorway = p('M54 222V140Q54 133 59 128L76 109Q81 104 88 104H123Q130 104 135 111L151 131Q155 136 155 143V222Z', 'coal') +
+    p('M67 219V144L86 119H122L141 144V219Z', lit('lava'), 'stroke-width="3"') +
+    p('M76 219V146L91 127H119L134 147V219Z', 'space-deep', 'stroke="none"') +
+    line('M136 151V212', lit('ascension'), 5) +
+    // Thick core-iron beams, with angular shoulder braces and rivets.
+    p('M46 222V139Q46 130 52 123L73 99H137L162 128V222H147V140L127 117H83L61 141V222Z', 'coal') +
+    line('M54 209V141L80 108H130', 'rock-dark', 6) +
+    [ [57,144], [82,108], [132,109], [154,145] ].map(([x,y]) => circle(x,y,3,'rock','stroke="none"')).join('') +
+    // Partly open sliding heat-shield door: inset ribs and a central locking wheel.
+    p('M66 217V147L86 123H108V217Z', 'rock-dark', 'stroke-width="3"') +
+    p('M98 127H107V214H97Z', 'coal', 'stroke="none"') +
+    [150,169,188].map(y => line(`M74 ${y}H96`, 'coal', 6) + line(`M74 ${y-2}H92`, 'rock', 2)).join('') +
+    circle(88,184,8,'coal','stroke-width="3"') + line('M88 179V189M83 184H93','rock',3) +
+    shine('M74 142L87 130') +
+    p('M172 215L180 149L194 154L211 222H191L185 191L182 222Z','coal') +
+    line('M183 160L194 206','rock-dark',5);
+  const rails = [218,226,233].map(y => line(`M104 ${y}H215`,'coal',4)).join('') +
+    line('M103 216L96 235M191 216L218 235','rock',5);
+  const cart = group('cart',
+    p('M151 199L154 184L166 173L179 184L190 169L205 181L211 200Z',lit('lava'),'stroke-width="3"') +
+    p('M156 188L166 177L176 186L169 199H155ZM179 187L191 174L201 183L197 197H180Z',lit('ascension'),'stroke="none"') +
+    line('M161 187L166 182M186 185L191 180',lit('energy'),4) +
+    p('M146 197H216L209 218H154Z','rock-dark') +
+    rect(144,195,74,10,'coal',4,'stroke-width="3"') +
+    line('M156 209H203','rock',4) +
+    circle(160,222,7,'coal','stroke-width="3"') + circle(202,222,7,'coal','stroke-width="3"') +
+    circle(160,222,2,'rock','stroke="none"') + circle(202,222,2,'rock','stroke="none"'));
+  return base() + rock + doorway + rails + cart;
+}
+
 const buildings = [
   { id: 'core-drill', draw: () => coreDrill(), parts: ['drill'], partPivots: { drill: [110, 170] } },
+  { id: 'core-mine', draw: coreMine, parts: ['cart'], partPivots: { cart: [180, 211] } },
 ];
 const assets = [];
 function emit(def, mode = 'idle') {
