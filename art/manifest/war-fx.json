@@ -1,0 +1,27 @@
+{
+  "assets": [
+    {
+      "id": "fx.nuke-blast",
+      "category": "fx",
+      "src": "art/src/fx/nuke-blast-f{f}.svg",
+      "out": "public/assets/sprites/fx/nuke-blast-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 5,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "explosion",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
