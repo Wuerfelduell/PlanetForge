@@ -1,0 +1,92 @@
+{
+  "assets": [
+    {
+      "id": "fx.nuke-blast",
+      "category": "fx",
+      "src": "art/src/fx/nuke-blast-f{f}.svg",
+      "out": "public/assets/sprites/fx/nuke-blast-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 5,
+      "fps": 12,
+      "parts": [],
+      "tags": [
+        "explosion",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "fx.emp-pulse",
+      "category": "fx",
+      "src": "art/src/fx/emp-pulse-f{f}.svg",
+      "out": "public/assets/sprites/fx/emp-pulse-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "emp-pulse",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.badge-emp",
+      "category": "ui",
+      "src": "art/src/ui/badge-emp.svg",
+      "out": "public/assets/sprites/ui/badge-emp.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-emp"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.badge-incoming-missile",
+      "category": "ui",
+      "src": "art/src/ui/badge-incoming-missile.svg",
+      "out": "public/assets/sprites/ui/badge-incoming-missile.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "badge-incoming-missile"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
