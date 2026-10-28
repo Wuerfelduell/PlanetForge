@@ -107,7 +107,7 @@ function cleanupIcon() {
     line('M55 81L62 80', 'cream', 3) + '</g></g>';
 }
 
-for (const n of [12, 16, 24, 32]) {
+for (const n of [12, 16, 18, 24, 30, 32, 40]) {
   emit(`overlay.scorched.${n}`, 'biomes', `overlay-scorched-${n}`, scorched(n), 1024, [.5, .5], ['overlay']);
 }
 
