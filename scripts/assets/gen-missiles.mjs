@@ -42,8 +42,32 @@ function homing(frame){
   return flight(hull,exhaust(frame));
 }
 
+function emp(frame){
+  const coil=x=>ellipse(x,64,6,19,'clay')+
+    ellipse(x,64,2.5,14,'deep-water','stroke-width="1.5"')+
+    shine(`M${x-3} 55Q${x-3} 49 ${x} 48`,1.5);
+  const spark=d=>line(d,'ink',4.5)+line(d,'energy',2);
+  const hull=
+    path('M40 49L38 37Q38 33 43 36L58 48M40 79L38 91Q38 95 43 92L58 80','energy')+
+    rect(25,54,15,20,5,'rock-dark')+
+    rect(34,46,54,36,12,'deep-water')+
+    shadow('M35 69Q59 80 85 68V75Q85 82 76 82H46Q37 82 35 74Z','deep-water')+
+    rect(59,46,16,36,4,'energy','stroke-width="1.5"')+
+    shadow('M60 72H75V80H60Z','energy')+
+    line('M44 61H52M44 68H52','science',2)+shine('M42 51H51',2)+
+    // A rounded copper solenoid is the nose itself, with no glass cockpit.
+    rect(79,55,33,18,7,'deep-water')+
+    coil(84)+coil(92)+coil(100)+coil(108)+
+    circle(114,64,4,'energy','stroke-width="1.5"')+
+    spark('M96 32L92 38L100 40L97 46')+
+    spark('M109 84L115 88L110 94')+
+    spark('M119 48L116 53L122 55');
+  return flight(hull,exhaust(frame));
+}
+
 const ships=[
   {name:'missile-homing',draw:homing},
+  {name:'missile-emp',draw:emp},
 ];
 const assets=[];
 for(const {name,draw} of ships){
