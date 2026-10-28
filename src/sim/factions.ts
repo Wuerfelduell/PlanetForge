@@ -296,7 +296,8 @@ function pickRecipe(s: SegmentState, economy: EconomyState): void {
     const recipe = RECIPES[id];
     const inputs = Object.entries(recipe.inputs) as [ResourceId, number][];
     if (inputs.some(([r, v]) => economy.resources[r] < v * 5)) continue;
-    const made = Object.keys(recipe.outputs)[0] as ResourceId;
+    const made = Object.keys(recipe.outputs)[0] as ResourceId | undefined;
+    if (!made) continue;
     const need = economy.resources[made] / FACTIONS.stockTarget;
     if (!best || need < best.need) best = { id, need };
   }
@@ -323,7 +324,8 @@ function workScore(planet: PlanetState, s: SegmentState, economy: EconomyState, 
     const recipe = RECIPES[segmentRecipe(s)!];
     // Only with the inputs in stock, and not when the shelf is already full.
     for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) if (economy.resources[r] < v * 5) return 0;
-    const made = Object.keys(recipe.outputs)[0] as ResourceId;
+    const made = Object.keys(recipe.outputs)[0] as ResourceId | undefined;
+    if (!made) return 1;
     if (economy.resources[made] > FACTIONS.stockTarget * 2) return 1;
     return made === "planks" || made === "tools" ? 6 : 5;
   }

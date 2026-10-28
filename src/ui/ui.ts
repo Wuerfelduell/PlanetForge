@@ -1076,7 +1076,7 @@ export class Ui {
           .map((id) => {
             const r = RECIPES[id];
             const list = (c: Partial<Record<ResourceId, number>>) => Object.entries(c).map(([k, v]) => `${v}${this.res(k as ResourceId)}`).join(" ");
-            return `<button class="deposit${id === recipe ? " on" : ""}" data-action="gather" data-value="${id}" title="${r.name}">${list(r.inputs)} → ${list(r.outputs)}</button>`;
+            return `<button class="deposit${id === recipe ? " on" : ""}" data-action="gather" data-value="${id}" title="${r.name}">${list(r.inputs)} → ${list(r.outputs)}${r.ascension ? `${r.ascension}⭐` : ""}</button>`;
           })
           .join("")}</div>`
       : "";

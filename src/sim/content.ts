@@ -119,7 +119,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "fiber", max: 50, byHand: true },
       { resource: "stone", max: 25 },
       { resource: "clay", max: 30 },
-      { resource: "bauxite", max: 35 },
+      { resource: "bauxite", max: 50 },
     ],
   },
   mountains: {
@@ -128,7 +128,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "stone", max: 90, byHand: true },
-      { resource: "iron", max: 50 },
+      { resource: "iron", max: 70 },
       { resource: "copper", max: 45 },
       { resource: "gold", max: 15, tier: 2 },
       { resource: "tin", max: 25 },
@@ -153,6 +153,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 30 },
       { resource: "copper", max: 30 },
       { resource: "ilmenite", max: 20 },
+      { resource: "bauxite", max: 25 },
     ],
   },
   swamp: {
@@ -163,7 +164,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "clay", max: 70, byHand: true },
       { resource: "water", max: 40 },
       { resource: "fiber", max: 30, byHand: true },
-      { resource: "bauxite", max: 25 },
+      { resource: "bauxite", max: 40 },
     ],
   },
   tundra: {
@@ -173,7 +174,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "stone", max: 50, byHand: true },
       { resource: "water", max: 60, byHand: true },
-      { resource: "iron", max: 30 },
+      { resource: "iron", max: 42 },
       { resource: "tin", max: 35 },
       { resource: "silver", max: 20, tier: 2 },
     ],
@@ -204,7 +205,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "stone", max: 60, byHand: true },
-      { resource: "iron", max: 45 },
+      { resource: "iron", max: 63 },
       { resource: "gold", max: 20, tier: 2 },
       { resource: "ilmenite", max: 35 },
     ],
@@ -232,7 +233,7 @@ export const BUILDING_IDS = [
   "watchtower", "battery",
   "launchpad", "refinery",
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
-  "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell",
+  "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell", "treasury",
   "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
@@ -359,7 +360,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { name: "Holzhaus", icon: "🏠", cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
       { name: "Steinhaus", icon: "🏡", cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
       // Needs power: without it only half the flats are lit and lived in.
-      { name: "Wohnturm", icon: "🏢", cost: { concrete: 20, steel: 10, glass: 10 }, unlockLevel: 7, housing: 12, energy: -1 },
+      { name: "Wohnturm", icon: "🏢", cost: { concrete: 20, steel: 10, glass: 10, plastic: 5 }, unlockLevel: 7, housing: 12, energy: -1 },
     ],
   },
   park: {
@@ -384,11 +385,23 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     ascension: 10,
     unique: true,
   },
+  // Seb 2026-10-28: gold, silver and ätherite piled up with nothing to spend them on.
+  treasury: {
+    name: "Schatzkammer",
+    icon: "🏛️",
+    category: "housing",
+    description: "Ein Arbeiter lagert Gold, Silber oder Ätherit ein, das Volk ist stolz darauf: je Stück 4 Aufstiegspunkte (Ätherit 6).",
+    cost: { bricks: 20, stone: 20, bronze: 5 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 1,
+    crafts: { recipes: ["tribute-gold", "tribute-silver", "tribute-aetherite"], speed: 1 },
+  },
   farm: {
     name: "Farm",
     icon: "🌾",
     category: "food",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub). Stufe 3 (Bewässerte Farm) bringt 60 % mehr, braucht aber Strom.",
     cost: { wood: 12 },
     unlockLevel: 0,
     allowedBiomes: ["savanna", "forest", "swamp", "ash"],
@@ -401,7 +414,11 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "mine", bonus: -0.25 },
       { building: "power-coal", bonus: -0.2 },
     ],
-    upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
+    upgrades: [
+      { cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 },
+      // Seb 2026-10-28: power should pay off. Same crew, more food, but it needs power.
+      { name: "Bewässerte Farm", cost: { steel: 10, glass: 5, wire: 5 }, unlockLevel: 6, workers: 4, produces: { resource: "food", perWorker: 0.8 }, energy: -1 },
+    ],
   },
   fishery: {
     name: "Fischerei",
@@ -434,7 +451,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Sägewerk",
     icon: "🪚",
     category: "production",
-    description: "Macht aus Holz Bretter. Muss neben einem Wald stehen, +30 % je Nachbar-Wald. Verbraucht Werkzeug.",
+    description: "Macht aus Holz Bretter. Muss neben einem Wald stehen, +30 % je Nachbar-Wald. Verbraucht Werkzeug. Stufe 2 braucht Strom.",
     cost: { wood: 20, stone: 10 },
     unlockLevel: 1,
     allowedBiomes: LAND,
@@ -443,7 +460,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     needsNeighbor: ["forest"],
     adjacency: [{ biome: "forest", bonus: 0.3 }],
     usesTools: true,
-    upgrades: [{ cost: { bricks: 10, tools: 5 }, unlockLevel: 4, workers: 4, crafts: { recipes: ["planks"], speed: 1.5 } }],
+    upgrades: [{ cost: { bricks: 10, tools: 5, wire: 5 }, unlockLevel: 4, workers: 4, crafts: { recipes: ["planks"], speed: 1.5 }, energy: -1 }],
   },
   forester: {
     name: "Förster",
@@ -460,7 +477,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Mine",
     icon: "⛏️",
     category: "resources",
-    description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
+    description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug. Stufe 2 braucht Strom.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
     allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
@@ -471,9 +488,10 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     usesTools: true,
     upgrades: [
       {
-        cost: { iron: 15, bricks: 10, tools: 5 },
+        cost: { iron: 15, bricks: 10, tools: 5, wire: 5 },
         unlockLevel: 5,
         workers: 5,
+        energy: -1,
         extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold", "tin", "bauxite", "ilmenite", "silver"], perWorker: 0.8 },
       },
     ],
@@ -512,30 +530,30 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Werkstatt",
     icon: "🛠️",
     category: "production",
-    description: "Macht Werkzeug, Kupferdraht, Stoff oder Raumanzüge. +15 % je Nachbar-Sägewerk oder -Mine.",
+    description: "Macht Werkzeug (aus Eisen oder sparsamer aus Bronze), Kupferdraht, Stoff oder Raumanzüge. Stufe 2 braucht Strom. +15 % je Nachbar-Sägewerk oder -Mine.",
     cost: { planks: 15, stone: 15 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1 },
+    crafts: { recipes: ["tools", "bronze-tools", "wire", "cloth", "suits"], speed: 1 },
     adjacency: [
       { building: "sawmill", bonus: 0.15 },
       { building: "mine", bonus: 0.15 },
     ],
-    upgrades: [{ cost: { bricks: 15, iron: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1.5 } }],
+    upgrades: [{ cost: { bricks: 15, iron: 10, wire: 5 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "bronze-tools", "wire", "cloth", "suits"], speed: 1.5 }, energy: -1 }],
   },
   lab: {
     name: "Labor",
     icon: "🔬",
     category: "research",
-    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk).",
+    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk). Stufe 2 braucht Strom.",
     cost: { stone: 20, planks: 10, water: 10 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
     produces: { resource: "science", perWorker: 0.2 },
     adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, { building: "library", bonus: 0.2 }, ...NOISY],
-    upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 } }],
+    upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 }, energy: -1 }],
   },
   foundry: {
     name: "Gießerei",
@@ -608,7 +626,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Biogasanlage",
     icon: "🫧",
     category: "production",
-    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
+    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk und Bioplastik. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
     cost: { bricks: 15, planks: 10, iron: 5 },
     unlockLevel: 4,
     allowedBiomes: LAND,
@@ -623,12 +641,12 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Kunststoffwerk",
     icon: "🧴",
     category: "production",
-    description: "Kocht aus Öl Plastik für Elektronik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
+    description: "Kocht aus Öl Plastik, oder ohne Öl aus Biogas Bioplastik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
     cost: { bricks: 15, steel: 10, planks: 10 },
     unlockLevel: 5,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["plastic"], speed: 1 },
+    crafts: { recipes: ["plastic", "bioplastic"], speed: 1 },
     adjacency: [{ building: "pump", bonus: 0.25 }],
   },
   electronics: {
@@ -926,7 +944,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     icon: "🛡️",
     category: "defense",
     description: "Ein Energieschild über dem Planeten, solange jemand ihn bedient: Invasoren können nichts zerstören oder verbrennen, Angreifer würfeln −1. Braucht viel Strom. Nur einer pro Planet.",
-    cost: { steel: 20, glass: 20, electronics: 4 },
+    cost: { steel: 20, glass: 20, electronics: 4, plastic: 5 },
     unlockLevel: 8,
     allowedBiomes: LAND,
     workers: 1,
@@ -950,7 +968,8 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
 
 export type RecipeId =
   | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
-  | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium";
+  | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium"
+  | "bronze-tools" | "bioplastic" | "tribute-gold" | "tribute-silver" | "tribute-aetherite";
 
 export interface RecipeDef {
   name: string;
@@ -958,6 +977,8 @@ export interface RecipeDef {
   outputs: Partial<Record<ResourceId, number>>;
   /** Seconds per craft with one worker at speed 1. */
   seconds: number;
+  /** Ascension points per craft (treasury offerings, which make no goods). */
+  ascension?: number;
 }
 
 /** Recipes; the id is also the main output, so a segment's `gather` names the chosen recipe. */
@@ -973,7 +994,7 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   steel: { name: "Stahl", inputs: { iron: 2, coal: 1 }, outputs: { steel: 1 }, seconds: 10 },
   concrete: { name: "Beton", inputs: { stone: 2, clay: 1, water: 1 }, outputs: { concrete: 1 }, seconds: 8 },
   greens: { name: "Gemüse", inputs: { water: 1 }, outputs: { food: 2 }, seconds: 5 },
-  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 2 }, seconds: 10 },
   biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
@@ -981,6 +1002,12 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   bronze: { name: "Bronze", inputs: { copper: 2, tin: 1, coal: 1 }, outputs: { bronze: 2 }, seconds: 8 },
   aluminium: { name: "Aluminium", inputs: { bauxite: 3 }, outputs: { aluminium: 1 }, seconds: 10 },
   titanium: { name: "Titan", inputs: { ilmenite: 2, coal: 2 }, outputs: { titanium: 1 }, seconds: 14 },
+  // Seb 2026-10-28: iron was short and copper, tin, gold, silver, plastic barely needed.
+  "bronze-tools": { name: "Bronzewerkzeug", inputs: { bronze: 1, planks: 1 }, outputs: { tools: 3 }, seconds: 10 },
+  bioplastic: { name: "Bioplastik", inputs: { biogas: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  "tribute-gold": { name: "Gold einlagern", inputs: { gold: 1 }, outputs: {}, seconds: 10, ascension: 4 },
+  "tribute-silver": { name: "Silber einlagern", inputs: { silver: 1 }, outputs: {}, seconds: 10, ascension: 4 },
+  "tribute-aetherite": { name: "Ätherit einlagern", inputs: { aetherite: 1 }, outputs: {}, seconds: 10, ascension: 6 },
 };
 
 /**
@@ -1091,11 +1118,11 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     maxRange: 16,
     versusOnly: true,
   },
-  // The big ship after Planet of Mine: computers and ätherite, flies on uranium, far and fast.
+  // The big ship after Planet of Mine: a computer, titanium hull and plastic, flies on uranium, far and fast.
   starship: {
     name: "Sternenschiff",
     icon: "🛸",
-    cost: { computer: 2, aetherite: 10, steel: 20, concrete: 10 },
+    cost: { computer: 1, titanium: 10, aluminium: 10, plastic: 10 },
     capacity: 6,
     fuel: { resource: "uranium", takeoff: 2, perDistance: 0.2, perPassenger: 0.1 },
     secondsPerDistance: 1.5,
@@ -1170,6 +1197,8 @@ export const SYSTEM = {
   rarePerStartPlanet: 2,
   /** Oil fields every start planet gets (rockets burn fuel from oil). */
   oilFieldsPerStartPlanet: 2,
+  /** More oil fields on dry and swampy worlds, start planets included. */
+  extraOilFields: { arid: 3, toxic: 1 } as Partial<Record<PlanetTypeId, number>>,
   rarePerFreePlanet: { min: 2, max: 4 },
   rareDepositMax: 60,
   sunTypes: ["yellow", "red", "blue", "white"],
