@@ -86,6 +86,11 @@ export class NetworkSession implements GameSession {
 
     channel.on("broadcast", { event: "state" }, ({ payload }) => {
       const msg = payload as StateMessage;
+      // Unpacking costs tens of ms on a phone, so states that can't win are dropped first: older
+      // ones, and the broadcast of this player's own save while its reply is still on the way
+      // (the reply brings the same state; replaying the in-flight moves on top of it would
+      // predict them twice until then).
+      if (msg.version <= session.version || (msg.by === session.playerId && session.inFlight.length)) return;
       void (msg.packed ? unpack<GameState>(msg.packed) : Promise.resolve(msg.state)).then((state) => {
         if (!state) return;
         if (msg.by !== session.playerId) session.pendingEvents.push(...(msg.events ?? []));
@@ -133,7 +138,11 @@ export class NetworkSession implements GameSession {
       } else {
         this.onError(reply.error);
         if (reply.state && reply.version !== undefined) this.accept(reply.version, reply.state, true);
-        else this.rebuild();
+        else {
+          this.rebuild();
+          // The server may have saved anyway (the reply got lost); its broadcast was skipped above.
+          this.resync();
+        }
       }
       this.flush();
     });
