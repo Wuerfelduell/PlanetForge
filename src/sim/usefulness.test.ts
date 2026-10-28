@@ -131,6 +131,13 @@ describe("every resource has a use", () => {
     expect(homePlanet(g, P1.id)!.power?.demand).toBe(1);
   });
 
+  it("a farm at stage 3 makes more food with the same crew, for power", () => {
+    const [t2, t3] = BUILDINGS.farm.upgrades!;
+    expect(t3!.workers).toBe(t2!.workers);
+    expect(t3!.produces!.perWorker).toBeGreaterThan(BUILDINGS.farm.produces!.perWorker);
+    expect(t3!.energy).toBe(-1);
+  });
+
   it("dry start planets hold more oil than temperate ones", () => {
     const oil = (start: "arid" | "temperate") => {
       const g = createGame("oily", [P1], { now: 0, world: { start } });

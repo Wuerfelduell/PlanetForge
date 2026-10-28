@@ -401,7 +401,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Farm",
     icon: "🌾",
     category: "food",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub). Stufe 3 (Bewässerte Farm) bringt 60 % mehr, braucht aber Strom.",
     cost: { wood: 12 },
     unlockLevel: 0,
     allowedBiomes: ["savanna", "forest", "swamp", "ash"],
@@ -414,7 +414,11 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "mine", bonus: -0.25 },
       { building: "power-coal", bonus: -0.2 },
     ],
-    upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
+    upgrades: [
+      { cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 },
+      // Seb 2026-10-28: power should pay off. Same crew, more food, but it needs power.
+      { name: "Bewässerte Farm", cost: { steel: 10, glass: 5, wire: 5 }, unlockLevel: 6, workers: 4, produces: { resource: "food", perWorker: 0.8 }, energy: -1 },
+    ],
   },
   fishery: {
     name: "Fischerei",
