@@ -52,6 +52,17 @@ export function advanceWithEvents(state: GameState, now: number): { state: GameS
   return { state: next, events };
 }
 
+/**
+ * advanceWithEvents() for a caller that owns `state` and lets it change in place: no copy of the
+ * whole state on every tick (a late game is ~0.5 MB). Same result, same log.
+ */
+export function advanceOwnedWithEvents(state: GameState, now: number): GameEvent[] {
+  if (state.simTime + TICK_MS > now) return [];
+  const events = advanceInPlace(state, now);
+  appendLog(state, events);
+  return events;
+}
+
 /** Mutating variant for callers that already own a private copy. Does not write the log. */
 export function advanceInPlace(state: GameState, now: number): GameEvent[] {
   const events: GameEvent[] = [];
