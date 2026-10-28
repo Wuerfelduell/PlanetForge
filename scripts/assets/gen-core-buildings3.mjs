@@ -67,8 +67,56 @@ function quantumLab(){
   return shell+rings+front;
 }
 
+function warpCore(){
+  const back =
+    // Thick leads turn away from the column and end on the same foundation.
+    pipe('M83 165H56Q40 165 40 181V207Q40 217 54 217H79','rock-dark',12)+
+    pipe('M173 130H200Q216 130 216 146V202Q216 217 201 217H177','oil-sheen',12)+
+    line('M40 184V202',lit('science'),5)+line('M216 151V179',lit('crystal'),5)+
+    rect(47,211,31,14,'rock',6)+rect(179,211,31,14,'rock',6)+
+    // A tall glass cylinder, deliberately narrower than either heavy end cap.
+    rect(86,52,84,146,'glacier',18)+
+    path('M153 60H166V187Q153 194 142 194V71Z','science','stroke="none" opacity="0.4"')+
+    line('M128 62V190','science',3);
+  const core = group('core',
+    // Discrete flat translucent halos, never a filter or a material gradient.
+    (state==='idle'?rect(96,65,64,125,'crystal',22,'stroke="none" opacity="0.2"')+
+      rect(109,69,38,117,'science',16,'stroke="none" opacity="0.3"'):'')+
+    [83,105,127,149,171].map((y,i)=>
+      path(`M98 ${y}Q98 ${y-8} 128 ${y-8}Q158 ${y-8} 158 ${y}V${y+6}Q158 ${y+14} 128 ${y+14}Q98 ${y+14} 98 ${y+6}Z`,'glacier','stroke-width="3"')+
+      path(`M129 ${y+1}L157 ${y-1}V${y+6}Q150 ${y+12} 129 ${y+12}Z`,'science','stroke="none" opacity="0.4"')+
+      ellipse(128,y,30,8,'snow','stroke-width="3"')+
+      (state==='idle'?ellipse(124,y-1,19,3,'tint-white','stroke="none"')+
+        line(`M105 ${y+8}Q128 ${y+15} 151 ${y+8}`,i%2?'crystal':'science',3):
+        line(`M108 ${y}H130`,'rock',3))).join(''));
+  const front =
+    // Narrow protective rails keep the stack visible at phone size.
+    rect(77,61,13,129,'rock',6)+rect(166,61,13,129,'rock-dark',6)+
+    glint('M82 76V109')+line('M172 126V162','rock',3)+
+    glint('M94 69V87M94 111V137')+
+    // Broad upper cap and stepped crown establish a capped cylinder silhouette.
+    rect(105,22,46,17,'rock-dark',8)+rect(111,26,34,6,lit('science'),3,'stroke="none"')+
+    path('M70 41Q70 27 128 27Q186 27 186 41V57Q186 71 128 71Q70 71 70 57Z','paper')+
+    path('M164 38Q179 38 182 43V56Q182 66 143 67V53Z','rock','stroke="none"')+
+    ellipse(128,39,58,12,'snow')+
+    line('M82 37Q99 30 123 32','tint-white',4)+
+    line('M85 59H103M153 59H171','rock-dark',4)+
+    // The lower cap is carried on two short feet, unlike the sphere reactor drum.
+    rect(77,207,23,18,'rock-dark',7)+rect(156,207,23,18,'rock-dark',7)+
+    path('M65 190Q65 180 81 180H175Q191 180 191 190V205Q191 220 128 220Q65 220 65 205Z','paper')+
+    path('M171 185H179Q187 185 187 193V204Q187 215 143 216V204Z','rock','stroke="none"')+
+    ellipse(128,187,63,10,'rock')+glint('M78 186Q99 180 119 181')+
+    rect(108,194,40,23,'rock-dark',8)+
+    rect(114,200,28,10,lit('science'),4,'stroke="none"')+
+    (state==='idle'?line('M120 203H130','tint-white',2):'')+
+    [81,175].map(x=>circle(x,201,4,'rock-dark','stroke-width="3"')+
+      circle(x-1,200,1.5,'snow','stroke="none"')).join('')+base();
+  return back+core+front;
+}
+
 const definitions = [
   {id:'quantum-lab',draw:quantumLab,parts:['rings','panels'],part:'rings',pivot:[128,108],tags:['science','quantum']},
+  {id:'warp-core',draw:warpCore,parts:['core'],part:'core',pivot:[128,127],tags:['travel','warp']},
 ];
 const assets = [];
 for(const def of definitions)for(const mode of ['idle','construction','off']){
