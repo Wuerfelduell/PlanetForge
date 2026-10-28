@@ -460,20 +460,33 @@ export function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): Bio
 
 const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold", "tin", "silver", "bauxite", "ilmenite"]);
 
-/** Platinum fields on asteroids and now and then on other free planets, never on start planets. */
+/**
+ * Platinum fields on asteroids and now and then on other free planets, never on start planets.
+ * Every world gets at least one (playtest 2026-10-28: about 3 % of worlds had none, so the core
+ * drill and the fuel cell could never be built); the extra field goes to a free planet first,
+ * which needs no discovery to fly to.
+ */
 function placePlatinum(seed: string, planets: PlanetState[]): void {
   const rng = new Rng(seedFromString(`${seed}:platinum`));
-  for (const p of planets) {
-    if (p.startSlot !== null) continue;
-    if (rng.next() >= (p.type === "asteroid" ? PLATINUM.asteroidChance : PLATINUM.planetChance)) continue;
+  const place = (p: PlanetState): boolean => {
     const fitting = p.segments.filter((s) => PLATINUM.biomes.includes(s.biome));
     const land = p.segments.filter((s) => BIOMES[s.biome].buildable);
     const pool = fitting.length ? fitting : land;
-    if (!pool.length) continue;
+    if (!pool.length) return false;
     const s = rng.pick(pool);
     const amount = rng.int(...PLATINUM.amount);
     s.deposits.push({ resource: "platinum", amount, max: amount, infinite: false, byHand: false });
+    return true;
+  };
+  let placed = false;
+  for (const p of planets) {
+    if (p.startSlot !== null) continue;
+    if (rng.next() >= (p.type === "asteroid" ? PLATINUM.asteroidChance : PLATINUM.planetChance)) continue;
+    if (place(p)) placed = true;
   }
+  if (placed) return;
+  const free = planets.filter((p) => p.startSlot === null);
+  for (const p of [...free.filter((x) => x.type !== "asteroid"), ...free.filter((x) => x.type === "asteroid")]) if (place(p)) return;
 }
 
 export function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {

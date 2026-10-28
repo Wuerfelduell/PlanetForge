@@ -95,6 +95,16 @@ describe("new ores", () => {
     expect(asteroidFields).toBeGreaterThan(0);
   });
 
+  it("every world has platinum somewhere, so the core drill can always be built", () => {
+    // Without the guarantee these seeds drew no platinum field at all (playtest 2026-10-28).
+    for (const seed of ["seed7", "seed24", "seed82"]) {
+      const g = createGame(seed, [P1], { now: 0 });
+      const fields = g.planets.filter((p) => p.segments.some((s) => s.deposits.some((d) => d.resource === "platinum")));
+      expect(fields.length, seed).toBeGreaterThan(0);
+      expect(fields.every((p) => p.startSlot === null), seed).toBe(true);
+    }
+  });
+
   it("old saves get the new ores and the platinum of a new game, once", () => {
     const fresh = createGame("old-ores", [P1], { now: 1000 });
     const old = clone(fresh);
