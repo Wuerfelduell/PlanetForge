@@ -80,14 +80,23 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
   // Workers inside a planet sleep up on its surface (CORE): they count as its residents.
   const surfaceIds = new Map((state.cores ?? []).map((c) => [c.id, c.coreOf!]));
 
-  // Workers per planet and segment, counted once per tick.
-  const workers = new Map<string, number>();
+  // Workers per planet and segment, counted once per tick, and the owners of the units on each
+  // planet (for housing: every people brings its own shelter).
+  const workers = new Map<string, number[]>();
   const residents = new Map<string, number>();
+  const owners = new Map<string, Set<string>>();
   for (const u of Object.values(state.units)) {
     const home = surfaceIds.get(u.planetId) ?? u.planetId;
     residents.set(home, (residents.get(home) ?? 0) + 1);
-    if (u.segment !== null) workers.set(`${u.planetId}:${u.segment}`, (workers.get(`${u.planetId}:${u.segment}`) ?? 0) + 1);
+    let o = owners.get(u.planetId);
+    if (!o) owners.set(u.planetId, (o = new Set()));
+    o.add(u.owner);
+    if (u.segment === null) continue;
+    let w = workers.get(u.planetId);
+    if (!w) workers.set(u.planetId, (w = []));
+    w[u.segment] = (w[u.segment] ?? 0) + 1;
   }
+  const workingOn = (planetId: string, segment: number) => workers.get(planetId)?.[segment] ?? 0;
 
   // Power grids of this tick, read by every consumer below (powerFactor). A planet and its
   // interior share one grid.
@@ -97,7 +106,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id) ?? { supply: 0, demand: 0 };
     const shut = planet.coreOf !== undefined && !shaftOpen(state, planet);
     for (const segment of planet.segments) {
-      const working = shut ? 0 : (workers.get(`${planet.id}:${segment.index}`) ?? 0);
+      const working = shut ? 0 : workingOn(planet.id, segment.index);
       grid.supply += energySupply(planet, segment, working, economy);
       grid.demand += energyDemand(segment, working);
     }
@@ -125,13 +134,14 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
     const forested = new Map<number, { mul: number; replant: boolean }>();
     for (const segment of planet.segments) {
       const f = buildingStats(segment)?.forester;
-      if (!f || !workers.get(`${planet.id}:${segment.index}`)) continue;
+      if (!f || !workingOn(planet.id, segment.index)) continue;
       for (const n of neighbors(planet, segment.index)) if (n.biome === "forest") forested.set(n.index, { mul: f.neighborRegenMul, replant: f.replantsDepleted });
     }
 
+    let regen: number | undefined;
     for (const segment of planet.segments) {
       const def = buildingStats(segment);
-      const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
+      const working = workingOn(planet.id, segment.index);
       if (economy && def?.crafts) craft(planet, segment, working, economy, rateFactor);
       if (economy && segment.building === "core-drill") drill(state, planet, segment, working, economy, events);
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {
@@ -165,11 +175,11 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
         const forester = d.resource === "wood" ? forested.get(segment.index) : undefined;
         // Inside a planet nothing grows back (CORE).
         if (planet.coreOf || segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
-        d.amount = Math.min(d.max, d.amount + d.max * modified(economy, "regenRate", RULES.regenPerSecond) * (forester?.mul ?? 1) * DT);
+        d.amount = Math.min(d.max, d.amount + d.max * (regen ??= modified(economy, "regenRate", RULES.regenPerSecond)) * (forester?.mul ?? 1) * DT);
       }
     }
 
-    if (economy && !planet.coreOf) birth(state, planet, residents.get(planet.id) ?? 0, events);
+    if (economy && !planet.coreOf) birth(state, planet, residents.get(planet.id) ?? 0, owners.get(planet.id)?.size ?? 0, events);
   }
 
   runQueues(state, events);
@@ -207,9 +217,9 @@ function runQueues(state: GameState, events: GameEvent[]): void {
   }
 }
 
-function birth(state: GameState, planet: PlanetState, residents: number, events: GameEvent[]): void {
+function birth(state: GameState, planet: PlanetState, residents: number, peoples: number, events: GameEvent[]): void {
   const economy = state.economies[planet.economyId!]!;
-  if (residents === 0 || residents >= housing(state, planet) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
+  if (residents === 0 || residents >= housing(state, planet, peoples) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
   planet.birthProgress += DT;
   if (planet.birthProgress < modified(economy, "birthTime", secondsPerBirth(state, residents)) - 1e-9) return;
 

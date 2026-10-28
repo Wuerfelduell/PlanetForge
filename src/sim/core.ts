@@ -144,7 +144,8 @@ export function syncCores(state: GameState): void {
     core.economyId = economyId;
     delete state.queues[core.id];
   }
-  for (const [id, u] of Object.entries(state.units)) {
+  for (const id in state.units) {
+    const u = state.units[id]!;
     const core = cores.get(u.planetId);
     if (!core) continue;
     const owner = state.players.find((p) => p.id === u.owner);
