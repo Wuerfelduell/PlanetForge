@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
   const request = parseRequest(await req.json().catch(() => null));
   if (!request) return json(req, { ok: false, error: "Ungültige Anfrage" }, 400);
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     const { data, error: loadError } = await admin.rpc("load_game", { p_game: request.gameId });
     if (loadError) return json(req, { ok: false, error: loadError.message }, 500);
     const game = data as LoadedGame | null;
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
       p_packed: await pack(result.state),
     });
     if (error) return json(req, { ok: false, error: error.message }, 500);
-    if (version !== null) return json(req, { ok: true, version, state: result.state, events: result.events });
+    if (version !== null) return json(req, { ok: true, version, state: result.state, events: result.events, errors: result.errors });
     // Someone else saved in between: reload and run again.
   }
   return json(req, { ok: false, error: "Zu viele gleichzeitige Züge, bitte nochmal" }, 409);
