@@ -65,9 +65,32 @@ function emp(frame){
   return flight(hull,exhaust(frame));
 }
 
+function nuke(frame){
+  const trefoil=[0,120,240].map(a=>`<g transform="rotate(${a} 73 64)">${
+    path('M70 59L67 54Q66 52 69 52Q76 49 81 54Q83 56 81 57L77 61Q74 58 70 59Z','coal','stroke="none"')
+  }</g>`).join('')+circle(73,64,2.5,'coal','stroke="none"');
+  const hull=
+    // A heavy pill with blunt fins, rather than the passenger rockets' swept wings.
+    path('M39 47L38 36Q38 32 43 33L56 43M39 81L38 92Q38 96 43 95L56 85','rock-dark')+
+    rect(25,53,18,22,6,'rock-dark')+
+    rect(34,41,68,46,16,'moss')+
+    shadow('M35 68Q60 85 99 71V81Q94 87 84 87H50Q37 87 35 74Z','moss')+
+    rect(58,41,29,46,6,'energy','stroke-width="1.5"')+
+    shadow('M59 77Q73 82 86 77V85H59Z','energy')+
+    trefoil+
+    path('M98 42Q115 45 120 59Q122 64 120 69Q115 83 98 86Q91 85 91 78V50Q91 43 98 42Z','rock')+
+    shadow('M92 72Q110 81 120 64Q118 80 99 86Q92 85 92 78Z','rock')+
+    line('M95 47Q91 64 95 81','rock-dark',2)+
+    circle(44,59,2,'paper','stroke="none"')+circle(44,70,2,'rock-dark','stroke="none"')+
+    shine('M44 47H51',2)+shine('M62 46H80',2)+shine('M101 48Q108 50 111 55',2);
+  // Bright flat green tones provide the glow cue without SVG filters or gradients.
+  return flight(hull,exhaust(frame,'uranium','toxic'));
+}
+
 const ships=[
   {name:'missile-homing',draw:homing},
   {name:'missile-emp',draw:emp},
+  {name:'missile-nuke',draw:nuke},
 ];
 const assets=[];
 for(const {name,draw} of ships){

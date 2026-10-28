@@ -57,6 +57,35 @@
         "loop"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ship.missile-nuke",
+      "category": "space",
+      "src": "art/src/space/missile-nuke-f{f}.svg",
+      "out": "public/assets/sprites/space/missile-nuke-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 6,
+      "parts": [
+        "hull",
+        "exhaust",
+        "engine-anchor"
+      ],
+      "tags": [
+        "star-map",
+        "ship",
+        "nose-right",
+        "flight",
+        "loop"
+      ],
+      "phase": "P1"
     }
   ]
 }
