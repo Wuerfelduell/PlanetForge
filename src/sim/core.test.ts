@@ -10,6 +10,7 @@ import {
   economyOfPlayer,
   flightPlan,
   homePlanet,
+  launchBlocker,
   planetById,
   TICK_MS,
   type BiomeId,
@@ -246,5 +247,14 @@ describe("planet interior", () => {
     const slow = flightPlan(home(g), other, "warp", 1).seconds;
     home(g).segments[0]!.building = "warp-core";
     expect(flightPlan(home(g), other, "warp", 1).seconds).toBe(slow * CORE.warpCoreMul);
+  });
+  it("no rocket flies into an interior or out of one", () => {
+    const g = opened();
+    const inside = core(g);
+    for (const rocket of ["colony", "homing", "emp", "nuke"] as const) {
+      expect(launchBlocker(g, P1.id, home(g), inside, rocket, rocket === "colony" ? 1 : 0, 0)).toBe("Ins Planeteninnere fliegt keine Rakete");
+    }
+    const r = applyCommand(g, P1.id, { type: "launch", planetId: inside.id, to: home(g).id, rocket: "colony", count: 1 }, g.simTime);
+    expect(r).toEqual({ ok: false, error: "Ins Planeteninnere fliegt keine Rakete" });
   });
 });
