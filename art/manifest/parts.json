@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.missile-silo.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/missile-silo-back.svg",
+      "out": "public/assets/sprites/buildings/anim/missile-silo-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/missile-silo-part.svg",
+      "out": "public/assets/sprites/buildings/anim/missile-silo-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.4141,
+        0.8086
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/missile-silo-front.svg",
+      "out": "public/assets/sprites/buildings/anim/missile-silo-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.shell-armor.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/shell-armor-back.svg",

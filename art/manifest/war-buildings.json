@@ -1,0 +1,110 @@
+{
+  "assets": [
+    {
+      "id": "building.missile-silo",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo.svg",
+      "out": "public/assets/sprites/buildings/missile-silo.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-silo-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo-off.svg",
+      "out": "public/assets/sprites/buildings/missile-silo-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
