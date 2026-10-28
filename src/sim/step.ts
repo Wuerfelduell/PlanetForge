@@ -16,6 +16,7 @@ import {
   secondsPerBirth,
   planetById,
   segmentOutput,
+  foodOutputMul,
   segmentRecipe,
   TICK_MS,
   ticksPerCycle,
@@ -177,7 +178,7 @@ function craft(planet: PlanetState, segment: PlanetState["segments"][number], wo
   if (crafts <= 0) return;
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) economy.resources[r] = Math.max(0, economy.resources[r] - v * crafts);
   for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) {
-    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r });
+    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r }) * foodOutputMul(r);
   }
   if (recipe.ascension) economy.ascension.points += recipe.ascension * crafts;
 }
