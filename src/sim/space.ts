@@ -1,16 +1,16 @@
-import { RESOURCE_IDS, RULES } from "./content";
+import { MISSILES, RESOURCE_IDS, ROCKETS, RULES, type BuildingId } from "./content";
 import { Rng } from "./rng";
 import { modified } from "./discoveries";
-import { landAtSun } from "./invaders";
-import { checkFactionEliminations, checkTeamWipe, onBattle } from "./diplomacy";
-import { activePlayers, countsFor, flightPlan, peopleOf, planetAttackBonus, planetById, planetDefense, planetIntercept, planetShield, playerById, ringDistance, ticksPerCycle, unitsOn } from "./rules";
+import { damageInvasion, landAtSun } from "./invaders";
+import { checkFactionEliminations, checkTeamWipe, factionOfEconomy, onBattle, shiftAttitude } from "./diplomacy";
+import { activePlayers, buildingStats, countsFor, cycleOf, flightPlan, missileDefenseLeft, peopleOf, planetAttackBonus, planetById, planetDefense, planetIntercept, planetShield, playerById, ringDistance, ticksPerCycle, unitsOn, workerCount } from "./rules";
 import type { Flight, GameEvent, GameState, PlanetState, PlayerState, UnitState } from "./state";
 import type { RocketId } from "./content";
 
 /** Pays for a rocket (already validated by launchBlocker) and puts `count` idle units of the player into it. */
-export function launch(state: GameState, player: PlayerState, from: PlanetState, to: PlanetState, rocket: RocketId, count: number, events: GameEvent[]): void {
+export function launch(state: GameState, player: PlayerState, from: PlanetState, to: PlanetState, rocket: RocketId, count: number, events: GameEvent[], segment?: number): void {
   const economy = state.economies[player.economyId]!;
-  const plan = flightPlan(from, to, rocket, count, economy);
+  const plan = flightPlan(from, to, rocket, count, economy, player.ai);
   for (const r of RESOURCE_IDS) economy.resources[r] -= plan.cost[r] ?? 0;
   const units = unitsOn(state, from.id, player.id)
     .filter((u) => u.segment === null)
@@ -26,8 +26,15 @@ export function launch(state: GameState, player: PlayerState, from: PlanetState,
     launchTick: state.tick,
     arrivalTick: state.tick + plan.seconds * RULES.ticksPerSecond,
   };
-  const drill = rocket === "combat" ? planetAttackBonus(state, from) : 0;
+  const def = ROCKETS[rocket];
+  const drill = def.attack ? planetAttackBonus(state, from) : 0;
   if (drill > 0) flight.attackBonus = drill;
+  if (def.unmanned && segment !== undefined && to.economyId !== player.economyId) flight.segment = segment;
+  if (rocket === "nuke" && !player.ai) {
+    // The silo that fired loads the next nuke for a while.
+    const silo = from.segments.find((s) => buildingStats(s)?.silo && workerCount(state, from, s.index) > 0 && (s.reloadUntilTick ?? 0) <= state.tick);
+    if (silo) silo.reloadUntilTick = state.tick + MISSILES.nukeReloadCycles * ticksPerCycle(state);
+  }
   state.flights.push(flight);
   events.push({ type: "launched", flightId: flight.id, playerId: player.id, from: from.id, to: to.id, rocket, count, arrivalTick: flight.arrivalTick });
 }
@@ -46,6 +53,10 @@ export function landFlights(state: GameState, events: GameEvent[]): void {
     const player = playerById(state, flight.owner);
     // A removed player's rocket simply vanishes with its passengers.
     if (!player) continue;
+    if (ROCKETS[flight.rocket].unmanned) {
+      missileImpact(state, flight, planet, player, events);
+      continue;
+    }
     if (planet.economyId === null || planet.economyId === player.economyId) {
       const colonized = planet.economyId === null;
       if (colonized) colonize(planet, player.economyId, events);
@@ -98,7 +109,8 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   const bonus = planetDefense(state, planet);
   const attackBonus = modified(state.economies[attacker.economyId], "battleRoll", 0) + (flight.attackBonus ?? 0) - planetShield(state, planet);
   // Pitfalls and flak take some attackers before anyone rolls.
-  const intercepted = Math.min(flight.units.length, planetIntercept(state, planet));
+  // A dropship's armor shrugs off some of them.
+  const intercepted = Math.min(flight.units.length, Math.max(0, planetIntercept(state, planet) - (ROCKETS[flight.rocket].armor ?? 0)));
   let attackers = flight.units.length - intercepted;
   let attackerLosses = intercepted;
   let beaten = 0;
@@ -158,6 +170,84 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   }
   events.push({ type: "battle", planetId: planet.id, attacker: attacker.id, defender: defenderId, attackerLosses, defenderLosses, won, captured, ...(intercepted ? { intercepted } : {}) });
   if (state.factions.length > 0) onBattle(state, attacker, loserEconomy.id, won, events);
+}
+
+/**
+ * A missile arrives: missile defense (then flak, for homing missiles) may shoot it down. A homing
+ * missile wrecks the building on its field or hits the mothership besieging an own planet, an EMP
+ * shuts the planet down, a nuke wrecks and irradiates the fields around its target and kills
+ * whoever lives there. Missiles never conquer.
+ */
+function missileImpact(state: GameState, flight: Flight, planet: PlanetState, attacker: PlayerState, events: GameEvent[]): void {
+  const rocket = flight.rocket;
+  const base = { planetId: planet.id, attacker: attacker.id, rocket, ...(flight.segment !== undefined ? { segment: flight.segment } : {}), destroyed: [] as BuildingId[], killed: 0 };
+  if (planet.economyId === attacker.economyId) {
+    // Up at the mothership (gone already: the missile falls into the sea).
+    const inv = state.invasion;
+    const hit = rocket === "homing" && inv?.sieging && inv.target === planet.id ? Math.min(inv.hp, MISSILES.invaderDamage) : 0;
+    events.push({ ...base, type: "missileHit", defender: attacker.id, intercepted: false, ...(hit ? { invaderDamage: hit } : {}) });
+    if (hit) damageInvasion(state, hit, events);
+    return;
+  }
+  // Conquered or abandoned while it flew: nothing to hit.
+  if (planet.economyId === null) return;
+  const residents = Object.values(state.units).filter((u) => u.planetId === planet.id && playerById(state, u.owner)?.economyId === planet.economyId);
+  const defender = mainOwner(residents) ?? state.players.find((p) => p.economyId === planet.economyId)?.id ?? "";
+  state.lastCombatTick = state.tick;
+  const rng = new Rng(state.rng);
+  let intercepted = false;
+  if (missileDefenseLeft(state, planet) > 0) {
+    const cycle = cycleOf(state);
+    planet.intercepts = { cycle, count: (planet.intercepts?.cycle === cycle ? planet.intercepts.count : 0) + 1 };
+    intercepted = true;
+  } else if (rocket === "homing" && planetIntercept(state, planet) > 0 && planet.segments.some((s) => s.building === "flak" && workerCount(state, planet, s.index) > 0)) {
+    intercepted = rng.next() < MISSILES.flakChance;
+  }
+  state.rng = rng.seed;
+  const destroyed: BuildingId[] = [];
+  let killed = 0;
+  const wreck = (index: number) => {
+    const s = planet.segments[index]!;
+    for (const u of residents) if (u.segment === index && state.units[u.id]) u.segment = null;
+    if (!s.building) return;
+    destroyed.push(s.building);
+    s.building = null;
+    s.builtBy = null;
+    delete s.tier;
+    delete s.reloadUntilTick;
+    s.ruin = true;
+  };
+  if (!intercepted && rocket === "homing" && flight.segment !== undefined) wreck(flight.segment);
+  if (!intercepted && rocket === "emp") planet.empUntilTick = state.tick + MISSILES.empCycles * ticksPerCycle(state);
+  if (!intercepted && rocket === "nuke" && flight.segment !== undefined) {
+    const radius = planetShield(state, planet) > 0 ? MISSILES.shieldedNukeRadius : MISSILES.nukeRadius;
+    const n = planet.segments.length;
+    const hit = planet.segments.filter((s) => ringDistance(s.index, flight.segment!, n) <= radius);
+    // Workers on the fields die, and the idle people in the same share of the planet.
+    const dead = residents.filter((u) => u.segment !== null && hit.some((s) => s.index === u.segment));
+    const idle = residents.filter((u) => u.segment === null);
+    dead.push(...idle.slice(0, Math.floor((idle.length * hit.length) / n)));
+    for (const s of hit) {
+      wreck(s.index);
+      s.scorched = true;
+      s.irradiated = true;
+      delete s.cryo;
+      for (const d of s.deposits) if (!d.infinite) d.amount = 0;
+    }
+    for (const u of dead) delete state.units[u.id];
+    killed = dead.length;
+    delete state.queues[planet.id];
+  }
+  events.push({ ...base, type: "missileHit", defender, intercepted, destroyed, killed, ...(rocket === "emp" && !intercepted ? { emp: true } : {}) });
+  if (state.factions.length > 0) {
+    onBattle(state, attacker, planet.economyId, false, events);
+    // A nuked faction does not forgive soon.
+    const faction = factionOfEconomy(state, planet.economyId);
+    if (faction && rocket === "nuke" && !intercepted && !attacker.ai) {
+      shiftAttitude(faction, -30);
+      faction.noPeaceUntilTick = state.tick + MISSILES.noPeaceCycles * ticksPerCycle(state);
+    }
+  }
 }
 
 function mainOwner(units: UnitState[]): string | undefined {

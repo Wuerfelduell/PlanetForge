@@ -241,6 +241,7 @@ export const BUILDING_IDS = [
   "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell", "treasury",
   "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
   "warpgate", "exo-drill", "power-antimatter", "neutron-bastion", "shell-armor", "xeno-lab",
+  "missile-silo", "missile-defense", "radar",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -329,6 +330,12 @@ export interface BuildingDef {
   shellArmor?: number;
   /** Cannot be built in versus. */
   coopOnly?: boolean;
+  /** Launches unmanned missiles (MISSILES) while someone works here. */
+  silo?: boolean;
+  /** Incoming missiles it shoots down per worker and cycle (see MISSILES). */
+  antiMissile?: number;
+  /** Sees incoming missiles at launch and the defenses of planets in the same sun system. */
+  radar?: boolean;
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
@@ -1064,7 +1071,44 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     produces: { resource: "science", perWorker: 1 },
     ascension: 4,
     energy: -3,
+  },  // Seb: a better war. Unmanned missiles from a silo, only inside their own sun system.
+  "missile-silo": {
+    name: "Raketensilo",
+    icon: "🧨",
+    category: "defense",
+    description: "Startet Raketen ohne Besatzung auf Planeten im selben Sonnensystem: Zielsuchrakete (zerstört ein Gebäude oder trifft ein Mutterschiff), EMP-Rakete (legt Strom und Abwehr lahm) und Atomrakete. Braucht einen Arbeiter.",
+    cost: { steel: 20, concrete: 15, electronics: 2 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 1,
+    silo: true,
   },
+  "missile-defense": {
+    name: "Raketenabwehr",
+    icon: "🔰",
+    category: "defense",
+    description: "Holt anfliegende Raketen vom Himmel: je Arbeiter eine pro Umlauf. Braucht Strom.",
+    cost: { aluminium: 10, electronics: 3, wire: 6 },
+    unlockLevel: 7,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    antiMissile: 1,
+    energy: -2,
+  },
+  radar: {
+    name: "Frühwarnradar",
+    icon: "📡",
+    category: "defense",
+    description: "Meldet feindliche Raketen schon beim Start samt Zielfeld und zeigt die Abwehr fremder Planeten im selben Sonnensystem. Braucht Strom. Nur eins pro Planet.",
+    cost: { silver: 4, electronics: 2, glass: 10 },
+    unlockLevel: 7,
+    allowedBiomes: LAND,
+    workers: 1,
+    radar: true,
+    energy: -2,
+    unique: true,
+  },
+
 };
 
 export type RecipeId =
@@ -1192,6 +1236,16 @@ export interface RocketDef {
   altFuel?: { resource: ResourceId; mul: number };
   /** Flies only between sun systems, from a warp gate (see WARP). */
   warp?: true;
+  /** Lands to fight (combat rocket, dropship): every arrival on a foreign planet is a battle. */
+  attack?: true;
+  /** A missile without crew (MISSILES): starts from a worked silo, never leaves its sun system. */
+  unmanned?: true;
+  /** Ascension level needed for this rocket (war rockets only; Seb: flying itself has no level). */
+  unlockLevel?: number;
+  /** Shrugs off this many interceptions (pitfalls, flak) before the battle. */
+  armor?: number;
+  /** AI factions pay this instead of `cost` and need no silo (they don't run the late chains). */
+  aiCost?: Partial<Record<ResourceId, number>>;
 }
 
 /**
@@ -1199,7 +1253,7 @@ export interface RocketDef {
  * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
  * locked out of flying.
  */
-export const ROCKET_IDS = ["colony", "combat", "starship", "warp"] as const;
+export const ROCKET_IDS = ["colony", "combat", "starship", "warp", "homing", "emp", "nuke", "dropship"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
 // Seb: flying has no level limit; launch pad, rocket cost and fuel are the only gates.
@@ -1222,6 +1276,7 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 4,
     maxRange: 16,
     versusOnly: true,
+    attack: true,
   },
   // The big ship after Planet of Mine: a computer, titanium hull and plastic, flies on uranium, far and fast.
   starship: {
@@ -1244,8 +1299,82 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 0,
     maxRange: Infinity,
     warp: true,
+  },  // War rockets (Seb): missiles without crew, only inside the sun system, and a big dropship.
+  homing: {
+    name: "Zielsuchrakete",
+    icon: "🎯",
+    cost: { plastic: 3, electronics: 1 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 3, perDistance: 0.5, perPassenger: 0 },
+    secondsPerDistance: 2,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 6,
+    aiCost: { iron: 12, stone: 10 },
   },
+  emp: {
+    name: "EMP-Rakete",
+    icon: "⚡",
+    cost: { copper: 6, silver: 2, electronics: 2 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 3, perDistance: 0.5, perPassenger: 0 },
+    secondsPerDistance: 2,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 7,
+    aiCost: { iron: 15, coal: 10 },
+  },
+  nuke: {
+    name: "Atomrakete",
+    icon: "☢️",
+    cost: { uranium: 15, computer: 1, titanium: 5 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 8, perDistance: 1, perPassenger: 0 },
+    secondsPerDistance: 3,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 9,
+    aiCost: { iron: 60, stone: 60, science: 40 },
+  },
+  dropship: {
+    name: "Landungsschiff",
+    icon: "🛩️",
+    cost: { aluminium: 12, titanium: 4, tools: 5 },
+    capacity: 8,
+    fuel: { resource: "fuel", takeoff: 10, perDistance: 2, perPassenger: 0.75 },
+    secondsPerDistance: 4,
+    maxRange: 16,
+    versusOnly: true,
+    attack: true,
+    unlockLevel: 8,
+    armor: 1,
+  },
+
 };
+
+/** Missiles without crew (Seb: war after a declaration; only inside their own sun system). */
+export const MISSILES = {
+  /** Mothership damage of a homing missile at an invader besieging the launch system. */
+  invaderDamage: 6,
+  /** An EMP shuts down power, shields and manned defenses for this many cycles. */
+  empCycles: 2,
+  /** Fields a nuke destroys on each side of the target field (a worked shield halves it). */
+  nukeRadius: 2,
+  shieldedNukeRadius: 1,
+  /** A silo needs this many cycles to load the next nuke. */
+  nukeReloadCycles: 3,
+  /** Start planets are safe from nukes for the first cycles of a game. */
+  startProtectionCycles: 10,
+  /** A nuked faction refuses peace for this many cycles. */
+  noPeaceCycles: 10,
+  /** Chance that worked flak downs a homing missile once missile defense is used up. */
+  flakChance: 0.5,
+  /** AI factions fire missiles from this level on (warlords also nukes from the nuke level). */
+  aiLevel: 6,
+} as const;
 
 /**
  * Neighbor sun systems (Seb): found when the first warp gate is built, reachable only by warp ship.

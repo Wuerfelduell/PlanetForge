@@ -94,6 +94,11 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       supply += energySupply(planet, segment, working, economy);
       demand += energyDemand(segment, working);
     }
+    // An EMP knocks out every power plant until it wears off.
+    if (planet.empUntilTick !== undefined) {
+      if (planet.empUntilTick > state.tick) supply = 0;
+      else delete planet.empUntilTick;
+    }
     if (supply > 0 || demand > 0) planet.power = { supply, demand };
     else delete planet.power;
 

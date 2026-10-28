@@ -225,6 +225,14 @@ export class PlanetView {
         case "siege":
           if (e.target === planet.id && (e.destroyed || e.killed || e.defenderLosses)) this.effect("fx.explosion", (this.selected + 2) * step, 1.05, segWidth * 1.6, 256);
           break;
+        case "missileHit": {
+          if (e.planetId !== planet.id || e.intercepted || e.invaderDamage !== undefined) break;
+          const at = (e.segment ?? this.selected) * step;
+          if (e.rocket === "nuke") this.effect(artAnimation("fx.nuke-blast") ? "fx.nuke-blast" : "fx.explosion", at, 1.05, segWidth * 5, 256);
+          else if (e.rocket === "emp") this.effect("fx.emp-pulse", 0, 0, ART_SURFACE * 1.4, 256);
+          else this.effect("fx.explosion", at, 1.05, segWidth * 1.6, 256);
+          break;
+        }
         case "launched":
           if (e.from === planet.id) this.launchRocket(planet, step, segWidth);
           break;
@@ -618,7 +626,8 @@ export class PlanetView {
       if (artTexture(`biome.${s.biome}.wedge.${n}`)) wedge(`biome.${s.biome}.wedge`, i);
       else g.poly(sector(ART_BODY * k, R, mid - step / 2, mid + step / 2)).fill(BIOMES[s.biome].color);
       // Burnt by invaders: own art once it exists, the pollution overlay until then.
-      if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
+      if (s.irradiated && artTexture(`overlay.irradiated.${n}`)) wedge("overlay.irradiated", i);
+      else if (s.scorched) wedge(artTexture(`overlay.scorched.${n}`) ? "overlay.scorched" : "overlay.polluted", i);
       else if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) wedge("overlay.depleted", i);
 
       const ruin = !s.building && s.ruin ? artTexture("building.ruin") : undefined;

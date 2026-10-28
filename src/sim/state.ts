@@ -138,6 +138,8 @@ export interface FactionState {
   nextProposalTick: number;
   /** Earliest tick for the next attack (at war). */
   nextAttackTick: number;
+  /** Nuked by the team: refuses peace until this tick. */
+  noPeaceUntilTick?: number;
   /** Trades and gifts of the team so far (for the "known us for a while" bonus). */
   trades: number;
   /**
@@ -189,6 +191,8 @@ export interface Flight {
   shield?: { segment: number; repair: boolean };
   /** Combat rockets: roll bonus from barracks on the launch planet. */
   attackBonus?: number;
+  /** Missiles (homing, nuke): the field they are aimed at. */
+  segment?: number;
 }
 
 export interface EconomyState {
@@ -242,6 +246,10 @@ export interface PlanetState {
   power?: { supply: number; demand: number };
   /** Neighbor sun system (GameState.systems); missing = the home system. */
   system?: number;
+  /** Hit by an EMP: no power, shield or manned defenses before this tick. */
+  empUntilTick?: number;
+  /** Missiles the missile defense here has downed in the current cycle. */
+  intercepts?: { cycle: number; count: number };
 }
 
 export interface SegmentState {
@@ -260,6 +268,10 @@ export interface SegmentState {
   scorched?: true;
   /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
   ruin?: true;
+  /** Hit by a nuke: scorched as well, only looks different; cleared together with `scorched`. */
+  irradiated?: true;
+  /** A silo that fired a nuke loads the next one until this tick. */
+  reloadUntilTick?: number;
   /** Cryo pod with frozen members of another people (Planet of Mine), found by exploring; thaw to recruit them. */
   cryo?: { people: PeopleId; count: number };
 }
@@ -291,8 +303,11 @@ export type Command =
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
-  /** Sends `count` idle units of the sender from a planet with a launch pad. combat: versus attack. */
-  | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
+  /**
+   * Sends `count` idle units of the sender from a planet with a launch pad. combat/dropship: attack.
+   * Missiles (homing, emp, nuke) fly from a silo with count 0; homing and nuke aim at `segment`.
+   */
+  | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number; segment?: number }
   /** Votes for one option of the economy's open discovery offer (alone: picks it). */
   | { type: "voteDiscovery"; discovery: string }
   /** Votes yes or no in the open team vote about a faction (see FactionState.vote). */
@@ -337,6 +352,11 @@ export type GameEvent =
   | { type: "launched"; flightId: string; playerId: string; from: string; to: string; rocket: RocketId; count: number; arrivalTick: number }
   | { type: "landed"; flightId: string; playerId: string; planetId: string; count: number; colonized: boolean }
   | { type: "battle"; planetId: string; attacker: string; defender: string; attackerLosses: number; defenderLosses: number; won: boolean; captured: number; intercepted?: number }
+  /**
+   * A missile arrived. intercepted: shot down; destroyed: buildings wrecked; killed: inhabitants
+   * lost; invaderDamage: hit on a besieging mothership; emp: the planet is shut down.
+   */
+  | { type: "missileHit"; planetId: string; attacker: string; defender: string; rocket: RocketId; segment?: number; intercepted: boolean; destroyed: BuildingId[]; killed: number; invaderDamage?: number; emp?: boolean }
   | { type: "assimilated"; playerId: string; count: number }
   | { type: "eliminated"; playerId: string }
   | { type: "surrendered"; playerId: string }
