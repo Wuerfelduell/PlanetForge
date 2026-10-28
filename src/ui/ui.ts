@@ -780,9 +780,9 @@ export class Ui {
         ? `${listChip}${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
         : `${listChip}${own.length > 1 && !inside ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">▸</button>` : ""}`) +
       (inside
-        ? `<button class="chip glow" data-action="surface" title="Zurück an die Oberfläche (I)">${this.uicon("icon-surface", "⬆")} Oberfläche</button>`
+        ? `<button class="chip glow" data-action="surface" title="Zurück an die Oberfläche (I)">${this.uicon("icon-surface", "⬆")}<span class="wide"> Oberfläche</span></button>`
         : coreOf(state, planet)
-          ? `<button class="chip" data-action="interior" title="Ins Planeteninnere (I)">${this.uicon("icon-interior", "⬇")} Inneres</button>`
+          ? `<button class="chip" data-action="interior" title="Ins Planeteninnere (I)">${this.uicon("icon-interior", "⬇")}<span class="wide"> Inneres</span></button>`
           : "");
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
@@ -795,7 +795,7 @@ export class Ui {
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
         ${inside
-          ? `<span class="chip" title="Arbeiter im Inneren / Tiefenanzüge">${this.res("deep-suit")} ${planet.economyId ? coreWorkers(state, planet.economyId).length : 0}/${Math.floor(economy.resources["deep-suit"])} <small>${idleUnits(state, surface, this.playerId).length} frei oben</small></span>`
+          ? `<span class="chip" title="Arbeiter im Inneren / Tiefenanzüge">${this.res("deep-suit")} ${planet.economyId ? coreWorkers(state, planet.economyId).length : 0}/${Math.floor(economy.resources["deep-suit"])} <small>${idleUnits(state, surface, this.playerId).length} frei<span class="wide"> oben</span></small></span>`
           : `<span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>`}
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>

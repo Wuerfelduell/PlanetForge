@@ -383,6 +383,10 @@ ul.owned small { color: var(--muted); }
   #hud .chip, #hud .level { padding: 3px 8px; font-size: 13px; }
   #hud .speed { min-width: 40px; min-height: 36px; padding: 4px 8px; font-size: 15px; }
   #hud .chip.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  /* Inside a planet the status line is crowded: words that only repeat an icon go, the planet name stays. */
+  #hud .wide { display: none; }
+  /* The planet name keeps a few letters; very narrow phones drop the level bar for it. */
+  #hud .chip.name { min-width: 64px; }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
   #hud .cycle { flex: none; width: 18px; height: 18px; }
@@ -442,3 +446,6 @@ ul.owned small { color: var(--muted); }
 .rename .row { display: flex; gap: 8px; }
 .rename .row button { flex: 1; padding: 10px; }
 .celebration-card button.secondary { background: var(--surface); color: inherit; }
+@media (max-width: 400px) {
+  #hud .row.main .level .bar, #hud .row.main .chip:not(.name) small { display: none; }
+}
