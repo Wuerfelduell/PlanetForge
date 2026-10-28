@@ -3,7 +3,7 @@
 import {C, svg, round, write} from './common.mjs';
 
 // Each numbered delivery remains independently reproducible from its commit.
-const STAGE = 1;
+const STAGE = 2;
 const assets = [];
 const path = (d, token = null, extra = '') => `<path d="${d}" fill="${token ? C(token) : 'none'}" ${extra}/>`;
 const circle = (x, y, r, token, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" ${/\bfill=/.test(extra) ? '' : `fill="${token ? C(token) : 'none'}"`} ${extra}/>`;
@@ -46,6 +46,24 @@ function nukeBlast(frame) {
   return defs + `<g opacity="${alpha}">${halo}${shock}${cloud}</g>`;
 }
 emit('fx.nuke-blast', 'fx', 'nuke-blast', nukeBlast, {frames: 5, fps: 12, tags: ['explosion', 'animation', 'once']});
+
+function empPulse(frame) {
+  const r = [32, 57, 84, 110][frame - 1], alpha = [1, .8, .5, .1][frame - 1];
+  const defs = `<defs><radialGradient id="pulse-glow"><stop offset="0.6" stop-color="${C('science')}" stop-opacity="0"/><stop offset="0.8" stop-color="${C('science')}" stop-opacity="0.4"/><stop offset="1" stop-color="${C('science')}" stop-opacity="0"/></radialGradient></defs>`;
+  const ring = circle(128, 128, r + 13, null, 'fill="url(#pulse-glow)" stroke="none"') +
+    circle(128, 128, r, null, 'stroke-width="10"') +
+    circle(128, 128, r, null, `stroke="${C('player-2')}" stroke-width="7"`) +
+    circle(128, 128, r - 1, null, `stroke="${C('science')}" stroke-width="3"`) +
+    line(`M${round(128-r*.8)} ${round(128-r*.6)} A${r} ${r} 0 0 1 ${round(128-r*.2)} ${round(128-r)}`, 'snow', 3);
+  let sparks = '';
+  for (const angle of [24, 110, 200, 285]) {
+    const a = (angle + frame * 5) * Math.PI / 180, x = round(128 + Math.cos(a) * r), y = round(128 + Math.sin(a) * r);
+    const bolt = path('M3 -12 Q5 -15 4 -10 L1 -3 H8 Q11 -3 8 1 L-3 12 Q-6 15 -4 10 L-2 3 H-9 Q-11 3 -8 0Z', 'energy', 'stroke-width="3"');
+    sparks += `<g transform="translate(${x} ${y}) rotate(${angle + frame * 5 + 45})">${bolt}</g>`;
+  }
+  return defs + `<g opacity="${alpha}">${ring}${sparks}</g>`;
+}
+if (STAGE >= 2) emit('fx.emp-pulse', 'fx', 'emp-pulse', empPulse, {frames: 4, fps: 10, tags: ['emp-pulse', 'animation', 'once']});
 
 write('art/manifest/war-fx.json', JSON.stringify({assets}, null, 2) + '\n');
 console.log(`War FX: ${assets.length} ids generated (stage ${STAGE}).`);

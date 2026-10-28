@@ -22,6 +22,29 @@
         "once"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "fx.emp-pulse",
+      "category": "fx",
+      "src": "art/src/fx/emp-pulse-f{f}.svg",
+      "out": "public/assets/sprites/fx/emp-pulse-f{f}.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 4,
+      "fps": 10,
+      "parts": [],
+      "tags": [
+        "emp-pulse",
+        "animation",
+        "once"
+      ],
+      "phase": "P1"
     }
   ]
 }
