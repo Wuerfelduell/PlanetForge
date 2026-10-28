@@ -87,10 +87,41 @@ function nuke(frame){
   return flight(hull,exhaust(frame,'uranium','toxic'));
 }
 
+function dropship(frame){
+  const rivet=(x,y)=>circle(x,y,1.5,'paper','stroke="none"');
+  const hull=
+    // Two short rear pods and a tall slab-sided troop bay. The occupied hull
+    // area is deliberately much larger than rocket-big's slender passenger tube.
+    rect(24,31,29,23,7,'rock-dark')+rect(24,74,29,23,7,'rock-dark')+
+    rect(24,36,10,13,4,'coal')+rect(24,79,10,13,4,'coal')+
+    path('M44 29H91Q99 29 104 34L117 46Q122 50 122 57V77Q122 84 116 88L103 97Q99 100 91 100H44Q34 100 34 90V39Q34 29 44 29Z','rock')+
+    shadow('M35 81Q63 94 98 89L121 77Q121 85 115 88L103 97Q99 100 91 100H44Q34 100 34 90Z','rock')+
+    // Separate chunky armor plates, with small round fasteners and warm windows.
+    path('M43 30H89Q97 30 102 36L106 41H43Q39 41 39 37V34Q39 30 43 30Z','deep-water')+
+    rect(41,51,51,37,7,'deep-water')+
+    shadow('M42 76H91V81Q91 88 84 88H49Q42 88 42 81Z','deep-water')+
+    line('M48 68H84','science',2)+
+    [48,61,74,87].map(x=>circle(x,46,4,'energy','stroke-width="2"')).join('')+
+    [48,85].map(x=>[58,81].map(y=>rivet(x,y)).join('')).join('')+
+    path('M45 91H91L103 96H45Z','rock-dark','stroke-width="1.5"')+
+    shine('M44 33H83',2)+line('M46 55H79','science',2)+
+    // The blunt right-hand face is a wide closed boarding ramp, never a cockpit.
+    path('M98 40L115 47Q120 49 120 55V78Q120 83 115 86L98 93Z','rock-dark')+
+    path('M102 49L114 54V79L102 84Z','rock','stroke-width="2"')+
+    line('M104 57L112 59M104 66L112 68M104 75L112 77','rock-dark',2)+
+    rect(95,49,5,12,2,'paper','stroke-width="1.5"')+
+    rect(95,75,5,12,2,'paper','stroke-width="1.5"')+
+    shine('M103 44L113 48',1.5)+rivet(118,55)+rivet(118,78);
+  const flames=`<g transform="translate(0 -22)">${exhaust(frame)}</g>`+
+    `<g transform="translate(0 22)">${exhaust(frame)}</g>`;
+  return flight(hull,flames);
+}
+
 const ships=[
   {name:'missile-homing',draw:homing},
   {name:'missile-emp',draw:emp},
   {name:'missile-nuke',draw:nuke},
+  {name:'dropship',draw:dropship},
 ];
 const assets=[];
 for(const {name,draw} of ships){

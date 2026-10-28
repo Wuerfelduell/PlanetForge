@@ -86,6 +86,35 @@
         "loop"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ship.dropship",
+      "category": "space",
+      "src": "art/src/space/dropship-f{f}.svg",
+      "out": "public/assets/sprites/space/dropship-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 6,
+      "parts": [
+        "hull",
+        "exhaust",
+        "engine-anchor"
+      ],
+      "tags": [
+        "star-map",
+        "ship",
+        "nose-right",
+        "flight",
+        "loop"
+      ],
+      "phase": "P1"
     }
   ]
 }
