@@ -101,6 +101,49 @@ function sawmill(){
     rect(129,188,24,15,'rock',6)+glint('M135 192H145')+base();
 }
 
+function mine(){
+  return post(146,43,181,'rock')+post(202,43,181,'rock')+
+    // Open steel headframe replaces tier two's small right-hand ore hopper.
+    line('M159 98L201 137L160 176L201 215M201 98L160 137L201 176L160 215','rock-dark',6)+
+    rect(140,28,80,19,'rock',8)+glint('M150 34H202')+
+    group('wheel',circle(178,65,29,'rock-dark')+circle(178,65,21,'sand')+
+      line('M178 45V85M158 65H198M164 51L192 79M164 79L192 51','rock-dark',5)+
+      circle(178,65,8,'rock','stroke-width="3"')+glint('M158 51Q165 41 176 42'))+
+    line('M171 94V159M186 94V161','coal',3)+
+    // The same soft grey hill, dark arched portal and rusty ore as mine.t2.
+    path('M34 224Q31 151 59 118Q87 84 130 104Q178 112 186 225Z','rock')+
+    line('M125 116Q161 130 169 204','rock-dark',13)+
+    path('M53 224V162Q53 124 103 124Q153 124 153 162V224Z','paper')+
+    path('M69 224V163Q69 141 103 141Q137 141 137 163V224Z','coal')+
+    line('M60 166H68M138 166H146M58 193H68M138 193H147','rock',4)+
+    line('M120 139Q142 143 145 163','rock',7)+glint('M62 151Q67 135 85 133')+
+    line('M83 190L95 181L105 190M105 168L116 161L126 172','rock-dark',4)+
+    post(38,111,66,'rock-dark')+post(211,111,70,'rock-dark')+
+    lamp(33,100,31,23)+lamp(194,100,28,23)+
+    cable('M40 223V192Q40 182 48 182H53M218 123V136M206 175V216H216')+
+    rect(193,138,29,36,'rock',8)+lamp(198,144,19,14)+
+    line('M201 165H213','rock-dark',3)+
+    // Sleepers and twin rails diverge towards the foreground; cart wheels sit on them.
+    line('M91 203L139 213M103 216L170 229M119 229H209','iron',7)+
+    line('M88 193L140 231M122 193L215 231','rock-dark',7)+
+    line('M88 193L140 231M122 193L215 231','snow',3)+
+    // One self-contained battery cart, including its motor and short local cable.
+    // Translation pivot: [172,212], midway between the wheel contact centers.
+    group('cart',
+      path('M139 181H207L200 207H148Z','rock')+
+      path('M144 181L153 164L168 173L181 158L195 169L203 181Z','iron')+
+      line('M156 174L163 179M180 168L187 177','clay',3)+
+      path('M159 186H198L194 200H162Z','clay','stroke-width="3"')+
+      rect(140,185,21,20,'science',6)+
+      circle(150,193,4,active('energy'),'stroke-width="3"')+
+      cable('M157 202H172V207')+
+      circle(153,212,9,'rock-dark')+circle(191,212,9,'rock-dark')+
+      circle(153,212,3,'snow','stroke="none"')+circle(191,212,3,'snow','stroke="none"')+
+      glint('M145 184H155'))+
+    // Front rail lip overlaps the bottoms of the wheels, matching existing cart layers.
+    line('M144 222H202','rock',4)+base();
+}
+
 function scaffolding(){
   return group('scaffolding',post(38,57,180)+post(206,57,180)+
     rect(31,108,194,12,'sand',5)+rect(31,186,194,12,'sand',5)+
@@ -112,6 +155,7 @@ function scaffolding(){
 const buildings = [
   {name:'fishery',draw:fishery,parts:[]},
   {name:'sawmill',draw:sawmill,parts:['blade']},
+  {name:'mine',draw:mine,parts:['cart','wheel']},
 ];
 const assets=[];
 for(const def of buildings){

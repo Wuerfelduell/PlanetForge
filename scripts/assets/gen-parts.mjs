@@ -22,6 +22,7 @@ export const PARTS = {
  'building.pump.t2':{file:'pump-t2',part:'pump-arm',pivot:[130,90]},
  'building.mine.t1':{file:'mine-t1',part:'cart',pivot:[105,211]},
  'building.mine.t2':{file:'mine-t2',part:'cart',pivot:[105,211]},
+ 'building.mine.t3':{file:'mine-t3',part:'cart',pivot:[172,212]},
  'building.market':{file:'market',part:'flag',pivot:[179,91]},
 };
 
