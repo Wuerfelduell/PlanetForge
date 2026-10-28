@@ -24,6 +24,8 @@ export const RESOURCE_IDS = [
   // More ores (Seb: "mehr verschiedene Erze"): tin and silver mined as they are, bauxite and
   // ilmenite smelted to aluminium and titanium, platinum only from asteroids and far planets.
   "tin", "silver", "bauxite", "ilmenite", "platinum", "bronze", "aluminium", "titanium",
+  // Warp systems (Seb): exotic matter only found in the neighbor systems behind the warp gate.
+  "antimatter", "neutronium", "xenocrystal",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -73,6 +75,9 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   bronze: { name: "Bronze", icon: "🥉" },
   aluminium: { name: "Aluminium", icon: "🥄" },
   titanium: { name: "Titan", icon: "🛡️" },
+  antimatter: { name: "Antimaterie", icon: "⚛️" },
+  neutronium: { name: "Neutronium", icon: "🟣" },
+  xenocrystal: { name: "Xenokristall", icon: "🔷" },
 };
 
 export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
@@ -235,6 +240,7 @@ export const BUILDING_IDS = [
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
   "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell", "treasury",
   "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
+  "warpgate", "exo-drill", "power-antimatter", "neutron-bastion", "shell-armor", "xeno-lab",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -319,6 +325,10 @@ export interface BuildingDef {
   ascension?: number;
   /** At most one per planet. */
   unique?: boolean;
+  /** Shield shell hits by invaders do this much less damage while one stands anywhere (counted up to WARP.maxShellArmor). */
+  shellArmor?: number;
+  /** Cannot be built in versus. */
+  coopOnly?: boolean;
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
@@ -979,6 +989,82 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     battery: 8,
     energy: -4,
   },
+  // Warp systems (Seb): the gate opens the way to the neighbor systems, the rest uses their exotic matter.
+  warpgate: {
+    name: "Warptor",
+    icon: "🌀",
+    category: "space",
+    description: "Ortet beim ersten Bau fünf Nachbarsysteme und schickt Warpschiffe dorthin. Nur eins pro Planet.",
+    cost: { steel: 40, titanium: 10, computer: 4, aetherite: 20 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    unique: true,
+    coopOnly: true,
+  },
+  "exo-drill": {
+    name: "Exobohrer",
+    icon: "🛰️",
+    category: "resources",
+    description: "Fördert Antimaterie, Neutronium und Xenokristall, die es nur in fremden Sonnensystemen gibt. Bringt seinen eigenen Strom mit. Nur auf einem Feld mit Vorkommen. Verbraucht Werkzeug.",
+    cost: { titanium: 6, steel: 10, electronics: 2 },
+    unlockLevel: 10,
+    allowedBiomes: [...HOT_GROUND, "glacier"],
+    workers: 2,
+    extracts: { resources: ["antimatter", "neutronium", "xenocrystal"], perWorker: 0.15 },
+    needsDeposit: true,
+    usesTools: true,
+  },
+  "power-antimatter": {
+    name: "Antimaterie-Reaktor",
+    icon: "⚛️",
+    category: "energy",
+    description: "+30 Strom mit zwei Arbeitern aus einer Prise Antimaterie. Xenokristalle halten sie in der Schwebe.",
+    cost: { antimatter: 10, xenocrystal: 4, titanium: 15, concrete: 30 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 2,
+    energy: 30,
+    burns: { resource: "antimatter", perSecond: 0.01 },
+  },
+  "neutron-bastion": {
+    name: "Neutroniumwall",
+    icon: "🧱",
+    category: "defense",
+    description: "Ein Wall aus Neutronium: +2 auf die Würfe der Verteidiger, holt 2 Angreifer vor dem Kampf herunter.",
+    cost: { neutronium: 12, steel: 15, concrete: 15 },
+    unlockLevel: 10,
+    allowedBiomes: HOT_GROUND,
+    workers: 0,
+    defense: 2,
+    intercept: 2,
+  },
+  "shell-armor": {
+    name: "Hüllenpanzerung",
+    icon: "🛡️",
+    category: "space",
+    description: "Neutroniumplatten für die Schutzhülle um die Sonne: Invasoren richten an der Hülle nur halb so viel Schaden an. Nur eine pro Planet.",
+    cost: { neutronium: 20, titanium: 10, steel: 20 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    shellArmor: 0.5,
+    unique: true,
+    coopOnly: true,
+  },
+  "xeno-lab": {
+    name: "Xenolabor",
+    icon: "🔬",
+    category: "research",
+    description: "Erforscht fremde Kristalle: sehr viel Wissen je Arbeiter und +4 Aufstiegspunkte pro Umlauf. Braucht Strom.",
+    cost: { xenocrystal: 12, glass: 20, computer: 2 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 3,
+    produces: { resource: "science", perWorker: 1 },
+    ascension: 4,
+    energy: -3,
+  },
 };
 
 export type RecipeId =
@@ -1102,6 +1188,10 @@ export interface RocketDef {
   secondsPerDistance: number;
   maxRange: number;
   versusOnly?: boolean;
+  /** Burns this instead (fuel amount × mul) when the economy is short of the main fuel. */
+  altFuel?: { resource: ResourceId; mul: number };
+  /** Flies only between sun systems, from a warp gate (see WARP). */
+  warp?: true;
 }
 
 /**
@@ -1109,7 +1199,7 @@ export interface RocketDef {
  * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
  * locked out of flying.
  */
-export const ROCKET_IDS = ["colony", "combat", "starship"] as const;
+export const ROCKET_IDS = ["colony", "combat", "starship", "warp"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
 // Seb: flying has no level limit; launch pad, rocket cost and fuel are the only gates.
@@ -1143,7 +1233,46 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 1.5,
     maxRange: 40,
   },
+  // Seb: other sun systems only by warp. The first jumps burn ätherite, antimatter from there is cheaper.
+  warp: {
+    name: "Warpschiff",
+    icon: "🌠",
+    cost: { titanium: 5, computer: 2 },
+    capacity: 6,
+    fuel: { resource: "antimatter", takeoff: 3, perDistance: 0, perPassenger: 0.1 },
+    altFuel: { resource: "aetherite", mul: 3 },
+    secondsPerDistance: 0,
+    maxRange: Infinity,
+    warp: true,
+  },
 };
+
+/**
+ * Neighbor sun systems (Seb): found when the first warp gate is built, reachable only by warp ship.
+ * Each one is rich in exotic matter; some are home to a foreign people (an AI faction).
+ */
+export const WARP = {
+  systems: 5,
+  /** Planets per neighbor system. */
+  planets: [3, 5] as const,
+  /** Every system is inhabited with this chance, but at least `inhabited[0]` and at most `inhabited[1]` are. */
+  inhabitedChance: 0.3,
+  inhabited: [1, 2] as const,
+  /** An inhabited system has at least this many settled planets (if it has that many). */
+  settledPlanets: 3,
+  /** Inhabitants of a foreign people on its main planet and on each other settled planet. */
+  people: { main: 8, other: 4 },
+  /** Exotic matter of the systems; inhabited systems keep theirs too. */
+  specialties: [["antimatter"], ["neutronium"], ["xenocrystal"], ["antimatter", "neutronium"], ["neutronium", "xenocrystal"]] as ResourceId[][],
+  /** Exotic fields per planet and their size. */
+  fields: [1, 2] as const,
+  amount: [40, 80] as const,
+  /** Distance used for warp fuel, and seconds per jump. */
+  distance: 10,
+  seconds: 120,
+  /** Shell armor counts up to this (halves shield damage at most). */
+  maxShellArmor: 0.5,
+} as const;
 
 /** Playable peoples (ids from the asset list). Bonuses and abilities come with the balancing data. */
 export const PEOPLE_IDS = ["burrowbeavers", "quillfolk", "axolings", "shellguards", "dunehoppers", "starowls", "tideotters", "hornbeetles", "frostseals", "swapcoons", "glowsnails", "echobats"] as const;
