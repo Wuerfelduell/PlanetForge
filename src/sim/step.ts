@@ -10,7 +10,7 @@ import {
   settlersOutside,
   neighbors,
   NOT_AFFORDABLE,
-  ascensionPerCycle,
+  ascensionIncome,
   economyThreshold,
   foodUpkeepPerCycle,
   secondsPerBirth,
@@ -235,18 +235,8 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
     breathe(state, economy, events);
 
     const a = economy.ascension;
-    // Monuments and upgraded buildings add their points on top of what the people earn.
-    let monuments = 0;
-    let upgrades = 0;
-    for (const p of state.planets) {
-      if (p.economyId !== economy.id) continue;
-      for (const s of p.segments) {
-        monuments += buildingStats(s)?.ascension ?? 0;
-        if (s.building) upgrades += (s.tier ?? 1) - 1;
-      }
-    }
-    const earned = ascensionPerCycle(state, people, upgrades);
-    a.points += modified(economy, "ascensionPerCycle", earned.people) + earned.upgrades + monuments;
+    // Inhabitants, upgraded buildings and monuments (rules.ts, also shown in the HUD).
+    a.points += ascensionIncome(state, economy, people).total;
     // Food beyond the stock limit rots, so it cannot pile up for the rest of the game.
     economy.resources.food = Math.min(economy.resources.food, RULES.foodStock.base + RULES.foodStock.perCitizen * people);
     for (let t = economyThreshold(state, economy); t !== null && a.points >= t; t = economyThreshold(state, economy)) {

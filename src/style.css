@@ -68,6 +68,13 @@ html, body {
 .res-item .res-name { flex: 1; color: var(--muted); }
 .res-item.bad b { color: var(--bad); }
 #hud .chip.more { color: var(--muted); }
+/* The ⭐ panel: ascension points per cycle and where they come from. */
+button.level { border: none; color: inherit; font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+button.level.on { outline: 2px solid var(--accent, #ffd166); }
+#hud .res-list.ascension { display: block; font-size: 14px; line-height: 1.4; }
+#hud .res-list.ascension p { margin: 4px 0; }
+#hud .res-list.ascension .muted { color: var(--muted); font-size: 13px; }
+#hud .asc-rows div { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
 /* "!" on a resource that just ran out on a field. */
 b.alert {
   display: inline-grid;
