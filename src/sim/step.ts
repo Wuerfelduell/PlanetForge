@@ -120,7 +120,8 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       const output = economy && !def?.crafts ? segmentOutput(planet, segment, working, economy) : {};
       const drawn = new Set<ResourceId>();
       for (const [resource, perSecond] of Object.entries(output) as [ResourceId, number][]) {
-        let amount = perSecond * DT * rateFactor;
+        // Hunger slows every job except getting food, so a hungry people can always eat its way out.
+        let amount = perSecond * DT * (resource === "food" ? 1 : rateFactor);
         // Producers (farm, pump, lab) create from nothing; everything else draws from the ground.
         const deposit = resource === made ? undefined : segment.deposits.find((d) => d.resource === resource);
         if (deposit && !deposit.infinite) {
@@ -154,7 +155,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
 /** One tick of a crafting building: as much of its recipe as workers and the stock allow. */
 function craft(planet: PlanetState, segment: PlanetState["segments"][number], working: number, economy: GameState["economies"][string], rateFactor: number): void {
   const recipe = RECIPES[segmentRecipe(segment)!];
-  let crafts = craftRate(planet, segment, working, economy) * DT * rateFactor;
+  let crafts = craftRate(planet, segment, working, economy) * DT * ("food" in recipe.outputs ? 1 : rateFactor);
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) crafts = Math.min(crafts, economy.resources[r] / v);
   if (crafts <= 0) return;
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) economy.resources[r] = Math.max(0, economy.resources[r] - v * crafts);
