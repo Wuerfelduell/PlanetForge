@@ -14,6 +14,9 @@ export const KEY_HELP: [keys: string, what: string][] = [
   ["L", "Aufstieg (Level)"],
   ["R", "Alle Rohstoffe"],
   ["H", "Zurück zum eigenen Planeten"],
+  ["P", "Planetenliste (umbenennen mit ✏️)"],
+  ["N", "Nächster eigener Planet"],
+  ["I", "Ins Planeteninnere / zurück nach oben"],
   ["Z", "Heranzoomen / ganzer Planet"],
   ["Leertaste", "Pause / weiter"],
   ["T", "Tempo 1× / 3×"],
@@ -83,6 +86,12 @@ function handle(a: KeyboardActions, key: string): boolean {
       return ui.press(`[data-action="resources"]`);
     case "h":
       return ui.press(`[data-action="home"]`);
+    case "p":
+      return ui.press(`#hud [data-action="planets"]`);
+    case "n":
+      return ui.press(`#hud [data-action="planet"]`);
+    case "i":
+      return ui.press(`#hud [data-action="interior"], #hud [data-action="surface"]`);
     case "z":
       return click(document.getElementById("zoom-toggle"));
     case " ":

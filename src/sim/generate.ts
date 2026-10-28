@@ -197,6 +197,7 @@ function addFaction(state: GameState, index: number, rng: Rng): void {
   const economy = state.economies[economyId]!;
   for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
   planet.economyId = economyId;
+  planet.founder = id;
   for (const s of planet.segments) if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
   const taken = new Set(state.players.map((p) => p.people));
   const free = PEOPLE_IDS.filter((p) => !taken.has(p));
@@ -253,6 +254,7 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   let arriving: number = RULES.coopJoinPopulation;
   if (planet.economyId === null) {
     planet.economyId = economyId;
+    planet.founder = playerId;
     arriving = RULES.startPopulation;
     const economy = next.economies[economyId]!;
     for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
@@ -555,6 +557,14 @@ export function upgradeState(state: unknown): GameState | null {
   }
   // Platinum came later too: worlds without any get their fields, the same a new game would have.
   if (!s.planets.some((p) => p.segments.some((x) => x.deposits.some((d) => d.resource === "platinum")))) placePlatinum(s.seed, s.planets);
+  // Founders came later: the first player who calls a planet home, else whoever has most people there.
+  for (const planet of s.planets) {
+    if (planet.founder || planet.economyId === null) continue;
+    const owners = s.players.filter((p) => p.economyId === planet.economyId);
+    const count = (id: string) => Object.values(s.units).filter((u) => u.planetId === planet.id && u.owner === id).length;
+    const founder = owners.find((p) => p.homePlanetId === planet.id) ?? owners.slice().sort((a, b) => count(b.id) - count(a.id))[0];
+    if (founder) planet.founder = founder.id;
+  }
   (s as { version: number }).version = 12;
   return s;
 }

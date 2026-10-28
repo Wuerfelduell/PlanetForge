@@ -78,11 +78,20 @@ describe("every resource has a use", () => {
     for (const r of Object.values(RECIPES)) add(r.inputs);
     for (const r of Object.values(ROCKETS)) add({ ...r.cost, [r.fuel.resource]: 1 });
     add(SUPERNOVA.segmentCost);
-    // Spent outside these tables: food (upkeep), science (discoveries), suits (breathing).
-    const elsewhere = new Set<ResourceId>(["food", "science", "suits"]);
+    // Spent outside these tables: food (upkeep), science (discoveries), suits (breathing), deep suits (worn inside planets).
+    const elsewhere = new Set<ResourceId>(["food", "science", "suits", "deep-suit"]);
     const single = RESOURCE_IDS.filter((r) => !elsewhere.has(r) && (uses.get(r) ?? 0) < 2);
-    // Raw goods with exactly one recipe that turns them into something widely used, and platinum.
-    expect(single).toEqual(["sand", "fiber", "tin", "bauxite", "ilmenite", "platinum"]);
+    // Raw goods with exactly one recipe that turns them into something widely used.
+    expect(single).toEqual(["sand", "fiber", "tin", "bauxite", "ilmenite"]);
+  });
+
+  it("the warp matter keeps a use after its buildings stand", () => {
+    // A recipe or a fuel eats it again and again, so it never just piles up.
+    const ongoing = new Set<ResourceId>();
+    for (const r of Object.values(RECIPES)) for (const k of Object.keys(r.inputs) as ResourceId[]) ongoing.add(k);
+    for (const b of Object.values(BUILDINGS)) if (b.burns) ongoing.add(b.burns.resource);
+    for (const r of Object.values(ROCKETS)) ongoing.add(r.fuel.resource);
+    for (const r of ["antimatter", "neutronium", "xenocrystal"] as ResourceId[]) expect(ongoing.has(r), r).toBe(true);
   });
 
   it("a treasury turns gold, silver and ätherite into ascension points", () => {

@@ -1,7 +1,11 @@
+import { buildingInfoHtml } from "./buildingInfo";
 import {
   adjacencyMultiplier,
   BIOMES,
   buildBlocker,
+  cleanPlanetName,
+  PLANET_NAME_MAX,
+  renameBlocker,
   BUILDING_CATEGORIES,
   BUILDING_CATEGORY_IDS,
   BUILDING_IDS,
@@ -80,6 +84,15 @@ import {
   TEAM_ECONOMY,
   tradeQuote,
   type FactionState,
+  CORE,
+  coreAccessBlocker,
+  coreHazard,
+  coreOf,
+  coreWorkers,
+  drillProgress,
+  planetById,
+  shaftOpen,
+  surfaceOf,
 } from "../sim";
 import { currentHint } from "./hints";
 import { artTexture, buildingArt, buildingIconUrl, resourceIconUrl } from "../render/art";
@@ -129,6 +142,9 @@ export class Ui {
   /** Full resource list open under the top bar. */
   private showResources = false;
   private showAscension = false;
+  /** Planet list under the top bar, and how it groups the planets. */
+  private showPlanets = false;
+  private planetGroups: "founder" | "system" = "founder";
   /** Resources that just ran out on a field, until when their "!" shows. */
   private readonly depleted = new Map<ResourceId, number>();
   /** Open tab of the build menu; kept while the player taps from field to field. */
@@ -174,8 +190,32 @@ export class Ui {
     return this.art && kind === "clearScorched" && artTexture("ui.icon-clear-scorched") ? `<img class="bi" src="assets/sprites/ui/icon-clear-scorched.png" alt="${emoji}">` : emoji;
   }
 
+  /** UI icon from the art (ui.<name>) once Codex drew it, else the emoji. */
+  private uicon(name: string, emoji: string): string {
+    return this.art && artTexture(`ui.${name}`) ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
+  }
+
   private bicon(building: BuildingId): string {
     return this.art && buildingArt(building) ? `<img class="bi" src="${buildingIconUrl(building)}" alt="${BUILDINGS[building].icon}">` : BUILDINGS[building].icon;
+  }
+
+  /** Small ⓘ in the corner of a build button: tapping it shows what the building does. */
+  private infoBadge(building: BuildingId): string {
+    return `<span class="info" data-info="${building}" role="button" aria-label="Was macht ${BUILDINGS[building].name}?">i</span>`;
+  }
+
+  /** Card over the game with everything a building does, made from its data (buildingInfo.ts). */
+  private showBuildingInfo(building: BuildingId): void {
+    document.querySelector(".binfo")?.remove();
+    sfx.play("ui.open");
+    const node = document.createElement("div");
+    node.className = "binfo";
+    node.innerHTML = `<div class="binfo-card">${buildingInfoHtml(building, (r) => this.res(r), this.bicon(building))}<button class="wide" data-close>OK</button></div>`;
+    // Tap anywhere outside the card (or OK) to close.
+    node.addEventListener("pointerup", (e) => {
+      if (e.target === node || (e.target as HTMLElement).closest("[data-close]")) node.remove();
+    });
+    document.body.appendChild(node);
   }
 
   /** The local player, whose people the +/- buttons move. */
@@ -192,7 +232,7 @@ export class Ui {
   render(state: GameState): void {
     this.state = state;
     this.celebrateShield(state);
-    const planet = state.planets.find((p) => p.id === this.planetId);
+    const planet = planetById(state, this.planetId);
     if (!planet) return;
     const hud = this.renderHud(state, planet);
     // Three parts, so the resource strip stays the same element and keeps its scroll position
@@ -229,6 +269,18 @@ export class Ui {
         case "thawed":
           if (this.isMine(e.planetId)) this.toast(`🧊 ${e.count} ${PEOPLES[e.people].name} aufgetaut! Sie wohnen jetzt auf ${this.planetName(e.planetId)}.`, "good");
           break;
+        case "coreOpened":
+          if (this.isMine(e.planetId)) this.toast(`🕳️ Durchbruch! Die Kernbohrung auf ${this.planetName(e.planetId)} hat das Planeteninnere erreicht. Tippe auf ⬇ Inneres.`, "good");
+          break;
+        case "quake":
+          if (this.isMine(e.planetId)) this.toast(`💥 Beben im Inneren von ${this.planetName(e.planetId)}: ein Arbeiter ist verschüttet, sein Tiefenanzug ist verloren. Stützpfeiler helfen.`, "bad");
+          break;
+        case "eruption":
+          if (this.isMine(e.planetId)) {
+            const what = e.building ? `${BUILDINGS[e.building].name} ${e.wrecked ? "zerstört" : "beschädigt"}` : "";
+            this.toast(`🌋 Magmaausbruch im Inneren von ${this.planetName(e.planetId)}${what ? `: ${what}` : ""}${e.killed ? ", ein Arbeiter ist umgekommen" : ""}.`, "bad");
+          }
+          break;
         case "suffocated":
           if (this.isMine(e.planetId)) this.toast(`🧑‍🚀 Keine Raumanzüge mehr: ein Siedler auf ${this.planetName(e.planetId)} ist erstickt. Eine Werkstatt (Stufe 2) näht neue.`, "bad");
           break;
@@ -251,7 +303,10 @@ export class Ui {
           break;
         }
         case "landed":
-          if (e.playerId === this.playerId) this.toast(e.colonized ? `🚩 Kolonie auf ${this.planetName(e.planetId)} gegründet` : `🚀 ${e.count} Einwohner auf ${this.planetName(e.planetId)} gelandet`, "good");
+          if (e.playerId === this.playerId) this.toast(e.colonized ? `🚩 Kolonie auf ${this.planetName(e.planetId)} gegründet. Umbenennen kannst du sie in der 🪐-Liste.` : `🚀 ${e.count} Einwohner auf ${this.planetName(e.planetId)} gelandet`, "good");
+          break;
+        case "renamed":
+          if (e.playerId !== this.playerId && this.isMine(e.planetId)) this.toast(`✏️ ${this.playerName(e.playerId)} hat ${e.from} in ${e.name} umbenannt`);
           break;
         case "battle": {
           const where = this.planetName(e.planetId);
@@ -451,12 +506,17 @@ export class Ui {
 
   /** Esc: closes the star map, discoveries, factions or the lists under the top bar. False if none was open. */
   closeOverlay(): boolean {
+    const info = document.querySelector(".binfo");
+    if (info) {
+      info.remove();
+      return true;
+    }
     if (this.mapOpen) return this.press(`[data-action="map"]`);
     if (this.showDiscoveries || this.showFactions) {
       this.showDiscoveries = this.showFactions = false;
       this.lastPanel = "";
-    } else if (this.showAscension || this.showResources) {
-      this.showAscension = this.showResources = false;
+    } else if (this.showAscension || this.showResources || this.showPlanets) {
+      this.showAscension = this.showResources = this.showPlanets = false;
       this.lastHud = NO_HUD;
     } else return false;
     if (this.state) this.render(this.state);
@@ -464,6 +524,12 @@ export class Ui {
   }
 
   private onAction(e: Event): void {
+    // The ⓘ on a build button only explains the building, it never builds (works on greyed-out ones too).
+    const info = (e.target as HTMLElement).closest<HTMLElement>("[data-info]");
+    if (info) {
+      this.showBuildingInfo(info.dataset.info as BuildingId);
+      return;
+    }
     const target = (e.target as HTMLElement).closest<HTMLElement>("[data-action]");
     if (!target || target.hasAttribute("disabled")) return;
     const { action, value } = target.dataset;
@@ -498,12 +564,38 @@ export class Ui {
         this.actions.send({ type: "launch", planetId: from || this.planetId, to: to!, rocket: rocket as RocketId, count: Number(count) });
         break;
       }
+      case "interior":
+      case "surface": {
+        // Down into the planet and back up (CORE).
+        const state = this.state;
+        const planet = state && planetById(state, this.planetId);
+        if (!state || !planet) break;
+        const to = action === "interior" ? coreOf(state, planet) : surfaceOf(state, planet);
+        if (to && to.id !== planet.id) this.actions.showPlanet(to.id);
+        break;
+      }
       case "planet": {
-        const own = this.ownPlanets();
+        // In the order of the planet list, so ▸ walks it from top to bottom.
+        const own = this.planetGroupsOf(this.state!).flatMap((g) => g.planets);
         const next = own[(own.findIndex((p) => p.id === this.planetId) + 1) % own.length];
         if (next) this.actions.showPlanet(next.id);
         break;
       }
+      case "planets":
+        this.showPlanets = !this.showPlanets;
+        this.showAscension = this.showResources = false;
+        break;
+      case "planetGroups":
+        this.planetGroups = value as "founder" | "system";
+        break;
+      case "gotoPlanet":
+        this.showPlanets = false;
+        if (this.mapOpen) this.press(`[data-action="map"]`);
+        this.actions.showPlanet(value!);
+        break;
+      case "rename":
+        this.askPlanetName(value!);
+        break;
       case "draw": {
         const me = this.state?.players.find((p) => p.id === this.playerId);
         this.actions.send({ type: "offerDraw", offer: !me?.offersDraw });
@@ -515,11 +607,11 @@ export class Ui {
         break;
       case "resources":
         this.showResources = !this.showResources;
-        this.showAscension = false;
+        this.showAscension = this.showPlanets = false;
         break;
       case "ascension":
         this.showAscension = !this.showAscension;
-        this.showResources = false;
+        this.showResources = this.showPlanets = false;
         break;
       case "discoveries":
         this.showDiscoveries = !this.showDiscoveries;
@@ -654,12 +746,21 @@ export class Ui {
     const speeds =
       `<button class="speed${paused ? " on" : ""}" data-action="speed" data-value="${paused ? pace : 0}" title="${paused ? "Weiter" : "Pause"}">${paused ? "▶" : "⏸"}</button>` +
       `<button class="speed${pace === 3 ? " on" : ""}" data-action="speed" data-value="${pace === 3 ? 1 : 3}" title="Tempo">${pace}×</button>`;
-    const own = this.ownPlanets();
-    const planetChip = !own.some((p) => p.id === planet.id)
-      ? `<span class="chip name" title="Planet">🪐 ${planet.name}</span>${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
-      : own.length > 1
-        ? `<button class="chip name" data-action="planet" title="Nächster eigener Planet">🪐 ${planet.name} <small>${own.findIndex((p) => p.id === planet.id) + 1}/${own.length} ▸</small></button>`
-        : `<span class="chip name" title="Planet">🪐 ${planet.name}</span>`;
+    // Same order as the 🪐 list and ▸. Inside a planet (CORE) the chip names the planet around it.
+    const own = this.planetGroupsOf(state).flatMap((g) => g.planets);
+    const surface = surfaceOf(state, planet);
+    const inside = planet.coreOf !== undefined;
+    const at = own.findIndex((p) => p.id === surface.id);
+    const listChip = `<button class="chip name${this.showPlanets ? " on" : ""}" data-action="planets" title="Alle Planeten">🪐 ${surface.name}${inside ? " <small>Inneres</small>" : ""}${at >= 0 && own.length > 1 ? ` <small>${at + 1}/${own.length}</small>` : ""} ${this.showPlanets ? "▴" : "▾"}</button>`;
+    const planetChip =
+      (at < 0
+        ? `${listChip}${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
+        : `${listChip}${own.length > 1 && !inside ? `<button class="chip" data-action="planet" title="Nächster eigener Planet">▸</button>` : ""}`) +
+      (inside
+        ? `<button class="chip glow" data-action="surface" title="Zurück an die Oberfläche (I)">${this.uicon("icon-surface", "⬆")} Oberfläche</button>`
+        : coreOf(state, planet)
+          ? `<button class="chip" data-action="interior" title="Ins Planeteninnere (I)">${this.uicon("icon-interior", "⬇")} Inneres</button>`
+          : "");
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
     const versusButtons = duel
@@ -670,11 +771,13 @@ export class Ui {
       <div class="row status main">
         ${planetChip}
         <button class="chip${this.mapOpen ? " on" : ""}" data-action="map" title="${this.mapOpen ? "Zurück zum Planeten" : "Sternkarte"}">${this.mapOpen ? "🪐" : "🌌"}</button>
-        <span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>
+        ${inside
+          ? `<span class="chip" title="Arbeiter im Inneren / Tiefenanzüge">${this.res("deep-suit")} ${planet.economyId ? coreWorkers(state, planet.economyId).length : 0}/${Math.floor(economy.resources["deep-suit"])} <small>${idleUnits(state, surface, this.playerId).length} frei oben</small></span>`
+          : `<span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>`}
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
         <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
-      </div>${this.renderFlights(state, versusButtons)}${list}${this.showAscension ? this.renderAscension(state, economy) : ""}`;
+      </div>${this.renderFlights(state, versusButtons)}${list}${this.showAscension ? this.renderAscension(state, economy) : ""}${this.showPlanets ? this.renderPlanetList(state) : ""}`;
     return { chips, controls, rest };
   }
 
@@ -852,12 +955,94 @@ export class Ui {
     return state && me ? state.planets.filter((p) => p.economyId === me.economyId) : [];
   }
 
+  /**
+   * Own planets in groups, for the 🪐 list and ▸: by founder (own first, then teammates, then
+   * conquered or joined ones), or by sun system. Start planets lead, the rest goes by name.
+   */
+  private planetGroupsOf(state: GameState): { title: string; planets: PlanetState[] }[] {
+    const own = this.ownPlanets();
+    const order = (a: PlanetState, b: PlanetState) => (b.startSlot !== null ? 1 : 0) - (a.startSlot !== null ? 1 : 0) || a.name.localeCompare(b.name, "de");
+    const groups = new Map<string, { title: string; planets: PlanetState[] }>();
+    const keys: string[] = [];
+    const add = (key: string, title: string, planet: PlanetState) => {
+      if (!groups.has(key)) groups.set(key, { title, planets: [] });
+      groups.get(key)!.planets.push(planet);
+    };
+    if (this.planetGroups === "system") {
+      keys.push("0", ...(state.systems ?? []).map((s) => String(s.index)));
+      for (const p of own) add(String(systemOf(p)), this.systemLabel(state, systemOf(p)), p);
+    } else {
+      keys.push(this.playerId, ...state.players.map((p) => p.id), "");
+      for (const p of own) {
+        const founder = state.players.find((x) => x.id === p.founder);
+        if (founder?.id === this.playerId) add(founder.id, "🚩 Von dir besiedelt", p);
+        else if (founder && founder.economyId === p.economyId) add(founder.id, `${PEOPLES[founder.people].icon} Von ${founder.name} besiedelt`, p);
+        else add("", "⚔️ Erobert oder übernommen", p);
+      }
+    }
+    return [...new Set(keys)].flatMap((k) => (groups.has(k) ? [groups.get(k)!] : [])).map((g) => ({ ...g, planets: g.planets.sort(order) }));
+  }
+
+  /** The 🪐 list: every own planet, grouped, with people, power and danger at a glance. */
+  private renderPlanetList(state: GameState): string {
+    const groups = this.planetGroupsOf(state);
+    const systems = new Set(this.ownPlanets().map(systemOf)).size > 1;
+    const toggle = (key: "founder" | "system", label: string) => `<button class="chip${this.planetGroups === key ? " on" : ""}" data-action="planetGroups" data-value="${key}">${label}</button>`;
+    const danger = new Set<string>([
+      ...state.flights.filter((f) => f.owner !== this.playerId && f.to !== "sun" && this.isMine(f.to)).map((f) => f.to),
+      ...(state.invasion && state.invasion.target !== "sun" ? [state.invasion.target] : []),
+    ]);
+    const row = (p: PlanetState) => {
+      const shown = this.state && planetById(this.state, this.planetId);
+      const here = p.id === this.planetId || (!!shown && p.id === shown.coreOf);
+      const idle = idleUnits(state, p, this.playerId).length;
+      const facts = [`👥 ${population(state, p)}/${housing(state, p)}`, idle ? `${idle} frei` : "", p.power && p.power.demand > p.power.supply ? `<span class="short">⚡ zu wenig</span>` : "", danger.has(p.id) ? `<span class="short">⚠️ Angriff</span>` : "", PLANET_TYPES[p.type].name];
+      const rename = renameBlocker(state, this.playerId, p) ? "" : `<button class="speed" data-action="rename" data-value="${p.id}" title="Umbenennen">✏️</button>`;
+      return `<div class="planet-row${here ? " here" : ""}"><button class="planet-go" data-action="gotoPlanet" data-value="${p.id}"><span>${p.type === "asteroid" ? "🪨" : "🪐"} <b>${p.name}</b>${here ? " ◂" : ""}</span><small>${facts.filter(Boolean).join(" · ")}</small></button>${rename}</div>`;
+    };
+    const lists = groups.map((g) => `<p class="group">${g.title} <small>${g.planets.length}</small></p>${g.planets.map(row).join("")}`).join("");
+    return `<div class="res-list planets">
+      <p><b>🪐 Deine Planeten</b> <small>${this.ownPlanets().length}</small>${systems || this.planetGroups === "system" ? ` <span class="toggle">${toggle("founder", "nach Siedler")}${toggle("system", "nach System")}</span>` : ""}</p>
+      ${lists || `<p class="muted">Du hast gerade keinen Planeten.</p>`}
+      <p class="muted">Umbenennen (✏️) darf nur, wer den Planeten zuerst besiedelt hat.</p>
+    </div>`;
+  }
+
+  /** Small dialog for a new planet name; the sim cleans and checks it again. */
+  private askPlanetName(planetId: string): void {
+    const planet = this.state?.planets.find((p) => p.id === planetId);
+    if (!planet) return;
+    const node = document.createElement("div");
+    node.className = "celebration rename";
+    node.innerHTML = `<form class="celebration-card"><h2>✏️ Planet umbenennen</h2><input name="name" maxlength="${PLANET_NAME_MAX}" autocomplete="off" enterkeyhint="done"><p class="muted">Höchstens ${PLANET_NAME_MAX} Zeichen. Alle Mitspieler sehen den neuen Namen.</p><div class="row"><button type="button" class="wide secondary" data-close>Abbrechen</button><button class="wide">Umbenennen</button></div></form>`;
+    const input = node.querySelector<HTMLInputElement>("input")!;
+    input.value = planet.name;
+    const close = () => node.remove();
+    node.querySelector("[data-close]")!.addEventListener("click", close);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+    node.querySelector("form")!.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = cleanPlanetName(input.value);
+      close();
+      if (name && name !== planet.name) this.actions.send({ type: "renamePlanet", planetId, name });
+    });
+    document.body.appendChild(node);
+    input.focus();
+    input.select();
+  }
+
   private isMine(planetId: string): boolean {
-    return this.ownPlanets().some((p) => p.id === planetId);
+    const planet = this.state && planetById(this.state, planetId);
+    // A planet interior is ours when its planet is.
+    return !!planet && this.ownPlanets().some((p) => p.id === surfaceOf(this.state!, planet).id);
   }
 
   private planetName(planetId: string): string {
-    return this.state?.planets.find((p) => p.id === planetId)?.name ?? "?";
+    const planet = this.state && planetById(this.state, planetId);
+    if (!planet) return "?";
+    return planet.coreOf ? `${surfaceOf(this.state!, planet).name} (Inneres)` : planet.name;
   }
 
   private playerName(playerId: string): string {
@@ -1151,7 +1336,7 @@ export class Ui {
         const amount = d.infinite ? "<small>unerschöpflich</small>" : empty ? "<small>aufgebraucht</small>" : "";
         const active = output[d.resource] ? " active" : empty ? " empty" : "";
         const deep = BIOMES[s.biome].deposits.find((x) => x.resource === d.resource)?.tier;
-        const tag = deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : d.resource === "platinum" ? `<small>Tiefbohrer</small>` : "";
+        const tag = planet.coreOf ? `<small>Kernmine</small>` : deep ? `<small>Mine ${deep}</small>` : GEMS.ids.includes(d.resource) ? `<small>Edelsteinmine</small>` : d.resource === "platinum" ? `<small>Tiefbohrer</small>` : "";
         const selectable = !def && d.byHand;
         return `<button class="deposit${active}${selectable && s.gather === d.resource ? " on" : ""}" ${selectable ? `data-action="gather" data-value="${d.resource}"` : "disabled"}>${this.res(d.resource)} ${amount} ${tag}</button>`;
     };
@@ -1171,7 +1356,7 @@ export class Ui {
       ? `<div class="workers">
           <button class="round" data-action="assign" data-value="-1" ${workerCount(state, planet, s.index, this.playerId) > 0 ? "" : "disabled"}>－</button>
           <span>👤 ${workerCount(state, planet, s.index)}/${cap}${workerCount(state, planet, s.index) !== workerCount(state, planet, s.index, this.playerId) ? ` <small>(${workerCount(state, planet, s.index, this.playerId)} von dir)</small>` : ""}</span>
-          <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, planet, this.playerId).length > 0 ? "" : "disabled"}>＋</button>
+          <button class="round" data-action="assign" data-value="1" ${workerCount(state, planet, s.index) < cap && idleUnits(state, surfaceOf(state, planet), this.playerId).length > 0 && !(planet.coreOf && coreAccessBlocker(state, planet, 1)) ? "" : "disabled"} title="${planet.coreOf ? (coreAccessBlocker(state, planet, 1) ?? "Ein freier Einwohner fährt im Tiefenanzug hinunter") : ""}">＋</button>
           <span class="rate">${rate}${mult !== 1 ? ` <small>Nachbarn ×${mult.toFixed(2)}</small>` : ""}${toolFactor(s, economy) < 1 ? ` <small>🔧 ohne Werkzeug langsamer</small>` : ""}</span>
         </div>`
       : "";
@@ -1229,7 +1414,7 @@ export class Ui {
           .filter(([r, v]) => economy.resources[r as ResourceId] < (v as number))
           .map(([r]) => RESOURCES[r as ResourceId].name);
         const missing = !locked && short.length ? `<br>Fehlt: ${short.join(", ")}` : "";
-        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}"><span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
+        upgrade = `<button class="build" data-action="upgrade" ${blocker ? "disabled" : ""} title="${blocker ?? ""}">${this.infoBadge(s.building!)}<span class="icon">${locked ? "🔒" : "⬆️"}</span><span class="name">${next.name ? `Ausbauen zu ${next.name}` : `Ausbauen auf Stufe ${(s.tier ?? 1) + 1}`}</span><span class="cost">${locked ? `Stufe ${next.unlockLevel}` : cost}${missing}</span></button>`;
       }
       actions = `${info}${upgrade}<button class="wide danger" data-action="demolish">Abreißen (50 % zurück)</button>`;
     } else if (biome.buildable) {
@@ -1258,7 +1443,7 @@ export class Ui {
           // Missing resources only: offer to queue the build instead of greying it out.
           const queueable = blocker === NOT_AFFORDABLE && !queued;
           return `<button class="build" data-action="${queueable ? "enqueue" : "build"}" data-value="${b}" ${blocker && !queueable ? "disabled" : ""} title="${blocker && !queueable && !locked ? `${blocker}. ` : ""}${bd.description}">
-              <span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
+              ${this.infoBadge(b)}<span class="icon">${locked ? "🔒" : this.bicon(b)}</span><span class="name">${bd.name}</span><span class="cost">${locked ? `Stufe ${bd.unlockLevel}` : cost}${queueable ? "<br>⏳ einplanen" : ""}</span>
             </button>`;
         })
         .join("");
@@ -1276,7 +1461,25 @@ export class Ui {
     const cryo = pod
       ? `<p class="muted">🧊 Eine Kryokapsel: ${pod.count} eingefrorene ${PEOPLES[pod.people].icon} ${PEOPLES[pod.people].name} schlafen hier.</p><button class="build" data-action="thaw" ${thawBlock ? `disabled title="${thawBlock}"` : ""}><span class="icon">🧊</span><span class="name">Auftauen: ${pod.count} neue Einwohner</span><span class="cost">${thawCost}</span></button>`
       : "";
-    return `<h2>${title}</h2>${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
+    return `<h2>${title}</h2>${this.renderDepths(state, planet, s)}${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
+  }
+
+  /** Planet interior (CORE): the drill's progress on the surface, the dangers and suits inside. */
+  private renderDepths(state: GameState, planet: PlanetState, s: PlanetState["segments"][number]): string {
+    if (s.building === "core-drill" && !planet.coreOf) {
+      if (coreOf(state, planet)) return `<p class="power">🕳️ Durchgebrochen. <button data-action="interior">⬇ Ins Innere</button></p>`;
+      const p = drillProgress(planet);
+      return `<p class="power">🕳️ Bohrt in die Tiefe: ${Math.floor(p * 100)} % <span class="bar"><span style="width:${Math.round(p * 100)}%"></span></span></p>`;
+    }
+    if (!planet.coreOf) return "";
+    const economy = economyOf(state, planet);
+    const used = planet.economyId ? coreWorkers(state, planet.economyId).length : 0;
+    const suits = `${this.res("deep-suit")} ${used}/${Math.floor(economy?.resources["deep-suit"] ?? 0)} Tiefenanzüge getragen`;
+    const { quake, eruption } = coreHazard(planet, s);
+    const risk = [quake ? `Beben ${Math.round(quake * 100)} %` : "", eruption ? `Magma ${Math.round(eruption * 100)} %` : ""].filter(Boolean).join(", ");
+    const shut = shaftOpen(state, planet) ? "" : `<p class="power short">🕳️ Die Kernbohrung oben fehlt: niemand kommt hinunter, die Arbeit steht still.</p>`;
+    const warn = quake >= CORE.warnFrom || eruption >= CORE.warnFrom ? " short" : "";
+    return `${shut}<p class="power${warn}">${risk ? `⚠️ Gefahr je Umlauf: ${risk}. ` : ""}<small>${suits}</small></p>`;
   }
 }
 
