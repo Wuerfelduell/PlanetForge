@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, INVADERS, RULES, SUPERNOVA, WARP, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, CORE, INVADERS, RULES, SUPERNOVA, WARP, type ResourceId } from "./content";
 import { modified } from "./discoveries";
 import { Rng } from "./rng";
 import { buildingStats, economyOf, planetById, planetDefense, planetShield, systemOf, ticksPerCycle } from "./rules";
@@ -180,8 +180,16 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
 /** Neutronium plates on the shield (WARP): share of shield damage they take away. */
 function shellArmor(state: GameState, economy: EconomyState): number {
   let armor = 0;
-  for (const p of state.planets) if (p.economyId === economy.id) for (const s of p.segments) armor += (s.building && BUILDINGS[s.building].shellArmor) || 0;
-  return Math.min(WARP.maxShellArmor, armor);
+  let core = 0;
+  for (const p of state.planets) {
+    if (p.economyId !== economy.id) continue;
+    for (const s of p.segments) {
+      armor += (s.building && BUILDINGS[s.building].shellArmor) || 0;
+      core += (s.building && BUILDINGS[s.building].coreArmor) || 0;
+    }
+  }
+  // Core iron plates (CORE) come on top of the neutronium ones.
+  return Math.min(WARP.maxShellArmor, armor) + Math.min(CORE.maxCoreArmor, core);
 }
 
 function hasResidents(state: GameState, planetId: string): boolean {

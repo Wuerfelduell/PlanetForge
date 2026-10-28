@@ -1,5 +1,5 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { BIOMES, buildingStats, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
+import { BIOMES, buildingStats, CORE, coreHazard, planetById, segmentOutput, TICK_MS, workerCount, type GameEvent, type GameState, type PlanetState, type ResourceId } from "../sim";
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
 import { Effects } from "./effects";
@@ -196,7 +196,7 @@ export class PlanetView {
   }
 
   private planet(state: GameState) {
-    return state.planets.find((p) => p.id === this.planetId) ?? state.planets[0]!;
+    return planetById(state, this.planetId) ?? state.planets[0]!;
   }
 
   /** Plays effects for events on the shown planet. Needs the art; silently does nothing without it. */
@@ -235,6 +235,13 @@ export class PlanetView {
         }
         case "launched":
           if (e.from === planet.id) this.launchRocket(planet, step, segWidth);
+          break;
+        // Dangers inside a planet (CORE).
+        case "quake":
+          if (e.planetId === planet.id) this.effect("fx.quake", e.segment * step, 1.02, segWidth * 1.4, 256);
+          break;
+        case "eruption":
+          if (e.planetId === planet.id) this.effect(artAnimation("fx.magma-burst") ? "fx.magma-burst" : "fx.explosion", e.segment * step, 1.05, segWidth * 1.6, 256);
           break;
         default:
           break;
@@ -600,10 +607,16 @@ export class PlanetView {
       sp.mystery.visible = false;
     }
 
-    g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
-    const body = artTexture(`planet.planet-${planet.type}`);
+    // Inside a planet (CORE): a small sphere around the glowing core, in the warm light of the magma.
+    const inside = planet.coreOf !== undefined;
+    g.circle(0, 0, R * 1.08).fill(inside ? { color: 0xff7a30, alpha: 0.14 } : { color: 0x7fb0ff, alpha: 0.08 });
+    const body = artTexture(inside ? "planet.core-sun" : `planet.planet-${planet.type}`);
     if (body) l.body.take(body).scale.set(k);
-    else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
+    else if (inside) {
+      g.circle(0, 0, ART_BODY * k).fill(0x8a2f12);
+      g.circle(0, 0, ART_BODY * k * 0.75).fill(0xd8561c);
+      g.circle(0, 0, ART_BODY * k * 0.45).fill(0xffb347);
+    } else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
 
     const wedge = (id: string, i: number) => {
       const texture = artTexture(`${id}.${n}`);
@@ -697,6 +710,7 @@ export class PlanetView {
           sprite.scale.set(((k * segWidth * 0.7) / PROP_SIZE) * (staged ? 1 : PROP_MIN_SCALE + (1 - PROP_MIN_SCALE) * fill));
         }
       }
+      if (inside) this.drawHazard(planet, s, mid, R, k * segWidth);
       if (s.cryo && !s.building) {
         // A cryo pod with a frozen people, beside the prop. Drawn art once it exists.
         const pod = artTexture("prop.cryo-pod");
@@ -744,6 +758,30 @@ export class PlanetView {
     }
   }
 
+  /** Danger badge over a cave field where quakes or magma strike often (CORE.warnFrom). */
+  private drawHazard(planet: PlanetState, s: PlanetState["segments"][number], mid: number, R: number, width: number): void {
+    const { quake, eruption } = coreHazard(planet, s);
+    if (Math.max(quake, eruption) < CORE.warnFrom) return;
+    const side = mid - ((Math.PI * 2) / this.segmentCount) * 0.3;
+    const size = Math.max(6, width * 0.14);
+    const x = Math.cos(side) * (R + size * 1.4);
+    const y = Math.sin(side) * (R + size * 1.4);
+    const badge = artTexture("ui.badge-quake");
+    if (badge) {
+      const sprite = this.layers.overlays.take(badge);
+      sprite.position.set(x, y);
+      sprite.rotation = side + Math.PI / 2;
+      sprite.scale.set((size * 2) / badge.width);
+      return;
+    }
+    const up = { x: Math.cos(side), y: Math.sin(side) };
+    const across = { x: -up.y, y: up.x };
+    this.ground
+      .poly([x + up.x * size, y + up.y * size, x - up.x * size * 0.7 + across.x * size, y - up.y * size * 0.7 + across.y * size, x - up.x * size * 0.7 - across.x * size, y - up.y * size * 0.7 - across.y * size])
+      .fill(eruption >= CORE.warnFrom ? 0xff5c2a : 0xffc14d)
+      .stroke({ width: 1.5, color: 0x1a1d2e });
+  }
+
   private drawPlaceholder(state: GameState): void {
     const n = this.segmentCount;
     const step = (Math.PI * 2) / n;
@@ -752,11 +790,12 @@ export class PlanetView {
     const g = this.ground;
     g.clear();
 
-    g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
-    g.circle(0, 0, rInner).fill(CORE_COLOR);
-    g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
-
     const planet = this.planet(state);
+    const inside = planet.coreOf !== undefined;
+    g.circle(0, 0, R * 1.08).fill(inside ? { color: 0xff7a30, alpha: 0.14 } : { color: 0x7fb0ff, alpha: 0.08 });
+    g.circle(0, 0, rInner).fill(inside ? 0xd8561c : CORE_COLOR);
+    g.circle(0, 0, rInner * 0.55).fill(inside ? 0xffb347 : 0x7a4b34);
+
     const workers = new Map<string, number>();
     for (const u of Object.values(state.units)) {
       if (u.planetId === planet.id && u.segment !== null) workers.set(`${u.owner}:${u.segment}`, (workers.get(`${u.owner}:${u.segment}`) ?? 0) + 1);
@@ -787,6 +826,7 @@ export class PlanetView {
       sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
       sp.icon.rotation = mid + Math.PI / 2;
 
+      if (inside && s.revealed) this.drawHazard(planet, s, mid, R, step * R);
       sp.mystery.visible = !s.revealed;
       setFontSize(sp.mystery, Math.max(12, R * 0.1));
       const rm = (rInner + R) / 2;
@@ -912,6 +952,10 @@ const PROPS: Partial<Record<string, string[]>> = {
   glacier: ["serac-a", "ice-floe", "serac-b"],
   lava: ["vent-a", "basalt", "vent-b"],
   ash: ["ash-cone", "dead-tree", "ash-rock"],
+  "mushroom-forest": ["giant-mushroom-a", "giant-mushroom-b"],
+  "crystal-grotto": ["crystal-a", "crystal-b"],
+  "magma-lake": ["vent-a", "vent-b"],
+  "primal-sea": ["coral-a", "coral-b"],
 };
 
 function sector(r0: number, r1: number, a0: number, a1: number): number[] {

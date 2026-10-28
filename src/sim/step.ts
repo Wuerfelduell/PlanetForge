@@ -28,6 +28,7 @@ import { cycleChecks, landFlights } from "./space";
 import { goalsCycle } from "./invaders";
 import { factionsCycle } from "./factions";
 import { resolveVote } from "./diplomacy";
+import { allPlanets, coreCycle, drill, shaftOpen, syncCores } from "./core";
 import type { EconomyState, GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -73,34 +74,51 @@ export function appendLog(state: GameState, events: GameEvent[]): void {
 /** Exactly one fixed tick. Deterministic: same state in, same state out. */
 function stepInPlace(state: GameState, events: GameEvent[]): void {
   landFlights(state, events);
+  syncCores(state);
+  const planets = allPlanets(state);
+  // Workers inside a planet sleep up on its surface (CORE): they count as its residents.
+  const surfaceIds = new Map((state.cores ?? []).map((c) => [c.id, c.coreOf!]));
 
   // Workers per planet and segment, counted once per tick.
   const workers = new Map<string, number>();
   const residents = new Map<string, number>();
   for (const u of Object.values(state.units)) {
-    residents.set(u.planetId, (residents.get(u.planetId) ?? 0) + 1);
+    const home = surfaceIds.get(u.planetId) ?? u.planetId;
+    residents.set(home, (residents.get(home) ?? 0) + 1);
     if (u.segment !== null) workers.set(`${u.planetId}:${u.segment}`, (workers.get(`${u.planetId}:${u.segment}`) ?? 0) + 1);
   }
 
-  for (const planet of state.planets) {
+  // Power grids of this tick, read by every consumer below (powerFactor). A planet and its
+  // interior share one grid.
+  const grids = new Map<string, { supply: number; demand: number }>();
+  for (const planet of planets) {
+    const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id) ?? { supply: 0, demand: 0 };
+    const shut = planet.coreOf !== undefined && !shaftOpen(state, planet);
+    for (const segment of planet.segments) {
+      const working = shut ? 0 : (workers.get(`${planet.id}:${segment.index}`) ?? 0);
+      grid.supply += energySupply(planet, segment, working, economy);
+      grid.demand += energyDemand(segment, working);
+    }
+    grids.set(surfaceIds.get(planet.id) ?? planet.id, grid);
+  }
+  // An EMP knocks out every power plant of the planet (and its interior) until it wears off.
+  for (const planet of planets) {
+    if (planet.empUntilTick === undefined) continue;
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id);
+    if (planet.empUntilTick > state.tick) {
+      if (grid) grid.supply = 0;
+    } else delete planet.empUntilTick;
+  }
+
+  for (const planet of planets) {
     const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];
     const rateFactor = economy?.starving ? RULES.starvingRateFactor : 1;
-
-    // Power grid of this tick, read by every consumer below (powerFactor).
-    let supply = 0;
-    let demand = 0;
-    for (const segment of planet.segments) {
-      const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
-      supply += energySupply(planet, segment, working, economy);
-      demand += energyDemand(segment, working);
-    }
-    // An EMP knocks out every power plant until it wears off.
-    if (planet.empUntilTick !== undefined) {
-      if (planet.empUntilTick > state.tick) supply = 0;
-      else delete planet.empUntilTick;
-    }
-    if (supply > 0 || demand > 0) planet.power = { supply, demand };
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id)!;
+    if (grid.supply > 0 || grid.demand > 0) planet.power = { ...grid };
     else delete planet.power;
+    // Without the shaft nobody gets down or up: work inside stands still.
+    if (planet.coreOf !== undefined && !shaftOpen(state, planet)) continue;
 
     // Forests next to a worked forester regrow faster, empty ones get replanted.
     const forested = new Map<number, { mul: number; replant: boolean }>();
@@ -114,6 +132,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       const def = buildingStats(segment);
       const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
       if (economy && def?.crafts) craft(planet, segment, working, economy, rateFactor);
+      if (economy && segment.building === "core-drill") drill(state, planet, segment, working, economy, events);
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {
         economy.resources.tools = Math.max(0, economy.resources.tools - (working * RULES.tools.perWorkerPerMinute * DT) / 60);
       }
@@ -143,12 +162,13 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       for (const d of segment.deposits) {
         // Exhausted deposits stay exhausted; untouched ones regrow.
         const forester = d.resource === "wood" ? forested.get(segment.index) : undefined;
-        if (segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
+        // Inside a planet nothing grows back (CORE).
+        if (planet.coreOf || segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
         d.amount = Math.min(d.max, d.amount + d.max * modified(economy, "regenRate", RULES.regenPerSecond) * (forester?.mul ?? 1) * DT);
       }
     }
 
-    if (economy) birth(state, planet, residents.get(planet.id) ?? 0, events);
+    if (economy && !planet.coreOf) birth(state, planet, residents.get(planet.id) ?? 0, events);
   }
 
   runQueues(state, events);
@@ -225,6 +245,7 @@ function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): 
 
 function endCycle(state: GameState, residents: Map<string, number>, events: GameEvent[]): void {
   events.push({ type: "cycle", cycle: state.tick / ticksPerCycle(state) });
+  coreCycle(state, events);
 
   for (const economy of Object.values(state.economies)) {
     const people = state.planets.filter((p) => p.economyId === economy.id).reduce((sum, p) => sum + (residents.get(p.id) ?? 0), 0);

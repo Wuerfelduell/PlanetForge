@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { cycleOf, homePlanet, type GameEvent } from "./sim";
+import { cycleOf, homePlanet, planetById, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { ChatPanel } from "./net/chat";
@@ -81,7 +81,7 @@ async function boot(): Promise<void> {
   // What the player is looking at, for chat pins.
   const focus = { planetId: "", segment: 0 };
   function showPlanet(planetId: string): void {
-    const planet = session.state.planets.find((p) => p.id === planetId);
+    const planet = planetById(session.state, planetId);
     if (!planet) return;
     focus.planetId = planet.id;
     ui.setPlanet(planet.id);
