@@ -142,6 +142,48 @@
         "treasury-off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "resource.fuel",
+      "category": "resources",
+      "src": "art/src/resources/fuel.svg",
+      "out": "public/assets/sprites/resources/fuel.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "usefulness",
+        "fuel"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "resource.fuel.mini",
+      "category": "resources",
+      "src": "art/src/resources/fuel-mini.svg",
+      "out": "public/assets/sprites/resources/fuel-mini.png",
+      "viewBox": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "usefulness",
+        "fuel-mini"
+      ],
+      "phase": "P1"
     }
   ]
 }

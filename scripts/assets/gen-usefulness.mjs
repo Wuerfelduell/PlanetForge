@@ -90,6 +90,21 @@ function emit(id,category,stem,body,size=128,extra={}){
     anchor:[.5,.5],frames:1,parts:[],tags:['usefulness',stem],phase:'P1',...meta});
 }
 
+function fuel(mini=false){
+  // One pierced carry handle and an offset cap give fuel its own silhouette.
+  // The mini keeps the large flame-drop but omits pressed ribs and small glints.
+  return p('M51 44V25Q51 17 59 17H82Q90 17 90 25V43H80V30Q80 27 77 27H64Q61 27 61 30V44Z','oil-sheen')+
+    p('M25 46L30 32L45 29L52 45Z','oil-sheen')+
+    rect(27,27,21,11,'oil-sheen',4,'transform="rotate(-15 37 32)"')+
+    p('M24 56Q24 45 35 44L91 39Q104 39 104 52V100Q104 112 92 112H36Q24 112 24 100Z','ascension')+
+    p('M91 42Q102 42 102 53V99Q102 110 91 110H38Q29 110 27 102H87Q93 102 93 95Z','ascension','stroke="none"',-.18)+
+    (mini?'':line('M36 62V92M92 58V91','energy',4)+line('M39 104H77','oil-sheen',3))+
+    // Violet oil-derived flame outline around a yellow droplet of rocket fuel.
+    p('M66 52Q66 67 80 75Q89 83 85 94Q82 103 66 103Q49 103 46 91Q43 80 55 70Q54 80 61 81Q58 65 66 52Z','oil-sheen',mini?'stroke-width="5"':'')+
+    p('M66 78Q66 84 72 88Q79 96 67 98Q56 98 59 91Z','energy','stroke="none"')+
+    (mini?'':shine('M34 56L47 54'));
+}
+
 for(const def of [
   {id:'farm.t3',file:'farm-t3',draw:farm,parts:['sprinkler','pump-light']},
   {id:'treasury',file:'treasury',draw:treasury,parts:['treasure-glow']},
@@ -101,6 +116,9 @@ for(const def of [
   emit(`building.${def.id}${mode==='idle'?'':'.'+mode}`,'buildings',`${def.file}${mode==='idle'?'':'-'+mode}`,body,256,
     {anchor:[.5,.9375],parts:[...def.parts,...(mode==='construction'?['scaffolding']:[])]});
 }
+
+emit('resource.fuel','resources','fuel',fuel());
+emit('resource.fuel.mini','resources','fuel-mini',`<g transform="scale(0.5)" stroke-width="8">${fuel(true)}</g>`,64,{stroke:4});
 
 write('art/manifest/usefulness.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`Usefulness art: ${assets.length} ids generated.`);
