@@ -61,8 +61,49 @@ function missileSilo(){
   return back+rocket+front+base();
 }
 
+function sandbag(x,y,w=43){return rect(x,y,w,22,'sand',10)+
+  path(`M${x+4} ${y+14}Q${x+w/2} ${y+21} ${x+w-4} ${y+13}V${y+17}Q${x+w-4} ${y+20} ${x+w-12} ${y+20}H${x+12}Z`,'sand','stroke="none"',-.18)+
+  line(`M${x+w-9} ${y+6}Q${x+w-13} ${y+11} ${x+w-9} ${y+16}`,'iron',3)+
+  glint(`M${x+8} ${y+6}H${x+21}`);}
+
+function interceptorTube(x,y){return rect(x,y,18,77,'snow',8)+
+  rect(x+11,y+9,5,64,'glacier',2,'stroke="none"')+
+  ellipse(x+9,y+5,9,5,'paper','stroke-width="3"')+
+  ellipse(x+9,y+5,4,2,'coal','stroke="none"')+
+  line(`M${x+5} ${y+18}V${y+46}`,'cream',3)+
+  rect(x+3,y+62,12,7,'rock',3,'stroke-width="3"');}
+
+function missileDefense(){
+  const back=ellipse(128,219,88,14,'moss')+
+    sandbag(40,198,46)+sandbag(169,198,46)+
+    path('M92 215L103 177H150L166 215Z','rock')+
+    path('M140 179H150L162 212H147Z','rock-dark','stroke="none"')+
+    ellipse(126,204,55,15,'rock-dark');
+  const turret=group('turret',
+    ellipse(126,180,45,14,'rock')+
+    // Two rows of three canisters; all six rounded mouths stay visible.
+    `<g transform="rotate(28 126 180)">`+
+    [100,126,152].map(x=>interceptorTube(x,69)).join('')+
+    rect(93,132,83,24,'rock-dark',8)+
+    [81,107,133].map(x=>interceptorTube(x,95)).join('')+
+    rect(78,153,78,13,'clay',6)+glint('M87 158H125')+
+    rivet(86,159)+rivet(148,159)+'</g>'+
+    circle(126,180,21,'rock-dark')+circle(126,180,13,'rock')+
+    rect(117,176,18,8,lit('science'),4,'stroke-width="3"')+
+    glint('M112 172Q116 165 123 165')+
+    // Tracking dish rotates together with the launcher, on the left cheek.
+    group('tracking-dish',line('M89 183L70 156','rock-dark',7)+
+      path('M46 137Q38 163 64 171Q82 176 88 158Z','paper')+
+      path('M49 143Q58 163 82 161','none',`stroke="${paint('rock')}" stroke-width="4"`)+
+      line('M65 155L56 137','rock-dark',3)+circle(54,134,5,lit('science'),'stroke-width="3"')));
+  // Front bags hide the pedestal's short feet, rather than the turntable.
+  const front=sandbag(34,213,45)+sandbag(80,215,46)+sandbag(127,215,46)+sandbag(175,213,45);
+  return back+turret+front+base();
+}
+
 const definitions=[
   {id:'missile-silo',draw:missileSilo,parts:['rocket','hatches','control-hut','beacon'],pivot:[106,207],tags:['missiles','silo']},
+  {id:'missile-defense',draw:missileDefense,parts:['turret','tracking-dish'],pivot:[126,180],tags:['missiles','interceptors','defense']},
 ];
 const assets=[];
 for(const def of definitions)for(const mode of ['idle','construction','off']){

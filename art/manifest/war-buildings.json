@@ -105,6 +105,109 @@
         "off"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense.svg",
+      "out": "public/assets/sprites/buildings/missile-defense.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-defense-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense-off.svg",
+      "out": "public/assets/sprites/buildings/missile-defense-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "off"
+      ],
+      "phase": "P1"
     }
   ]
 }
