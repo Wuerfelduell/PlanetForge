@@ -137,6 +137,16 @@ describe("power grid", () => {
     // 2 workers / 5 s per craft × 2 food × 0.25 (no power).
     expect(econ(g).resources.food - food).toBeCloseTo(10 * (2 / 5) * 2 * RULES.energy.unpoweredMul, 0);
   });
+
+  it("hunger does not slow down food, so a hungry people can eat its way out", () => {
+    let g = world(["desert", "savanna"]);
+    g = build(g, 0, "hydro-farm", 2);
+    const fed = run(clone(g), 10);
+    const hungry = clone(g);
+    econ(hungry).starving = true;
+    const starved = run(hungry, 10);
+    expect(econ(starved).resources.food - econ(g).resources.food).toBeCloseTo(econ(fed).resources.food - econ(g).resources.food, 5);
+  });
 });
 
 describe("new buildings", () => {

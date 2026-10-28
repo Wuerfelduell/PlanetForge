@@ -220,7 +220,7 @@ export class Ui {
           if (this.isMine(e.planetId)) this.toast(`🧑‍🚀 Keine Raumanzüge mehr: ein Siedler auf ${this.planetName(e.planetId)} ist erstickt. Eine Werkstatt (Stufe 2) näht neue.`, "bad");
           break;
         case "starving":
-          this.toast("🍂 Hunger! Ohne Nahrung arbeiten alle nur halb so schnell.", "bad");
+          this.toast("🍂 Hunger! Ohne Nahrung arbeiten alle nur halb so schnell, nur Nahrung sammeln geht voll weiter.", "bad");
           break;
         case "revealed":
           this.toast(`🔭 ${e.segments.length} neue Felder entdeckt`);
