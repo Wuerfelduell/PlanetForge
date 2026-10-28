@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.farm.t3.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/farm-t3-back.svg",
+      "out": "public/assets/sprites/buildings/anim/farm-t3-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.farm.t3.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/farm-t3-part.svg",
+      "out": "public/assets/sprites/buildings/anim/farm-t3-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.6211,
+        0.168
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.farm.t3.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/farm-t3-front.svg",
+      "out": "public/assets/sprites/buildings/anim/farm-t3-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.ion-cannon.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/ion-cannon-back.svg",
