@@ -1,0 +1,26 @@
+{
+  "assets": [
+    {
+      "id": "planet.core-sun",
+      "category": "planets",
+      "src": "art/src/planets/core-sun.svg",
+      "out": "public/assets/sprites/planets/core-sun.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body",
+        "lava-swirl",
+        "heat-haze"
+      ],
+      "tags": [],
+      "phase": "P0"
+    }
+  ]
+}
