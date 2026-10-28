@@ -31,6 +31,38 @@
         "sun-shield"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.popup-loot",
+      "category": "ui",
+      "src": "art/src/ui/popup-loot.svg",
+      "out": "public/assets/sprites/ui/popup-loot.png",
+      "viewBox": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "smoke",
+        "wreck",
+        "debris",
+        "crate",
+        "metal",
+        "crystal",
+        "coins"
+      ],
+      "tags": [
+        "ui",
+        "popup",
+        "celebration",
+        "mothership-destroyed",
+        "salvage"
+      ],
+      "phase": "P1"
     }
   ]
 }
