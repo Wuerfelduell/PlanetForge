@@ -584,7 +584,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Gießerei",
     icon: "🏭",
     category: "production",
-    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
+    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom und macht aus Neutronium viel Stahl. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
     cost: { stone: 25, clay: 15, planks: 10 },
     unlockLevel: 3,
     allowedBiomes: HOT_GROUND,
@@ -594,7 +594,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "mine", bonus: 0.1 },
       { biome: "lava", bonus: 0.3 },
     ],
-    upgrades: [{ name: "Stahlwerk", cost: { bricks: 15, steel: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["bricks", "charcoal", "steel", "concrete"], speed: 1.5 }, energy: -1 }],
+    upgrades: [{ name: "Stahlwerk", cost: { bricks: 15, steel: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["bricks", "charcoal", "steel", "concrete", "neutron-steel"], speed: 1.5 }, energy: -1 }],
   },
   glassworks: {
     name: "Glashütte",
@@ -678,7 +678,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Elektronikwerk",
     icon: "🔌",
     category: "production",
-    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer. Braucht Strom. +15 % je Nachbar-Werkstatt.",
+    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer, mit Xenokristall doppelt so viele. Braucht Strom. +15 % je Nachbar-Werkstatt.",
     cost: { steel: 15, glass: 10, bricks: 10 },
     unlockLevel: 6,
     allowedBiomes: LAND,
@@ -686,7 +686,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     crafts: { recipes: ["electronics"], speed: 1 },
     adjacency: [{ building: "workshop", bonus: 0.15 }],
     energy: -1,
-    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer"], speed: 1.25 }, energy: -2 }],
+    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer", "quantum-chip"], speed: 1.25 }, energy: -2 }],
   },
   "power-wind": {
     name: "Windrad",
@@ -1070,7 +1070,8 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
 export type RecipeId =
   | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
   | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium"
-  | "bronze-tools" | "bioplastic" | "tribute-gold" | "tribute-silver" | "tribute-aetherite";
+  | "bronze-tools" | "bioplastic" | "tribute-gold" | "tribute-silver" | "tribute-aetherite"
+  | "neutron-steel" | "quantum-chip";
 
 export interface RecipeDef {
   name: string;
@@ -1108,6 +1109,9 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   bioplastic: { name: "Bioplastik", inputs: { biogas: 2 }, outputs: { plastic: 1 }, seconds: 10 },
   "tribute-gold": { name: "Gold einlagern", inputs: { gold: 1 }, outputs: {}, seconds: 10, ascension: 4 },
   "tribute-silver": { name: "Silber einlagern", inputs: { silver: 1 }, outputs: {}, seconds: 10, ascension: 4 },
+  // Seb: the warp matter should keep being useful after its few buildings stand.
+  "neutron-steel": { name: "Neutroniumstahl", inputs: { neutronium: 1, iron: 1 }, outputs: { steel: 4 }, seconds: 10 },
+  "quantum-chip": { name: "Quantenchip", inputs: { xenocrystal: 1, electronics: 1 }, outputs: { computer: 2 }, seconds: 20 },
   "tribute-aetherite": { name: "Ätherit einlagern", inputs: { aetherite: 1 }, outputs: {}, seconds: 10, ascension: 6 },
 };
 
