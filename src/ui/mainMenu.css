@@ -170,3 +170,9 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
 #main-menu .menu-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 #main-menu .menu-chip { padding: 6px 10px; border-radius: 999px; font-size: 14px; }
 #main-menu .menu-chip.on { outline: 2px solid var(--accent); background: #34385f; }
+
+#main-menu .menu-keys { margin: 4px 0 8px; }
+#main-menu .menu-keys summary { cursor: pointer; padding: 6px 0; }
+#main-menu .menu-keys dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 6px 0 0; font-size: 14px; }
+#main-menu .menu-keys dt { font-weight: 700; color: var(--accent); white-space: nowrap; }
+#main-menu .menu-keys dd { margin: 0; color: var(--muted); }
