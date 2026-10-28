@@ -1,0 +1,107 @@
+{
+  "assets": [
+    {
+      "id": "building.quantum-lab",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab-construction.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.off",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab-off.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

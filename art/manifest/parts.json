@@ -1,6 +1,72 @@
 {
   "assets": [
     {
+      "id": "building.quantum-lab.anim.back",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/quantum-lab-back.svg",
+      "out": "public/assets/sprites/buildings/anim/quantum-lab-back.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "back"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.anim.part",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/quantum-lab-part.svg",
+      "out": "public/assets/sprites/buildings/anim/quantum-lab-part.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.4219
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "part"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.anim.front",
+      "category": "buildings",
+      "src": "art/src/buildings/anim/quantum-lab-front.svg",
+      "out": "public/assets/sprites/buildings/anim/quantum-lab-front.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "buildings",
+        "anim",
+        "front"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "building.shell-armor.anim.back",
       "category": "buildings",
       "src": "art/src/buildings/anim/shell-armor-back.svg",
