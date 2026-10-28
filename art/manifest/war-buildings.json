@@ -1,0 +1,319 @@
+{
+  "assets": [
+    {
+      "id": "building.missile-silo",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo.svg",
+      "out": "public/assets/sprites/buildings/missile-silo.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-silo-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-silo.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-silo-off.svg",
+      "out": "public/assets/sprites/buildings/missile-silo-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rocket",
+        "hatches",
+        "control-hut",
+        "beacon"
+      ],
+      "partPivots": {
+        "rocket": [
+          106,
+          207
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-silo",
+        "missiles",
+        "silo",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense.svg",
+      "out": "public/assets/sprites/buildings/missile-defense.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense-construction.svg",
+      "out": "public/assets/sprites/buildings/missile-defense-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.missile-defense.off",
+      "category": "buildings",
+      "src": "art/src/buildings/missile-defense-off.svg",
+      "out": "public/assets/sprites/buildings/missile-defense-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "turret",
+        "tracking-dish"
+      ],
+      "partPivots": {
+        "turret": [
+          126,
+          180
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "missile-defense",
+        "missiles",
+        "interceptors",
+        "defense",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.radar",
+      "category": "buildings",
+      "src": "art/src/buildings/radar.svg",
+      "out": "public/assets/sprites/buildings/radar.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "antenna",
+        "mast",
+        "operator-cabin",
+        "screen"
+      ],
+      "partPivots": {
+        "antenna": [
+          128,
+          104
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "radar",
+        "early-warning",
+        "radar",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.radar.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/radar-construction.svg",
+      "out": "public/assets/sprites/buildings/radar-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "antenna",
+        "mast",
+        "operator-cabin",
+        "screen",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "antenna": [
+          128,
+          104
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "radar",
+        "early-warning",
+        "radar",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.radar.off",
+      "category": "buildings",
+      "src": "art/src/buildings/radar-off.svg",
+      "out": "public/assets/sprites/buildings/radar-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "antenna",
+        "mast",
+        "operator-cabin",
+        "screen"
+      ],
+      "partPivots": {
+        "antenna": [
+          128,
+          104
+        ]
+      },
+      "tags": [
+        "war-buildings",
+        "radar",
+        "early-warning",
+        "radar",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
