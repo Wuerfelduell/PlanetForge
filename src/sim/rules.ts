@@ -1,4 +1,4 @@
-import { BIOMES, BUILDINGS, CRYO, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
+import { BIOMES, BUILDINGS, CRYO, PLANET_TYPES, RECIPES, RESOURCE_IDS, ROCKETS, RULES, SUPERNOVA, WARP, type BuildingDef, type BiomeId, type BuildingId, type BuildingUpgrade, type RecipeId, type ResourceId, type RocketId } from "./content";
 import { hasUnlock, modified } from "./discoveries";
 import { atWar, factionOfEconomy } from "./diplomacy";
 import { ASCENSION } from "../data/balance/progression";
@@ -231,6 +231,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   if (segment.scorched) return "Verbrannte Erde: erst aufräumen";
   if (!BIOMES[segment.biome].buildable) return `Auf ${BIOMES[segment.biome].name} kann man nicht bauen`;
   if (economy.ascension.level < def.unlockLevel) return `Ab Aufstiegsstufe ${def.unlockLevel}`;
+  if (def.coopOnly && state.settings.mode !== "coop") return "Nur im Miteinander";
   if (!def.allowedBiomes.includes(segment.biome)) return `Nicht auf ${BIOMES[segment.biome].name}`;
   if (def.needsNeighbor && !neighbors(planet, segment.index).some((n) => def.needsNeighbor!.includes(n.biome))) {
     return `Muss neben ${def.needsNeighbor.map((b) => BIOMES[b].name).join(" oder ")} stehen`;
@@ -344,8 +345,14 @@ export function ringDistance(a: number, b: number, n: number): number {
   return Math.min(d, n - d);
 }
 
-/** Straight-line distance between two planets on the star map (orbit radius and angle). */
+/** Sun system of a planet: 0 = home, 1 … = the neighbor systems behind the warp gate. */
+export function systemOf(planet: Pick<PlanetState, "system">): number {
+  return planet.system ?? 0;
+}
+
+/** Straight-line distance between two planets on the star map (orbit radius and angle); a warp jump between systems counts WARP.distance. */
 export function planetDistance(a: PlanetState, b: PlanetState): number {
+  if (systemOf(a) !== systemOf(b)) return WARP.distance;
   const ax = Math.cos(a.orbit.angle) * a.orbit.radius;
   const ay = Math.sin(a.orbit.angle) * a.orbit.radius;
   const bx = Math.cos(b.orbit.angle) * b.orbit.radius;
@@ -365,8 +372,12 @@ export function flightPlan(from: PlanetState, to: PlanetState, rocket: RocketId,
   const distance = planetDistance(from, to);
   const cost: Partial<Record<ResourceId, number>> = { ...def.cost };
   const fuel = Math.ceil(modified(economy, "rocketFuel", def.fuel.takeoff + distance * (def.fuel.perDistance + def.fuel.perPassenger * passengers)));
-  cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
-  return { distance, cost, seconds: Math.max(1, Math.round(distance * def.secondsPerDistance)) };
+  // Short of the main fuel (warp ship without antimatter): burn the replacement instead.
+  if (def.altFuel && economy && economy.resources[def.fuel.resource] < fuel + (cost[def.fuel.resource] ?? 0)) {
+    cost[def.altFuel.resource] = (cost[def.altFuel.resource] ?? 0) + fuel * def.altFuel.mul;
+  } else cost[def.fuel.resource] = (cost[def.fuel.resource] ?? 0) + fuel;
+  const seconds = def.warp ? WARP.seconds : Math.round(distance * def.secondsPerDistance);
+  return { distance, cost, seconds: Math.max(1, seconds) };
 }
 
 export function canPay(economy: EconomyState, cost: Partial<Record<ResourceId, number>>): boolean {
@@ -387,7 +398,10 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (!player || !def) return "Unbekannte Rakete";
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
   if (from.id === to.id) return "Ziel ist der Startplanet";
-  if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
+  const warp = systemOf(from) !== systemOf(to);
+  if (warp && !def.warp) return "In andere Sonnensysteme kommt nur das Warpschiff";
+  if (!warp && def.warp) return "Das Warpschiff fliegt nur in andere Sonnensysteme";
+  if (def.warp ? !hasBuilding(from, "warpgate") : !hasBuilding(from, "launchpad")) return def.warp ? "Dafür braucht es ein Warptor" : "Dafür braucht es eine Startrampe";
   if (to.type === "asteroid" && !asteroidsVisible(state.economies[player.economyId])) return "Dafür braucht es die Entdeckung Weltraumbergbau";
   if (blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
@@ -396,6 +410,7 @@ export function launchBlocker(state: GameState, playerId: string, from: PlanetSt
   if (def.versusOnly && state.settings.mode !== "versus" && !factionsInvolved) return "Angriffe gibt es nur im Gegeneinander-Modus";
   if (rocket === "combat" && (to.economyId === null || to.economyId === player.economyId)) return "Angreifen kann man nur fremde Planeten";
   if (def.versusOnly && state.settings.mode !== "versus" && !atWar(state, from.economyId, to.economyId)) return "Dafür müsste Krieg herrschen";
+  if (def.warp && to.economyId !== null && to.economyId !== player.economyId) return "Dort lebt schon jemand";
   if (rocket === "colony" && state.settings.mode !== "versus" && to.economyId !== null && to.economyId !== player.economyId) return "Dort lebt schon jemand";
   if (!Number.isInteger(count) || count < 1) return "Mindestens ein Einwohner muss mitfliegen";
   const capacity = rocketCapacity(economy, rocket);
@@ -445,6 +460,7 @@ export function shieldBlocker(state: GameState, playerId: string, from: PlanetSt
   if (!player) return "Unbekannter Spieler";
   if (state.sun.novaTick === null) return "In diesem Spiel droht keine Supernova";
   if (from.economyId !== player.economyId) return "Dieser Planet gehört dir nicht";
+  if (systemOf(from) !== 0) return "Zur Sonne fliegt man nur aus dem Heimatsystem";
   if (!hasBuilding(from, "launchpad")) return "Dafür braucht es eine Startrampe";
   if (blockaded(state, from)) return BLOCKADED;
   const economy = state.economies[player.economyId]!;
