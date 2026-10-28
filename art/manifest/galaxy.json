@@ -1,0 +1,33 @@
+{
+  "assets": [
+    {
+      "id": "ship.warp",
+      "category": "space",
+      "src": "art/src/space/ship-warp-f{f}.svg",
+      "out": "public/assets/sprites/space/ship-warp-f{f}.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 2,
+      "fps": 6,
+      "parts": [
+        "hull",
+        "exhaust",
+        "engine-anchor"
+      ],
+      "tags": [
+        "star-map",
+        "ship",
+        "nose-right",
+        "flight",
+        "loop"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
