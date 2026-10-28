@@ -95,6 +95,200 @@
         "segments-12"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-a",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-a.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-b",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-b.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-a",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-a.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-b",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-b.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-a",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-a.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "puff",
+        "ember"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-b",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-b.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "puff",
+        "ember"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-a",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-a.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-a.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-b",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-b.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-b.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop"
+      ],
+      "phase": "P0"
     }
   ]
 }
