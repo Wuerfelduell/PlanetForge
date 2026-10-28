@@ -59,7 +59,7 @@ const AI_EXPAND_LEVEL = 4;
  * deterministic as the rest of the simulation.
  */
 export function factionsCycle(state: GameState, events: GameEvent[]): void {
-  if (state.settings.factions === 0 || state.result) return;
+  if (state.factions.length === 0 || state.result) return;
   const rng = new Rng(state.rng);
   try {
     for (const faction of activeFactions(state)) {

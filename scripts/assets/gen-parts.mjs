@@ -6,6 +6,10 @@ import {read,write,round} from './common.mjs';
 // Part group id and pivot (in the 256 canvas) per building sprite. Motions live in the game code.
 export const PARTS = {
  'building.shell-armor':{file:'shell-armor',part:'press',pivot:[101,101]},
+ 'building.warpgate':{file:'warpgate',part:'portal',pivot:[128,114]},
+ 'building.exo-drill':{file:'exo-drill',part:'drill',pivot:[112,181]},
+ 'building.power-antimatter':{file:'power-antimatter',part:'core',pivot:[128,94]},
+ 'building.farm.t3':{file:'farm-t3',part:'sprinkler',pivot:[159,43]},
  'building.ion-cannon':{file:'ion-cannon',part:'barrel',pivot:[92,151]},
  'building.shield-generator':{file:'shield-generator',part:'orb',pivot:[128,82]},
  'building.missile-launcher':{file:'missile-launcher',part:'rack',pivot:[128,165]},

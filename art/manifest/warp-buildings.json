@@ -1,0 +1,304 @@
+{
+  "assets": [
+    {
+      "id": "building.warpgate",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate.svg",
+      "out": "public/assets/sprites/buildings/warpgate.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warpgate.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate-construction.svg",
+      "out": "public/assets/sprites/buildings/warpgate-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warpgate.off",
+      "category": "buildings",
+      "src": "art/src/buildings/warpgate-off.svg",
+      "out": "public/assets/sprites/buildings/warpgate-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "portal"
+      ],
+      "partPivots": {
+        "portal": [
+          128,
+          114
+        ]
+      },
+      "tags": [
+        "warp",
+        "warpgate",
+        "ascension-10",
+        "travel",
+        "unique",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill.svg",
+      "out": "public/assets/sprites/buildings/exo-drill.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill-construction.svg",
+      "out": "public/assets/sprites/buildings/exo-drill-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.exo-drill.off",
+      "category": "buildings",
+      "src": "art/src/buildings/exo-drill-off.svg",
+      "out": "public/assets/sprites/buildings/exo-drill-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "drill"
+      ],
+      "partPivots": {
+        "drill": [
+          112,
+          181
+        ]
+      },
+      "tags": [
+        "warp",
+        "exo-drill",
+        "ascension-10",
+        "mining",
+        "exotic-resources",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter-construction.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.power-antimatter.off",
+      "category": "buildings",
+      "src": "art/src/buildings/power-antimatter-off.svg",
+      "out": "public/assets/sprites/buildings/power-antimatter-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          94
+        ]
+      },
+      "tags": [
+        "warp",
+        "power-antimatter",
+        "ascension-10",
+        "power",
+        "antimatter",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
