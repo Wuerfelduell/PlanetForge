@@ -110,10 +110,21 @@ export function nextUpgrade(segment: SegmentState): BuildingUpgrade | undefined 
   return segment.building ? BUILDINGS[segment.building].upgrades?.[(segment.tier ?? 1) - 1] : undefined;
 }
 
+/** Seb: no core drill on the surface, nobody goes down; nothing gets built or upgraded inside. */
+export const SHAFT_CLOSED = "Ohne Kernbohrung kommt niemand hinunter";
+
+/** An interior whose planet has no core drill (any more). */
+function shaftClosed(state: GameState, planet: PlanetState): boolean {
+  if (planet.coreOf === undefined) return false;
+  const surface = planetById(state, planet.coreOf);
+  return !surface || !hasBuilding(surface, "core-drill");
+}
+
 /** Why the building on a segment cannot be upgraded right now, or null. */
 export function upgradeBlocker(state: GameState, planet: PlanetState, segment: SegmentState): string | null {
   const economy = economyOf(state, planet);
   if (!economy) return "Unbewohnter Planet";
+  if (shaftClosed(state, planet)) return SHAFT_CLOSED;
   const next = nextUpgrade(segment);
   if (!next) return "Höchste Stufe erreicht";
   if (economy.ascension.level < next.unlockLevel) return `Ab Aufstiegsstufe ${next.unlockLevel}`;
@@ -234,6 +245,7 @@ export function buildBlocker(state: GameState, planet: PlanetState, segment: Seg
   const def = BUILDINGS[building];
   const economy = economyOf(state, planet);
   if (!economy) return "Unbewohnter Planet";
+  if (shaftClosed(state, planet)) return SHAFT_CLOSED;
   if (!segment.revealed) return "Feld noch unerforscht";
   if (segment.building) return "Feld ist schon bebaut";
   if (def.unique && hasBuilding(planet, building)) return "Nur eins pro Planet";

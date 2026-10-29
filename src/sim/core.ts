@@ -1,5 +1,5 @@
 import { BIOMES, CORE, RULES, type BiomeId, type ResourceId } from "./content";
-import { buildingStats, hasBuilding, neighbors, planetById, powerFactor, ringDistance, toolFactor } from "./rules";
+import { buildingStats, hasBuilding, neighbors, planetById, powerFactor, ringDistance, SHAFT_CLOSED, toolFactor } from "./rules";
 import { Rng, seedFromString } from "./rng";
 import type { EconomyState, GameEvent, GameState, PlanetState, SegmentState, UnitState } from "./state";
 
@@ -40,7 +40,7 @@ export function freeDeepSuits(state: GameState, economy: EconomyState): number {
 /** Why `count` more workers cannot go down into this interior, or null. */
 export function coreAccessBlocker(state: GameState, core: PlanetState, count: number): string | null {
   const surface = surfaceOf(state, core);
-  if (!hasBuilding(surface, "core-drill")) return "Ohne Kernbohrung kommt niemand hinunter";
+  if (!hasBuilding(surface, "core-drill")) return SHAFT_CLOSED;
   const economy = core.economyId === null ? undefined : state.economies[core.economyId];
   if (!economy) return "Unbewohnter Planet";
   if (freeDeepSuits(state, economy) < count) return "Zu wenig Tiefenanzüge (Werkstatt Stufe 2)";
