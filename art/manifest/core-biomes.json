@@ -25,6 +25,31 @@
       "phase": "P0"
     },
     {
+      "id": "biome.mushroom-forest.wedge.inner.12",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-wedge-inner-12.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-wedge-inner-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "wedge",
+        "inner",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.crystal-grotto.wedge.12",
       "category": "biomes",
       "src": "art/src/biomes/crystal-grotto-wedge-12.svg",
@@ -44,6 +69,31 @@
       "tags": [
         "crystal-grotto",
         "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.wedge.inner.12",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-wedge-inner-12.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-wedge-inner-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "wedge",
+        "inner",
         "segments-12"
       ],
       "phase": "P0"
@@ -73,6 +123,31 @@
       "phase": "P0"
     },
     {
+      "id": "biome.magma-lake.wedge.inner.12",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-wedge-inner-12.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-wedge-inner-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "magma-lake",
+        "wedge",
+        "inner",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.primal-sea.wedge.12",
       "category": "biomes",
       "src": "art/src/biomes/primal-sea-wedge-12.svg",
@@ -92,6 +167,31 @@
       "tags": [
         "primal-sea",
         "wedge",
+        "segments-12"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.wedge.inner.12",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-wedge-inner-12.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-wedge-inner-12.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "primal-sea",
+        "wedge",
+        "inner",
         "segments-12"
       ],
       "phase": "P0"

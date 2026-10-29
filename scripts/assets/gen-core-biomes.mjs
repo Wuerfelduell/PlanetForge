@@ -17,19 +17,27 @@ const point = (r, a) => `${round(512 + r * Math.sin(a))} ${round(512 - r * Math.
 function sector(inner, outer, start, end) {
   return `M ${point(outer, start)} A ${outer} ${outer} 0 0 1 ${point(outer, end)} L ${point(inner, end)} A ${inner} ${inner} 0 0 0 ${point(inner, start)} Z`;
 }
-function edgeMask(segments) {
+// Hollow-world variant (the planet seen from inside): radii mirrored about 460, so the surface
+// rim lies inside at 458 and the ground reaches out to 522; marks face the middle.
+const mirror = (inner) => (r) => (inner ? 920 - r : r);
+function bandAt(inner, from, to, start, end) {
+  const m = mirror(inner);
+  return sector(Math.min(m(from), m(to)), Math.max(m(from), m(to)), start, end);
+}
+function edgeMask(segments, inner = false) {
   const half = Math.PI / segments;
-  let strips = path(sector(398, 462, -half - 1 / 400, half + 1 / 400), C('tint-white'), 'stroke="none"');
+  let strips = path(bandAt(inner, 398, 462, -half - 1 / 400, half + 1 / 400), C('tint-white'), 'stroke="none"');
   for (let i = 0; i < 6; i++) {
     const a = half + (1 + i / 6) / 400, b = half + (1 + (i + 1) / 6) / 400;
-    for (const side of [-1, 1]) strips += path(sector(398, 462, side < 0 ? -b : a, side < 0 ? -a : b), C('tint-white'), `stroke="none" opacity="${round((6 - i) / 7)}"`);
+    for (const side of [-1, 1]) strips += path(bandAt(inner, 398, 462, side < 0 ? -b : a, side < 0 ? -a : b), C('tint-white'), `stroke="none" opacity="${round((6 - i) / 7)}"`);
   }
   return `<mask id="edge" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">${strips}</mask>`;
 }
 
-export function wedge(biome, segments = 12) {
+export function wedge(biome, segments = 12, inner = false) {
   const half = Math.PI / segments, a = half + 2 / 400;
-  const band = (inner, outer, color, extra = '') => path(sector(inner, outer, -a, a), color, `stroke="none" ${extra}`);
+  const band = (from, to, color, extra = '') => path(bandSector(from, to), color, `stroke="none" ${extra}`);
+  const bandSector = (from, to) => bandAt(inner, from, to, -a, a);
   let body = '';
   if (biome === 'mushroom-forest') {
     body += band(398, 462, C('oil'));
@@ -64,7 +72,7 @@ export function wedge(biome, segments = 12) {
   }
   // Repeated motifs stay clear of both seams and the continuous surface rim.
   for (let i = -1; i <= 1; i++) {
-    const angle = i * half * .56, x = round(512 + 435 * Math.sin(angle)), y = round(512 - 435 * Math.cos(angle));
+    const r = mirror(inner)(435), angle = i * half * .56, x = round(512 + r * Math.sin(angle)), y = round(512 - r * Math.cos(angle));
     let mark = '';
     if (biome === 'mushroom-forest') {
       mark += ellipse(0, 0, 15, 7, C('ok'), 'stroke="none" opacity="0.2"');
@@ -91,9 +99,9 @@ export function wedge(biome, segments = 12) {
       mark += path('M -14 0 Q 0 -6 14 0 M -9 5 Q 0 8 9 5', 'none', `stroke="${C('ok', .18)}" stroke-width="2" opacity="0.5"`);
       mark += circle(-7, -1, 1.5, C('glacier'), 'stroke="none" opacity="0.7"');
     }
-    body += `<g transform="translate(${x} ${y}) rotate(${round(angle * 180 / Math.PI)})">${mark}</g>`;
+    body += `<g transform="translate(${x} ${y}) rotate(${round(angle * 180 / Math.PI + (inner ? 180 : 0))})">${mark}</g>`;
   }
-  return `<defs>${edgeMask(segments)}</defs>${group('ground', body, 'mask="url(#edge)"')}`;
+  return `<defs>${edgeMask(segments, inner)}</defs>${group('ground', body, 'mask="url(#edge)"')}`;
 }
 
 // Props keep the outer biome convention: 3px ink outline, y=120 ground,
@@ -196,6 +204,7 @@ function coral(variant) {
 
 for (const biome of biomes) {
   add(`biome.${biome}.wedge.12`, `${biome}-wedge-12`, wedge(biome), 1024, [.5, .5], ['ground'], [biome, 'wedge', 'segments-12']);
+  add(`biome.${biome}.wedge.inner.12`, `${biome}-wedge-inner-12`, wedge(biome, 12, true), 1024, [.5, .5], ['ground'], [biome, 'wedge', 'inner', 'segments-12']);
 }
 const propNames = {
   'mushroom-forest': ['giant-mushroom-a', 'giant-mushroom-b'],
