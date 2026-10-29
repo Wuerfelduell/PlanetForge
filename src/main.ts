@@ -85,7 +85,7 @@ async function boot(): Promise<void> {
     if (!planet) return;
     focus.planetId = planet.id;
     ui.setPlanet(planet.id);
-    view.setPlanet(planet.id, planet.segments.length);
+    view.setPlanet(planet.id, planet.segments.length, planet.coreOf !== undefined);
     ui.render(session.state);
   }
   const chat = new ChatPanel({

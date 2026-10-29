@@ -6,6 +6,13 @@ import { Effects } from "./effects";
 import { propFill } from "./props";
 
 const TOP = -Math.PI / 2;
+/** Inside a planet (CORE) the selected field lies at the bottom, like the floor under your feet. */
+const BOTTOM = Math.PI / 2;
+/** Hollow world: the ground band reaches this far beyond the inner surface, then the crust. */
+const INNER_GROUND = 0.14;
+const INNER_CRUST = 0.32;
+/** Radius of the glowing core in the middle, against the inner surface. */
+const CORE_SUN = 0.3;
 const TAP_SLOP_PX = 8;
 const HIDDEN_COLOR = 0x2b3150;
 const CORE_COLOR = 0x5a3b2e;
@@ -165,11 +172,23 @@ export class PlanetView {
 
   /** Planet shown on the wheel. */
   planetId = "";
+  /**
+   * A planet interior (CORE), seen from inside the hollow sphere: the fields lie on the inner side
+   * of the crust, buildings point to the glowing core in the middle, the selected field is at the bottom.
+   */
+  private inverted = false;
+
+  /** Screen angle of the selected field. */
+  private get anchor(): number {
+    return this.inverted ? BOTTOM : TOP;
+  }
 
   /** Shows another planet (planets differ in size), starting at segment 0. */
-  setPlanet(planetId: string, segmentCount: number): void {
+  setPlanet(planetId: string, segmentCount: number, inverted = false): void {
     this.planetId = planetId;
-    if (segmentCount !== this.segmentCount) {
+    const flipped = inverted !== this.inverted;
+    this.inverted = inverted;
+    if (segmentCount !== this.segmentCount || flipped) {
       for (const sp of this.sprites) {
         sp.icon.destroy();
         sp.mystery.destroy();
@@ -190,7 +209,7 @@ export class PlanetView {
     this.effects.clear();
     this.harvest.clear();
     this.harvestTick = -1;
-    this.rotation = this.targetRotation = rotationFor(0, segmentCount);
+    this.rotation = this.targetRotation = rotationFor(0, segmentCount, this.anchor);
     this.dirty = true;
     this.onSelect(0);
   }
@@ -259,8 +278,10 @@ export class PlanetView {
     sprite.loop = false;
     sprite.animationSpeed = anim.fps / 60;
     sprite.scale.set((k * size) / artSize);
-    sprite.position.set(Math.cos(angle) * this.radius * radius, Math.sin(angle) * this.radius * radius);
-    sprite.rotation = angle + Math.PI / 2;
+    // Inside a hollow world, above the ground lies towards the middle.
+    const r = this.inverted && radius > 0 ? 2 - radius : radius;
+    sprite.position.set(Math.cos(angle) * this.radius * r, Math.sin(angle) * this.radius * r);
+    sprite.rotation = angle + (this.inverted ? -Math.PI / 2 : Math.PI / 2);
     sprite.onComplete = () => sprite.destroy();
     this.fx.addChild(sprite);
     sprite.play();
@@ -340,6 +361,24 @@ export class PlanetView {
     const whole = Math.min(width * 0.4, free * 0.4);
     let radius = whole;
     let cy = insets.top + free / 2 + whole * 0.06;
+    if (this.inverted) {
+      // The crust goes round outside the fields: a smaller ring so all of it fits.
+      radius = whole / (1 + INNER_CRUST * 0.6);
+      cy = insets.top + free / 2;
+      if (this.zoom && this.segmentCount) {
+        // Close-up: the floor at the bottom, the world curving up left and right, the core above.
+        const field = Math.min(width, 560) / 4;
+        const big = Math.max(radius, (field * this.segmentCount) / (Math.PI * 2));
+        if (big > radius * 1.05) {
+          radius = big;
+          cy = this.height - insets.bottom - radius * (1 + INNER_GROUND) - field * 0.15;
+        }
+      }
+      this.goal = { cx: width / 2, cy, radius };
+      if (snap) ({ cx: this.cx, cy: this.cy, radius: this.radius } = this.goal);
+      this.dirty = true;
+      return;
+    }
     if (this.zoom && this.segmentCount) {
       // About five fields across the screen, but never smaller than the whole planet.
       const field = Math.min(width, 560) / 5;
@@ -376,7 +415,7 @@ export class PlanetView {
     const n = this.segmentCount;
     const current = this.rotation;
     // Turn the shortest way round.
-    let target = rotationFor(index, n);
+    let target = rotationFor(index, n, this.anchor);
     while (target - current > Math.PI) target -= Math.PI * 2;
     while (target - current < -Math.PI) target += Math.PI * 2;
     this.targetRotation = target;
@@ -386,6 +425,8 @@ export class PlanetView {
   /** Keyboard: the next field to the right (+1) or left (-1). */
   turn(step: number): void {
     const n = this.segmentCount;
+    // At the bottom of the hollow world the next field lies to the left.
+    if (this.inverted) step = -step;
     if (n) this.select((((this.selected + step) % n) + n) % n);
   }
 
@@ -470,8 +511,10 @@ export class PlanetView {
 
   /** Point on (or above, factor > 1) the surface in the middle of a segment, in wheel coordinates. */
   private surface(index: number, factor: number): { x: number; y: number; angle: number } {
-    const angle = index * ((Math.PI * 2) / this.segmentCount);
-    return { x: Math.cos(angle) * this.radius * factor, y: Math.sin(angle) * this.radius * factor, angle };
+    const mid = index * ((Math.PI * 2) / this.segmentCount);
+    // Inside a hollow world "above the ground" points to the middle.
+    const r = this.radius * (this.inverted ? 2 - factor : factor);
+    return { x: Math.cos(mid) * r, y: Math.sin(mid) * r, angle: this.inverted ? mid + Math.PI : mid };
   }
 
   private segmentWidth(): number {
@@ -550,7 +593,8 @@ export class PlanetView {
     for (const pool of Object.values(this.layers)) pool.begin();
     this.moving = [];
     this.chimneys = [];
-    if (art) this.drawArt(state, planet);
+    if (this.inverted) this.drawHollow(state, planet);
+    else if (art) this.drawArt(state, planet);
     else this.drawPlaceholder(state);
     for (const pool of Object.values(this.layers)) pool.end();
     this.drawMarker();
@@ -608,16 +652,10 @@ export class PlanetView {
       sp.mystery.visible = false;
     }
 
-    // Inside a planet (CORE): a small sphere around the glowing core, in the warm light of the magma.
-    const inside = planet.coreOf !== undefined;
-    g.circle(0, 0, R * 1.08).fill(inside ? { color: 0xff7a30, alpha: 0.14 } : { color: 0x7fb0ff, alpha: 0.08 });
-    const body = artTexture(inside ? "planet.core-sun" : `planet.planet-${planet.type}`);
+    g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
+    const body = artTexture(`planet.planet-${planet.type}`);
     if (body) l.body.take(body).scale.set(k);
-    else if (inside) {
-      g.circle(0, 0, ART_BODY * k).fill(0x8a2f12);
-      g.circle(0, 0, ART_BODY * k * 0.75).fill(0xd8561c);
-      g.circle(0, 0, ART_BODY * k * 0.45).fill(0xffb347);
-    } else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
+    else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
 
     const wedge = (id: string, i: number) => {
       const texture = artTexture(`${id}.${n}`);
@@ -714,7 +752,6 @@ export class PlanetView {
           sprite.scale.set(((k * segWidth * 0.7) / PROP_SIZE) * (staged ? 1 : PROP_MIN_SCALE + (1 - PROP_MIN_SCALE) * fill));
         }
       }
-      if (inside) this.drawHazard(planet, s, mid, R, k * segWidth);
       if (s.cryo && !s.building) {
         // A cryo pod with a frozen people, beside the prop. Drawn art once it exists.
         const pod = artTexture("prop.cryo-pod");
@@ -762,23 +799,138 @@ export class PlanetView {
     }
   }
 
+  /**
+   * A planet interior seen from inside (Seb: "ein inverser Planet"): the cave fields line the
+   * inner side of the crust, everything on them stands towards the glowing core in the middle.
+   * Biome art for this lies in biome.<id>.wedge.inner.<n> (ground band outside the surface).
+   */
+  private drawHollow(state: GameState, planet: PlanetState): void {
+    const n = this.segmentCount;
+    const step = (Math.PI * 2) / n;
+    const R = this.radius;
+    const k = R / ART_SURFACE;
+    const segWidth = step * ART_SURFACE;
+    const outer = R * (1 + INNER_GROUND);
+    const l = this.layers;
+    const g = this.ground;
+    const art = hasArt();
+    g.clear();
+    for (const sp of this.sprites) {
+      sp.icon.visible = false;
+      sp.mystery.visible = false;
+    }
+
+    // Rock all around, the hollow lit warm by the core, which glows in the middle.
+    g.circle(0, 0, R * (1 + INNER_CRUST)).fill(0x2a1712);
+    g.circle(0, 0, R * (1 + INNER_CRUST)).stroke({ width: Math.max(2, R * 0.02), color: 0x4a2a1c });
+    g.circle(0, 0, R).fill(0x1d1016);
+    for (let i = 5; i >= 1; i--) g.circle(0, 0, R * (CORE_SUN + i * 0.1)).fill({ color: 0xff7a30, alpha: 0.05 });
+    const sun = art ? artTexture("planet.core-sun") : undefined;
+    // On the props layer: the ground drawing would hide it on the body layer.
+    if (sun) l.props.take(sun).scale.set((R * CORE_SUN * 2.4) / sun.width);
+    else {
+      g.circle(0, 0, R * CORE_SUN).fill(0xd8561c);
+      g.circle(0, 0, R * CORE_SUN * 0.7).fill(0xffb347);
+      g.circle(0, 0, R * CORE_SUN * 0.35).fill(0xfff1b8);
+    }
+
+    const multiplayer = state.players.length > 1;
+    planet.segments.forEach((s, i) => {
+      const mid = i * step;
+      const a0 = mid - step / 2;
+      const up = mid - Math.PI / 2;
+      const surface = { x: Math.cos(mid) * R, y: Math.sin(mid) * R };
+      if (!s.revealed) {
+        g.poly(sector(R, outer, a0, a0 + step)).fill(HIDDEN_COLOR).stroke({ width: 1.5, color: 0x1a1d2e, alpha: 0.6 });
+        const sp = this.sprites[i]!;
+        sp.mystery.visible = true;
+        setFontSize(sp.mystery, Math.max(12, R * 0.08));
+        sp.mystery.position.set(Math.cos(mid) * (R + outer) / 2, Math.sin(mid) * (R + outer) / 2);
+        sp.mystery.rotation = up;
+        return;
+      }
+      const wedge = art ? artTexture(`biome.${s.biome}.wedge.inner.${n}`) : undefined;
+      if (wedge) {
+        const sprite = l.ground.take(wedge);
+        sprite.scale.set(k);
+        sprite.rotation = mid + Math.PI / 2;
+      } else g.poly(sector(R, outer, a0, a0 + step)).fill(BIOMES[s.biome].color).stroke({ width: 1.5, color: 0x1a1d2e, alpha: 0.6 });
+      if (s.deposits.length > 0 && s.deposits.every((d) => !d.infinite && d.amount <= 0)) g.poly(sector(R, outer, a0, a0 + step)).fill({ color: 0x000000, alpha: 0.4 });
+
+      const scale = (k * segWidth) / ART_FOOTPRINT;
+      const ruin = !s.building && s.ruin && art ? artTexture("building.ruin") : undefined;
+      const empty = !!s.building && buildingStats(s)!.workers > 0 && !Object.values(state.units).some((u) => u.planetId === planet.id && u.segment === i);
+      const texture = ruin ?? (s.building && art ? buildingArt(s.building, empty ? "off" : undefined, s.tier) : undefined);
+      if (texture) {
+        const sprite = l.buildings.take(texture);
+        sprite.position.set(surface.x, surface.y);
+        sprite.rotation = up;
+        sprite.scale.set(scale);
+      } else if (s.building) {
+        // Buildings the art does not have yet keep their emoji.
+        const sp = this.sprites[i]!;
+        const icon = buildingStats(s)!.icon;
+        if (sp.icon.text !== icon) sp.icon.text = icon;
+        setFontSize(sp.icon, Math.max(16, R * 0.15));
+        sp.icon.position.set(Math.cos(mid) * (R - 2), Math.sin(mid) * (R - 2));
+        sp.icon.rotation = up;
+        sp.icon.visible = true;
+      } else if (!s.ruin && art) {
+        const props = PROPS[s.biome] ?? [];
+        const prop = props.length ? artTexture(`biome.${s.biome}.prop.${props[(i * 7) % props.length]}`) : undefined;
+        if (prop && propFill(s) > 0) {
+          const sprite = l.props.take(prop);
+          sprite.position.set(surface.x, surface.y);
+          sprite.rotation = up;
+          sprite.scale.set((k * segWidth * 0.7) / PROP_SIZE);
+        }
+      }
+      this.drawHazard(planet, s, mid, R, k * segWidth);
+
+      // Workers stand on the inside of the crust, heads towards the core.
+      const workers = Object.values(state.units).filter((u) => u.planetId === planet.id && u.segment === i);
+      workers.forEach((u, w) => {
+        const a = a0 + (step * (w + 1)) / (workers.length + 1);
+        const frame = 1 + ((Math.floor(state.tick / 5) + w) % 2);
+        const look = art ? (artTexture(`people.${u.people}.citizen.work.f${frame}`) ?? artTexture(`people.${u.people}.citizen.idle.f1`)) : undefined;
+        const owner = state.players.find((p) => p.id === u.owner);
+        const color = PLAYER_COLORS[(owner?.color ?? 0) % PLAYER_COLORS.length]!;
+        if (look) {
+          const sprite = l.citizens.take(look);
+          sprite.position.set(Math.cos(a) * R, Math.sin(a) * R);
+          sprite.rotation = a - Math.PI / 2;
+          sprite.scale.set((k * segWidth * 0.5) / PROP_SIZE);
+          if (multiplayer) g.circle(Math.cos(a) * R * 1.03, Math.sin(a) * R * 1.03, Math.max(2.5, R * 0.018)).fill(color);
+        } else {
+          const r = (R + outer) / 2;
+          g.circle(Math.cos(a) * r, Math.sin(a) * r, Math.max(3, R * 0.03)).fill(color).stroke({ width: 1.5, color: 0x1a1d2e });
+        }
+      });
+    });
+
+    const sa0 = this.selected * step - step / 2;
+    g.poly(sector(R, outer, sa0, sa0 + step)).stroke({ width: 3, color: 0xffffff });
+  }
+
   /** Danger badge over a cave field where quakes or magma strike often (CORE.warnFrom). */
   private drawHazard(planet: PlanetState, s: PlanetState["segments"][number], mid: number, R: number, width: number): void {
     const { quake, eruption } = coreHazard(planet, s);
     if (Math.max(quake, eruption) < CORE.warnFrom) return;
     const side = mid - ((Math.PI * 2) / this.segmentCount) * 0.3;
     const size = Math.max(6, width * 0.14);
-    const x = Math.cos(side) * (R + size * 1.4);
-    const y = Math.sin(side) * (R + size * 1.4);
+    // Above the ground: outward on a planet, towards the core inside the hollow world.
+    const dir = this.inverted ? -1 : 1;
+    const x = Math.cos(side) * (R + dir * size * 1.4);
+    const y = Math.sin(side) * (R + dir * size * 1.4);
     const badge = artTexture("ui.badge-quake");
     if (badge) {
       const sprite = this.layers.overlays.take(badge);
       sprite.position.set(x, y);
-      sprite.rotation = side + Math.PI / 2;
+      sprite.rotation = side + (dir * Math.PI) / 2;
       sprite.scale.set((size * 2) / badge.width);
       return;
     }
-    const up = { x: Math.cos(side), y: Math.sin(side) };
+    const up = { x: dir * Math.cos(side), y: dir * Math.sin(side) };
     const across = { x: -up.y, y: up.x };
     this.ground
       .poly([x + up.x * size, y + up.y * size, x - up.x * size * 0.7 + across.x * size, y - up.y * size * 0.7 + across.y * size, x - up.x * size * 0.7 - across.x * size, y - up.y * size * 0.7 - across.y * size])
@@ -794,11 +946,11 @@ export class PlanetView {
     const g = this.ground;
     g.clear();
 
+    g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
+    g.circle(0, 0, rInner).fill(CORE_COLOR);
+    g.circle(0, 0, rInner * 0.55).fill(0x7a4b34);
+
     const planet = this.planet(state);
-    const inside = planet.coreOf !== undefined;
-    g.circle(0, 0, R * 1.08).fill(inside ? { color: 0xff7a30, alpha: 0.14 } : { color: 0x7fb0ff, alpha: 0.08 });
-    g.circle(0, 0, rInner).fill(inside ? 0xd8561c : CORE_COLOR);
-    g.circle(0, 0, rInner * 0.55).fill(inside ? 0xffb347 : 0x7a4b34);
 
     const workers = new Map<string, number>();
     for (const u of Object.values(state.units)) {
@@ -830,7 +982,6 @@ export class PlanetView {
       sp.icon.position.set(Math.cos(mid) * (R + 2), Math.sin(mid) * (R + 2));
       sp.icon.rotation = mid + Math.PI / 2;
 
-      if (inside && s.revealed) this.drawHazard(planet, s, mid, R, step * R);
       sp.mystery.visible = !s.revealed;
       setFontSize(sp.mystery, Math.max(12, R * 0.1));
       const rm = (rInner + R) / 2;
@@ -848,6 +999,13 @@ export class PlanetView {
     const m = this.marker;
     m.clear();
     const field = this.segmentWidth();
+    if (this.inverted) {
+      // Above the floor field, inside the hollow world, pointing down at it.
+      const tip = this.cy + R - field * 0.95;
+      const size = Math.max(8, field * 0.2);
+      m.poly([this.cx, tip + size, this.cx - size, tip - size * 0.4, this.cx + size, tip - size * 0.4]).fill(0xffd166);
+      return;
+    }
     const tipY = this.cy - R - field * 0.8;
     const size = Math.max(8, field * 0.24);
     m.poly([this.cx, tipY + size, this.cx - size, tipY - size * 0.4, this.cx + size, tipY - size * 0.4]).fill(0xffd166);
@@ -891,7 +1049,7 @@ export class PlanetView {
       d.lastTime = now;
       this.rotation += delta;
       this.targetRotation = this.rotation;
-      this.setSelected(indexAtTop(this.rotation, this.segmentCount));
+      this.setSelected(indexAtTop(this.rotation, this.segmentCount, this.anchor));
     });
 
     const end = (e: PointerEvent) => {
@@ -905,8 +1063,8 @@ export class PlanetView {
       }
       // Coast a little in the flick direction, then snap to the nearest segment.
       const coasted = this.rotation + d.velocity * 120;
-      const index = indexAtTop(coasted, this.segmentCount);
-      this.targetRotation = coasted + wrapAngle(rotationFor(index, this.segmentCount) - coasted);
+      const index = indexAtTop(coasted, this.segmentCount, this.anchor);
+      this.targetRotation = coasted + wrapAngle(rotationFor(index, this.segmentCount, this.anchor) - coasted);
       this.setSelected(index);
     };
     canvas.addEventListener("pointerup", end);
@@ -918,7 +1076,7 @@ export class PlanetView {
     const x = e.clientX - rect.left - this.cx;
     const y = e.clientY - rect.top - this.cy;
     const dist = Math.hypot(x, y);
-    if (dist > this.radius * 1.25) return null;
+    if (this.inverted ? dist < this.radius * CORE_SUN * 1.2 || dist > this.radius * (1 + INNER_CRUST) : dist > this.radius * 1.25) return null;
     const step = (Math.PI * 2) / this.segmentCount;
     const local = Math.atan2(y, x) - this.rotation;
     return mod(Math.round(local / step), this.segmentCount);
@@ -931,13 +1089,14 @@ function setFontSize(text: Text, size: number): void {
   if (text.style.fontSize !== rounded) text.style.fontSize = rounded;
 }
 
-function rotationFor(index: number, n: number): number {
-  return TOP - index * ((Math.PI * 2) / n);
+/** Wheel rotation that brings field `index` to the screen angle `anchor` (top, or bottom inside a planet). */
+function rotationFor(index: number, n: number, anchor = TOP): number {
+  return anchor - index * ((Math.PI * 2) / n);
 }
 
-function indexAtTop(rotation: number, n: number): number {
+function indexAtTop(rotation: number, n: number, anchor = TOP): number {
   const step = (Math.PI * 2) / n;
-  return mod(Math.round((TOP - rotation) / step), n);
+  return mod(Math.round((anchor - rotation) / step), n);
 }
 
 /** Decoration per biome on empty segments (ids from the asset manifest). */
