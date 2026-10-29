@@ -5,6 +5,7 @@ import {
   applyCommand,
   BUILDINGS,
   buildBlocker,
+  upgradeBlocker,
   CORE,
   createGame,
   economyOfPlayer,
@@ -167,6 +168,10 @@ describe("planet interior", () => {
     g = run(g, 20);
     expect(econ(g).resources["ember-crystal"]).toBe(ember);
     expect(applyCommand(g, P1.id, { type: "assign", planetId: core(g).id, segment: 0, delta: 1 }, g.simTime)).toMatchObject({ ok: false });
+    // Seb: no drill, no going down, so nothing gets built or upgraded down there either.
+    const free = core(g).segments.find((s) => s.index !== 0 && !s.building && s.biome !== "magma-lake")!;
+    expect(buildBlocker(g, core(g), free, "support-pillar")).toBe("Ohne Kernbohrung kommt niemand hinunter");
+    expect(upgradeBlocker(g, core(g), core(g).segments[0]!)).toBe("Ohne Kernbohrung kommt niemand hinunter");
   });
 
   it("a geothermal plant inside powers the surface too", () => {
