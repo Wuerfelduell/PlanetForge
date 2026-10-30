@@ -1,0 +1,130 @@
+{
+  "assets": [
+    {
+      "id": "ui.icon-ascension",
+      "category": "ui",
+      "src": "art/src/ui/icon-ascension.svg",
+      "out": "public/assets/sprites/ui/icon-ascension.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ascension"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-planets",
+      "category": "ui",
+      "src": "art/src/ui/icon-planets.svg",
+      "out": "public/assets/sprites/ui/icon-planets.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-planets"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-menu",
+      "category": "ui",
+      "src": "art/src/ui/icon-menu.svg",
+      "out": "public/assets/sprites/ui/icon-menu.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-rename",
+      "category": "ui",
+      "src": "art/src/ui/icon-rename.svg",
+      "out": "public/assets/sprites/ui/icon-rename.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rename"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-thaw",
+      "category": "ui",
+      "src": "art/src/ui/icon-thaw.svg",
+      "out": "public/assets/sprites/ui/icon-thaw.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-thaw"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-unlock",
+      "category": "ui",
+      "src": "art/src/ui/icon-unlock.svg",
+      "out": "public/assets/sprites/ui/icon-unlock.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-unlock"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
