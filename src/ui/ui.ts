@@ -71,6 +71,7 @@ import {
   type GameState,
   type ResourceId,
   type BuildingId,
+  type FactionStance,
   type GameEvent,
   type PlanetState,
   TERRAFORM,
@@ -195,13 +196,21 @@ export class Ui {
 
   /** Icon of a field action: Codex art where it exists, else the emoji. */
   private ticon(kind: TerraformKind, emoji = TERRAFORM[kind].icon, irradiated = false): string {
-    if (this.art && kind === "clearScorched" && irradiated && artTexture("ui.icon-clear-irradiated")) return `<img class="bi" src="assets/sprites/ui/icon-clear-irradiated.png" alt="${emoji}">`;
-    return this.art && kind === "clearScorched" && artTexture("ui.icon-clear-scorched") ? `<img class="bi" src="assets/sprites/ui/icon-clear-scorched.png" alt="${emoji}">` : emoji;
+    // plantTrees -> icon-plant-trees; scorched ground that is also irradiated has its own icon.
+    const name = kind === "clearScorched" && irradiated ? "icon-clear-irradiated" : `icon-${kind.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
+    if (kind === "clearScorched" && irradiated && !(this.art && artTexture(`ui.${name}`))) return this.ticon(kind, emoji);
+    return this.art && artTexture(`ui.${name}`) ? `<img class="bi" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
   }
 
   /** UI icon from the art (ui.<name>) once Codex drew it, else the emoji. */
   private uicon(name: string, emoji: string): string {
     return this.art && artTexture(`ui.${name}`) ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
+  }
+
+  /** Icon of a faction's stance (peace, war, alliance, merged). */
+  private sicon(stance: FactionStance): string {
+    const name = { peace: "icon-peace", war: "icon-war", allied: "icon-alliance", merged: "icon-merge" }[stance];
+    return this.uicon(name, STANCE_NAMES[stance].icon);
   }
 
   private bicon(building: BuildingId): string {
@@ -775,7 +784,7 @@ export class Ui {
     const surface = surfaceOf(state, planet);
     const inside = planet.coreOf !== undefined;
     const at = own.findIndex((p) => p.id === surface.id);
-    const listChip = `<button class="chip name${this.showPlanets ? " on" : ""}" data-action="planets" title="Alle Planeten">🪐 ${surface.name}${inside ? " <small>Inneres</small>" : ""}${at >= 0 && own.length > 1 ? ` <small>${at + 1}/${own.length}</small>` : ""} ${this.showPlanets ? "▴" : "▾"}</button>`;
+    const listChip = `<button class="chip name${this.showPlanets ? " on" : ""}" data-action="planets" title="Alle Planeten">${this.uicon("icon-planets", "🪐")} ${surface.name}${inside ? " <small>Inneres</small>" : ""}${at >= 0 && own.length > 1 ? ` <small>${at + 1}/${own.length}</small>` : ""} ${this.showPlanets ? "▴" : "▾"}</button>`;
     const planetChip =
       (at < 0
         ? `${listChip}${own.length ? `<button class="chip glow" data-action="home" title="Zurück zum eigenen Planeten">↩ Zurück</button>` : ""}`
@@ -788,9 +797,9 @@ export class Ui {
     const me = state.players.find((p) => p.id === this.playerId);
     const duel = state.settings.mode === "versus" && state.players.length > 1 && !state.result && me && !me.eliminated;
     const versusButtons = duel
-      ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">🤝</button><button class="speed" data-action="surrender" title="Aufgeben">🏳️</button>`
+      ? `<button class="speed${me.offersDraw ? " on" : ""}" data-action="draw" title="Unentschieden anbieten">${this.uicon("icon-draw", "🤝")}</button><button class="speed" data-action="surrender" title="Aufgeben">${this.uicon("icon-surrender", "🏳️")}</button>`
       : "";
-    const controls = `${moreButton}${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">☰</button>`;
+    const controls = `${moreButton}${speeds}<button class="speed" id="menu-button" data-action="menu" title="Menü und Speichern" aria-label="Menü und Speichern">${this.uicon("icon-menu", "☰")}</button>`;
     const rest = `
       <div class="row status main">
         ${planetChip}
@@ -799,7 +808,7 @@ export class Ui {
           ? `<span class="chip" title="Arbeiter im Inneren / Tiefenanzüge">${this.res("deep-suit")} ${planet.economyId ? coreWorkers(state, planet.economyId).length : 0}/${Math.floor(economy.resources["deep-suit"])} <small>${idleUnits(state, surface, this.playerId).length} frei<span class="wide"> oben</span></small></span>`
           : `<span class="chip" title="Einwohner / Wohnraum, davon frei">👥 ${population(state, planet)}/${housing(state, planet)} <small>${idleUnits(state, planet, this.playerId).length} frei</small></span>`}
         ${planet.power ? `<span class="chip${planet.power.demand > planet.power.supply ? " bad" : ""}" title="Strom: erzeugt / gebraucht">⚡ ${fmt(planet.power.supply)}/${fmt(planet.power.demand)}</span>` : ""}
-        <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">⭐ ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>
+        <button class="level${this.showAscension ? " on" : ""}" data-action="ascension" title="Aufstieg: ${Math.floor(ascension.points)}${next ? ` / ${next}` : ""} Punkte">${this.uicon("icon-ascension", "⭐")} ${lvl}<span class="bar"><span style="width:${Math.round(Math.min(1, progress) * 100)}%"></span></span></button>
         <span class="cycle" title="Planetenumlauf ${cycleOf(state) + 1}" style="--p:${Math.round(cycleProgress * 100)}"></span>
       </div>${this.renderFlights(state, versusButtons)}${list}${this.showAscension ? this.renderAscension(state, economy) : ""}${this.showPlanets ? this.renderPlanetList(state) : ""}`;
     return { chips, controls, rest };
@@ -819,13 +828,13 @@ export class Ui {
       const live = state.factions.filter((f) => !f.eliminated && f.stance !== "merged");
       const offers = live.filter((f) => f.offer && f.offer.expiresTick > state.tick).length;
       const war = live.some((f) => f.stance === "war");
-      chips.push(`<button class="chip${offers ? " glow" : war ? " bad" : ""}" data-action="factions">🏳️ Fraktionen${offers ? ` <small>${offers} Angebot${offers === 1 ? "" : "e"}</small>` : war ? " <small>Krieg</small>" : ""}</button>`);
+      chips.push(`<button class="chip${offers ? " glow" : war ? " bad" : ""}" data-action="factions">${this.uicon("icon-factions", "🏳️")} Fraktionen${offers ? ` <small>${offers} Angebot${offers === 1 ? "" : "e"}</small>` : war ? " <small>Krieg</small>" : ""}</button>`);
     }
     // The server closes the lobby after 10 idle minutes; only the host can open it again.
     if (!state.lobby.open) {
       chips.push(
         state.hostId === this.playerId
-          ? `<button class="chip" data-action="openLobby" title="Spiel geschlossen. Tippen zum Öffnen">🔓 Öffnen</button>`
+          ? `<button class="chip" data-action="openLobby" title="Spiel geschlossen. Tippen zum Öffnen">${this.uicon("icon-unlock", "🔓")} Öffnen</button>`
           : `<span class="chip" title="Spiel geschlossen. Warte auf ${this.playerName(state.hostId)}">🔒 Zu</span>`,
       );
     }
@@ -906,7 +915,7 @@ export class Ui {
     const back = this.ownPlanets().length ? `<button class="build" data-action="home">↩ Zurück zum eigenen Planeten</button>` : "";
     const faction = factionOfEconomy(state, planet.economyId);
     const note = faction
-      ? `Hier leben die ${faction.name} (${PERSONALITY_NAMES[faction.personality].name}, ${STANCE_NAMES[faction.stance].icon} ${STANCE_NAMES[faction.stance].name}). ${faction.stance === "war" ? "Mit einer Kampfrakete von deiner Startrampe kannst du angreifen, vom Raketensilo aus mit Raketen auf ein Feld (antippen)." : "Handeln und verhandeln kannst du unter 🏳️ Fraktionen."}`
+      ? `Hier leben die ${faction.name} (${PERSONALITY_NAMES[faction.personality].name}, ${this.sicon(faction.stance)} ${STANCE_NAMES[faction.stance].name}). ${faction.stance === "war" ? "Mit einer Kampfrakete von deiner Startrampe kannst du angreifen, vom Raketensilo aus mit Raketen auf ein Feld (antippen)." : "Handeln und verhandeln kannst du unter 🏳️ Fraktionen."}`
       : "Hier hast du nichts. Mit einer Rakete von deiner Startrampe kannst du hinfliegen.";
     const s = planet.segments[this.selected];
     const missiles = planet.economyId !== null && s ? this.missileButtons(state, planet, ["homing", "emp", "nuke"], s.index) : "";
@@ -914,7 +923,7 @@ export class Ui {
     return `<h2>${planet.type === "asteroid" ? "🪨" : "🪐"} ${planet.name} <small>${this.planetStatus(state, planet)}</small></h2>
       <p class="muted">${PLANET_TYPES[planet.type].name} · ${planet.segments.length} Felder${people ? ` · ${people} Einwohner` : ""}. ${note}</p>
       ${this.radarIntel(state, planet)}${field}
-      <div class="row">${back}<button class="build" data-action="map">🌌 Karte</button>${faction ? `<button class="build" data-action="factions">🏳️ Fraktionen</button>` : ""}</div>`;
+      <div class="row">${back}<button class="build" data-action="map">${this.uicon("tab-starmap", "🌌")} Karte</button>${faction ? `<button class="build" data-action="factions">${this.uicon("icon-factions", "🏳️")} Fraktionen</button>` : ""}</div>`;
   }
 
   private factionName(id: string): string {
@@ -925,7 +934,7 @@ export class Ui {
   private renderFactions(state: GameState): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const team = me ? state.economies[me.economyId] : undefined;
-    let html = `<h2>🏳️ Fraktionen <button class="speed" data-action="factions" title="Zurück">✕</button></h2>`;
+    let html = `<h2>${this.uicon("icon-factions", "🏳️")} Fraktionen <button class="speed" data-action="factions" title="Zurück">✕</button></h2>`;
     if (!team) return html;
     const order = [...state.factions].sort((a, b) => Number(a.eliminated || a.stance === "merged") - Number(b.eliminated || b.stance === "merged"));
     for (const f of order) html += this.renderFaction(state, f, team);
@@ -938,7 +947,7 @@ export class Ui {
     const people = PEOPLES[player?.people ?? state.players[0]!.people];
     const icon = `${people.icon}`;
     if (f.eliminated || f.stance === "merged") {
-      return `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${f.stance === "merged" ? "🫂 Gehören zu deinem Volk" : "💀 Ausgelöscht"}</small></span></div>`;
+      return `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${f.stance === "merged" ? `${this.sicon("merged")} Gehören zu deinem Volk` : "💀 Ausgelöscht"}</small></span></div>`;
     }
     const economy = factionEconomy(state, f)!;
     const planets = state.planets.filter((p) => p.economyId === economy.id);
@@ -947,7 +956,7 @@ export class Ui {
     const personality = PERSONALITY_NAMES[f.personality];
     const mood = f.stance === "war" ? "" : ` · ${attitudeLabel(f.attitude)}`;
     const power = strength(state, economy.id) > strength(state, TEAM_ECONOMY) * 1.3 ? " · stärker als ihr" : strength(state, economy.id) * 1.3 < strength(state, TEAM_ECONOMY) ? " · schwächer als ihr" : "";
-    let html = `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${personality.icon} ${personality.name} · ${stance.icon} ${stance.name}${mood} · ⭐ ${economy.ascension.level} · ${planets.length} Planet${planets.length === 1 ? "" : "en"} · ${pop} Einwohner${power}</small></span>${planets[0] ? `<button class="build" data-action="view" data-value="${planets[0].id}">🔍 Ansehen</button>` : ""}</div>`;
+    let html = `<div class="target faction"><span>${icon} <b>${f.name}</b> <small>${this.uicon(`personality-${f.personality}`, personality.icon)} ${personality.name} · ${this.sicon(f.stance)} ${stance.name}${mood} · ${this.uicon("icon-ascension", "⭐")} ${economy.ascension.level} · ${planets.length} Planet${planets.length === 1 ? "" : "en"} · ${pop} Einwohner${power}</small></span>${planets[0] ? `<button class="build" data-action="view" data-value="${planets[0].id}">🔍 Ansehen</button>` : ""}</div>`;
 
     const offer = f.offer && f.offer.expiresTick > state.tick ? f.offer : null;
     if (offer) {
@@ -970,16 +979,16 @@ export class Ui {
       const mine = f.vote.votes[this.playerId];
       const open = members.filter((p) => f.vote!.votes[p.id] === undefined).map((p) => p.name);
       html += `<p class="offer">🗳️ Abstimmung „${VOTE_NAMES[f.vote.action]}“: ${yes} dafür · ${no} dagegen${open.length ? ` · es fehlt ${open.join(", ")}` : ""} <small>Mehrheit entscheidet, spätestens am Zyklusende</small></p>`;
-      html += `<div class="choices"><button class="chip${mine === true ? " on" : " glow"}" data-action="voteDiplomacy" data-value="${f.id}:1">👍 Dafür</button><button class="chip${mine === false ? " on" : ""}" data-action="voteDiplomacy" data-value="${f.id}:0">👎 Dagegen</button></div>`;
+      html += `<div class="choices"><button class="chip${mine === true ? " on" : " glow"}" data-action="voteDiplomacy" data-value="${f.id}:1">${this.uicon("icon-vote-yes", "👍")} Dafür</button><button class="chip${mine === false ? " on" : ""}" data-action="voteDiplomacy" data-value="${f.id}:0">${this.uicon("icon-vote-no", "👎")} Dagegen</button></div>`;
     }
 
     const chips: string[] = [];
-    if (f.stance !== "war") chips.push(`<button class="chip${this.tradeWith === f.id ? " on" : ""}" data-action="tradeWith" data-value="${f.id}">⚖️ Handeln</button>`);
+    if (f.stance !== "war") chips.push(`<button class="chip${this.tradeWith === f.id ? " on" : ""}" data-action="tradeWith" data-value="${f.id}">${this.uicon("icon-trade", "⚖️")} Handeln</button>`);
     if (!f.vote) {
-      if (f.stance === "war") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:peace">🕊️ Frieden anbieten</button>`);
-      if (f.stance === "peace") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:alliance">🤝 Bündnis vorschlagen</button>`);
-      if (f.stance === "allied") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:merge">🫂 Zusammenschluss</button>`);
-      if (f.stance !== "war") chips.push(`<button class="chip bad" data-action="diplomacy" data-value="${f.id}:war">⚔️ Krieg erklären</button>`);
+      if (f.stance === "war") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:peace">${this.sicon("peace")} Frieden anbieten</button>`);
+      if (f.stance === "peace") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:alliance">${this.sicon("allied")} Bündnis vorschlagen</button>`);
+      if (f.stance === "allied") chips.push(`<button class="chip" data-action="diplomacy" data-value="${f.id}:merge">${this.sicon("merged")} Zusammenschluss</button>`);
+      if (f.stance !== "war") chips.push(`<button class="chip bad" data-action="diplomacy" data-value="${f.id}:war">${this.sicon("war")} Krieg erklären</button>`);
     }
     html += `<div class="choices">${chips.join("")}</div>`;
 
@@ -995,7 +1004,7 @@ export class Ui {
         .join("");
       html += rows ? `<p class="muted">Sie verkaufen, was sie übrig haben${f.stance === "allied" ? "; Verbündete zahlen weniger" : ""}:</p><div class="targets">${rows}</div>` : `<p class="muted">Gerade haben sie nichts übrig.</p>`;
       const gifts = (["food", "wood", "stone", "planks", "tools", "iron"] as ResourceId[]).filter((r) => team.resources[r] >= 10);
-      if (gifts.length) html += `<p class="muted">Schenken (macht sie freundlicher):</p><div class="choices">${gifts.map((r) => `<button class="chip" data-action="gift" data-value="${f.id}:${r}:10">🎁 10 ${this.res(r)}</button>`).join("")}</div>`;
+      if (gifts.length) html += `<p class="muted">Schenken (macht sie freundlicher):</p><div class="choices">${gifts.map((r) => `<button class="chip" data-action="gift" data-value="${f.id}:${r}:10">${this.uicon("icon-gift", "🎁")} 10 ${this.res(r)}</button>`).join("")}</div>`;
     }
     return `<div class="faction-card">${html}</div>`;
   }
@@ -1048,7 +1057,7 @@ export class Ui {
       const here = p.id === this.planetId || (!!shown && p.id === shown.coreOf);
       const idle = idleUnits(state, p, this.playerId).length;
       const facts = [`👥 ${population(state, p)}/${housing(state, p)}`, idle ? `${idle} frei` : "", p.power && p.power.demand > p.power.supply ? `<span class="short">⚡ zu wenig</span>` : "", danger.has(p.id) ? `<span class="short">⚠️ Angriff</span>` : "", PLANET_TYPES[p.type].name];
-      const rename = renameBlocker(state, this.playerId, p) ? "" : `<button class="speed" data-action="rename" data-value="${p.id}" title="Umbenennen">✏️</button>`;
+      const rename = renameBlocker(state, this.playerId, p) ? "" : `<button class="speed" data-action="rename" data-value="${p.id}" title="Umbenennen">${this.uicon("icon-rename", "✏️")}</button>`;
       return `<div class="planet-row${here ? " here" : ""}"><button class="planet-go" data-action="gotoPlanet" data-value="${p.id}"><span>${p.type === "asteroid" ? "🪨" : "🪐"} <b>${p.name}</b>${here ? " ◂" : ""}</span><small>${facts.filter(Boolean).join(" · ")}</small></button>${rename}</div>`;
     };
     const lists = groups.map((g) => `<p class="group">${g.title} <small>${g.planets.length}</small></p>${g.planets.map(row).join("")}`).join("");
@@ -1065,7 +1074,7 @@ export class Ui {
     if (!planet) return;
     const node = document.createElement("div");
     node.className = "celebration rename";
-    node.innerHTML = `<form class="celebration-card"><h2>✏️ Planet umbenennen</h2><input name="name" maxlength="${PLANET_NAME_MAX}" autocomplete="off" enterkeyhint="done"><p class="muted">Höchstens ${PLANET_NAME_MAX} Zeichen. Alle Mitspieler sehen den neuen Namen.</p><div class="row"><button type="button" class="wide secondary" data-close>Abbrechen</button><button class="wide">Umbenennen</button></div></form>`;
+    node.innerHTML = `<form class="celebration-card"><h2>${this.uicon("icon-rename", "✏️")} Planet umbenennen</h2><input name="name" maxlength="${PLANET_NAME_MAX}" autocomplete="off" enterkeyhint="done"><p class="muted">Höchstens ${PLANET_NAME_MAX} Zeichen. Alle Mitspieler sehen den neuen Namen.</p><div class="row"><button type="button" class="wide secondary" data-close>Abbrechen</button><button class="wide">Umbenennen</button></div></form>`;
     const input = node.querySelector<HTMLInputElement>("input")!;
     input.value = planet.name;
     const close = () => node.remove();
@@ -1177,7 +1186,7 @@ export class Ui {
   private planetStatus(state: GameState, to: PlanetState): string {
     const me = state.players.find((p) => p.id === this.playerId);
     const faction = factionOfEconomy(state, to.economyId);
-    const owner = faction ? `${STANCE_NAMES[faction.stance].icon} ${faction.name}` : to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
+    const owner = faction ? `${this.sicon(faction.stance)} ${faction.name}` : to.economyId === null ? "unbewohnt" : to.economyId === me?.economyId ? "eigener Planet" : `von ${this.playerName(state.players.find((p) => p.economyId === to.economyId)?.id ?? "")}`;
     return needsSuits(to) ? `${owner} · keine Atemluft, draußen braucht man Raumanzüge` : owner;
   }
 
@@ -1259,7 +1268,7 @@ export class Ui {
     const sys = state.systems?.find((s) => s.index === index);
     if (!sys) return "?";
     const faction = sys.faction ? state.factions.find((f) => f.id === sys.faction) : undefined;
-    const people = faction && !faction.eliminated && faction.stance !== "merged" ? ` · ${STANCE_NAMES[faction.stance].icon} ${faction.name}` : "";
+    const people = faction && !faction.eliminated && faction.stance !== "merged" ? ` · ${this.sicon(faction.stance)} ${faction.name}` : "";
     return `✨ ${sys.name} ${sys.specialties.map((r) => this.res(r)).join("")}${people}`;
   }
 
@@ -1525,7 +1534,8 @@ export class Ui {
           const { icon, name } = t === "terrain" ? { icon: "🌱", name: "Gelände" } : BUILDING_CATEGORIES[t];
           // A dot marks tabs with something that can be built right now.
           const ready = t !== "terrain" && buildable.some((b) => BUILDINGS[b].category === t && !buildBlocker(state, planet, s, b));
-          return `<button class="tab${t === tab ? " on" : ""}" data-action="buildTab" data-value="${t}" title="${name}" aria-label="${name}">${icon}${ready ? `<i class="dot"></i>` : ""}</button>`;
+          const art = t === "terrain" ? this.ticon("plantTrees", icon) : this.uicon(`category-${t}`, icon);
+          return `<button class="tab${t === tab ? " on" : ""}" data-action="buildTab" data-value="${t}" title="${name}" aria-label="${name}">${art}${ready ? `<i class="dot"></i>` : ""}</button>`;
         })
         .join("");
       const items = tab === "terrain"
@@ -1558,7 +1568,7 @@ export class Ui {
       .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
       .join(" ");
     const cryo = pod
-      ? `<p class="muted">🧊 Eine Kryokapsel: ${pod.count} eingefrorene ${PEOPLES[pod.people].icon} ${PEOPLES[pod.people].name} schlafen hier.</p><button class="build" data-action="thaw" ${thawBlock ? `disabled title="${thawBlock}"` : ""}><span class="icon">🧊</span><span class="name">Auftauen: ${pod.count} neue Einwohner</span><span class="cost">${thawCost}</span></button>`
+      ? `<p class="muted">🧊 Eine Kryokapsel: ${pod.count} eingefrorene ${PEOPLES[pod.people].icon} ${PEOPLES[pod.people].name} schlafen hier.</p><button class="build" data-action="thaw" ${thawBlock ? `disabled title="${thawBlock}"` : ""}><span class="icon">${this.uicon("icon-thaw", "🧊")}</span><span class="name">Auftauen: ${pod.count} neue Einwohner</span><span class="cost">${thawCost}</span></button>`
       : "";
     return `<h2>${title}</h2>${this.renderDepths(state, planet, s)}${cryo}${deposits}${recipes}${workers}${queuedNote}${actions}${hint}`;
   }
