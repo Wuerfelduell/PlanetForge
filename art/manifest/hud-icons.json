@@ -272,6 +272,90 @@
         "icon-draw"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.personality-trader",
+      "category": "ui",
+      "src": "art/src/ui/personality-trader.svg",
+      "out": "public/assets/sprites/ui/personality-trader.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-trader"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-warlord",
+      "category": "ui",
+      "src": "art/src/ui/personality-warlord.svg",
+      "out": "public/assets/sprites/ui/personality-warlord.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-warlord"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-builder",
+      "category": "ui",
+      "src": "art/src/ui/personality-builder.svg",
+      "out": "public/assets/sprites/ui/personality-builder.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-builder"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-diplomat",
+      "category": "ui",
+      "src": "art/src/ui/personality-diplomat.svg",
+      "out": "public/assets/sprites/ui/personality-diplomat.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-diplomat"
+      ],
+      "phase": "P1"
     }
   ]
 }

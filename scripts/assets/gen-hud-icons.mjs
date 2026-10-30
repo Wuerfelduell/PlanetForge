@@ -77,7 +77,7 @@ emit('icon-merge',p('M29 61 V84 Q29 96 64 96 Q99 96 99 84 V61 M64 96 V114',null,
   circ(45,46,31,'science')+circ(83,46,31,'crystal')+
   shadow('M112 38 Q115 67 85 76 Q69 78 59 65 Q90 80 112 38Z','crystal')+
   shine('M24 35 Q29 25 39 24')+shine('M64 31 Q70 24 78 24')+
-  group(heart(),'translate(21 45) scale(0.7)'));
+  group(heart(),'translate(21 43) scale(0.7)'));
 
 emit('icon-gift',rect(24,49,80,63,10,'clay')+
   shadow('M26 97 H102 V101 Q102 110 94 110 H34 Q26 110 26 97Z','clay')+
@@ -115,6 +115,55 @@ emit('icon-draw',smallScale()+
   p('M115 76 L99 62 L81 70 L66 65 Q59 62 54 68 L43 79 Q38 85 44 89 Q49 94 55 89 L66 81 L89 99 L101 103Z','paper')+
   p('M14 77 L27 68 L40 94 L26 103Z','science')+p('M99 64 L114 75 L102 103 L89 96Z','crystal')+
   detail('M58 98 L67 105 M66 91 L77 100 M74 86 L86 94')+shine('M57 73 L63 69 L77 74'));
+
+// 3. AI personalities: one shared round, pressed badge with a quiet cream field.
+// Motifs use native canvas coordinates to retain the 3 px reference outline.
+function badge(body) {
+  return circ(64,65,52,'rock-dark')+circ(64,62,52,'science')+circ(64,62,45,'cream')+
+    shine('M27 32 Q39 18 57 17')+body;
+}
+
+emit('personality-trader',badge(
+  rect(59,36,10,61,4,'clay')+rect(45,93,38,10,5,'clay')+
+  p('M31 43 H97',null,'stroke-width="7"')+circ(64,42,7,'energy')+
+  p('M33 44 L23 78 M33 44 L45 78 M94 44 L82 78 M94 44 L105 78',null,'stroke-width="2"')+
+  circ(34,66,11,'energy')+p('M29 63 Q30 58 34 58',null,`stroke="${C('cream')}" stroke-width="3"`)+
+  rect(83,57,21,21,4,'clay')+p('M87 61 L100 74 M100 61 L87 74',null,'stroke-width="2"')+
+  p('M21 77 H47 Q45 88 34 88 Q23 88 21 77Z M80 77 H107 Q105 88 94 88 Q82 88 80 77Z','sand')+
+  shine('M62 57 V80')));
+
+function toySword() {
+  return p('M28 27 Q25 21 31 23 L44 29 L92 89 L82 98 L34 40Z','snow')+
+    shadow('M34 30 L92 89 L87 94Z','snow')+
+    p('M76 91 L94 78',null,'stroke-width="8"')+
+    p('M90 98 L102 109',null,'stroke-width="9"');
+}
+emit('personality-warlord',badge(toySword()+group(toySword(),'translate(128 0) scale(-1 1)')+
+  p('M53 42 L61 22 Q64 17 67 22 L75 42Z','energy')+
+  p('M36 52 L23 44 L30 65 M92 52 L105 44 L98 65','rock')+
+  p('M34 76 V63 Q34 36 64 36 Q94 36 94 63 V82 L80 100 L65 92 L48 100 L34 85Z','rock')+
+  shadow('M66 38 Q94 38 94 63 V82 L80 100 L65 92Z','rock')+
+  rect(41,61,46,17,6,'space')+rect(59,53,10,39,4,'rock')+
+  shine('M42 52 Q46 43 55 43')));
+
+emit('personality-builder',badge(
+  rect(28,67,73,35,5,'clay')+shadow('M29 94 H100 V97 Q100 101 95 101 H33Z','clay')+
+  p('M29 84 H100 M51 68 V83 M78 68 V83 M64 85 V101',null,'stroke-width="2"')+
+  p('M34 60 Q34 31 63 30 Q93 31 93 60 V69 H34Z','energy')+
+  shadow('M77 33 Q93 39 93 60 V69 H76 Q84 48 77 33Z','energy')+
+  rect(57,26,13,35,5,'energy')+rect(26,60,76,13,6,'ascension')+
+  shine('M42 50 Q44 41 51 39')+shine('M34 64 H49')));
+
+emit('personality-diplomat',badge(
+  p('M100 55 Q111 66 103 80',null,'stroke-width="2"')+
+  p('M38 68 L22 57 L26 79 L18 87 Q39 94 53 81 Q75 91 89 71 L98 59 Q105 49 94 41 Q83 35 76 49 L67 59Z','snow')+
+  p('M48 72 Q27 58 37 28 Q47 42 63 45 Q80 49 70 63 L60 76Z','snow')+
+  shadow('M43 63 Q57 68 70 57 Q73 68 60 76 L48 72Z','snow')+
+  p('M98 48 L110 53 L98 58Z','energy')+circ(89,48,2,'ink')+
+  p('M62 80 H101 V103 H62 Q68 92 62 80Z','paper')+
+  ellipse(62,91,6,11,'cream')+ellipse(101,91,6,11,'cream')+
+  rect(78,80,8,23,2,'clay')+circ(82,91,6,'danger')+
+  shine('M42 40 Q43 49 51 53')));
 
 write('art/manifest/hud-icons.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`HUD icons: ${assets.length} entries`);
