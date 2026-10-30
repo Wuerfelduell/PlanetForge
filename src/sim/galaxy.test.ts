@@ -10,6 +10,7 @@ import {
   launchBlocker,
   RESOURCE_IDS,
   TICK_MS,
+  upgradeState,
   WARP,
   type Command,
   type GameEvent,
@@ -139,5 +140,52 @@ describe("warp systems", () => {
     const home = homePlanet(g, P1.id)!;
     const seg = home.segments.find((s) => s.revealed && s.biome !== "ocean" && !s.building)!;
     expect(buildBlocker(g, home, seg, "warpgate")).toBe("Nur im Miteinander");
+  });
+  it("have 7 to 12 planets, hot ones near the sun and ice far out (Seb)", () => {
+    const heat = { lava: 0, toxic: 1, arid: 2, temperate: 3, ocean: 4, ice: 5 } as Record<string, number>;
+    for (const seed of ["a", "b", "c", "d"]) {
+      const { state } = withGate(seed);
+      for (const sys of state.systems!) {
+        const planets = state.planets.filter((p) => p.system === sys.index).sort((a, b) => a.orbit.radius - b.orbit.radius);
+        expect(planets.length).toBeGreaterThanOrEqual(7);
+        expect(planets.length).toBeLessThanOrEqual(12);
+        expect(planets[0]!.orbit.radius).toBe(1);
+        expect(planets.at(-1)!.orbit.radius).toBeCloseTo(WARP.maxOrbit);
+        // No ice in the inner half, no lava in the outer half.
+        planets.forEach((p, i) => {
+          if (i < planets.length / 2) expect(p.type).not.toBe("ice");
+          else expect(p.type).not.toBe("lava");
+        });
+        expect(heat[planets[0]!.type]).toBeLessThan(heat[planets.at(-1)!.type]!);
+        // Foreign peoples live in the middle, never on the innermost or outermost planet.
+        if (sys.faction) {
+          const settled = planets.filter((p) => p.economyId !== null);
+          expect(settled).not.toContain(planets[0]);
+          expect(settled).not.toContain(planets.at(-1));
+        }
+      }
+    }
+  });
+
+  it("systems found with fewer planets get the rest on load", () => {
+    const { state } = withGate("grow");
+    const sys = state.systems![0]!;
+    // Like an old save: only three planets in that system.
+    const own = state.planets.filter((p) => p.system === sys.index);
+    const keep = own.slice(0, 3).map((p) => p.id);
+    state.planets = state.planets.filter((p) => p.system !== sys.index || keep.includes(p.id));
+    const before = JSON.parse(JSON.stringify(state.planets.filter((p) => keep.includes(p.id))));
+    const up = upgradeState(JSON.parse(JSON.stringify(state)))!;
+    const after = up.planets.filter((p) => p.system === sys.index);
+    expect(after.length).toBeGreaterThanOrEqual(7);
+    expect(new Set(after.map((p) => p.id)).size).toBe(after.length);
+    expect(new Set(up.planets.map((p) => p.name)).size).toBe(up.planets.length);
+    // The old planets keep everything but their orbit.
+    for (const old of before) {
+      const now = after.find((p) => p.id === old.id)!;
+      expect({ ...now, orbit: null }).toEqual({ ...old, orbit: null });
+    }
+    // Loading again changes nothing.
+    expect(upgradeState(JSON.parse(JSON.stringify(up)))).toEqual(up);
   });
 });

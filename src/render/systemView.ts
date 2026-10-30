@@ -1,5 +1,5 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { asteroidsVisible, factionOfEconomy, INVADERS, radarIn, ROCKETS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, type GameState } from "../sim";
+import { asteroidsVisible, factionOfEconomy, INVADERS, radarIn, ROCKETS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, WARP, type GameState } from "../sim";
 import { artFrames, artTexture, hasArt, planetArt } from "./art";
 
 const TAP_SLOP_PX = 10;
@@ -203,6 +203,18 @@ export class SystemView {
     const home = system === 0;
     const planets = state.planets.filter((p) => systemOf(p) === system);
     const sunType = home ? state.sun.type : (state.systems?.find((x) => x.index === system)?.sun ?? "white");
+
+    // Neighbor systems: faint zones by distance to the sun (hot, warm, green, frozen), the same the
+    // planet types come from (WARP.zones).
+    if (!home) {
+      const colors = [0xff6a3c, 0xffb04a, 0x5ee08a, 0x7ec8ff];
+      let inner = 0.55;
+      WARP.zones.forEach((z, i) => {
+        const outer = i === WARP.zones.length - 1 ? WARP.maxOrbit + 0.45 : 1 + z.until * (WARP.maxOrbit - 1);
+        g.circle(this.cx, this.cy, ((inner + outer) / 2) * k).stroke({ width: (outer - inner) * k, color: colors[i] ?? 0xffffff, alpha: 0.1 });
+        inner = outer;
+      });
+    }
 
     // Orbits.
     for (const p of planets) if (p.type !== "asteroid") g.circle(this.cx, this.cy, p.orbit.radius * k).stroke({ width: 1.5, color: 0x8890b8, alpha: 0.25 });

@@ -103,6 +103,8 @@ export interface DepositDef {
   byHand?: boolean;
   /** Deep deposit: only a building stage that lists it reaches it (gold and silver, mine stage 2). */
   tier?: 2;
+  /** Added later (Seb 2026-10-30): drawn from the side stream so older seeds keep their worlds; old saves get it too. */
+  later?: true;
 }
 
 export interface BiomeDef {
@@ -170,6 +172,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "copper", max: 30 },
       { resource: "ilmenite", max: 20 },
       { resource: "bauxite", max: 25 },
+      // Seb 2026-10-30: cacti are not sand; they hold water. The dune is the sand.
+      { resource: "water", max: 20, byHand: true, later: true },
     ],
   },
   swamp: {
@@ -178,9 +182,12 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "clay", max: 70, byHand: true },
-      { resource: "water", max: 40 },
+      // Seb 2026-10-30: the swamp is wet, its water can be scooped by hand (was a deposit nothing reached).
+      { resource: "water", max: 40, byHand: true },
       { resource: "fiber", max: 30, byHand: true },
       { resource: "bauxite", max: 40 },
+      // The mushrooms on the field.
+      { resource: "food", max: 20, byHand: true, later: true },
     ],
   },
   tundra: {
@@ -193,6 +200,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "iron", max: 42 },
       { resource: "tin", max: 35 },
       { resource: "silver", max: 20, tier: 2 },
+      // The snowy pines give wood (and thawing a glacier costs wood).
+      { resource: "wood", max: 25, byHand: true, later: true },
     ],
   },
   crystal: {
@@ -235,6 +244,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 30, byHand: true },
       { resource: "coal", max: 25 },
       { resource: "ilmenite", max: 25 },
+      // The dead trees are dry wood.
+      { resource: "wood", max: 15, byHand: true, later: true },
     ],
   },
   // Inside a planet (CORE): small deposits that never regrow; only the core mine reaches them.
@@ -1580,8 +1591,22 @@ export const MISSILES = {
  */
 export const WARP = {
   systems: 5,
-  /** Planets per neighbor system. */
-  planets: [3, 5] as const,
+  /** Planets per neighbor system (Seb: 7–12). */
+  planets: [7, 12] as const,
+  /** Outermost orbit; the planets share it out evenly, so a full system still fits a phone screen. */
+  maxOrbit: 8,
+  /**
+   * Seb: what a planet is depends on how far from the sun it is. `until` is the share of the way
+   * out (0 = innermost orbit, 1 = outermost); a planet draws its type from the first zone it is in.
+   */
+  zones: [
+    { until: 0.2, types: ["lava", "lava", "toxic"] },
+    { until: 0.45, types: ["arid", "arid", "toxic", "temperate"] },
+    { until: 0.7, types: ["temperate", "temperate", "ocean", "ocean", "arid"] },
+    { until: 1, types: ["ice", "ice", "ice", "arid"] },
+  ] as { until: number; types: PlanetTypeId[] }[],
+  /** Foreign peoples live closest to this point of the way out (the middle of the green zone). */
+  homeZone: 0.55,
   /** Every system is inhabited with this chance, but at least `inhabited[0]` and at most `inhabited[1]` are. */
   inhabitedChance: 0.3,
   inhabited: [1, 2] as const,

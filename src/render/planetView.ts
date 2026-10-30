@@ -3,7 +3,7 @@ import { BIOMES, buildingStats, CORE, coreHazard, planetById, segmentOutput, TIC
 import { sfx } from "../audio/sfx";
 import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt, planetArt } from "./art";
 import { Effects } from "./effects";
-import { propFill } from "./props";
+import { propOf } from "./props";
 
 const TOP = -Math.PI / 2;
 /** Inside a planet (CORE) the selected field lies at the bottom, like the floor under your feet. */
@@ -736,10 +736,10 @@ export class PlanetView {
         const chimney = SMOKE[smokeKey];
         if (chimney && !empty) this.chimneys.push({ ...at(chimney[0], chimney[1]), angle: mid, size: segWidth * k * 0.35, key: smokeKey });
       } else {
-        const props = PROPS[s.biome] ?? [];
         // Nothing grows on scorched earth, not even a stump.
-        const prop = !s.scorched && props.length ? `biome.${s.biome}.prop.${props[(i * 7) % props.length]}` : undefined;
-        const fill = propFill(s);
+        const shown = s.scorched ? undefined : propOf(s);
+        const prop = shown?.id;
+        const fill = shown?.fill ?? 1;
         // The prop is what the field holds: it shrinks while it is harvested, grows back while it
         // regrows and is a stump (or gone, without that art) when the deposit is used up.
         const stage = fill <= 0 ? "depleted" : fill < 1 / 3 ? "regrow-1" : fill < 2 / 3 ? "regrow-2" : undefined;
@@ -876,9 +876,9 @@ export class PlanetView {
         sp.icon.rotation = up;
         sp.icon.visible = true;
       } else if (!s.ruin && art) {
-        const props = PROPS[s.biome] ?? [];
-        const prop = props.length ? artTexture(`biome.${s.biome}.prop.${props[(i * 7) % props.length]}`) : undefined;
-        if (prop && propFill(s) > 0) {
+        const shown = propOf(s);
+        const prop = shown ? artTexture(shown.id) : undefined;
+        if (prop && shown!.fill > 0) {
           const sprite = l.props.take(prop);
           sprite.position.set(surface.x, surface.y);
           sprite.rotation = up;
@@ -1099,27 +1099,8 @@ function indexAtTop(rotation: number, n: number, anchor = TOP): number {
   return mod(Math.round((anchor - rotation) / step), n);
 }
 
-/** Decoration per biome on empty segments (ids from the asset manifest). */
 /** Smallest size of a prop whose deposit is almost used up, relative to a full one. */
 const PROP_MIN_SCALE = 0.55;
-
-const PROPS: Partial<Record<string, string[]>> = {
-  forest: ["tree-a", "tree-b", "tree-c"],
-  savanna: ["acacia", "bush-a", "bush-b"],
-  mountains: ["peak-a", "peak-b", "peak-c"],
-  ocean: ["wave-a", "buoy", "wave-b"],
-  desert: ["cactus-a", "dune", "cactus-b"],
-  swamp: ["reed-a", "mushroom", "reed-b"],
-  tundra: ["pine-snow-a", "ice-rock", "pine-snow-b"],
-  crystal: ["crystal-a", "crystal-b", "crystal-c"],
-  glacier: ["serac-a", "ice-floe", "serac-b"],
-  lava: ["vent-a", "basalt", "vent-b"],
-  ash: ["ash-cone", "dead-tree", "ash-rock"],
-  "mushroom-forest": ["giant-mushroom-a", "giant-mushroom-b"],
-  "crystal-grotto": ["crystal-a", "crystal-b"],
-  "magma-lake": ["vent-a", "vent-b"],
-  "primal-sea": ["coral-a", "coral-b"],
-};
 
 function sector(r0: number, r1: number, a0: number, a1: number): number[] {
   const pts: number[] = [];
