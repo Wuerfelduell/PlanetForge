@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyCommand, BIOMES, buildBlocker, createGame, economyOfPlayer, homePlanet, type BiomeId, type GameState, type TerraformKind } from "./index";
+import { applyCommand, BIOMES, buildBlocker, createGame, economyOfPlayer, homePlanet, upgradeState, type BiomeId, type GameState, type TerraformKind } from "./index";
 
 const P1 = { id: "p1", name: "Seb" };
 const home = (g: GameState) => homePlanet(g, P1.id)!;
@@ -69,5 +69,33 @@ describe("ice and lava fields", () => {
     expect(counts.glacier).toBeGreaterThan(0);
     expect(counts.lava).toBeGreaterThan(0);
     expect(counts.ash).toBeGreaterThan(0);
+  });
+});
+
+describe("terrain logic (Seb 2026-10-30)", () => {
+  it("every biome gives what its look promises", () => {
+    const hand = (b: keyof typeof BIOMES) => BIOMES[b].deposits.filter((d) => d.byHand).map((d) => d.resource);
+    expect(hand("desert")).toEqual(expect.arrayContaining(["sand", "water"]));
+    expect(hand("tundra")).toContain("wood");
+    expect(hand("ash")).toContain("wood");
+    expect(hand("swamp")).toEqual(expect.arrayContaining(["clay", "water", "food"]));
+    expect(hand("desert")[0]).toBe("sand");
+  });
+});
+
+describe("old saves get the terrain fixes", () => {
+  it("cactus water, swamp water by hand", () => {
+    const g = createGame("old-save", [P1], { now: 1000 });
+    const seg = home(g).segments[5]!;
+    seg.biome = "desert";
+    seg.deposits = [{ resource: "sand", amount: 90, max: 90, infinite: false, byHand: true }];
+    const swamp = home(g).segments[6]!;
+    swamp.biome = "swamp";
+    swamp.deposits = [{ resource: "water", amount: 40, max: 40, infinite: false, byHand: false }];
+    const up = upgradeState(JSON.parse(JSON.stringify(g)))!;
+    const p = up.planets.find((x) => x.id === home(g).id)!;
+    expect(p.segments[5]!.deposits.find((d) => d.resource === "water")).toMatchObject({ byHand: true, max: 20 });
+    expect(p.segments[6]!.deposits.find((d) => d.resource === "water")!.byHand).toBe(true);
+    expect(p.segments[6]!.deposits.some((d) => d.resource === "food" && d.byHand)).toBe(true);
   });
 });
