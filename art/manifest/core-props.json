@@ -299,6 +299,300 @@
         "regrow-2"
       ],
       "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.magma-lake.prop.vent-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/magma-lake-vent-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/magma-lake-vent-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop"
+      ],
+      "tags": [
+        "magma-lake",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.primal-sea.prop.coral-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/primal-sea-coral-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/primal-sea-coral-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "tips"
+      ],
+      "tags": [
+        "primal-sea",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
     }
   ]
 }
