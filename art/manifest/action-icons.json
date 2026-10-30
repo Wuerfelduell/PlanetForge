@@ -1,0 +1,298 @@
+{
+  "assets": [
+    {
+      "id": "ui.icon-plant-trees",
+      "category": "ui",
+      "src": "art/src/ui/icon-plant-trees.svg",
+      "out": "public/assets/sprites/ui/icon-plant-trees.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-plant-trees"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-fill-sand",
+      "category": "ui",
+      "src": "art/src/ui/icon-fill-sand.svg",
+      "out": "public/assets/sprites/ui/icon-fill-sand.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-fill-sand"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-fill-clay",
+      "category": "ui",
+      "src": "art/src/ui/icon-fill-clay.svg",
+      "out": "public/assets/sprites/ui/icon-fill-clay.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-fill-clay"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-drain-swamp",
+      "category": "ui",
+      "src": "art/src/ui/icon-drain-swamp.svg",
+      "out": "public/assets/sprites/ui/icon-drain-swamp.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-drain-swamp"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-thaw-glacier",
+      "category": "ui",
+      "src": "art/src/ui/icon-thaw-glacier.svg",
+      "out": "public/assets/sprites/ui/icon-thaw-glacier.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-thaw-glacier"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-cool-lava",
+      "category": "ui",
+      "src": "art/src/ui/icon-cool-lava.svg",
+      "out": "public/assets/sprites/ui/icon-cool-lava.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-cool-lava"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-housing",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-housing.svg",
+      "out": "public/assets/sprites/ui/icon-category-housing.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-housing"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-food",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-food.svg",
+      "out": "public/assets/sprites/ui/icon-category-food.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-food"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-resources",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-resources.svg",
+      "out": "public/assets/sprites/ui/icon-category-resources.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-resources"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-production",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-production.svg",
+      "out": "public/assets/sprites/ui/icon-category-production.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-production"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-research",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-research.svg",
+      "out": "public/assets/sprites/ui/icon-category-research.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-research"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-energy",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-energy.svg",
+      "out": "public/assets/sprites/ui/icon-category-energy.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-energy"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-defense",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-defense.svg",
+      "out": "public/assets/sprites/ui/icon-category-defense.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-defense"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.category-space",
+      "category": "ui",
+      "src": "art/src/ui/icon-category-space.svg",
+      "out": "public/assets/sprites/ui/icon-category-space.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "category-space"
+      ],
+      "phase": "P1"
+    }
+  ]
+}
