@@ -1,0 +1,304 @@
+{
+  "assets": [
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mushroom-forest.prop.giant-mushroom-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/mushroom-forest-giant-mushroom-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/mushroom-forest-giant-mushroom-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "cap-glow"
+      ],
+      "tags": [
+        "mushroom-forest",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-a.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-a-depleted.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-a-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-a.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-a-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-a-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-a.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-a-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-a-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-b.depleted",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-b-depleted.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-b-depleted.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "depleted"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-b.regrow-1",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-b-regrow-1.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-b-regrow-1.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "regrow-1"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal-grotto.prop.crystal-b.regrow-2",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-grotto-crystal-b-regrow-2.svg",
+      "out": "public/assets/sprites/biomes/crystal-grotto-crystal-b-regrow-2.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "prop",
+        "glint"
+      ],
+      "tags": [
+        "crystal-grotto",
+        "prop",
+        "regrow-2"
+      ],
+      "phase": "P0"
+    }
+  ]
+}
