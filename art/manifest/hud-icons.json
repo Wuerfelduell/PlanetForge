@@ -125,6 +125,153 @@
         "icon-unlock"
       ],
       "phase": "P1"
+    },
+    {
+      "id": "ui.icon-factions",
+      "category": "ui",
+      "src": "art/src/ui/icon-factions.svg",
+      "out": "public/assets/sprites/ui/icon-factions.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-factions"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-merge",
+      "category": "ui",
+      "src": "art/src/ui/icon-merge.svg",
+      "out": "public/assets/sprites/ui/icon-merge.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-merge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-gift",
+      "category": "ui",
+      "src": "art/src/ui/icon-gift.svg",
+      "out": "public/assets/sprites/ui/icon-gift.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-gift"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-vote-yes",
+      "category": "ui",
+      "src": "art/src/ui/icon-vote-yes.svg",
+      "out": "public/assets/sprites/ui/icon-vote-yes.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-vote-yes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-vote-no",
+      "category": "ui",
+      "src": "art/src/ui/icon-vote-no.svg",
+      "out": "public/assets/sprites/ui/icon-vote-no.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-vote-no"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-surrender",
+      "category": "ui",
+      "src": "art/src/ui/icon-surrender.svg",
+      "out": "public/assets/sprites/ui/icon-surrender.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-surrender"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-draw",
+      "category": "ui",
+      "src": "art/src/ui/icon-draw.svg",
+      "out": "public/assets/sprites/ui/icon-draw.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-draw"
+      ],
+      "phase": "P1"
     }
   ]
 }

@@ -62,5 +62,59 @@ emit('icon-unlock',rect(75,44,40,65,5,'paper')+p('M80 52 L103 58 V113 L80 105Z',
   rect(12,59,61,48,12,'energy')+shadow('M14 93 H71 V95 Q71 105 60 105 H25 Q14 105 14 93Z','energy')+
   circ(42,79,6,'ink')+p('M42 82 V91',null,'stroke-width="6"')+shine('M21 67 H35'));
 
+// 2. Factions and diplomacy. Votes use a raised forearm and an upper speech
+// bubble, distinct from the existing assign/unassign paw with a lower badge.
+emit('icon-factions',
+  p('M30 27 Q50 17 73 25 Q94 33 111 23 V76 Q95 87 74 78 Q50 69 30 80Z','crystal')+
+  shadow('M31 69 Q50 58 75 70 Q96 78 110 67 V76 Q95 87 74 78 Q50 69 31 80Z','crystal')+
+  group(paw('cream'),'translate(42 24) scale(0.5)')+
+  rect(22,22,10,91,5,'clay')+circ(27,18,8,'energy')+shine('M39 29 L51 27'));
+
+const heart = () => p('M64 106 Q24 79 26 59 Q28 38 46 41 Q58 42 64 54 Q71 39 84 41 Q104 43 102 62 Q98 83 64 106Z','danger')+
+  shadow('M95 46 Q100 68 64 96 L45 90 L64 106 Q99 82 102 62 Q104 53 95 46Z','danger')+shine('M35 58 Q37 49 45 49');
+emit('icon-merge',p('M29 61 V84 Q29 96 64 96 Q99 96 99 84 V61 M64 96 V114',null,'stroke-width="7"')+
+  p('M23 55 H62 V91 L44 82 L23 91Z','science')+p('M65 55 H105 V91 L84 82 L65 91Z','crystal')+
+  circ(45,46,31,'science')+circ(83,46,31,'crystal')+
+  shadow('M112 38 Q115 67 85 76 Q69 78 59 65 Q90 80 112 38Z','crystal')+
+  shine('M24 35 Q29 25 39 24')+shine('M64 31 Q70 24 78 24')+
+  group(heart(),'translate(21 45) scale(0.7)'));
+
+emit('icon-gift',rect(24,49,80,63,10,'clay')+
+  shadow('M26 97 H102 V101 Q102 110 94 110 H34 Q26 110 26 97Z','clay')+
+  p('M64 42 Q20 44 24 23 Q28 9 43 20 Q56 29 64 42Z','energy')+
+  p('M64 42 Q106 42 104 23 Q99 8 84 20 Q71 29 64 42Z','energy')+
+  rect(17,41,94,23,7,'danger')+rect(55,42,18,70,4,'energy')+
+  circ(64,39,9,'energy')+shine('M29 49 H45')+shine('M32 23 Q40 22 47 31'));
+
+function vote(yes) {
+  return p('M28 109 V74 Q24 65 31 58 L63 56 Q72 66 65 80 V109Z','clay')+
+    shadow('M54 76 H65 V109 H54Z','clay')+
+    group(paw('paper'),'translate(1 25) scale(0.7)')+
+    p('M27 107 H67 V116 H27Z','science')+
+    p('M80 11 H103 Q117 11 117 25 V47 Q117 61 103 61 H87 L72 75 V59 Q65 55 65 45 V25 Q65 11 80 11Z',yes?'ok':'danger')+
+    p(yes?'M76 34 L86 45 L106 24':'M79 24 L103 47 M103 24 L79 47',null,`stroke="${C('cream')}" stroke-width="7"`)+
+    shine('M34 91 V100');
+}
+emit('icon-vote-yes',vote(true));
+emit('icon-vote-no',vote(false));
+
+emit('icon-surrender',p('M41 28 Q61 14 84 24 Q100 30 113 24 L105 70 Q89 77 74 68 Q55 60 39 73Z','snow')+
+  shadow('M42 62 Q58 49 76 59 Q94 69 107 59 L105 70 Q89 77 74 68 Q55 60 40 72Z','snow')+
+  p('M24 113 L38 71 L40 19',null,'stroke-width="9"')+
+  p('M24 113 L38 71 L40 19',null,`stroke="${C('clay')}" stroke-width="4"`)+shine('M51 29 Q61 24 71 26'));
+
+// A level beam with two equal bowls. The large handshake sits below, so the
+// draw silhouette cannot be confused with the shield/link alliance icon.
+function smallScale() {
+  return p('M64 13 V54 M36 22 H92 M53 54 H75',null,'stroke-width="5"')+
+    p('M36 23 L26 42 H46Z M92 23 L82 42 H102Z',null,'stroke-width="2"')+
+    p('M24 41 H48 Q46 53 36 53 Q26 53 24 41Z M80 41 H104 Q102 53 92 53 Q82 53 80 41Z','energy')+circ(64,22,5,'energy');
+}
+emit('icon-draw',smallScale()+
+  p('M13 77 L29 63 L53 76 L70 72 L96 89 L81 112 Q74 118 66 112 L36 95 L24 101Z','clay')+
+  p('M115 76 L99 62 L81 70 L66 65 Q59 62 54 68 L43 79 Q38 85 44 89 Q49 94 55 89 L66 81 L89 99 L101 103Z','paper')+
+  p('M14 77 L27 68 L40 94 L26 103Z','science')+p('M99 64 L114 75 L102 103 L89 96Z','crystal')+
+  detail('M58 98 L67 105 M66 91 L77 100 M74 86 L86 94')+shine('M57 73 L63 69 L77 74'));
+
 write('art/manifest/hud-icons.json',JSON.stringify({assets},null,2)+'\n');
 console.log(`HUD icons: ${assets.length} entries`);
