@@ -18,9 +18,9 @@ function add(type, variant, body) {
 const line = (d, token, width = 12, opacity = 1) => path(d, 'none', `stroke="${C(token)}" stroke-width="${width}" opacity="${opacity}"`);
 const patch = (d, token, tone = 0, extra = '') => path(d, C(token, tone), `stroke="none" ${extra}`);
 
-function planet(base, crust, details) {
+function planet(base, crust, details, tone = 0) {
   // Same radius, outline, light position and quiet crust ring as gen-world.mjs.
-  const gradient = `<radialGradient id="body-light" cx="32%" cy="28%" r="74%"><stop stop-color="${C(base, .18)}"/><stop offset="0.6" stop-color="${C(base)}"/><stop offset="1" stop-color="${C(base, -.18)}"/></radialGradient>`;
+  const gradient = `<radialGradient id="body-light" cx="32%" cy="28%" r="74%"><stop stop-color="${C(base, tone < 0 ? 0 : .18)}"/><stop offset="0.6" stop-color="${C(base, tone)}"/><stop offset="1" stop-color="${C(base, -.18)}"/></radialGradient>`;
   const clip = `<clipPath id="inner-surface">${circle(512, 512, 340, C('tint-white'), 'stroke="none"')}</clipPath>`;
   let b = circle(512, 512, 400, 'url(#body-light)');
   b += circle(512, 512, 364, 'none', `stroke="${C(crust)}" stroke-width="25" opacity="0.2"`);
@@ -65,13 +65,16 @@ function arid(variant) {
     'M 528 583 Q 566 543 617 553 L 707 581 Q 751 601 735 645 L 695 696 Q 660 731 618 708 L 532 679 Q 494 651 528 583 Z',
   ];
   for (const [i, d] of plateaus.entries()) {
-    const [dx, dy] = [[0, 0], [15, 105], [-95, 25]][i];
+    const [dx, dy] = [[-15, 75], [-75, -40], [40, -65]][i];
     b += `<g transform="translate(${dx} ${dy})">`;
     b += path(d, C('clay'), 'stroke="none" transform="translate(0 18)"');
     b += path(d, C('rock-dark'), `stroke="${C('iron')}" stroke-width="12"`);
     b += line(['M 310 353 Q 328 327 367 331 L 406 342', 'M 581 333 Q 608 308 638 325', 'M 546 600 Q 565 572 603 578 L 665 597'][i], 'rock', 13);
     b += '</g>';
   }
+  b += path('M 377 675 Q 397 649 425 663 L 471 684 Q 494 698 478 727 Q 452 754 418 734 L 380 715 Q 363 700 377 675 Z', C('clay'), 'stroke="none" transform="translate(0 14)"');
+  b += path('M 377 675 Q 397 649 425 663 L 471 684 Q 494 698 478 727 Q 452 754 418 734 L 380 715 Q 363 700 377 675 Z', C('rock-dark'), `stroke="${C('iron')}" stroke-width="10"`);
+  b += line('M 388 683 Q 401 670 422 680 L 452 693', 'rock', 11);
   b += line('M 300 562 Q 361 535 410 554 M 329 596 Q 366 578 393 587 M 461 476 Q 512 456 553 477 M 397 732 Q 429 720 457 727', 'sand', 12);
   return planet('sand', 'clay', b);
 }
@@ -94,7 +97,92 @@ function ice(variant) {
   return planet('glacier', 'science', b);
 }
 
-for (const [type, draw] of Object.entries({ temperate, arid, ice })) {
+function ocean(variant) {
+  if (variant === 'b') {
+    let b = line('M 298 409 Q 338 390 375 411 M 520 287 Q 558 270 598 289 M 551 573 Q 590 552 629 572 M 328 687 Q 363 669 402 689 M 690 483 Q 722 469 751 484', 'water', 14, .6);
+    // Small irregular island silhouettes, each with a warm beach and leafy center.
+    const island = 'M -27 -12 Q -17 -29 0 -21 Q 11 -25 20 -9 Q 34 0 21 15 Q 8 28 -10 16 Q -32 17 -27 -12 Z';
+    for (const [x, y, scale, rotation] of [[356, 337, 1.1, -24], [483, 432, .8, 32], [664, 362, 1, 9], [335, 557, .7, -40], [547, 687, 1.1, 14], [711, 601, .8, -18]]) {
+      b += `<g transform="translate(${x} ${y}) rotate(${rotation}) scale(${scale})">`;
+      b += ellipse(0, 0, 40, 32, C('water'), 'stroke="none" opacity="0.4"');
+      b += path(island, C('sand'), `stroke="${C('deep-water', -.18)}" stroke-width="6"`);
+      b += path(island, C('grass'), 'stroke="none" transform="translate(-3 -3) scale(0.6)"');
+      b += '</g>';
+    }
+    return planet('deep-water', 'water', b);
+  }
+  let b = patch('M 270 371 Q 343 274 427 314 Q 478 339 452 398 Q 415 436 434 486 Q 454 540 395 578 Q 337 610 303 567 Q 280 525 316 482 Q 337 443 285 432 Q 253 416 270 371 Z', 'ok', 0, 'opacity="0.5"');
+  b += patch('M 457 646 Q 519 609 571 635 Q 616 656 679 628 Q 723 613 745 657 Q 680 765 546 758 Q 466 749 443 711 Q 425 677 457 646 Z', 'science', .18, 'opacity="0.5"');
+  b += line('M 299 373 Q 354 317 396 344 M 485 697 Q 538 723 585 704', 'snow', 14, .4);
+  // A broad, open cyclone with an off-center eye, unlike the scattered island world.
+  const spiral = 'M 405 502 C 363 409 435 311 556 309 C 689 301 783 397 747 508 C 720 594 604 630 530 575 C 469 530 480 441 550 420 C 604 403 657 439 640 487 C 630 519 587 521 579 493';
+  b += line(spiral, 'deep-water', 45, .2);
+  b += line(spiral, 'snow', 29, .8);
+  b += line('M 441 562 Q 416 605 452 646 M 689 351 Q 729 368 744 403', 'snow', 16, .5);
+  return planet('water', 'science', b);
+}
+
+function lava(variant) {
+  if (variant === 'b') {
+    let b = patch('M 302 360 Q 320 299 386 310 L 443 362 L 417 449 L 336 472 Q 286 430 302 360 Z M 549 565 L 628 532 L 716 587 L 687 681 Q 632 735 570 691 Z', 'coal', -.18);
+    const rivers = 'M 340 277 Q 375 336 416 366 L 392 457 L 448 515 L 414 610 L 458 718 M 416 366 L 510 346 L 576 267 M 510 346 L 557 427 L 661 443 L 734 385 M 392 457 L 298 474 L 259 531 M 448 515 L 539 539 L 557 427 M 539 539 L 578 629 L 548 762 M 578 629 L 669 667 L 728 609 M 414 610 L 326 649 M 661 443 L 692 526 L 769 539 M 539 539 L 619 501 L 692 526';
+    b += line(rivers, 'lava', 24, .5);
+    b += line(rivers, 'ascension', 13);
+    b += line(rivers, 'energy', 5, .8);
+    b += line('M 327 386 L 345 356 M 588 325 L 615 340 M 616 711 L 649 719', 'rock-dark', 10, .5);
+    return planet('coal', 'lava', b);
+  }
+  let b = '';
+  const lakes = [
+    'M 300 361 Q 329 302 393 319 Q 453 332 434 384 Q 420 417 441 444 Q 461 491 406 511 Q 349 532 310 485 Q 273 433 300 361 Z',
+    'M 589 407 Q 629 365 682 387 Q 725 404 714 446 Q 700 471 733 504 Q 761 542 723 572 Q 677 604 641 575 Q 620 552 591 549 Q 546 531 565 489 Q 593 455 589 407 Z',
+    'M 450 645 Q 492 602 540 632 Q 566 651 601 652 Q 648 656 636 696 Q 616 742 554 745 Q 501 748 466 717 Q 422 691 450 645 Z',
+  ];
+  for (const [i, d] of lakes.entries()) {
+    b += `<g transform="translate(${i === 2 ? -120 : 0} 0)">`;
+    b += path(d, C('ascension'), `stroke="${C('coal')}" stroke-width="20"`);
+    b += path(d, 'none', `stroke="${C('lava')}" stroke-width="7"`);
+    b += '</g>';
+  }
+  b += patch('M 322 370 Q 341 334 378 342 Q 410 351 396 381 Q 379 412 403 451 Q 414 476 379 480 Q 330 477 320 436 Q 308 406 322 370 Z', 'energy');
+  b += patch('M 610 423 Q 637 398 664 411 Q 683 426 663 451 Q 643 475 680 502 Q 704 525 681 544 Q 656 557 640 531 Q 590 520 601 492 Q 624 458 610 423 Z', 'energy');
+  b += line('M 355 664 Q 382 642 406 660 Q 433 682 461 676', 'energy', 20);
+  b += line('M 464 300 Q 485 313 499 334 M 290 569 L 320 593 M 698 655 L 715 630', 'coal', 12, .4);
+  return planet('lava', 'coal', b, -.18);
+}
+
+function toxic(variant) {
+  if (variant === 'b') {
+    let b = '';
+    // Interleaved, tapering cloud ribbons; no bubbles on this gaseous variant.
+    b += patch('M 290 369 Q 338 270 454 285 Q 530 291 569 337 Q 622 389 689 365 Q 738 349 760 390 Q 694 443 617 417 Q 566 400 523 361 Q 477 320 415 329 Q 345 336 290 369 Z', 'toxic');
+    b += patch('M 266 492 Q 322 438 386 461 Q 447 483 483 456 Q 519 429 494 408 Q 541 422 527 462 Q 514 509 457 515 Q 411 519 373 500 Q 325 476 266 492 Z', 'sand', 0, 'opacity="0.7"');
+    b += patch('M 301 612 Q 372 564 446 593 Q 500 617 540 581 Q 569 550 602 497 Q 645 442 709 474 Q 764 511 739 561 Q 722 595 682 588 Q 727 569 703 535 Q 672 503 645 544 Q 616 609 571 650 Q 511 704 432 661 Q 362 623 301 655 Z', 'toxic');
+    b += line('M 331 351 Q 399 297 468 321 M 328 615 Q 387 591 434 614 M 612 529 Q 652 468 697 503', 'sand', 15, .7);
+    b += line('M 418 739 Q 482 757 531 733 M 566 276 Q 610 285 640 306', 'toxic', 18, .5);
+    return planet('moss', 'toxic', b);
+  }
+  let b = '';
+  const pools = [
+    'M 282 386 Q 312 324 374 346 Q 426 364 414 409 Q 397 442 427 470 Q 459 512 412 543 Q 370 563 332 528 Q 300 514 280 480 Q 259 435 282 386 Z',
+    'M 566 318 Q 617 280 663 320 Q 691 344 674 376 Q 662 402 692 422 Q 734 455 699 487 Q 655 524 619 489 Q 596 460 563 453 Q 525 428 547 390 Q 570 362 566 318 Z',
+    'M 489 617 Q 522 579 569 605 Q 605 628 646 603 Q 697 578 723 623 Q 747 669 694 711 Q 658 744 610 721 Q 576 707 548 731 Q 508 757 479 718 Q 446 667 489 617 Z',
+  ];
+  // Unevenly sized marshes and a small fourth pool avoid face-like symmetry.
+  for (const d of pools) b += path(d, C('oil-sheen'), `stroke="${C('oil')}" stroke-width="16"`);
+  b += path('M 279 626 Q 285 594 316 603 Q 343 609 337 638 Q 331 664 301 660 Q 274 656 279 626 Z', C('oil-sheen'), `stroke="${C('oil')}" stroke-width="12"`);
+  b += ellipse(305, 630, 15, 20, C('toxic'), 'stroke="none"');
+  b += patch('M 305 399 Q 330 363 363 378 Q 393 394 365 425 Q 344 448 381 474 Q 402 495 374 510 Q 331 511 314 474 Q 290 441 305 399 Z', 'toxic');
+  b += patch('M 587 338 Q 617 315 638 341 Q 652 360 622 380 Q 599 407 643 433 Q 671 452 651 469 Q 619 482 596 444 Q 562 419 582 386 Q 596 361 587 338 Z', 'moss');
+  b += patch('M 504 638 Q 531 615 560 641 Q 590 671 638 644 Q 678 624 692 650 Q 703 678 665 691 Q 633 699 604 682 Q 567 668 542 700 Q 511 721 501 688 Q 484 660 504 638 Z', 'toxic');
+  for (const [x, y, r] of [[345, 410, 20], [383, 476, 13], [611, 359, 17], [650, 429, 25], [529, 659, 23], [665, 652, 14]]) {
+    b += circle(x, y, r, C('toxic'), `stroke="${C('moss', -.18)}" stroke-width="7"`);
+    b += ellipse(x - r * .3, y - r * .3, r * .3, r * .2, C('toxic', .18), 'stroke="none"');
+  }
+  return planet('moss', 'oil', b);
+}
+
+for (const [type, draw] of Object.entries({ temperate, arid, ice, ocean, lava, toxic })) {
   for (const variant of ['b', 'c']) add(type, variant, draw(variant));
 }
 write('art/manifest/planet-variants.json', JSON.stringify({ assets }, null, 2) + '\n');
