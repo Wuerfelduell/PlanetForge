@@ -1,7 +1,7 @@
 import { AnimatedSprite, Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
 import { BIOMES, buildingStats, CORE, coreHazard, planetById, segmentOutput, TICK_MS, type GameEvent, type GameState, type PlanetState, type ResourceId, type UnitState } from "../sim";
 import { sfx } from "../audio/sfx";
-import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt } from "./art";
+import { artAnimation, artFrames, artTexture, buildingAnim, buildingArt, hasArt, planetArt } from "./art";
 import { Effects } from "./effects";
 import { propOf } from "./props";
 
@@ -653,7 +653,7 @@ export class PlanetView {
     }
 
     g.circle(0, 0, R * 1.08).fill({ color: 0x7fb0ff, alpha: 0.08 });
-    const body = artTexture(`planet.planet-${planet.type}`);
+    const body = planetArt(planet);
     if (body) l.body.take(body).scale.set(k);
     else g.circle(0, 0, ART_BODY * k).fill(CORE_COLOR);
 

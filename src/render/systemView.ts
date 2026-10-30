@@ -1,6 +1,6 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
 import { asteroidsVisible, factionOfEconomy, INVADERS, radarIn, ROCKETS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, WARP, type GameState } from "../sim";
-import { artFrames, artTexture, hasArt } from "./art";
+import { artFrames, artTexture, hasArt, planetArt } from "./art";
 
 const TAP_SLOP_PX = 10;
 const ZOOM_MAX = 5;
@@ -242,7 +242,7 @@ export class SystemView {
       const r = Math.max(Math.min(9, k * 0.4), k * (0.16 + p.segments.length / 160));
       const asteroid = p.type === "asteroid";
       const rich = p.segments.some((s) => s.deposits.some((d) => d.resource === "aetherite"));
-      const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : artTexture(`planet.planet-${p.type}`);
+      const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : planetArt(p);
       if (texture) this.sprite(texture, x, y, r * 2.3);
       else g.circle(x, y, r).fill(PLANET_COLORS[p.type] ?? 0x9aa0b5).stroke({ width: 2, color: 0x1a1d2e });
       // A drill bit next to planets whose core was reached.

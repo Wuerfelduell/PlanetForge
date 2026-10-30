@@ -65,6 +65,18 @@ export function artTexture(id: string): Texture | undefined {
   return textures.get(id);
 }
 
+/**
+ * Body of a planet: each type has up to three looks (planet-<type>, -b, -c), picked from the
+ * planet id so a big system does not show the same world twice in a row. Missing variants fall
+ * back to the first look.
+ */
+export function planetArt(planet: { id: string; type: string }): Texture | undefined {
+  let h = 0;
+  for (const c of planet.id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const variant = ["", "-b", "-c"][h % 3];
+  return textures.get(`planet.planet-${planet.type}${variant}`) ?? textures.get(`planet.planet-${planet.type}`);
+}
+
 /** Sprite of a building at its stage, falling back to the first stage or the single-stage name. */
 export function buildingArt(building: string, state?: "off" | "construction", tier = 1): Texture | undefined {
   const suffix = state ? `.${state}` : "";
