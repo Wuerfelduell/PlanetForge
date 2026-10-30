@@ -20,6 +20,7 @@ import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
 import { syncPeoples } from "./discoveries";
+import { growSystems } from "./galaxy";
 import { PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
 import { ringDistance } from "./rules";
 import { FACTIONS, factionName, pickPersonality } from "./diplomacy";
@@ -589,6 +590,8 @@ export function upgradeState(state: unknown): GameState | null {
     const founder = owners.find((p) => p.homePlanetId === planet.id) ?? owners.slice().sort((a, b) => count(b.id) - count(a.id))[0];
     if (founder) planet.founder = founder.id;
   }
+  // Seb: neighbor systems have 7–12 planets now; systems found before get the rest.
+  growSystems(s);
   syncPeoples(s);
   (s as { version: number }).version = 12;
   return s;
