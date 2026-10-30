@@ -1,7 +1,7 @@
 import { BUILDINGS, CRYO, PEOPLE_IDS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { createUnit } from "./units";
 import { placeBuilding } from "./build";
-import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
+import { buildCost, buildingStats, economyOf, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
 import { buildBlocker, cleanPlanetName, cloneState, renameBlocker, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
@@ -146,7 +146,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       const target = checkSegment(player, planet, cmd.segment);
       if (typeof target === "string") return target;
       if (unit.segment === cmd.segment) return null;
-      if (workerCount(state, planet, cmd.segment) >= workerCapacity(target)) return "Kein Platz für weitere Einwohner";
+      if (workerCount(state, planet, cmd.segment) >= workerCapacity(target, economyOf(state, planet))) return "Kein Platz für weitere Einwohner";
       unit.segment = cmd.segment;
       return null;
     }
@@ -228,7 +228,8 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (blocker) return blocker;
       const economy = state.economies[planet.economyId!]!;
       const next = nextUpgrade(segment)!;
-      for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+      const cost = buildCost(economy, next.cost);
+    for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
       segment.tier = (segment.tier ?? 1) + 1;
       events.push({ type: "upgraded", planetId: planet.id, segment: segment.index, building: segment.building, tier: segment.tier, playerId });
       return null;
@@ -236,7 +237,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     case "assign": {
       if (!Number.isInteger(cmd.delta) || cmd.delta === 0) return "Ungültige Anzahl";
       if (cmd.delta > 0) {
-        if (workerCount(state, planet, segment.index) + cmd.delta > workerCapacity(segment)) return "Kein Platz für weitere Einwohner";
+        if (workerCount(state, planet, segment.index) + cmd.delta > workerCapacity(segment, economyOf(state, planet))) return "Kein Platz für weitere Einwohner";
         // Inside a planet (CORE): idle people come down from the surface, each in a deep suit.
         const idle = idleUnits(state, surfaceOf(state, planet), playerId);
         if (idle.length < cmd.delta) return "Keine freien Einwohner";

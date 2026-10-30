@@ -1,6 +1,9 @@
 import { DISCOVERIES, DISCOVERY_RULES, type DiscoveryId } from "../data/balance/discoveries";
 import { discoveryBaseCost } from "../data/balance/index";
 import { MODES } from "../data/balance/progression";
+import { PEOPLE_BASE, PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
+import type { StatKey } from "../data/balance/types";
+import type { PeopleId } from "./content";
 import { Rng } from "./rng";
 import type { EconomyState, GameEvent, GameState } from "./state";
 
@@ -44,22 +47,63 @@ export const OFFERABLE: DiscoveryId[] = (Object.keys(DISCOVERIES) as DiscoveryId
   return mods.length + actions.length > 0 && mods.every((m) => (SUPPORTED_STATS as readonly string[]).includes(m.stat)) && actions.every((a) => (SUPPORTED_ACTIONS as readonly string[]).includes(a));
 });
 
+/** Stats only peoples change (no discovery offers them yet). */
+type PeopleStat = Extract<StatKey, "buildCost" | "workerSlots" | "craftSpeed" | "foodUpkeep" | "tradeRate" | "suitWear">;
+
+/** Modifiers grouped by stat, so modified() (asked for every field on every tick) only looks at matching ones. */
+function byStat(mods: readonly Modifier[]): Map<string, Modifier[]> {
+  const out = new Map<string, Modifier[]>();
+  for (const m of mods) out.set(m.stat, [...(out.get(m.stat) ?? []), m]);
+  return out;
+}
+const discoveryModifiers = new Map(Object.keys(DISCOVERIES).map((id) => [id, byStat(defOf(id)!.modifiers ?? [])]));
+
+/** A people's ability plus its favorite biome and resource (PEOPLE_BASE), as plain modifiers. */
+const peopleModifiers = new Map<string, Map<string, Modifier[]>>(
+  Object.entries(PEOPLE_DEFS).map(([id, def]) => {
+    const biome = 1 + PEOPLE_BASE.favoriteBiomeBonus;
+    const resource = 1 + PEOPLE_BASE.favoriteResourceBonus;
+    return [
+      id,
+      byStat([
+        ...(def.ability.modifiers as readonly Modifier[]),
+        { stat: "handGatherRate", mul: biome, scope: { biome: def.favoriteBiome } },
+        { stat: "buildingOutput", mul: biome, scope: { biome: def.favoriteBiome } },
+        { stat: "handGatherRate", mul: resource, scope: { resource: def.favoriteResource } },
+        { stat: "buildingOutput", mul: resource, scope: { resource: def.favoriteResource } },
+      ]),
+    ];
+  }),
+);
+
+/** The peoples playing on each economy (EconomyState.peoples), so their abilities apply. Run after players change. */
+export function syncPeoples(state: GameState): void {
+  for (const economy of Object.values(state.economies)) {
+    const peoples = state.players.filter((p) => p.economyId === economy.id).map((p) => p.people);
+    const old = economy.peoples;
+    if (!old || old.length !== peoples.length || old.some((x, i) => x !== peoples[i])) economy.peoples = peoples;
+  }
+}
+
 /**
- * Applies the economy's discoveries to a base value. `scope` narrows to modifiers for one
- * building or resource; unscoped modifiers always apply, scoped ones only when the scope matches.
+ * Applies the economy's discoveries and the abilities of its peoples to a base value. `scope`
+ * narrows to modifiers for one building, resource or biome; unscoped modifiers always apply,
+ * scoped ones only when the scope matches.
  */
-export function modified(economy: EconomyState | undefined, stat: StatId, base: number, scope: { building?: string; resource?: string } = {}): number {
+export function modified(economy: EconomyState | undefined, stat: StatId | PeopleStat, base: number, scope: { building?: string; resource?: string; biome?: string } = {}): number {
   if (!economy) return base;
   let value = base;
-  for (const id of economy.discoveries) {
-    for (const m of defOf(id)?.modifiers ?? []) {
-      if (m.stat !== stat) continue;
+  const apply = (mods: readonly Modifier[] | undefined) => {
+    for (const m of mods ?? []) {
       if (m.scope?.building && m.scope.building !== scope.building) continue;
       if (m.scope?.resource && m.scope.resource !== scope.resource) continue;
+      if (m.scope?.biome && m.scope.biome !== scope.biome) continue;
       if (m.mul !== undefined) value *= m.mul;
       if (m.add !== undefined) value += m.add;
     }
-  }
+  };
+  for (const id of economy.discoveries) apply(discoveryModifiers.get(id)?.get(stat));
+  for (const id of economy.peoples ?? []) apply(peopleModifiers.get(id as PeopleId)?.get(stat));
   return value;
 }
 

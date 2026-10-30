@@ -2,6 +2,7 @@ import { RESOURCES as RESOURCE_VALUES } from "../data/balance/resources";
 import { PEOPLES, RECIPES, RESOURCE_IDS, RESOURCES, type PeopleId, type ResourceId } from "./content";
 import type { Rng } from "./rng";
 import { buildingStats, peopleOf, playerById, ticksPerCycle } from "./rules";
+import { modified } from "./discoveries";
 import type { EconomyState, FactionOfferKind, FactionPersonality, FactionState, FactionStance, FactionVoteAction, GameEvent, GameState, PlayerState } from "./state";
 
 /**
@@ -163,7 +164,8 @@ export function tradeQuote(state: GameState, faction: FactionState, resource: Re
   if (faction.stance === "war" || faction.stance === "merged" || faction.eliminated) return null;
   const economy = factionEconomy(state, faction);
   if (!economy || !Number.isInteger(amount) || amount < 1 || economy.resources[resource] - amount < FACTIONS.keep) return null;
-  const worth = resourceValue(resource) * amount * markup(faction);
+  // Good traders (Tauschbären, Handelswege) pay less for the same goods.
+  const worth = (resourceValue(resource) * amount * markup(faction)) / modified(buyer, "tradeRate", 1);
   const candidates = FACTIONS.payment.filter((r) => r !== resource).map((r) => ({ give: r, giveAmount: Math.max(1, Math.ceil(worth / resourceValue(r))) }));
   // Wants first what it has least of, among what the buyer can actually pay.
   candidates.sort((a, b) => economy.resources[a.give] - economy.resources[b.give]);

@@ -208,6 +208,8 @@ export interface EconomyState {
   starving: boolean;
   /** Discoveries owned, in the order they were made. */
   discoveries: string[];
+  /** Peoples of the players on this economy; their abilities count like discoveries (syncPeoples). */
+  peoples?: PeopleId[];
   /** Discoveries earned by level-ups and not chosen yet. */
   picks: number;
   /** Open choice: up to three options, one vote per member (coop: true majority decides). */
