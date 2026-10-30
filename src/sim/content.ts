@@ -103,6 +103,8 @@ export interface DepositDef {
   byHand?: boolean;
   /** Deep deposit: only a building stage that lists it reaches it (gold and silver, mine stage 2). */
   tier?: 2;
+  /** Added later (Seb 2026-10-30): drawn from the side stream so older seeds keep their worlds; old saves get it too. */
+  later?: true;
 }
 
 export interface BiomeDef {
@@ -170,6 +172,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "copper", max: 30 },
       { resource: "ilmenite", max: 20 },
       { resource: "bauxite", max: 25 },
+      // Seb 2026-10-30: cacti are not sand; they hold water. The dune is the sand.
+      { resource: "water", max: 20, byHand: true, later: true },
     ],
   },
   swamp: {
@@ -178,9 +182,12 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "clay", max: 70, byHand: true },
-      { resource: "water", max: 40 },
+      // Seb 2026-10-30: the swamp is wet, its water can be scooped by hand (was a deposit nothing reached).
+      { resource: "water", max: 40, byHand: true },
       { resource: "fiber", max: 30, byHand: true },
       { resource: "bauxite", max: 40 },
+      // The mushrooms on the field.
+      { resource: "food", max: 20, byHand: true, later: true },
     ],
   },
   tundra: {
@@ -193,6 +200,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "iron", max: 42 },
       { resource: "tin", max: 35 },
       { resource: "silver", max: 20, tier: 2 },
+      // The snowy pines give wood (and thawing a glacier costs wood).
+      { resource: "wood", max: 25, byHand: true, later: true },
     ],
   },
   crystal: {
@@ -235,6 +244,8 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 30, byHand: true },
       { resource: "coal", max: 25 },
       { resource: "ilmenite", max: 25 },
+      // The dead trees are dry wood.
+      { resource: "wood", max: 15, byHand: true, later: true },
     ],
   },
   // Inside a planet (CORE): small deposits that never regrow; only the core mine reaches them.

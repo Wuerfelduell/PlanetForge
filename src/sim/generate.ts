@@ -502,7 +502,7 @@ export function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentS
   const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
     // ±25 % variation per segment.
-    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) ? side : rng).next() * 0.5));
+    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) || d.later ? side : rng).next() * 0.5));
     return { resource: d.resource, amount: max, max, infinite: !!d.infinite, byHand: !!d.byHand };
   });
   return {
@@ -557,8 +557,11 @@ export function upgradeState(state: unknown): GameState | null {
     for (const segment of planet.segments) {
       if (segment.scorched) continue;
       for (const d of BIOMES[segment.biome].deposits) {
-        if (d.byHand || segment.deposits.some((x) => x.resource === d.resource)) continue;
-        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: false });
+        const had = segment.deposits.find((x) => x.resource === d.resource);
+        // Seb 2026-10-30: swamp water became gatherable by hand.
+        if (had && d.byHand && !had.byHand && !d.later) had.byHand = true;
+        if (had || (d.byHand && !d.later)) continue;
+        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: !!d.byHand });
       }
     }
   }
