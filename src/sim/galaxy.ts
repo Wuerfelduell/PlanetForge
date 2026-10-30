@@ -1,4 +1,4 @@
-import { BIOMES, PEOPLE_IDS, PLANET_TYPE_IDS, RARE_RESOURCES, RESOURCE_IDS, RULES, SYSTEM, WARP, type PlanetTypeId, type ResourceId } from "./content";
+import { BIOMES, PEOPLE_IDS, RARE_RESOURCES, RESOURCE_IDS, RULES, SYSTEM, WARP, type PlanetTypeId, type ResourceId } from "./content";
 import { FACTIONS, factionName, pickPersonality } from "./diplomacy";
 import { createSegment, newEconomy, placeRareDeposit, planetName, shuffle, startPlanetBiomes, weightedBiomes } from "./generate";
 import { Rng, seedFromString } from "./rng";
@@ -67,44 +67,102 @@ export function discoverSystems(state: GameState, events: GameEvent[]): void {
 function generateSystemPlanets(state: GameState, system: StarSystemState, settled: boolean, usedNames: Set<string>): { planets: PlanetState[]; homes: PlanetState[] } {
   const rng = new Rng(seedFromString(`${state.seed}:system:${system.index}`));
   const count = rng.int(...WARP.planets);
-  const homes = settled ? Math.min(count, WARP.settledPlanets + rng.int(0, 1)) : 0;
+  const homeCount = settled ? Math.min(count, WARP.settledPlanets + rng.int(0, 1)) : 0;
+  // Foreign peoples live in the green zone, the main planet right in its middle.
+  const homeSlots = Array.from({ length: count }, (_, i) => i)
+    .sort((a, b) => Math.abs(share(a, count) - WARP.homeZone) - Math.abs(share(b, count) - WARP.homeZone))
+    .slice(0, homeCount);
   const planets: PlanetState[] = [];
   for (let i = 0; i < count; i++) {
-    const home = i < homes;
-    const type: PlanetTypeId = home ? rng.pick(HOMELY) : rng.pick(PLANET_TYPE_IDS);
-    const size = rng.pick(SYSTEM.freePlanetSegments);
-    const biomes = home ? startPlanetBiomes(rng, size, type, true) : weightedBiomes(rng, type, size);
-    const segments = biomes.map((biome, index) => createSegment(index, biome, rng));
-    for (const r of Object.keys(RARE_RESOURCES) as ResourceId[]) if (rng.next() < 0.4) placeRareDeposit(rng, segments, r, home);
-    // Exotic matter: the reason to come here. Settled planets keep it outside their start area.
-    const fields = rng.int(...WARP.fields);
-    for (let f = 0; f < fields; f++) {
-      const resource = rng.pick(system.specialties);
-      const pool = segments.filter((s) => BIOMES[s.biome].buildable && !s.deposits.some((d) => WARP.specialties.flat().includes(d.resource)) && (!home || ringDistance(s.index, 0, size) > RULES.startRevealRadius));
-      if (!pool.length) continue;
-      const amount = rng.int(...WARP.amount);
-      rng.pick(pool).deposits.push({ resource, amount, max: amount, infinite: false, byHand: false });
-    }
-    let name = planetName(rng);
-    while (usedNames.has(name)) name = planetName(rng);
-    usedNames.add(name);
-    planets.push({
-      id: `w${system.index}p${i}`,
-      name,
-      type,
-      orbit: { radius: i + 1, angle: rng.next() * Math.PI * 2 },
-      startSlot: null,
-      economyId: null,
-      birthProgress: 0,
-      segments,
-      system: system.index,
-    });
+    const home = homeSlots.includes(i);
+    let type = zoneType(rng, share(i, count));
+    if (home && !HOMELY.includes(type)) type = rng.pick(HOMELY);
+    planets.push(systemPlanet(rng, system, `w${system.index}p${i}`, type, home, usedNames));
   }
-  // Settled planets are not always the inner ones.
-  const radii = planets.map((p) => p.orbit.radius);
-  shuffle(radii, rng);
-  planets.forEach((p, i) => (p.orbit.radius = radii[i]!));
-  return { planets, homes: planets.slice(0, homes) };
+  layOut(planets, rng);
+  return { planets, homes: homeSlots.map((i) => planets[i]!) };
+}
+
+/** How far out orbit slot `i` of `count` lies: 0 innermost, 1 outermost. */
+function share(i: number, count: number): number {
+  return count > 1 ? i / (count - 1) : 0;
+}
+
+/** Seb: hot planets near the sun, ice far out, the breathable ones in between. */
+function zoneType(rng: Rng, at: number): PlanetTypeId {
+  return rng.pick((WARP.zones.find((z) => at <= z.until) ?? WARP.zones[WARP.zones.length - 1]!).types);
+}
+
+/** Hot to cold, for sorting planets of an existing system onto the orbit slots. */
+const HEAT: Record<PlanetTypeId, number> = { lava: 0, toxic: 1, arid: 2, asteroid: 2.5, temperate: 3, ocean: 4, ice: 5 };
+
+/**
+ * Orbits in list order, evenly out to WARP.maxOrbit; neighbors sit a golden angle apart around the
+ * sun, so even twelve planets never overlap on the star map.
+ */
+function layOut(planets: PlanetState[], rng: Rng): void {
+  const n = planets.length;
+  planets.forEach((p, i) => {
+    p.orbit = { radius: 1 + share(i, n) * (WARP.maxOrbit - 1), angle: (i * 2.399963 + rng.next() * 0.6) % (Math.PI * 2) };
+  });
+}
+
+function systemPlanet(rng: Rng, system: StarSystemState, id: string, type: PlanetTypeId, home: boolean, usedNames: Set<string>): PlanetState {
+  const size = rng.pick(SYSTEM.freePlanetSegments);
+  const biomes = home ? startPlanetBiomes(rng, size, type, true) : weightedBiomes(rng, type, size);
+  const segments = biomes.map((biome, index) => createSegment(index, biome, rng));
+  for (const r of Object.keys(RARE_RESOURCES) as ResourceId[]) if (rng.next() < 0.4) placeRareDeposit(rng, segments, r, home);
+  // Exotic matter: the reason to come here. Settled planets keep it outside their start area.
+  const fields = rng.int(...WARP.fields);
+  for (let f = 0; f < fields; f++) {
+    const resource = rng.pick(system.specialties);
+    const pool = segments.filter((s) => BIOMES[s.biome].buildable && !s.deposits.some((d) => WARP.specialties.flat().includes(d.resource)) && (!home || ringDistance(s.index, 0, size) > RULES.startRevealRadius));
+    if (!pool.length) continue;
+    const amount = rng.int(...WARP.amount);
+    rng.pick(pool).deposits.push({ resource, amount, max: amount, infinite: false, byHand: false });
+  }
+  let name = planetName(rng);
+  while (usedNames.has(name)) name = planetName(rng);
+  usedNames.add(name);
+  return { id, name, type, orbit: { radius: 1, angle: 0 }, startSlot: null, economyId: null, birthProgress: 0, segments, system: system.index };
+}
+
+/**
+ * Saves whose systems were found with 3–5 planets each get the missing ones (Seb: 7–12), and every
+ * system is sorted by distance to its sun again. Planets that exist keep everything but their orbit.
+ */
+export function growSystems(state: GameState): void {
+  if (!state.systems) return;
+  const usedNames = new Set(state.planets.map((p) => p.name));
+  for (const system of state.systems) {
+    const own = state.planets.filter((p) => p.system === system.index);
+    if (own.length >= WARP.planets[0]) continue;
+    const rng = new Rng(seedFromString(`${state.seed}:system-grow:${system.index}`));
+    const count = Math.max(own.length, rng.int(...WARP.planets));
+    const wanted = Array.from({ length: count }, (_, i) => zoneType(rng, share(i, count)));
+    const slots: (PlanetState | null)[] = Array<PlanetState | null>(count).fill(null);
+    // Each planet that exists takes the free slot whose wished type is closest to its own.
+    for (const planet of own.slice().sort((a, b) => HEAT[a.type] - HEAT[b.type])) {
+      let best = -1;
+      for (let i = 0; i < count; i++) {
+        if (slots[i]) continue;
+        if (best < 0 || Math.abs(HEAT[wanted[i]!] - HEAT[planet.type]) < Math.abs(HEAT[wanted[best]!] - HEAT[planet.type])) best = i;
+      }
+      slots[best] = planet;
+    }
+    const ids = new Set(state.planets.map((p) => p.id));
+    let next = 0;
+    for (let i = 0; i < count; i++) {
+      if (slots[i]) continue;
+      while (ids.has(`w${system.index}p${next}`)) next++;
+      const id = `w${system.index}p${next}`;
+      ids.add(id);
+      const planet = systemPlanet(rng, system, id, wanted[i]!, false, usedNames);
+      slots[i] = planet;
+      state.planets.push(planet);
+    }
+    layOut(slots as PlanetState[], rng);
+  }
 }
 
 /** A foreign people (an AI faction) on the given planets of a system. Returns its id. */
