@@ -17,10 +17,11 @@ const PROPS: Partial<Record<string, [id: string, resource?: ResourceId][]>> = {
   glacier: [["serac-a", "water"], ["ice-floe", "water"], ["serac-b", "water"]],
   lava: [["vent-a", "stone"], ["basalt", "stone"], ["vent-b", "stone"]],
   ash: [["ash-cone", "sand"], ["dead-tree", "wood"], ["ash-rock", "stone"]],
-  "mushroom-forest": [["giant-mushroom-a"], ["giant-mushroom-b"]],
-  "crystal-grotto": [["crystal-a"], ["crystal-b"]],
-  "magma-lake": [["vent-a"], ["vent-b"]],
-  "primal-sea": [["coral-a"], ["coral-b"]],
+  // Inside a planet nothing regrows, so these shrink for good while the core mine works.
+  "mushroom-forest": [["giant-mushroom-a", "aetherite"], ["giant-mushroom-b", "aetherite"]],
+  "crystal-grotto": [["crystal-a", "deep-quartz"], ["crystal-b", "deep-quartz"]],
+  "magma-lake": [["vent-a", "core-iron"], ["vent-b", "core-iron"]],
+  "primal-sea": [["coral-a", "deep-quartz"], ["coral-b", "deep-quartz"]],
 };
 
 export interface Prop {
