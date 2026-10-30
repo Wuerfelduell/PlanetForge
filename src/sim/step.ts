@@ -23,7 +23,7 @@ import {
   toolsWear,
 } from "./rules";
 import { createUnit } from "./units";
-import { grantPick, modified, resolveOffer } from "./discoveries";
+import { grantPick, modified, resolveOffer, syncPeoples } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
 import { goalsCycle } from "./invaders";
@@ -85,6 +85,7 @@ export function appendLog(state: GameState, events: GameEvent[]): void {
 
 /** Exactly one fixed tick. Deterministic: same state in, same state out. */
 function stepInPlace(state: GameState, events: GameEvent[]): void {
+  syncPeoples(state);
   landFlights(state, events);
   syncCores(state);
   const planets = allPlanets(state);
@@ -149,7 +150,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       for (const n of neighbors(planet, segment.index)) if (n.biome === "forest") forested.set(n.index, { mul: f.neighborRegenMul, replant: f.replantsDepleted });
     }
 
-    let regen: number | undefined;
+    const regen: Partial<Record<ResourceId, number>> = {};
     for (const segment of planet.segments) {
       const def = buildingStats(segment);
       const working = workingOn(planet.id, segment.index);
@@ -186,7 +187,7 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
         const forester = d.resource === "wood" ? forested.get(segment.index) : undefined;
         // Inside a planet nothing grows back (CORE).
         if (planet.coreOf || segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
-        d.amount = Math.min(d.max, d.amount + d.max * (regen ??= modified(economy, "regenRate", RULES.regenPerSecond)) * (forester?.mul ?? 1) * DT);
+        d.amount = Math.min(d.max, d.amount + d.max * (regen[d.resource] ??= modified(economy, "regenRate", RULES.regenPerSecond, { resource: d.resource })) * (forester?.mul ?? 1) * DT);
       }
     }
 
@@ -207,7 +208,7 @@ function craft(planet: PlanetState, segment: PlanetState["segments"][number], wo
   if (crafts <= 0) return;
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) economy.resources[r] = Math.max(0, economy.resources[r] - v * crafts);
   for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) {
-    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r }) * foodOutputMul(r);
+    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r, biome: segment.biome }) * foodOutputMul(r);
   }
   if (recipe.ascension) economy.ascension.points += recipe.ascension * crafts;
 }
@@ -253,7 +254,7 @@ function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): 
     if (planet.economyId !== economy.id) continue;
     const outside = settlersOutside(state, planet);
     if (!outside.length) continue;
-    const need = outside.length * RULES.suits.perInhabitantPerCycle;
+    const need = outside.length * modified(economy, "suitWear", RULES.suits.perInhabitantPerCycle);
     if (economy.resources.suits >= need) {
       economy.resources.suits -= need;
       continue;
@@ -272,7 +273,7 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
   for (const economy of Object.values(state.economies)) {
     const people = state.planets.filter((p) => p.economyId === economy.id).reduce((sum, p) => sum + (residents.get(p.id) ?? 0), 0);
     if (people === 0) continue;
-    const upkeep = foodUpkeepPerCycle(state, people);
+    const upkeep = foodUpkeepPerCycle(state, people, economy);
     if (economy.resources.food >= upkeep) {
       economy.resources.food -= upkeep;
       economy.starving = false;

@@ -176,7 +176,8 @@ export type StatKey =
   | "ascensionPerCycle"
   | "demolishRefund"
   | "escapePodReward"
-  | "automatonSlots";
+  | "automatonSlots"
+  | "suitWear";
 
 export interface PeopleDef<R extends string = string, B extends string = string> {
   name: string;

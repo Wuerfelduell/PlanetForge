@@ -183,14 +183,15 @@ describe("building stages", () => {
     const planks = econ(g).resources.planks;
     g = exec(g, { type: "upgrade", planetId, segment: 1 });
     expect(seg(g, 1).tier).toBe(2);
-    expect(econ(g).resources.planks).toBe(planks - 10);
+    // Dammbiber (default people) pay 20 % less planks.
+    expect(econ(g).resources.planks).toBe(planks - 8);
     expect(housing(g, homePlanet(g, P1.id)!)).toBe(base + 2);
     expect(applyCommand(g, P1.id, { type: "upgrade", planetId, segment: 1 }, g.simTime)).toEqual({ ok: false, error: "Ab Aufstiegsstufe 5" });
 
     const wood = econ(g).resources.wood;
     g = exec(g, { type: "demolish", planetId, segment: 1 });
     expect(seg(g, 1).tier).toBeUndefined();
-    expect(econ(g).resources.planks).toBe(planks - 10 + 5);
+    expect(econ(g).resources.planks).toBe(planks - 8 + 5);
     expect(econ(g).resources.wood).toBe(wood + 7);
   });
 

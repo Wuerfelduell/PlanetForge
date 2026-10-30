@@ -42,6 +42,7 @@ import {
   unitsOn,
   upgradeBlocker,
   workerCapacity,
+  buildCost,
   workerCount,
 } from "./rules";
 import { launch } from "./space";
@@ -251,7 +252,8 @@ function upgradeHousing(state: GameState, planet: PlanetState, events: GameEvent
     if (s.building !== "housing" || !nextUpgrade(s) || upgradeBlocker(state, planet, s)) continue;
     const economy = state.economies[planet.economyId!]!;
     const next = nextUpgrade(s)!;
-    for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+    const cost = buildCost(economy, next.cost);
+    for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
     s.tier = (s.tier ?? 1) + 1;
     events.push({ type: "upgraded", planetId: planet.id, segment: s.index, building: s.building, tier: s.tier, playerId: player.id });
     return;
@@ -280,7 +282,7 @@ function assignWorkers(state: GameState, faction: FactionState, economy: Economy
     .sort((a, b) => b.score - a.score);
   let next = 0;
   for (const { s } of scored) {
-    const capacity = workerCapacity(s) - workerCount(state, planet, s.index);
+    const capacity = workerCapacity(s, economy) - workerCount(state, planet, s.index);
     for (let i = 0; i < capacity && free > 0; i++) {
       units[next++]!.segment = s.index;
       free--;
@@ -320,7 +322,7 @@ function pickGather(s: SegmentState, economy: EconomyState, foodPerCycle: number
 }
 
 function workScore(planet: PlanetState, s: SegmentState, economy: EconomyState, foodLow: boolean): number {
-  if (!s.revealed || s.scorched || workerCapacity(s) === 0) return 0;
+  if (!s.revealed || s.scorched || workerCapacity(s, economy) === 0) return 0;
   const def = buildingStats(s);
   if (def?.crafts) {
     const recipe = RECIPES[segmentRecipe(s)!];

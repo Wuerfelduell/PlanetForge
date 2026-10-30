@@ -128,7 +128,7 @@ export function upgradeBlocker(state: GameState, planet: PlanetState, segment: S
   const next = nextUpgrade(segment);
   if (!next) return "Höchste Stufe erreicht";
   if (economy.ascension.level < next.unlockLevel) return `Ab Aufstiegsstufe ${next.unlockLevel}`;
-  if (!canPay(economy, next.cost)) return NOT_AFFORDABLE;
+  if (!canPay(economy, buildCost(economy, next.cost))) return NOT_AFFORDABLE;
   return null;
 }
 
@@ -152,9 +152,11 @@ function housedInBuildings(state: GameState, planet: PlanetState): number {
   return total;
 }
 
-export function workerCapacity(segment: SegmentState): number {
-  if (segment.building) return buildingStats(segment)!.workers;
-  return !segment.scorched && segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
+/** `economy` adds people bonuses (more miners, more gatherers on the sea). */
+export function workerCapacity(segment: SegmentState, economy?: EconomyState): number {
+  const base = segment.building ? buildingStats(segment)!.workers : !segment.scorched && segment.deposits.some((d) => d.byHand) ? RULES.handWorkersPerSegment : 0;
+  // Unmanned buildings (wind, houses) stay unmanned.
+  return base > 0 ? modified(economy, "workerSlots", base, { building: segment.building ?? undefined, biome: segment.biome }) : 0;
 }
 
 export function adjacencyMultiplier(planet: PlanetState, segment: SegmentState): number {
@@ -230,12 +232,19 @@ export function toolFactor(segment: SegmentState, economy: EconomyState | undefi
 export function craftRate(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): number {
   const recipe = segmentRecipe(segment);
   if (!recipe || workers <= 0) return 0;
-  const speed = buildingStats(segment)!.crafts!.speed;
+  const speed = modified(economy, "craftSpeed", buildingStats(segment)!.crafts!.speed, { building: segment.building! });
   return (workers * speed * adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment)) / RECIPES[recipe].seconds;
 }
 
 export function canAfford(economy: EconomyState, building: BuildingId): boolean {
-  return canPay(economy, BUILDINGS[building].cost);
+  return canPay(economy, buildCost(economy, BUILDINGS[building].cost));
+}
+
+/** What a building or upgrade really costs this economy (people discounts, e.g. Dammbiber on wood). */
+export function buildCost(economy: EconomyState | undefined, cost: Partial<Record<ResourceId, number>>): Partial<Record<ResourceId, number>> {
+  const out: Partial<Record<ResourceId, number>> = {};
+  for (const [r, v] of Object.entries(cost) as [ResourceId, number][]) out[r] = Math.ceil(modified(economy, "buildCost", v, { resource: r }) - 1e-9);
+  return out;
 }
 
 export const NOT_AFFORDABLE = "Zu wenig Ressourcen";
@@ -276,7 +285,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   if (workers <= 0) return out;
   const mult = adjacencyMultiplier(planet, segment) * toolFactor(segment, economy) * powerFactor(planet, segment);
   const def = buildingStats(segment);
-  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource }) * foodOutputMul(resource);
+  const bonus = (resource: ResourceId) => modified(economy, "buildingOutput", 1, { building: segment.building ?? undefined, resource, biome: segment.biome }) * foodOutputMul(resource);
   if (def?.produces) {
     const r = def.produces.resource;
     out[r] = def.produces.perWorker * workers * mult * bonus(r);
@@ -293,7 +302,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   }
   if (!def && !segment.scorched) {
     const d = segment.deposits.find((x) => x.resource === segment.gather);
-    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker) * workers * foodOutputMul(d.resource);
+    if (d && d.byHand && (d.infinite || d.amount > 0)) out[d.resource] = modified(economy, "handGatherRate", RULES.handRatePerWorker, { resource: d.resource, biome: segment.biome }) * workers * foodOutputMul(d.resource);
   }
   return out;
 }
@@ -322,8 +331,8 @@ export function secondsPerBirth(state: GameState, residents: number): number {
 }
 
 /** Food all `people` of an economy eat in one cycle; grows a little faster than the head count. */
-export function foodUpkeepPerCycle(state: GameState, people: number): number {
-  return people * foodUpkeepPerSecond(people) * state.settings.cycleSeconds;
+export function foodUpkeepPerCycle(state: GameState, people: number, economy?: EconomyState): number {
+  return modified(economy, "foodUpkeep", people * foodUpkeepPerSecond(people) * state.settings.cycleSeconds);
 }
 
 /** Ascension points per cycle: inhabitants plus every building stage above the first. */

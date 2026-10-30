@@ -30,10 +30,10 @@ export const PEOPLES = {
     startBonus: { wood: 20 },
     ability: {
       name: "Baumeister",
-      description: "Gebäude sind 30 % schneller fertig und kosten 15 % weniger Holz.",
+      description: "Gebäude und Ausbauten kosten 20 % weniger Holz und Bretter.",
       modifiers: [
-        { stat: "buildTime", mul: 0.7 },
-        { stat: "buildCost", mul: 0.85, scope: { resource: "wood" } },
+        { stat: "buildCost", mul: 0.8, scope: { resource: "wood" } },
+        { stat: "buildCost", mul: 0.8, scope: { resource: "planks" } },
       ],
     },
     startDiscovery: null,
@@ -64,13 +64,13 @@ export const PEOPLES = {
     startBonus: { water: 20, food: 10 },
     ability: {
       name: "Heiler",
-      description: "Nachwuchs kommt 25 % schneller, im Kampf sterben halb so viele.",
+      description: "Nachwuchs kommt 25 % schneller, im Kampf stirbt einer weniger.",
       modifiers: [
         { stat: "birthTime", mul: 0.75 },
-        { stat: "battleLosses", mul: 0.5 },
+        { stat: "battleLosses", add: -1 },
       ],
     },
-    startDiscovery: "medicine",
+    startDiscovery: null,
     aggression: 0.1,
   },
   shellguards: {
@@ -115,9 +115,9 @@ export const PEOPLES = {
     startBonus: { stone: 10, wood: 10 },
     ability: {
       name: "Sternkunde",
-      description: "+2 Sichtweite auf der Sternkarte, Labore +20 %.",
+      description: "Sehen Invasoren schon beim Aufbruch kommen, Labore +20 %.",
       modifiers: [
-        { stat: "sightRadius", add: 2 },
+        { stat: "sightRadius", add: 1 },
         { stat: "buildingOutput", mul: 1.2, scope: { building: "lab" } },
       ],
     },
@@ -151,7 +151,7 @@ export const PEOPLES = {
       name: "Schmiede",
       description: "Die Gießerei arbeitet 20 % schneller, +1 auf jeden Kampfwurf.",
       modifiers: [
-        { stat: "craftSpeed", mul: 1.2 },
+        { stat: "craftSpeed", mul: 1.2, scope: { building: "foundry" } },
         { stat: "battleRoll", add: 1 },
       ],
     },
@@ -166,10 +166,10 @@ export const PEOPLES = {
     startBonus: { food: 15, water: 10 },
     ability: {
       name: "Dickes Fell",
-      description: "Brauchen 20 % weniger Nahrung, Tundra-Vorkommen sind 50 % größer.",
+      description: "Brauchen 20 % weniger Nahrung, Raumanzüge halten doppelt so lange.",
       modifiers: [
         { stat: "foodUpkeep", mul: 0.8 },
-        { stat: "depositMax", mul: 1.5, scope: { biome: "tundra" } },
+        { stat: "suitWear", mul: 0.5 },
       ],
     },
     startDiscovery: null,
@@ -199,11 +199,11 @@ export const PEOPLES = {
     favoriteResource: "biogas",
     startBonus: { clay: 20 },
     ability: {
-      name: "Giftfest",
-      description: "Erzeugen 25 % weniger Verschmutzung und halten 25 Punkte mehr davon aus.",
+      name: "Schneckenhaus",
+      description: "Jedes Wohngebäude fasst einen Einwohner mehr, Biogasanlagen +30 %.",
       modifiers: [
-        { stat: "pollutionOutput", mul: 0.75 },
-        { stat: "pollutionTolerance", add: 25 },
+        { stat: "housing", add: 1 },
+        { stat: "buildingOutput", mul: 1.3, scope: { building: "biogas-plant" } },
       ],
     },
     startDiscovery: null,
@@ -217,7 +217,7 @@ export const PEOPLES = {
     startBonus: { stone: 15 },
     ability: {
       name: "Echoortung",
-      description: "Jedes Gebäude deckt ein Feld weiter auf, Ätherit ist von Anfang an abbaubar.",
+      description: "Jedes Gebäude deckt ein Feld weiter auf.",
       modifiers: [{ stat: "revealRadius", add: 1 }],
     },
     startDiscovery: "crystal-lore",

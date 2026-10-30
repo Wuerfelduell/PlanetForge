@@ -19,6 +19,8 @@ import {
 import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
+import { syncPeoples } from "./discoveries";
+import { PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
 import { ringDistance } from "./rules";
 import { FACTIONS, factionName, pickPersonality } from "./diplomacy";
 import type { DepositState, Difficulty, EconomyState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
@@ -268,6 +270,12 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   let color = 0;
   while (usedColors.has(color)) color++;
   next.players.push({ id: playerId, name, color, people: chosen, economyId, homePlanetId: planet.id, joinedTick: next.tick, eliminated: false, surrendered: false, offersDraw: false });
+  // Every people brings its start goods and maybe a discovery (data/balance PEOPLES).
+  const economy = next.economies[economyId]!;
+  const def = PEOPLE_DEFS[chosen];
+  for (const [r, n] of Object.entries(def.startBonus) as [ResourceId, number][]) economy.resources[r] += n;
+  if (def.startDiscovery && !economy.discoveries.includes(def.startDiscovery)) economy.discoveries.push(def.startDiscovery);
+  syncPeoples(next);
   events.push({ type: "joined", playerId });
   appendLog(next, events);
   return { ok: true, state: next };
@@ -578,6 +586,7 @@ export function upgradeState(state: unknown): GameState | null {
     const founder = owners.find((p) => p.homePlanetId === planet.id) ?? owners.slice().sort((a, b) => count(b.id) - count(a.id))[0];
     if (founder) planet.founder = founder.id;
   }
+  syncPeoples(s);
   (s as { version: number }).version = 12;
   return s;
 }

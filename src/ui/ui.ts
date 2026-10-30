@@ -66,6 +66,7 @@ import {
   toolFactor,
   ticksPerCycle,
   workerCapacity,
+  buildCost,
   type Command,
   type GameState,
   type ResourceId,
@@ -1443,7 +1444,7 @@ export class Ui {
       (surface ? `<div class="deposits"><span class="layer">Oberfläche</span>${surface}</div>` : "") +
       (ground ? `<div class="deposits"><span class="layer">Untergrund</span>${ground}</div>` : "");
 
-    const cap = workerCapacity(s);
+    const cap = workerCapacity(s, economy);
     const rate = Object.entries(output)
       .map(([r, v]) => `+${(v as number).toFixed(1)} ${this.res(r as ResourceId)}/s`)
       .join(" ");
@@ -1505,10 +1506,10 @@ export class Ui {
       if (next) {
         const blocker = upgradeBlocker(state, planet, s);
         const locked = economy.ascension.level < next.unlockLevel;
-        const cost = Object.entries(next.cost)
+        const cost = Object.entries(buildCost(economy, next.cost))
           .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
           .join(" ");
-        const short = Object.entries(next.cost)
+        const short = Object.entries(buildCost(economy, next.cost))
           .filter(([r, v]) => economy.resources[r as ResourceId] < (v as number))
           .map(([r]) => RESOURCES[r as ResourceId].name);
         const missing = !locked && short.length ? `<br>Fehlt: ${short.join(", ")}` : "";
@@ -1535,7 +1536,7 @@ export class Ui {
           const bd = BUILDINGS[b];
           const blocker = buildBlocker(state, planet, s, b);
           const locked = economy.ascension.level < bd.unlockLevel;
-          const cost = Object.entries(bd.cost)
+          const cost = Object.entries(buildCost(economy, bd.cost))
             .map(([r, v]) => `<span class="${economy.resources[r as ResourceId] >= (v as number) ? "" : "short"}">${this.res(r as ResourceId)}${v}</span>`)
             .join(" ");
           // Missing resources only: offer to queue the build instead of greying it out.
