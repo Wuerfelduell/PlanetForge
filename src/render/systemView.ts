@@ -1,12 +1,12 @@
 import { Application, Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
-import { asteroidsVisible, factionOfEconomy, INVADERS, STANCE_NAMES, SUPERNOVA, ticksPerCycle, type GameState } from "../sim";
-import { artFrames, artTexture, hasArt } from "./art";
+import { asteroidsVisible, factionOfEconomy, INVADERS, radarIn, ROCKETS, STANCE_NAMES, SUPERNOVA, systemOf, ticksPerCycle, WARP, type GameState } from "../sim";
+import { artFrames, artTexture, hasArt, planetArt } from "./art";
 
 const TAP_SLOP_PX = 10;
 const ZOOM_MAX = 5;
 /** Four human colors, then the AI factions (PlayerState.color 4 …). */
-const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab, 0xc39bff, 0xff9f43, 0x6ee7b7, 0xf87171];
-const SUN_COLORS: Record<string, number> = { yellow: 0xffd23f, red: 0xff7a4d, blue: 0x8fc7ff, white: 0xf4f1ff };
+const PLAYER_COLORS = [0xffffff, 0xffd166, 0x7bd3ff, 0xff8fab, 0xc39bff, 0xff9f43, 0x6ee7b7, 0xf87171, 0x9ae66e, 0xf0abfc];
+const SUN_COLORS: Record<string, number> = { yellow: 0xffd23f, red: 0xff7a4d, blue: 0x8fc7ff, white: 0xf4f1ff, nebula: 0xd38cff, neutron: 0xa8f0ff, crystal: 0x6ff7d8 };
 const PLANET_COLORS: Record<string, number> = { temperate: 0x6fbf73, arid: 0xe0b35a, ice: 0xbfe6ff, lava: 0xe2603a, ocean: 0x4f8fdc, toxic: 0x9bd04a };
 /** Sun body in sim units (orbit radius 1 is the innermost planet). */
 const SUN_SIZE = 0.5;
@@ -15,6 +15,9 @@ const SUN_SIZE = 0.5;
  * Star map: the sun with its shield shell, the planets on their orbits, rockets in flight and
  * invader fleets. Read-only towards the game like PlanetView; taps report the planet (or "sun").
  */
+/** Star map art of rockets whose sprite id differs from the rocket id. */
+const SHIP_ART: Partial<Record<string, string>> = { homing: "missile-homing", emp: "missile-emp", nuke: "missile-nuke" };
+
 export class SystemView {
   readonly stage = new Container();
   private readonly back = new Graphics();
@@ -47,6 +50,10 @@ export class SystemView {
   selected: string | null = null;
   /** The local player: own planets and flights are marked. */
   playerId = "";
+  /** Sun system shown: 0 = home, 1 … = neighbor systems, -1 = the galaxy with all systems. */
+  system = 0;
+  private shownSystem = 0;
+  private insets = { top: 0, bottom: 0 };
 
   constructor(
     app: Application,
@@ -60,8 +67,11 @@ export class SystemView {
   layout(width: number, height: number, topInset: number, bottomInset: number, state: GameState): void {
     this.width = width;
     this.height = height;
+    this.insets = { top: topInset, bottom: bottomInset };
+    this.shownSystem = this.system;
     const free = Math.max(160, height - topInset - bottomInset);
-    const maxOrbit = Math.max(1, ...state.planets.map((p) => p.orbit.radius));
+    const view = this.system < 0 ? 0 : this.system;
+    const maxOrbit = Math.max(1, ...state.planets.filter((p) => systemOf(p) === view).map((p) => p.orbit.radius));
     this.base = { scale: Math.min(width * 0.48, free * 0.48) / (maxOrbit + 0.45), cx: width / 2, cy: topInset + free / 2, maxOrbit };
     this.applyView();
   }
@@ -119,7 +129,14 @@ export class SystemView {
   update(state: GameState, deltaMs: number): void {
     if (!this.stage.visible) return;
     this.time += deltaMs / 1000;
-    this.draw(state);
+    if (this.system !== this.shownSystem) {
+      // Another system: fit it and start without zoom.
+      this.zoom = 1;
+      this.pan = { x: 0, y: 0 };
+      this.layout(this.width, this.height, this.insets.top, this.insets.bottom, state);
+    }
+    if (this.system < 0) this.drawGalaxy(state);
+    else this.draw(state);
   }
 
   /** Screen position of a planet (or the sun at the center). */
@@ -182,34 +199,55 @@ export class SystemView {
     const me = state.players.find((p) => p.id === this.playerId);
     const font = Math.max(11, Math.min(15, k * 0.28));
 
+    const system = this.system;
+    const home = system === 0;
+    const planets = state.planets.filter((p) => systemOf(p) === system);
+    const sunType = home ? state.sun.type : (state.systems?.find((x) => x.index === system)?.sun ?? "white");
+
+    // Neighbor systems: faint zones by distance to the sun (hot, warm, green, frozen), the same the
+    // planet types come from (WARP.zones).
+    if (!home) {
+      const colors = [0xff6a3c, 0xffb04a, 0x5ee08a, 0x7ec8ff];
+      let inner = 0.55;
+      WARP.zones.forEach((z, i) => {
+        const outer = i === WARP.zones.length - 1 ? WARP.maxOrbit + 0.45 : 1 + z.until * (WARP.maxOrbit - 1);
+        g.circle(this.cx, this.cy, ((inner + outer) / 2) * k).stroke({ width: (outer - inner) * k, color: colors[i] ?? 0xffffff, alpha: 0.1 });
+        inner = outer;
+      });
+    }
+
     // Orbits.
-    for (const p of state.planets) if (p.type !== "asteroid") g.circle(this.cx, this.cy, p.orbit.radius * k).stroke({ width: 1.5, color: 0x8890b8, alpha: 0.25 });
+    for (const p of planets) if (p.type !== "asteroid") g.circle(this.cx, this.cy, p.orbit.radius * k).stroke({ width: 1.5, color: 0x8890b8, alpha: 0.25 });
 
     // Sun and its shield shell.
     const sunPx = SUN_SIZE * k * 2;
-    const sunTexture = art ? artTexture(`space.sun-${state.sun.type}`) : undefined;
+    const sunTexture = art ? artTexture(`space.sun-${sunType}`) : undefined;
     // Sun and shell art share a 1024 canvas: glow to the edge, shell at radius 303-337.
     const canvasPx = k * 2.3;
     if (sunTexture) this.sprite(sunTexture, this.cx, this.cy, canvasPx).rotation = this.time * 0.05;
     else {
-      g.circle(this.cx, this.cy, sunPx * 0.62).fill({ color: SUN_COLORS[state.sun.type] ?? 0xffd23f, alpha: 0.25 });
-      g.circle(this.cx, this.cy, sunPx * 0.42).fill(SUN_COLORS[state.sun.type] ?? 0xffd23f);
+      g.circle(this.cx, this.cy, sunPx * 0.62).fill({ color: SUN_COLORS[sunType] ?? 0xffd23f, alpha: 0.25 });
+      g.circle(this.cx, this.cy, sunPx * 0.42).fill(SUN_COLORS[sunType] ?? 0xffd23f);
     }
-    if (state.sun.novaTick !== null) this.drawShield(state, canvasPx);
-    this.hits.push({ id: "sun", x: this.cx, y: this.cy, r: sunPx * 0.6 });
+    // Shield and supernova belong to the home sun only.
+    if (home && state.sun.novaTick !== null) this.drawShield(state, canvasPx);
+    if (home) this.hits.push({ id: "sun", x: this.cx, y: this.cy, r: sunPx * 0.6 });
     if (this.selected === "sun") front.circle(this.cx, this.cy, sunPx * 0.9).stroke({ width: 2.5, color: 0xffffff, alpha: 0.9 });
 
     // Planets: size by segment count, a ring in the owner's color. Asteroids need "Weltraumbergbau".
     const seeAsteroids = asteroidsVisible(me ? state.economies[me.economyId] : undefined);
-    for (const p of state.planets) {
+    for (const p of planets) {
       if (p.type === "asteroid" && !seeAsteroids && p.economyId === null) continue;
       const { x, y } = this.at(state, p.id);
       const r = Math.max(Math.min(9, k * 0.4), k * (0.16 + p.segments.length / 160));
       const asteroid = p.type === "asteroid";
       const rich = p.segments.some((s) => s.deposits.some((d) => d.resource === "aetherite"));
-      const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : artTexture(`planet.planet-${p.type}`);
+      const texture = !art ? undefined : asteroid ? artTexture(rich ? "space.asteroid-rich" : `space.asteroid-${"abcd"[Number(p.id.slice(1)) % 4]}`) : planetArt(p);
       if (texture) this.sprite(texture, x, y, r * 2.3);
       else g.circle(x, y, r).fill(PLANET_COLORS[p.type] ?? 0x9aa0b5).stroke({ width: 2, color: 0x1a1d2e });
+      // A drill bit next to planets whose core was reached.
+      const drill = art && state.cores?.some((c) => c.coreOf === p.id) ? artTexture("space.planet-core-drill-badge") : undefined;
+      if (drill) this.sprite(drill, x - r * 0.45, y - r * 0.7, Math.max(10, r * 0.9));
       const owners = state.players.filter((pl) => pl.economyId && pl.economyId === p.economyId);
       if (owners.length) {
         const own = owners.some((pl) => pl.id === me?.id);
@@ -243,20 +281,27 @@ export class SystemView {
       this.hits.push({ id: p.id, x, y, r: Math.max(r * 1.5, 22) });
     }
 
-    // Rockets: a dotted path and the rocket on it.
+    // Rockets: a dotted path and the rocket on it. Warp jumps show on the galaxy map.
+    const here = (id: string) => (id === "sun" ? home : planets.some((p) => p.id === id));
     for (const f of state.flights) {
+      if (!here(f.from) || !here(f.to)) continue;
+      // Enemy missiles fly unseen unless a manned radar of ours watches this system.
+      const owner = state.players.find((p) => p.id === f.owner);
+      if (ROCKETS[f.rocket].unmanned && owner?.economyId !== me?.economyId && !radarIn(state, me?.economyId, system)) continue;
       const a = this.at(state, f.from);
       const b = this.at(state, f.to);
       const t = Math.min(1, Math.max(0, (state.tick - f.launchTick) / Math.max(1, f.arrivalTick - f.launchTick)));
       const mine = f.owner === this.playerId;
-      const hostile = !mine && state.planets.some((p) => p.id === f.to && p.economyId === me?.economyId) && f.rocket === "combat";
+      const hostile = !mine && state.planets.some((p) => p.id === f.to && p.economyId === me?.economyId) && (ROCKETS[f.rocket].attack || ROCKETS[f.rocket].unmanned);
       const color = hostile ? 0xff5c5c : mine ? 0x7bf0a0 : 0xb8bedc;
       dotted(lines, a.x, a.y, b.x, b.y, color, Math.max(4, k * 0.12));
       const x = a.x + (b.x - a.x) * t;
       const y = a.y + (b.y - a.y) * t;
       const angle = Math.atan2(b.y - a.y, b.x - a.x);
       // Ship art points right; the launch pad rocket (fallback) points up.
-      const ship = art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
+      // War rockets have their own art (ship.missile-homing, …, ship.dropship).
+      const own = art && f.rocket !== "colony" && f.rocket !== "combat" ? artFrames(`ship.${SHIP_ART[f.rocket] ?? f.rocket}`) : [];
+      const ship = own.length ? own : art ? artFrames(`ship.${f.rocket !== "colony" ? "rocket-big" : "rocket-small"}`) : [];
       const rocket = ship.length ? ship[Math.floor(this.time * 6) % ship.length] : art ? artTexture(f.rocket !== "colony" ? "building.rocket-big" : "building.rocket-small") : undefined;
       if (rocket) this.sprite(rocket, x, y, Math.max(18, k * 0.5), angle + (ship.length ? 0 : Math.PI / 2));
       else {
@@ -265,8 +310,86 @@ export class SystemView {
       }
     }
 
-    this.drawInvasion(state, font);
+    if (home) this.drawInvasion(state, font);
 
+    for (let i = this.used; i < this.pool.length; i++) this.pool[i]!.visible = false;
+    for (let i = this.textsUsed; i < this.texts.length; i++) this.texts[i]!.visible = false;
+  }
+
+  /**
+   * The galaxy: the home sun in the middle, the neighbor systems around it on warp lanes, warp
+   * ships between them. Taps report "sys:<index>".
+   */
+  private drawGalaxy(state: GameState): void {
+    this.used = 0;
+    this.textsUsed = 0;
+    this.hits = [];
+    this.placed = [];
+    const g = this.back;
+    const lines = this.lines;
+    const front = this.front;
+    g.clear();
+    lines.clear();
+    front.clear();
+    const art = hasArt();
+    const unit = (this.base.scale * this.base.maxOrbit * 0.75) * this.zoom;
+    const font = Math.max(11, Math.min(15, unit * 0.07));
+    const me = state.players.find((p) => p.id === this.playerId);
+    const bg = art ? artTexture("space.galaxy-bg") : undefined;
+    if (bg) this.sprite(bg, this.width / 2, this.height / 2, Math.max(this.width, this.height)).alpha = 0.8;
+    const pos = (index: number) => {
+      const sys = state.systems?.find((x) => x.index === index);
+      return { x: this.cx + (sys?.position.x ?? 0) * unit, y: this.cy + (sys?.position.y ?? 0) * unit };
+    };
+    const systemOfPlanet = (id: string) => {
+      const p = state.planets.find((x) => x.id === id);
+      return p ? systemOf(p) : 0;
+    };
+    const entries = [{ index: 0, name: "Heimat", sun: state.sun.type, faction: null as string | null }, ...(state.systems ?? [])];
+    // Warp lanes from home to every system.
+    for (const sys of entries) {
+      if (sys.index === 0) continue;
+      const a = pos(0);
+      const b = pos(sys.index);
+      dotted(lines, a.x, a.y, b.x, b.y, 0x8890b8, Math.max(6, unit * 0.04));
+    }
+    for (const sys of entries) {
+      const { x, y } = pos(sys.index);
+      const r = Math.max(10, unit * (sys.index === 0 ? 0.11 : 0.08));
+      const color = SUN_COLORS[sys.sun] ?? 0xffd23f;
+      const key = sys.index === 0 ? `space.sun-${sys.sun}` : sys.faction ? "space.galaxy-system-alien" : "space.galaxy-system";
+      const texture = art ? (artTexture(key) ?? artTexture(`space.sun-${sys.sun}`)) : undefined;
+      if (texture) this.sprite(texture, x, y, r * 2.6).rotation = this.time * 0.05;
+      else {
+        g.circle(x, y, r * 1.5).fill({ color, alpha: 0.2 });
+        g.circle(x, y, r).fill(color);
+      }
+      const planets = state.planets.filter((p) => systemOf(p) === sys.index);
+      const own = planets.some((p) => p.economyId !== null && p.economyId === me?.economyId);
+      if (own) g.circle(x, y, r * 1.9).stroke({ width: 2.5, color: 0x7bf0a0, alpha: 0.9 });
+      if (this.selected === `sys:${sys.index}`) front.circle(x, y, r * 2.3).stroke({ width: 2.5, color: 0xffffff, alpha: 0.9 });
+      const faction = sys.faction ? state.factions.find((f) => f.id === sys.faction) : undefined;
+      const tag = faction && !faction.eliminated && faction.stance !== "merged" ? ` 👽${STANCE_NAMES[faction.stance].icon}` : "";
+      const t = this.label(`${sys.index === 0 ? "☀️ " : ""}${sys.name}${tag}`, x, y, font, own ? 0xffffff : 0xb8bedc);
+      this.placeLabel(t, x, y, r * 2, [[0, 1], [0, -1], [1, 0], [-1, 0]], true);
+      this.hits.push({ id: `sys:${sys.index}`, x, y, r: Math.max(r * 2, 26) });
+    }
+    // Warp ships on their way between systems.
+    for (const f of state.flights) {
+      const from = f.from === "sun" ? 0 : systemOfPlanet(f.from);
+      const to = f.to === "sun" ? 0 : systemOfPlanet(f.to);
+      if (from === to) continue;
+      const a = pos(from);
+      const b = pos(to);
+      const t = Math.min(1, Math.max(0, (state.tick - f.launchTick) / Math.max(1, f.arrivalTick - f.launchTick)));
+      const color = f.owner === this.playerId ? 0x7bf0a0 : 0xb8bedc;
+      const x = a.x + (b.x - a.x) * t;
+      const y = a.y + (b.y - a.y) * t;
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      const ship = art ? (artFrames("ship.warp").length ? artFrames("ship.warp") : artFrames("ship.rocket-big")) : [];
+      if (ship.length) this.sprite(ship[Math.floor(this.time * 6) % ship.length]!, x, y, Math.max(18, unit * 0.08), angle);
+      else front.circle(x, y, 4).fill(color);
+    }
     for (let i = this.used; i < this.pool.length; i++) this.pool[i]!.visible = false;
     for (let i = this.textsUsed; i < this.texts.length; i++) this.texts[i]!.visible = false;
   }
@@ -302,7 +425,7 @@ export class SystemView {
     if (!inv || !(inv.spotted || inv.sieging)) return;
     const k = this.scale;
     const target = this.at(state, inv.target);
-    const maxOrbit = Math.max(1, ...state.planets.map((p) => p.orbit.radius));
+    const maxOrbit = Math.max(1, ...state.planets.filter((p) => systemOf(p) === 0).map((p) => p.orbit.radius));
     const angle = inv.wave * 2.399;
     const edge = { x: this.cx + Math.cos(angle) * (maxOrbit + 0.6) * k, y: this.cy + Math.sin(angle) * (maxOrbit + 0.6) * k };
     const start = inv.arrivalTick - INVADERS.approachCycles * ticksPerCycle(state);

@@ -1,14 +1,15 @@
 import { BUILDINGS, CRYO, PEOPLE_IDS, RESOURCE_IDS, RULES, SUPERNOVA, type RecipeId } from "./content";
 import { createUnit } from "./units";
 import { placeBuilding } from "./build";
-import { buildingStats, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
-import { buildBlocker, cloneState, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
+import { buildCost, buildingStats, economyOf, nextUpgrade, paidFor, shieldBlocker, shieldFlightPlan, thawBlocker, upgradeBlocker } from "./rules";
+import { buildBlocker, cleanPlanetName, cloneState, renameBlocker, NOT_AFFORDABLE, idleUnits, launchBlocker, planetById, playerById, segmentAt, workerCapacity, workerCount, workersOn } from "./rules";
 import { modified, resolveOffer } from "./discoveries";
 import { checkEliminations, checkResult, launch, surrender } from "./space";
 import { decide, factionById, gift, trade, vote } from "./diplomacy";
 import type { Command, CommandResult, GameEvent, GameState, PlanetState, PlayerState } from "./state";
 import { advanceInPlace, appendLog } from "./step";
 import { terraform, terraformBlocker } from "./terraform";
+import { coreAccessBlocker, surfaceOf, syncCores } from "./core";
 
 /**
  * Simulates up to `now`, then validates and applies one command from `playerId`.
@@ -19,6 +20,8 @@ export function applyCommand(state: GameState, playerId: string, cmd: Command, n
   const events = advanceInPlace(next, now);
   const error = executeCommand(next, playerId, cmd, events);
   if (error) return { ok: false, error };
+  // Workers sent off a field inside a planet ride back up at once.
+  syncCores(next);
   appendLog(next, events);
   return { ok: true, state: next, events };
 }
@@ -102,6 +105,19 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       events.push({ type: "lobby", ...state.lobby, playerId });
       return null;
     }
+    case "renamePlanet": {
+      const planet = planetById(state, cmd.planetId);
+      if (!planet) return "Unbekannter Planet";
+      const blocker = renameBlocker(state, playerId, planet);
+      if (blocker) return blocker;
+      const name = cleanPlanetName(String(cmd.name ?? ""));
+      if (!name) return "Der Name ist leer";
+      if (name === planet.name) return null;
+      if (state.planets.some((p) => p !== planet && p.name.toLowerCase() === name.toLowerCase())) return "So heißt schon ein anderer Planet";
+      events.push({ type: "renamed", planetId: planet.id, name, from: planet.name, playerId });
+      planet.name = name;
+      return null;
+    }
     case "factionTrade":
     case "gift":
     case "diplomacy":
@@ -130,7 +146,7 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       const target = checkSegment(player, planet, cmd.segment);
       if (typeof target === "string") return target;
       if (unit.segment === cmd.segment) return null;
-      if (workerCount(state, planet, cmd.segment) >= workerCapacity(target)) return "Kein Platz für weitere Einwohner";
+      if (workerCount(state, planet, cmd.segment) >= workerCapacity(target, economyOf(state, planet))) return "Kein Platz für weitere Einwohner";
       unit.segment = cmd.segment;
       return null;
     }
@@ -163,9 +179,9 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
   if (cmd.type === "launch") {
     const to = planetById(state, cmd.to);
     if (!to) return "Unbekanntes Ziel";
-    const blocker = launchBlocker(state, playerId, planet, to, cmd.rocket, cmd.count);
+    const blocker = launchBlocker(state, playerId, planet, to, cmd.rocket, cmd.count, cmd.segment);
     if (blocker) return blocker;
-    launch(state, player, planet, to, cmd.rocket, cmd.count, events);
+    launch(state, player, planet, to, cmd.rocket, cmd.count, events, cmd.segment);
     return null;
   }
   const segment = checkSegment(player, planet, cmd.segment);
@@ -212,7 +228,8 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
       if (blocker) return blocker;
       const economy = state.economies[planet.economyId!]!;
       const next = nextUpgrade(segment)!;
-      for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+      const cost = buildCost(economy, next.cost);
+    for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
       segment.tier = (segment.tier ?? 1) + 1;
       events.push({ type: "upgraded", planetId: planet.id, segment: segment.index, building: segment.building, tier: segment.tier, playerId });
       return null;
@@ -220,10 +237,18 @@ function executeCommand(state: GameState, playerId: string, cmd: Command, events
     case "assign": {
       if (!Number.isInteger(cmd.delta) || cmd.delta === 0) return "Ungültige Anzahl";
       if (cmd.delta > 0) {
-        if (workerCount(state, planet, segment.index) + cmd.delta > workerCapacity(segment)) return "Kein Platz für weitere Einwohner";
-        const idle = idleUnits(state, planet, playerId);
+        if (workerCount(state, planet, segment.index) + cmd.delta > workerCapacity(segment, economyOf(state, planet))) return "Kein Platz für weitere Einwohner";
+        // Inside a planet (CORE): idle people come down from the surface, each in a deep suit.
+        const idle = idleUnits(state, surfaceOf(state, planet), playerId);
         if (idle.length < cmd.delta) return "Keine freien Einwohner";
-        for (const u of idle.slice(0, cmd.delta)) u.segment = segment.index;
+        if (planet.coreOf) {
+          const blocker = coreAccessBlocker(state, planet, cmd.delta);
+          if (blocker) return blocker;
+        }
+        for (const u of idle.slice(0, cmd.delta)) {
+          u.planetId = planet.id;
+          u.segment = segment.index;
+        }
       } else {
         const own = workersOn(state, planet, segment.index, playerId);
         if (own.length < -cmd.delta) return "Hier arbeiten keine Leute von dir";

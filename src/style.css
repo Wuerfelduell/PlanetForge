@@ -68,6 +68,18 @@ html, body {
 .res-item .res-name { flex: 1; color: var(--muted); }
 .res-item.bad b { color: var(--bad); }
 #hud .chip.more { color: var(--muted); }
+/* The ⭐ panel: ascension points per cycle and where they come from. */
+button.level { border: none; color: inherit; font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+button.level.on { outline: 2px solid var(--accent, #ffd166); }
+#hud .res-list.ascension { display: block; font-size: 14px; line-height: 1.4; }
+#hud .res-list.ascension p { margin: 4px 0; }
+#hud .res-list.ascension .muted { color: var(--muted); font-size: 13px; }
+#hud .level-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 2px 0 6px; }
+#hud .level-strip .medal { position: relative; width: 34px; height: 34px; }
+#hud .level-strip .medal img { width: 100%; height: 100%; }
+#hud .level-strip .medal b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #2b2340; }
+#hud .level-strip .medal.locked b { color: #6b7089; }
+#hud .asc-rows div { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
 /* "!" on a resource that just ran out on a field. */
 b.alert {
   display: inline-grid;
@@ -197,6 +209,36 @@ body.panel-collapsed #panel-body > :not(h2) { visibility: hidden; }
 .build { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; }
 .build .icon { font-size: 24px; }
 .build .cost { font-size: 13px; color: var(--muted); }
+/* ⓘ in the corner of a build button: what the building does, without building it (also on greyed-out ones). */
+.build { position: relative; }
+.build .info {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font: italic 700 13px/20px Georgia, serif;
+  text-align: center;
+  pointer-events: auto;
+  cursor: help;
+}
+.build .info::before { content: ""; position: absolute; inset: -8px; } /* bigger tap area */
+.binfo { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.45); }
+.binfo-card { width: min(420px, 100%); max-height: 85vh; overflow-y: auto; background: var(--surface-2); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.4; }
+.binfo-card p { margin: 6px 0; }
+.binfo-card ul { margin: 6px 0; padding-left: 18px; }
+.binfo-card li { margin: 3px 0; }
+.binfo-card small { color: var(--muted); }
+.binfo-card .good { color: var(--good); }
+.binfo-card .bad { color: var(--bad); }
+.binfo-head { display: flex; align-items: center; gap: 10px; }
+.binfo-head .icon { font-size: 32px; }
+.binfo-head .icon img.bi { width: 48px; height: 48px; }
+.binfo-head small { display: block; }
+.binfo-sub { font-weight: 700; margin-top: 10px !important; }
 .build .cost .short { color: var(--bad); }
 .power { margin: 6px 0; color: var(--good); font-size: 14px; }
 .power small { color: var(--muted); }
@@ -357,6 +399,10 @@ ul.owned small { color: var(--muted); }
   #hud .chip, #hud .level { padding: 3px 8px; font-size: 13px; }
   #hud .speed { min-width: 40px; min-height: 36px; padding: 4px 8px; font-size: 15px; }
   #hud .chip.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  /* Inside a planet the status line is crowded: words that only repeat an icon go, the planet name stays. */
+  #hud .wide { display: none; }
+  /* The planet name keeps a few letters; very narrow phones drop the level bar for it. */
+  #hud .chip.name { min-width: 56px; }
   #hud .level { gap: 4px; }
   #hud .bar { width: 32px; }
   #hud .cycle { flex: none; width: 18px; height: 18px; }
@@ -381,4 +427,44 @@ ul.owned small { color: var(--muted); }
   #zoom-toggle { bottom: 10px; }
   #music-control { right: calc(var(--side-w) + 12px); bottom: 10px; }
   body.panel-collapsed #music-control { right: 12px; bottom: calc(var(--panel-h) + 10px); }
+}
+
+/* Coop goal reached: shell around the sun closed. */
+.celebration { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(8, 9, 24, 0.72); overflow: hidden; }
+.celebration-card { position: relative; width: min(92vw, 420px); padding: 20px; border-radius: var(--radius); background: var(--surface-2); border: 2px solid var(--accent); text-align: center; box-shadow: 0 0 40px rgba(255, 209, 102, 0.45); animation: celebration-pop 0.5s ease-out; }
+.celebration-card h2 { margin: 4px 0 8px; color: var(--accent); font-size: 26px; }
+.celebration-card p { margin: 6px 0; }
+.celebration-sun { font-size: 64px; animation: celebration-spin 6s linear infinite; }
+.celebration-art { display: block; width: min(56vw, 200px); height: auto; margin: -8px auto 0; }
+.celebration i { position: absolute; top: -20px; left: var(--x); width: 8px; height: 14px; border-radius: 2px; background: hsl(var(--h), 85%, 62%); animation: celebration-fall 3.2s linear var(--d) infinite; }
+@keyframes celebration-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes celebration-spin { to { transform: rotate(360deg); } }
+@keyframes celebration-fall { to { transform: translateY(110vh) rotate(720deg); } }
+.loot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0; }
+.loot-item { padding: 6px 10px; border-radius: 10px; background: var(--surface); font-size: 17px; }
+.loot-item small { color: var(--muted); font-size: 12px; }
+.celebration-card button { background: var(--accent); color: #1b1d36; font-weight: 600; border: 0; border-radius: 10px; }
+/* The 🪐 list: own planets grouped by settler or sun system. */
+#hud .res-list.planets { display: block; font-size: 14px; max-height: 45vh; }
+#hud .res-list.planets p { margin: 4px 0; }
+#hud .res-list.planets .muted { color: var(--muted); font-size: 12px; }
+#hud .res-list.planets .group { margin-top: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+#hud .res-list.planets .toggle { float: right; display: inline-flex; gap: 4px; }
+#hud .res-list.planets .toggle .chip { font-size: 12px; padding: 2px 8px; }
+#hud .res-list.planets .chip.on { outline: 2px solid var(--accent, #ffd166); }
+.planet-row { display: flex; align-items: stretch; gap: 4px; margin: 3px 0; }
+.planet-row .speed { width: 40px; }
+.planet-row .planet-go { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 5px 10px; border: 0; border-radius: 10px; background: var(--surface-2); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.planet-row.here .planet-go { outline: 2px solid var(--accent, #ffd166); }
+.planet-row .planet-go small { color: var(--muted); font-size: 12px; }
+.planet-row .planet-go .short { color: var(--bad); }
+.rename input { width: 100%; box-sizing: border-box; margin: 6px 0; padding: 10px 12px; font: inherit; font-size: 18px; border-radius: 10px; border: 2px solid var(--accent); background: var(--surface); color: inherit; }
+.rename .row { display: flex; gap: 8px; }
+.rename .row button { flex: 1; padding: 10px; }
+.celebration-card button.secondary { background: var(--surface); color: inherit; }
+@media (max-width: 440px) {
+  #hud .row.main .level .bar, #hud .row.main .chip:not(.name) small { display: none; }
+}
+@media (max-width: 380px) {
+  #hud .row.main .cycle { display: none; }
 }

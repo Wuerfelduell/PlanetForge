@@ -1,0 +1,207 @@
+{
+  "assets": [
+    {
+      "id": "building.quantum-lab",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab-construction.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.quantum-lab.off",
+      "category": "buildings",
+      "src": "art/src/buildings/quantum-lab-off.svg",
+      "out": "public/assets/sprites/buildings/quantum-lab-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "rings",
+        "panels"
+      ],
+      "partPivots": {
+        "rings": [
+          128,
+          108
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "quantum-lab",
+        "deep-quartz",
+        "science",
+        "quantum",
+        "off"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warp-core",
+      "category": "buildings",
+      "src": "art/src/buildings/warp-core.svg",
+      "out": "public/assets/sprites/buildings/warp-core.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          127
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "warp-core",
+        "deep-quartz",
+        "travel",
+        "warp",
+        "idle"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warp-core.construction",
+      "category": "buildings",
+      "src": "art/src/buildings/warp-core-construction.svg",
+      "out": "public/assets/sprites/buildings/warp-core-construction.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core",
+        "scaffolding"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          127
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "warp-core",
+        "deep-quartz",
+        "travel",
+        "warp",
+        "construction"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "building.warp-core.off",
+      "category": "buildings",
+      "src": "art/src/buildings/warp-core-off.svg",
+      "out": "public/assets/sprites/buildings/warp-core-off.png",
+      "viewBox": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "frames": 1,
+      "parts": [
+        "core"
+      ],
+      "partPivots": {
+        "core": [
+          128,
+          127
+        ]
+      },
+      "tags": [
+        "core-buildings3",
+        "warp-core",
+        "deep-quartz",
+        "travel",
+        "warp",
+        "off"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

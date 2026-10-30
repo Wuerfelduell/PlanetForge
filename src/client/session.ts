@@ -1,4 +1,4 @@
-import { advanceWithEvents, applyCommand, createGame, type Command, type PeopleId, type GameOptions, type GameEvent, type GameState } from "../sim";
+import { advanceOwnedWithEvents, applyCommand, createGame, type Command, type PeopleId, type GameOptions, type GameEvent, type GameState } from "../sim";
 
 /** `events`: what the command caused right away, when the session knows it (local play). */
 export type SendResult = { ok: true; events?: GameEvent[] } | { ok: false; error: string };
@@ -47,8 +47,7 @@ export class LocalSession implements GameSession {
   update(elapsedMs: number): GameEvent[] {
     // Cap a single frame (e.g. after the tab was in the background) to avoid a long freeze.
     this.clock += Math.min(elapsedMs, 1000) * this.speed;
-    const { state, events } = advanceWithEvents(this.state, this.clock);
-    this.state = state;
-    return events;
+    // The session owns its state (send() replaces it), so ticks run on it without a copy.
+    return advanceOwnedWithEvents(this.state, this.clock);
   }
 }

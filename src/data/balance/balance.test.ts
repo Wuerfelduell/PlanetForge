@@ -203,7 +203,7 @@ describe("pacing", () => {
   });
 
   it("formulas", () => {
-    expect(ascensionThreshold(1)).toBe(25);
+    expect(ascensionThreshold(1)).toBe(15);
     expect(ascensionThreshold(11)).toBe(17900);
     expect(ascensionThreshold(20)).toBe(146400);
     expect(ascensionThreshold(21)).toBeNull();

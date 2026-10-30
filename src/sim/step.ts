@@ -10,24 +10,26 @@ import {
   settlersOutside,
   neighbors,
   NOT_AFFORDABLE,
-  ascensionPerCycle,
+  ascensionIncome,
   economyThreshold,
   foodUpkeepPerCycle,
   secondsPerBirth,
   planetById,
   segmentOutput,
+  foodOutputMul,
   segmentRecipe,
   TICK_MS,
   ticksPerCycle,
   toolsWear,
 } from "./rules";
 import { createUnit } from "./units";
-import { grantPick, modified, resolveOffer } from "./discoveries";
+import { grantPick, modified, resolveOffer, syncPeoples } from "./discoveries";
 import { placeBuilding } from "./build";
 import { cycleChecks, landFlights } from "./space";
 import { goalsCycle } from "./invaders";
 import { factionsCycle } from "./factions";
 import { resolveVote } from "./diplomacy";
+import { allPlanets, coreCycle, drill, shaftOpen, syncCores } from "./core";
 import type { EconomyState, GameEvent, GameState, PlanetState } from "./state";
 
 const DT = 1 / RULES.ticksPerSecond;
@@ -48,6 +50,17 @@ export function advanceWithEvents(state: GameState, now: number): { state: GameS
   const events = advanceInPlace(next, now);
   appendLog(next, events);
   return { state: next, events };
+}
+
+/**
+ * advanceWithEvents() for a caller that owns `state` and lets it change in place: no copy of the
+ * whole state on every tick (a late game is ~0.5 MB). Same result, same log.
+ */
+export function advanceOwnedWithEvents(state: GameState, now: number): GameEvent[] {
+  if (state.simTime + TICK_MS > now) return [];
+  const events = advanceInPlace(state, now);
+  appendLog(state, events);
+  return events;
 }
 
 /** Mutating variant for callers that already own a private copy. Does not write the log. */
@@ -72,43 +85,77 @@ export function appendLog(state: GameState, events: GameEvent[]): void {
 
 /** Exactly one fixed tick. Deterministic: same state in, same state out. */
 function stepInPlace(state: GameState, events: GameEvent[]): void {
+  syncPeoples(state);
   landFlights(state, events);
+  syncCores(state);
+  const planets = allPlanets(state);
+  // Workers inside a planet sleep up on its surface (CORE): they count as its residents.
+  const surfaceIds = new Map((state.cores ?? []).map((c) => [c.id, c.coreOf!]));
 
-  // Workers per planet and segment, counted once per tick.
-  const workers = new Map<string, number>();
+  // Workers per planet and segment, counted once per tick, and the owners of the units on each
+  // planet (for housing: every people brings its own shelter).
+  const workers = new Map<string, number[]>();
   const residents = new Map<string, number>();
+  const owners = new Map<string, Set<string>>();
   for (const u of Object.values(state.units)) {
-    residents.set(u.planetId, (residents.get(u.planetId) ?? 0) + 1);
-    if (u.segment !== null) workers.set(`${u.planetId}:${u.segment}`, (workers.get(`${u.planetId}:${u.segment}`) ?? 0) + 1);
+    const home = surfaceIds.get(u.planetId) ?? u.planetId;
+    residents.set(home, (residents.get(home) ?? 0) + 1);
+    let o = owners.get(u.planetId);
+    if (!o) owners.set(u.planetId, (o = new Set()));
+    o.add(u.owner);
+    if (u.segment === null) continue;
+    let w = workers.get(u.planetId);
+    if (!w) workers.set(u.planetId, (w = []));
+    w[u.segment] = (w[u.segment] ?? 0) + 1;
+  }
+  const workingOn = (planetId: string, segment: number) => workers.get(planetId)?.[segment] ?? 0;
+
+  // Power grids of this tick, read by every consumer below (powerFactor). A planet and its
+  // interior share one grid.
+  const grids = new Map<string, { supply: number; demand: number }>();
+  for (const planet of planets) {
+    const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id) ?? { supply: 0, demand: 0 };
+    const shut = planet.coreOf !== undefined && !shaftOpen(state, planet);
+    for (const segment of planet.segments) {
+      const working = shut ? 0 : workingOn(planet.id, segment.index);
+      grid.supply += energySupply(planet, segment, working, economy);
+      grid.demand += energyDemand(segment, working);
+    }
+    grids.set(surfaceIds.get(planet.id) ?? planet.id, grid);
+  }
+  // An EMP knocks out every power plant of the planet (and its interior) until it wears off.
+  for (const planet of planets) {
+    if (planet.empUntilTick === undefined) continue;
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id);
+    if (planet.empUntilTick > state.tick) {
+      if (grid) grid.supply = 0;
+    } else delete planet.empUntilTick;
   }
 
-  for (const planet of state.planets) {
+  for (const planet of planets) {
     const economy = planet.economyId === null ? undefined : state.economies[planet.economyId];
     const rateFactor = economy?.starving ? RULES.starvingRateFactor : 1;
-
-    // Power grid of this tick, read by every consumer below (powerFactor).
-    let supply = 0;
-    let demand = 0;
-    for (const segment of planet.segments) {
-      const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
-      supply += energySupply(planet, segment, working, economy);
-      demand += energyDemand(segment, working);
-    }
-    if (supply > 0 || demand > 0) planet.power = { supply, demand };
+    const grid = grids.get(surfaceIds.get(planet.id) ?? planet.id)!;
+    if (grid.supply > 0 || grid.demand > 0) planet.power = { ...grid };
     else delete planet.power;
+    // Without the shaft nobody gets down or up: work inside stands still.
+    if (planet.coreOf !== undefined && !shaftOpen(state, planet)) continue;
 
     // Forests next to a worked forester regrow faster, empty ones get replanted.
     const forested = new Map<number, { mul: number; replant: boolean }>();
     for (const segment of planet.segments) {
       const f = buildingStats(segment)?.forester;
-      if (!f || !workers.get(`${planet.id}:${segment.index}`)) continue;
+      if (!f || !workingOn(planet.id, segment.index)) continue;
       for (const n of neighbors(planet, segment.index)) if (n.biome === "forest") forested.set(n.index, { mul: f.neighborRegenMul, replant: f.replantsDepleted });
     }
 
+    const regen: Partial<Record<ResourceId, number>> = {};
     for (const segment of planet.segments) {
       const def = buildingStats(segment);
-      const working = workers.get(`${planet.id}:${segment.index}`) ?? 0;
+      const working = workingOn(planet.id, segment.index);
       if (economy && def?.crafts) craft(planet, segment, working, economy, rateFactor);
+      if (economy && segment.building === "core-drill") drill(state, planet, segment, working, economy, events);
       if (economy && def?.usesTools && working > 0 && toolsWear(economy)) {
         economy.resources.tools = Math.max(0, economy.resources.tools - (working * RULES.tools.perWorkerPerMinute * DT) / 60);
       }
@@ -120,7 +167,8 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       const output = economy && !def?.crafts ? segmentOutput(planet, segment, working, economy) : {};
       const drawn = new Set<ResourceId>();
       for (const [resource, perSecond] of Object.entries(output) as [ResourceId, number][]) {
-        let amount = perSecond * DT * rateFactor;
+        // Hunger slows every job except getting food, so a hungry people can always eat its way out.
+        let amount = perSecond * DT * (resource === "food" ? 1 : rateFactor);
         // Producers (farm, pump, lab) create from nothing; everything else draws from the ground.
         const deposit = resource === made ? undefined : segment.deposits.find((d) => d.resource === resource);
         if (deposit && !deposit.infinite) {
@@ -137,12 +185,13 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
       for (const d of segment.deposits) {
         // Exhausted deposits stay exhausted; untouched ones regrow.
         const forester = d.resource === "wood" ? forested.get(segment.index) : undefined;
-        if (segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
-        d.amount = Math.min(d.max, d.amount + d.max * modified(economy, "regenRate", RULES.regenPerSecond) * (forester?.mul ?? 1) * DT);
+        // Inside a planet nothing grows back (CORE).
+        if (planet.coreOf || segment.scorched || d.infinite || drawn.has(d.resource) || d.amount >= d.max || (d.amount <= 0 && !forester?.replant)) continue;
+        d.amount = Math.min(d.max, d.amount + d.max * (regen[d.resource] ??= modified(economy, "regenRate", RULES.regenPerSecond, { resource: d.resource })) * (forester?.mul ?? 1) * DT);
       }
     }
 
-    if (economy) birth(state, planet, residents.get(planet.id) ?? 0, events);
+    if (economy && !planet.coreOf) birth(state, planet, residents.get(planet.id) ?? 0, owners.get(planet.id)?.size ?? 0, events);
   }
 
   runQueues(state, events);
@@ -154,13 +203,14 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
 /** One tick of a crafting building: as much of its recipe as workers and the stock allow. */
 function craft(planet: PlanetState, segment: PlanetState["segments"][number], working: number, economy: GameState["economies"][string], rateFactor: number): void {
   const recipe = RECIPES[segmentRecipe(segment)!];
-  let crafts = craftRate(planet, segment, working, economy) * DT * rateFactor;
+  let crafts = craftRate(planet, segment, working, economy) * DT * ("food" in recipe.outputs ? 1 : rateFactor);
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) crafts = Math.min(crafts, economy.resources[r] / v);
   if (crafts <= 0) return;
   for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) economy.resources[r] = Math.max(0, economy.resources[r] - v * crafts);
   for (const [r, v] of Object.entries(recipe.outputs) as [ResourceId, number][]) {
-    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r });
+    economy.resources[r] += v * crafts * modified(economy, "buildingOutput", 1, { building: segment.building!, resource: r, biome: segment.biome }) * foodOutputMul(r);
   }
+  if (recipe.ascension) economy.ascension.points += recipe.ascension * crafts;
 }
 
 /** Starts the first queued build of each planet once it is affordable; drops orders that can no longer fit. */
@@ -179,9 +229,9 @@ function runQueues(state: GameState, events: GameEvent[]): void {
   }
 }
 
-function birth(state: GameState, planet: PlanetState, residents: number, events: GameEvent[]): void {
+function birth(state: GameState, planet: PlanetState, residents: number, peoples: number, events: GameEvent[]): void {
   const economy = state.economies[planet.economyId!]!;
-  if (residents === 0 || residents >= housing(state, planet) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
+  if (residents === 0 || residents >= housing(state, planet, peoples) || economy.starving || economy.resources.food < RULES.birthFoodCost) return;
   planet.birthProgress += DT;
   if (planet.birthProgress < modified(economy, "birthTime", secondsPerBirth(state, residents)) - 1e-9) return;
 
@@ -204,7 +254,7 @@ function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): 
     if (planet.economyId !== economy.id) continue;
     const outside = settlersOutside(state, planet);
     if (!outside.length) continue;
-    const need = outside.length * RULES.suits.perInhabitantPerCycle;
+    const need = outside.length * modified(economy, "suitWear", RULES.suits.perInhabitantPerCycle);
     if (economy.resources.suits >= need) {
       economy.resources.suits -= need;
       continue;
@@ -218,11 +268,12 @@ function breathe(state: GameState, economy: EconomyState, events: GameEvent[]): 
 
 function endCycle(state: GameState, residents: Map<string, number>, events: GameEvent[]): void {
   events.push({ type: "cycle", cycle: state.tick / ticksPerCycle(state) });
+  coreCycle(state, events);
 
   for (const economy of Object.values(state.economies)) {
     const people = state.planets.filter((p) => p.economyId === economy.id).reduce((sum, p) => sum + (residents.get(p.id) ?? 0), 0);
     if (people === 0) continue;
-    const upkeep = foodUpkeepPerCycle(state, people);
+    const upkeep = foodUpkeepPerCycle(state, people, economy);
     if (economy.resources.food >= upkeep) {
       economy.resources.food -= upkeep;
       economy.starving = false;
@@ -235,18 +286,8 @@ function endCycle(state: GameState, residents: Map<string, number>, events: Game
     breathe(state, economy, events);
 
     const a = economy.ascension;
-    // Monuments and upgraded buildings add their points on top of what the people earn.
-    let monuments = 0;
-    let upgrades = 0;
-    for (const p of state.planets) {
-      if (p.economyId !== economy.id) continue;
-      for (const s of p.segments) {
-        monuments += buildingStats(s)?.ascension ?? 0;
-        if (s.building) upgrades += (s.tier ?? 1) - 1;
-      }
-    }
-    const earned = ascensionPerCycle(state, people, upgrades);
-    a.points += modified(economy, "ascensionPerCycle", earned.people) + earned.upgrades + monuments;
+    // Inhabitants, upgraded buildings and monuments (rules.ts, also shown in the HUD).
+    a.points += ascensionIncome(state, economy, people).total;
     // Food beyond the stock limit rots, so it cannot pile up for the rest of the game.
     economy.resources.food = Math.min(economy.resources.food, RULES.foodStock.base + RULES.foodStock.perCitizen * people);
     for (let t = economyThreshold(state, economy); t !== null && a.points >= t; t = economyThreshold(state, economy)) {

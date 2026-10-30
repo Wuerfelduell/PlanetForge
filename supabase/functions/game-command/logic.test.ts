@@ -112,6 +112,18 @@ describe("game-command logic", () => {
     expect(r.ok && r.state.players.map((p) => p.id)).toEqual(["p1"]);
   });
 
+  it("applies a batch of commands in order and keeps the ones that worked", () => {
+    const state = createGame("s", [{ id: "p1", name: "Alice" }, { id: "p2", name: "Bob" }]);
+    const bad = { type: "assign", planetId: homePlanet(state, "p1")!.id, segment: 0, delta: 0 } as const;
+    const kick = { type: "kickPlayer", playerId: "p2" } as const;
+    const run = (cmds: Parameters<typeof step>[0]["request"] & { kind: "commands" }) =>
+      step({ state, clockAt: 0, members: [alice, bob], playerId: "p1", request: cmds, now: 100 });
+    const r = run({ gameId: GAME, kind: "commands", cmds: [bad, kick] });
+    expect(r.ok && r.errors).toEqual(["Ungültige Anzahl"]);
+    expect(r.ok && r.removed).toEqual(["p2"]);
+    expect(run({ gameId: GAME, kind: "commands", cmds: [bad, bad] })).toEqual({ ok: false, error: "Ungültige Anzahl" });
+  });
+
   it("closes the lobby when nobody was online for ten minutes", () => {
     const state = createGame("s", [{ id: "p1", name: "Alice" }, { id: "p2", name: "Bob" }]);
     const sync = { gameId: GAME, kind: "sync" } as const;
@@ -133,6 +145,10 @@ describe("game-command logic", () => {
     expect(parseRequest({ gameId: GAME, kind: "sync" })).toEqual({ gameId: GAME, kind: "sync" });
     expect(parseRequest({ gameId: "x", kind: "sync" })).toBeNull();
     expect(parseRequest({ gameId: GAME, kind: "command" })).toBeNull();
+    expect(parseRequest({ gameId: GAME, kind: "commands", cmds: [{ type: "a" }, { type: "b" }] })).toEqual({ gameId: GAME, kind: "commands", cmds: [{ type: "a" }, { type: "b" }] });
+    expect(parseRequest({ gameId: GAME, kind: "commands", cmds: [] })).toBeNull();
+    expect(parseRequest({ gameId: GAME, kind: "commands", cmds: [{ type: "a" }, 5] })).toBeNull();
+    expect(parseRequest({ gameId: GAME, kind: "commands", cmds: Array(31).fill({ type: "a" }) })).toBeNull();
     expect(parseRequest(null)).toBeNull();
   });
 

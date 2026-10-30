@@ -2,9 +2,10 @@ import { C, svg, round, write } from './common.mjs';
 
 // All geometry is in reference pixels; no random input or external artwork.
 const assets = [];
-const sizes = [12, 16, 24, 32];
+// Every field count a planet can have: free planets 16/24/32, start planets 24 or 32 scaled by world size (0.75/1.25).
+const sizes = [12, 16, 18, 24, 30, 32, 40];
 const biomes = ['forest', 'mountains', 'ocean', 'swamp', 'savanna', 'desert', 'tundra', 'crystal', 'glacier', 'lava', 'ash'];
-const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'savanna', desert: 'sand', tundra: 'snow', crystal: 'crystal', glacier: 'glacier', lava: 'lava', ash: 'ash' };
+const ground = { forest: 'grass', mountains: 'rock', ocean: 'water', swamp: 'moss', savanna: 'dry-grass', desert: 'sand', tundra: 'snow', crystal: 'crystal', glacier: 'glacier', lava: 'lava', ash: 'ash' };
 const path = (d, fill = 'none', extra = '') => `<path d="${d}" fill="${fill}" ${extra}/>`;
 const circle = (x, y, r, fill, extra = '') => `<circle cx="${round(x)}" cy="${round(y)}" r="${round(r)}" fill="${fill}" ${extra}/>`;
 const ellipse = (x, y, rx, ry, fill, extra = '') => `<ellipse cx="${round(x)}" cy="${round(y)}" rx="${round(rx)}" ry="${round(ry)}" fill="${fill}" ${extra}/>`;

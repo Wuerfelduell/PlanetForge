@@ -16,7 +16,13 @@ export const SIM_VERSION = createGame("version-probe", [{ id: "p1", name: "p" }]
 // Available in Deno, browsers and Node; declared here because this file is checked without DOM types.
 declare function atob(data: string): string;
 
-export type Request = { gameId: string; kind: "sync" } | { gameId: string; kind: "command"; cmd: Command };
+/** Most commands one request may carry; a client batches what the player did while waiting. */
+export const MAX_BATCH = 30;
+
+export type Request =
+  | { gameId: string; kind: "sync" }
+  | { gameId: string; kind: "command"; cmd: Command }
+  | { gameId: string; kind: "commands"; cmds: Command[] };
 
 export interface Member {
   playerId: string;
@@ -65,8 +71,11 @@ export interface StepInput {
 }
 
 export type StepResult =
-  /** `removed`: players the host kicked, whose memberships have to end with this save. */
-  | { ok: true; state: GameState; events: GameEvent[]; changed: boolean; removed: string[] }
+  /**
+   * `removed`: players the host kicked, whose memberships have to end with this save.
+   * `errors`: why commands of a batch were refused; the others still count.
+   */
+  | { ok: true; state: GameState; events: GameEvent[]; changed: boolean; removed: string[]; errors?: string[] }
   | { ok: false; error: string };
 
 export function nextSimTime(state: GameState, clockAt: number | null, now: number): number {
@@ -114,11 +123,31 @@ export function step(input: StepInput): StepResult {
   if (request.kind === "sync") {
     return { ok: true, state: advance(state, simNow), events, changed: true, removed: [] };
   }
-  const result = applyCommand(state, playerId, request.cmd, simNow);
-  if (!result.ok) return result;
-  events.push(...result.events);
-  const removed = result.events.flatMap((e) => (e.type === "removed" ? [e.playerId] : []));
-  return { ok: true, state: result.state, events, changed: true, removed };
+  if (request.kind === "command") {
+    const result = applyCommand(state, playerId, request.cmd, simNow);
+    if (!result.ok) return result;
+    events.push(...result.events);
+    return { ok: true, state: result.state, events, changed: true, removed: removedBy(result.events) };
+  }
+  // A batch: each command on top of the previous one, all at the same sim time.
+  const errors: string[] = [];
+  let applied = 0;
+  for (const cmd of request.cmds) {
+    const result = applyCommand(state, playerId, cmd, simNow);
+    if (!result.ok) {
+      errors.push(result.error);
+      continue;
+    }
+    state = result.state;
+    events.push(...result.events);
+    applied++;
+  }
+  if (!applied) return { ok: false, error: errors[0] ?? "Keine Züge" };
+  return { ok: true, state, events, changed: true, removed: removedBy(events), errors };
+}
+
+function removedBy(events: GameEvent[]): string[] {
+  return events.flatMap((e) => (e.type === "removed" ? [e.playerId] : []));
 }
 
 /**
@@ -145,6 +174,10 @@ export function parseRequest(body: unknown): Request | null {
   if (b.kind === "command" && b.cmd && typeof b.cmd === "object" && typeof (b.cmd as { type?: unknown }).type === "string") {
     // The simulation validates every field of the command itself.
     return { gameId: b.gameId, kind: "command", cmd: b.cmd as Command };
+  }
+  if (b.kind === "commands" && Array.isArray(b.cmds) && b.cmds.length > 0 && b.cmds.length <= MAX_BATCH) {
+    const isCmd = (c: unknown) => !!c && typeof c === "object" && typeof (c as { type?: unknown }).type === "string";
+    if (b.cmds.every(isCmd)) return { gameId: b.gameId, kind: "commands", cmds: b.cmds as Command[] };
   }
   return null;
 }

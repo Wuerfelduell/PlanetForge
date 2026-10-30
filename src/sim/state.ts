@@ -55,6 +55,27 @@ export interface GameState {
   log: LogEntry[];
   /** AI factions (coop with settings.factions > 0): neighbors in the system to trade, ally or fight with. */
   factions: FactionState[];
+  /** Neighbor sun systems behind the warp gate (index 1 …); missing until the first warp gate is built. */
+  systems?: StarSystemState[];
+  /**
+   * Planet interiors opened by a core drill (CORE). Kept apart from `planets` so the star map,
+   * flights and invaders never see them; planetById finds them all the same.
+   */
+  cores?: PlanetState[];
+}
+
+/** A neighbor sun system (WARP). Its planets live in `planets` with `system` set to its index. */
+export interface StarSystemState {
+  /** 1 … WARP.systems; the home system is 0 and has no entry. */
+  index: number;
+  name: string;
+  sun: string;
+  /** Exotic matter found there. */
+  specialties: ResourceId[];
+  /** Position on the galaxy map, home at (0, 0). */
+  position: { x: number; y: number };
+  /** Id of the foreign people (AI faction) living there, if any. */
+  faction: string | null;
 }
 
 export interface GameSettings {
@@ -122,6 +143,8 @@ export interface FactionState {
   nextProposalTick: number;
   /** Earliest tick for the next attack (at war). */
   nextAttackTick: number;
+  /** Nuked by the team: refuses peace until this tick. */
+  noPeaceUntilTick?: number;
   /** Trades and gifts of the team so far (for the "known us for a while" bonus). */
   trades: number;
   /**
@@ -173,6 +196,8 @@ export interface Flight {
   shield?: { segment: number; repair: boolean };
   /** Combat rockets: roll bonus from barracks on the launch planet. */
   attackBonus?: number;
+  /** Missiles (homing, nuke): the field they are aimed at. */
+  segment?: number;
 }
 
 export interface EconomyState {
@@ -183,6 +208,8 @@ export interface EconomyState {
   starving: boolean;
   /** Discoveries owned, in the order they were made. */
   discoveries: string[];
+  /** Peoples of the players on this economy; their abilities count like discoveries (syncPeoples). */
+  peoples?: PeopleId[];
   /** Discoveries earned by level-ups and not chosen yet. */
   picks: number;
   /** Open choice: up to three options, one vote per member (coop: true majority decides). */
@@ -224,6 +251,18 @@ export interface PlanetState {
   segments: SegmentState[];
   /** Power grid of the last tick; missing while nothing on the planet makes or uses power. */
   power?: { supply: number; demand: number };
+  /** Neighbor sun system (GameState.systems); missing = the home system. */
+  system?: number;
+  /** Hit by an EMP: no power, shield or manned defenses before this tick. */
+  empUntilTick?: number;
+  /** Missiles the missile defense here has downed in the current cycle. */
+  intercepts?: { cycle: number; count: number };
+  /** playerId of whoever settled the planet first (the last time it was free); only they may rename it. */
+  founder?: string;
+  /** Seconds the core drill has worked so far; gone once it broke through. */
+  drill?: number;
+  /** The interior of this planet (in GameState.cores): id of the planet around it. */
+  coreOf?: string;
 }
 
 export interface SegmentState {
@@ -242,6 +281,10 @@ export interface SegmentState {
   scorched?: true;
   /** Rubble of a building invaders destroyed (looks only); gone once something is built or cleared. */
   ruin?: true;
+  /** Hit by a nuke: scorched as well, only looks different; cleared together with `scorched`. */
+  irradiated?: true;
+  /** A silo that fired a nuke loads the next one until this tick. */
+  reloadUntilTick?: number;
   /** Cryo pod with frozen members of another people (Planet of Mine), found by exploring; thaw to recruit them. */
   cryo?: { people: PeopleId; count: number };
 }
@@ -273,8 +316,11 @@ export type Command =
   /** Queues a build that runs once the economy can pay for it. */
   | { type: "enqueue"; planetId: string; segment: number; building: BuildingId }
   | { type: "dequeue"; planetId: string; index: number }
-  /** Sends `count` idle units of the sender from a planet with a launch pad. combat: versus attack. */
-  | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number }
+  /**
+   * Sends `count` idle units of the sender from a planet with a launch pad. combat/dropship: attack.
+   * Missiles (homing, emp, nuke) fly from a silo with count 0; homing and nuke aim at `segment`.
+   */
+  | { type: "launch"; planetId: string; to: string; rocket: RocketId; count: number; segment?: number }
   /** Votes for one option of the economy's open discovery offer (alone: picks it). */
   | { type: "voteDiscovery"; discovery: string }
   /** Votes yes or no in the open team vote about a faction (see FactionState.vote). */
@@ -295,6 +341,8 @@ export type Command =
   | { type: "diplomacy"; faction: string; action: "war" | "peace" | "alliance" | "merge" }
   /** Answers the faction's open offer. */
   | { type: "answerOffer"; faction: string; accept: boolean }
+  /** Founder only: gives the planet a new name (PLANET_NAME_MAX characters at most). */
+  | { type: "renamePlanet"; planetId: string; name: string }
   | { type: "openLobby" }
   | { type: "closeLobby" }
   | { type: "pause" }
@@ -313,12 +361,18 @@ export type GameEvent =
   | { type: "upgraded"; planetId: string; segment: number; building: BuildingId; tier: number; playerId: string }
   | { type: "terraformed"; planetId: string; segment: number; kind: TerraformKind; playerId: string }
   | { type: "joined"; playerId: string }
+  | { type: "renamed"; planetId: string; name: string; from: string; playerId: string }
   | { type: "removed"; playerId: string; by: string }
   | { type: "queueDropped"; planetId: string; segment: number; building: BuildingId; reason: string }
   | { type: "lobby"; open: boolean; paused: boolean; playerId: string }
   | { type: "launched"; flightId: string; playerId: string; from: string; to: string; rocket: RocketId; count: number; arrivalTick: number }
   | { type: "landed"; flightId: string; playerId: string; planetId: string; count: number; colonized: boolean }
   | { type: "battle"; planetId: string; attacker: string; defender: string; attackerLosses: number; defenderLosses: number; won: boolean; captured: number; intercepted?: number }
+  /**
+   * A missile arrived. intercepted: shot down; destroyed: buildings wrecked; killed: inhabitants
+   * lost; invaderDamage: hit on a besieging mothership; emp: the planet is shut down.
+   */
+  | { type: "missileHit"; planetId: string; attacker: string; defender: string; rocket: RocketId; segment?: number; intercepted: boolean; destroyed: BuildingId[]; killed: number; invaderDamage?: number; emp?: boolean }
   | { type: "assimilated"; playerId: string; count: number }
   | { type: "eliminated"; playerId: string }
   | { type: "surrendered"; playerId: string }
@@ -328,7 +382,7 @@ export type GameEvent =
   | { type: "invasionSpotted"; target: string; wave: number; arrivalTick: number }
   | { type: "invasionArrived"; target: string; wave: number }
   | { type: "siege"; target: string; damage: number; hp: number; defenderLosses: number; destroyed: BuildingId | null; killed: number; shieldSegment: number | null; scorched?: number[] }
-  | { type: "invasionDefeated"; target: string; wave: number }
+  | { type: "invasionDefeated"; target: string; wave: number; /** What the wreck gave the team (missing in older events). */ loot?: Partial<Record<ResourceId, number>> }
   | { type: "suffocated"; planetId: string; left: number }
   | { type: "thawed"; planetId: string; segment: number; people: PeopleId; count: number; playerId: string }
   | { type: "invasionMoved"; from: string; target: string; wave: number; arrivalTick: number }
@@ -347,7 +401,14 @@ export type GameEvent =
   /** `from` is the faction (a present to its ally) or the player who gave. */
   | { type: "factionGift"; faction: string; from: string; resource: ResourceId; amount: number }
   | { type: "factionMerged"; faction: string; playerId: string; units: number; planets: number }
-  | { type: "factionEliminated"; faction: string };
+  | { type: "factionEliminated"; faction: string }
+  /** The first warp gate found the neighbor systems. */
+  | { type: "systemsFound"; count: number; inhabited: number }
+  /** A core drill broke through: `coreId` is the new interior of `planetId`. */
+  | { type: "coreOpened"; planetId: string; coreId: string; playerId: string }
+  /** Danger inside a planet: a quake killed a worker, or a magma burst hit a building (and maybe a worker). */
+  | { type: "quake"; planetId: string; segment: number; killed: number }
+  | { type: "eruption"; planetId: string; segment: number; killed: number; building: BuildingId | null; wrecked: boolean };
 
 export type LogEntry = { tick: number; event: GameEvent };
 

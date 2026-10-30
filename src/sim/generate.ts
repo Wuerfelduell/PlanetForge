@@ -19,6 +19,9 @@ import {
 import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
+import { syncPeoples } from "./discoveries";
+import { growSystems } from "./galaxy";
+import { PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
 import { ringDistance } from "./rules";
 import { FACTIONS, factionName, pickPersonality } from "./diplomacy";
 import type { DepositState, Difficulty, EconomyState, GameMode, GameState, PlanetState, PlayerInit, SegmentState } from "./state";
@@ -109,6 +112,12 @@ export function createGame(seed: string, players: PlayerInit[], options: GameOpt
     const oilFields = () => p.segments.filter((x) => x.deposits.some((d) => d.resource === "oil")).length;
     for (let tries = 0; tries < 6 && oilFields() < SYSTEM.oilFieldsPerStartPlanet; tries++) placeRareDeposit(oilRng, p.segments, "oil", true, true);
   }
+  // Seb 2026-10-28: dry worlds should hold more oil. Extra fields from yet another stream.
+  const dryRng = new Rng(seedFromString(`${seed}:dryoil`));
+  for (const p of planets) {
+    const extra = SYSTEM.extraOilFields[p.type] ?? 0;
+    for (let i = 0; i < extra; i++) placeRareDeposit(dryRng, p.segments, "oil", p.startSlot !== null, true);
+  }
   // Gems: one field on every start planet, now and then one elsewhere. Own stream as well.
   const gemRng = new Rng(seedFromString(`${seed}:gems`));
   for (const p of planets) {
@@ -191,6 +200,7 @@ function addFaction(state: GameState, index: number, rng: Rng): void {
   const economy = state.economies[economyId]!;
   for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
   planet.economyId = economyId;
+  planet.founder = id;
   for (const s of planet.segments) if (ringDistance(s.index, 0, planet.segments.length) <= RULES.startRevealRadius) s.revealed = true;
   const taken = new Set(state.players.map((p) => p.people));
   const free = PEOPLE_IDS.filter((p) => !taken.has(p));
@@ -247,6 +257,7 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   let arriving: number = RULES.coopJoinPopulation;
   if (planet.economyId === null) {
     planet.economyId = economyId;
+    planet.founder = playerId;
     arriving = RULES.startPopulation;
     const economy = next.economies[economyId]!;
     for (const r of RESOURCE_IDS) economy.resources[r] += RULES.startResources[r] ?? 0;
@@ -260,12 +271,18 @@ export function addPlayer(state: GameState, playerId: string, name: string, now:
   let color = 0;
   while (usedColors.has(color)) color++;
   next.players.push({ id: playerId, name, color, people: chosen, economyId, homePlanetId: planet.id, joinedTick: next.tick, eliminated: false, surrendered: false, offersDraw: false });
+  // Every people brings its start goods and maybe a discovery (data/balance PEOPLES).
+  const economy = next.economies[economyId]!;
+  const def = PEOPLE_DEFS[chosen];
+  for (const [r, n] of Object.entries(def.startBonus) as [ResourceId, number][]) economy.resources[r] += n;
+  if (def.startDiscovery && !economy.discoveries.includes(def.startDiscovery)) economy.discoveries.push(def.startDiscovery);
+  syncPeoples(next);
   events.push({ type: "joined", playerId });
   appendLog(next, events);
   return { ok: true, state: next };
 }
 
-function newEconomy(id: string): EconomyState {
+export function newEconomy(id: string): EconomyState {
   return {
     id,
     resources: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>,
@@ -370,7 +387,7 @@ function startRarePackages(rng: Rng, maxPlayers: number): ResourceId[][] {
   return Array.from({ length: maxPlayers }, (_, slot) => patterns[slot % patterns.length]!.slice(0, SYSTEM.rarePerStartPlanet));
 }
 
-function placeRareDeposit(
+export function placeRareDeposit(
   rng: Rng,
   segments: SegmentState[],
   resource: ResourceId,
@@ -408,7 +425,7 @@ function placeRareDeposit(
   }
 }
 
-function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges = false): BiomeId[] {
+export function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges = false): BiomeId[] {
   const r = RULES.startRevealRadius;
   // The visible start area always offers wood, food and stone, so every seed is playable.
   // Three forests (playtest: two built over meant no wood ever again). The old draw stays so
@@ -430,7 +447,7 @@ function startPlanetBiomes(rng: Rng, size: number, type: PlanetTypeId, openEdges
 }
 
 /** Biomes in runs of 1–3 equal segments, drawn by the planet type's weights. */
-function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] {
+export function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] {
   const weights = Object.entries(PLANET_TYPES[type].biomeWeights) as [BiomeId, number][];
   const total = weights.reduce((sum, [, w]) => sum + w, 0);
   const draw = (): BiomeId => {
@@ -452,28 +469,41 @@ function weightedBiomes(rng: Rng, type: PlanetTypeId, count: number): BiomeId[] 
 
 const TINKER_DEPOSITS = new Set<string>(["fiber", "copper", "gold", "tin", "silver", "bauxite", "ilmenite"]);
 
-/** Platinum fields on asteroids and now and then on other free planets, never on start planets. */
+/**
+ * Platinum fields on asteroids and now and then on other free planets, never on start planets.
+ * Every world gets at least one (playtest 2026-10-28: about 3 % of worlds had none, so the core
+ * drill and the fuel cell could never be built); the extra field goes to a free planet first,
+ * which needs no discovery to fly to.
+ */
 function placePlatinum(seed: string, planets: PlanetState[]): void {
   const rng = new Rng(seedFromString(`${seed}:platinum`));
-  for (const p of planets) {
-    if (p.startSlot !== null) continue;
-    if (rng.next() >= (p.type === "asteroid" ? PLATINUM.asteroidChance : PLATINUM.planetChance)) continue;
+  const place = (p: PlanetState): boolean => {
     const fitting = p.segments.filter((s) => PLATINUM.biomes.includes(s.biome));
     const land = p.segments.filter((s) => BIOMES[s.biome].buildable);
     const pool = fitting.length ? fitting : land;
-    if (!pool.length) continue;
+    if (!pool.length) return false;
     const s = rng.pick(pool);
     const amount = rng.int(...PLATINUM.amount);
     s.deposits.push({ resource: "platinum", amount, max: amount, infinite: false, byHand: false });
+    return true;
+  };
+  let placed = false;
+  for (const p of planets) {
+    if (p.startSlot !== null) continue;
+    if (rng.next() >= (p.type === "asteroid" ? PLATINUM.asteroidChance : PLATINUM.planetChance)) continue;
+    if (place(p)) placed = true;
   }
+  if (placed) return;
+  const free = planets.filter((p) => p.startSlot === null);
+  for (const p of [...free.filter((x) => x.type !== "asteroid"), ...free.filter((x) => x.type === "asteroid")]) if (place(p)) return;
 }
 
-function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
+export function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
   // Tinkering deposits and the newer ores vary from a side stream so worlds of older seeds stay the same.
   const side = new Rng(rng.seed ^ 0x5eed);
   const deposits: DepositState[] = BIOMES[biome].deposits.map((d) => {
     // ±25 % variation per segment.
-    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) ? side : rng).next() * 0.5));
+    const max = d.infinite ? 0 : Math.round(d.max * (0.75 + (TINKER_DEPOSITS.has(d.resource) || d.later ? side : rng).next() * 0.5));
     return { resource: d.resource, amount: max, max, infinite: !!d.infinite, byHand: !!d.byHand };
   });
   return {
@@ -489,7 +519,7 @@ function createSegment(index: number, biome: BiomeId, rng: Rng): SegmentState {
 
 const SYLLABLES = ["ka", "lo", "mi", "ra", "ven", "tu", "sel", "dor", "ny", "quo", "bri", "za", "fen", "ol", "ix", "mar", "pe", "su"];
 
-function planetName(rng: Rng): string {
+export function planetName(rng: Rng): string {
   const parts = rng.int(2, 3);
   let name = "";
   for (let i = 0; i < parts; i++) name += rng.pick(SYLLABLES);
@@ -502,7 +532,7 @@ function pickDistinct<T>(rng: Rng, items: readonly T[], count: number): T[] {
   return copy.slice(0, Math.min(count, copy.length));
 }
 
-function shuffle<T>(items: T[], rng: Rng): void {
+export function shuffle<T>(items: T[], rng: Rng): void {
   for (let i = items.length - 1; i > 0; i--) {
     const j = rng.int(0, i);
     [items[i], items[j]] = [items[j]!, items[i]!];
@@ -528,8 +558,11 @@ export function upgradeState(state: unknown): GameState | null {
     for (const segment of planet.segments) {
       if (segment.scorched) continue;
       for (const d of BIOMES[segment.biome].deposits) {
-        if (d.byHand || segment.deposits.some((x) => x.resource === d.resource)) continue;
-        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: false });
+        const had = segment.deposits.find((x) => x.resource === d.resource);
+        // Seb 2026-10-30: swamp water became gatherable by hand.
+        if (had && d.byHand && !had.byHand && !d.later) had.byHand = true;
+        if (had || (d.byHand && !d.later)) continue;
+        segment.deposits.push({ resource: d.resource, amount: d.max, max: d.max, infinite: !!d.infinite, byHand: !!d.byHand });
       }
     }
   }
@@ -549,6 +582,17 @@ export function upgradeState(state: unknown): GameState | null {
   }
   // Platinum came later too: worlds without any get their fields, the same a new game would have.
   if (!s.planets.some((p) => p.segments.some((x) => x.deposits.some((d) => d.resource === "platinum")))) placePlatinum(s.seed, s.planets);
+  // Founders came later: the first player who calls a planet home, else whoever has most people there.
+  for (const planet of s.planets) {
+    if (planet.founder || planet.economyId === null) continue;
+    const owners = s.players.filter((p) => p.economyId === planet.economyId);
+    const count = (id: string) => Object.values(s.units).filter((u) => u.planetId === planet.id && u.owner === id).length;
+    const founder = owners.find((p) => p.homePlanetId === planet.id) ?? owners.slice().sort((a, b) => count(b.id) - count(a.id))[0];
+    if (founder) planet.founder = founder.id;
+  }
+  // Seb: neighbor systems have 7–12 planets now; systems found before get the rest.
+  growSystems(s);
+  syncPeoples(s);
   (s as { version: number }).version = 12;
   return s;
 }

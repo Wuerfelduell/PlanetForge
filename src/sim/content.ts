@@ -24,6 +24,11 @@ export const RESOURCE_IDS = [
   // More ores (Seb: "mehr verschiedene Erze"): tin and silver mined as they are, bauxite and
   // ilmenite smelted to aluminium and titanium, platinum only from asteroids and far planets.
   "tin", "silver", "bauxite", "ilmenite", "platinum", "bronze", "aluminium", "titanium",
+  // Warp systems (Seb): exotic matter only found in the neighbor systems behind the warp gate.
+  "antimatter", "neutronium", "xenocrystal",
+  // Planet interior (Seb): very rare ores only the core mine reaches, and deep suits for the
+  // people working down there (not used up: one per worker).
+  "core-iron", "ember-crystal", "deep-quartz", "deep-suit",
 ] as const;
 export type ResourceId = (typeof RESOURCE_IDS)[number];
 
@@ -73,9 +78,20 @@ export const RESOURCES: Record<ResourceId, ResourceDef> = {
   bronze: { name: "Bronze", icon: "🥉" },
   aluminium: { name: "Aluminium", icon: "🥄" },
   titanium: { name: "Titan", icon: "🛡️" },
+  antimatter: { name: "Antimaterie", icon: "⚛️" },
+  neutronium: { name: "Neutronium", icon: "🟣" },
+  xenocrystal: { name: "Xenokristall", icon: "🔷" },
+  "core-iron": { name: "Kerneisen", icon: "🧲" },
+  "ember-crystal": { name: "Glutkristall", icon: "🔶" },
+  "deep-quartz": { name: "Tiefenquarz", icon: "🔮" },
+  "deep-suit": { name: "Tiefenanzug", icon: "🥽" },
 };
 
-export const BIOME_IDS = ["forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash"] as const;
+export const BIOME_IDS = [
+  "forest", "savanna", "mountains", "ocean", "desert", "swamp", "tundra", "crystal", "glacier", "lava", "ash",
+  // Only inside a planet (CORE): caves around the glowing core.
+  "mushroom-forest", "crystal-grotto", "magma-lake", "primal-sea",
+] as const;
 export type BiomeId = (typeof BIOME_IDS)[number];
 
 export interface DepositDef {
@@ -87,6 +103,8 @@ export interface DepositDef {
   byHand?: boolean;
   /** Deep deposit: only a building stage that lists it reaches it (gold and silver, mine stage 2). */
   tier?: 2;
+  /** Added later (Seb 2026-10-30): drawn from the side stream so older seeds keep their worlds; old saves get it too. */
+  later?: true;
 }
 
 export interface BiomeDef {
@@ -119,7 +137,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "fiber", max: 50, byHand: true },
       { resource: "stone", max: 25 },
       { resource: "clay", max: 30 },
-      { resource: "bauxite", max: 35 },
+      { resource: "bauxite", max: 50 },
     ],
   },
   mountains: {
@@ -128,7 +146,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "stone", max: 90, byHand: true },
-      { resource: "iron", max: 50 },
+      { resource: "iron", max: 70 },
       { resource: "copper", max: 45 },
       { resource: "gold", max: 15, tier: 2 },
       { resource: "tin", max: 25 },
@@ -153,6 +171,9 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 30 },
       { resource: "copper", max: 30 },
       { resource: "ilmenite", max: 20 },
+      { resource: "bauxite", max: 25 },
+      // Seb 2026-10-30: cacti are not sand; they hold water. The dune is the sand.
+      { resource: "water", max: 20, byHand: true, later: true },
     ],
   },
   swamp: {
@@ -161,9 +182,12 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "clay", max: 70, byHand: true },
-      { resource: "water", max: 40 },
+      // Seb 2026-10-30: the swamp is wet, its water can be scooped by hand (was a deposit nothing reached).
+      { resource: "water", max: 40, byHand: true },
       { resource: "fiber", max: 30, byHand: true },
-      { resource: "bauxite", max: 25 },
+      { resource: "bauxite", max: 40 },
+      // The mushrooms on the field.
+      { resource: "food", max: 20, byHand: true, later: true },
     ],
   },
   tundra: {
@@ -173,9 +197,11 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     deposits: [
       { resource: "stone", max: 50, byHand: true },
       { resource: "water", max: 60, byHand: true },
-      { resource: "iron", max: 30 },
+      { resource: "iron", max: 42 },
       { resource: "tin", max: 35 },
       { resource: "silver", max: 20, tier: 2 },
+      // The snowy pines give wood (and thawing a glacier costs wood).
+      { resource: "wood", max: 25, byHand: true, later: true },
     ],
   },
   crystal: {
@@ -204,7 +230,7 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
     buildable: true,
     deposits: [
       { resource: "stone", max: 60, byHand: true },
-      { resource: "iron", max: 45 },
+      { resource: "iron", max: 63 },
       { resource: "gold", max: 20, tier: 2 },
       { resource: "ilmenite", max: 35 },
     ],
@@ -218,6 +244,45 @@ export const BIOMES: Record<BiomeId, BiomeDef> = {
       { resource: "stone", max: 30, byHand: true },
       { resource: "coal", max: 25 },
       { resource: "ilmenite", max: 25 },
+      // The dead trees are dry wood.
+      { resource: "wood", max: 15, byHand: true, later: true },
+    ],
+  },
+  // Inside a planet (CORE): small deposits that never regrow; only the core mine reaches them.
+  "mushroom-forest": {
+    name: "Pilzwald",
+    color: 0x7a5aa8,
+    buildable: true,
+    deposits: [
+      { resource: "ember-crystal", max: 8 },
+      { resource: "aetherite", max: 15 },
+    ],
+  },
+  "crystal-grotto": {
+    name: "Kristallgrotte",
+    color: 0x5fc6d6,
+    buildable: true,
+    deposits: [
+      { resource: "deep-quartz", max: 10 },
+      { resource: "core-iron", max: 8 },
+    ],
+  },
+  "magma-lake": {
+    name: "Magmasee",
+    color: 0xe0612a,
+    buildable: true,
+    deposits: [
+      { resource: "core-iron", max: 14 },
+      { resource: "ember-crystal", max: 10 },
+    ],
+  },
+  "primal-sea": {
+    name: "Urmeer",
+    color: 0x2f6f8f,
+    buildable: true,
+    deposits: [
+      { resource: "deep-quartz", max: 12 },
+      { resource: "uranium", max: 15 },
     ],
   },
 };
@@ -232,8 +297,11 @@ export const BUILDING_IDS = [
   "watchtower", "battery",
   "launchpad", "refinery",
   "gem-mine", "crystal-palace", "prism-dome", "ruby-laser",
-  "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell",
+  "smelter", "bell-tower", "power-tower", "deep-drill", "power-fuelcell", "treasury",
   "pitfall", "barracks", "flak", "missile-launcher", "shield-generator", "ion-cannon",
+  "warpgate", "exo-drill", "power-antimatter", "neutron-bastion", "shell-armor", "xeno-lab",
+  "missile-silo", "missile-defense", "radar",
+  "core-drill", "core-mine", "support-pillar", "power-geothermal", "gravity-cannon", "core-armor", "quantum-lab", "warp-core",
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -318,6 +386,18 @@ export interface BuildingDef {
   ascension?: number;
   /** At most one per planet. */
   unique?: boolean;
+  /** Shield shell hits by invaders do this much less damage while one stands anywhere (counted up to WARP.maxShellArmor). */
+  shellArmor?: number;
+  /** Like shellArmor, on top of it, counted up to CORE.maxCoreArmor. */
+  coreArmor?: number;
+  /** Cannot be built in versus. */
+  coopOnly?: boolean;
+  /** Launches unmanned missiles (MISSILES) while someone works here. */
+  silo?: boolean;
+  /** Incoming missiles it shoots down per worker and cycle (see MISSILES). */
+  antiMissile?: number;
+  /** Sees incoming missiles at launch and the defenses of planets in the same sun system. */
+  radar?: boolean;
 }
 
 export type BuildingUpgrade = Pick<BuildingDef, "cost" | "unlockLevel"> &
@@ -341,6 +421,8 @@ const NOISY: readonly AdjacencyDef[] = [
 /** Lava is buildable, but only for what stands the heat (mine, foundry, defenses). */
 const LAND: readonly BiomeId[] = ["forest", "savanna", "mountains", "desert", "swamp", "tundra", "crystal", "ash"];
 const HOT_GROUND: readonly BiomeId[] = [...LAND, "lava"];
+/** The cave fields inside a planet (CORE). */
+const INNER: readonly BiomeId[] = ["mushroom-forest", "crystal-grotto", "magma-lake", "primal-sea"];
 
 export const BUILDINGS: Record<BuildingId, BuildingDef> = {
   housing: {
@@ -359,7 +441,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { name: "Holzhaus", icon: "🏠", cost: { planks: 10, clay: 10, stone: 10 }, unlockLevel: 2, housing: 4 },
       { name: "Steinhaus", icon: "🏡", cost: { bricks: 15, cloth: 5, iron: 10 }, unlockLevel: 5, housing: 7 },
       // Needs power: without it only half the flats are lit and lived in.
-      { name: "Wohnturm", icon: "🏢", cost: { concrete: 20, steel: 10, glass: 10 }, unlockLevel: 7, housing: 12, energy: -1 },
+      { name: "Wohnturm", icon: "🏢", cost: { concrete: 20, steel: 10, glass: 10, plastic: 5 }, unlockLevel: 7, housing: 12, energy: -1 },
     ],
   },
   park: {
@@ -384,11 +466,23 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     ascension: 10,
     unique: true,
   },
+  // Seb 2026-10-28: gold, silver and ätherite piled up with nothing to spend them on.
+  treasury: {
+    name: "Schatzkammer",
+    icon: "🏛️",
+    category: "housing",
+    description: "Ein Arbeiter lagert Gold, Silber oder Ätherit ein, das Volk ist stolz darauf: je Stück 4 Aufstiegspunkte (Ätherit 6).",
+    cost: { bricks: 20, stone: 20, bronze: 5 },
+    unlockLevel: 5,
+    allowedBiomes: LAND,
+    workers: 1,
+    crafts: { recipes: ["tribute-gold", "tribute-silver", "tribute-aetherite", "tribute-quartz"], speed: 1 },
+  },
   farm: {
     name: "Farm",
     icon: "🌾",
     category: "food",
-    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub).",
+    description: "Baut Nahrung an, ohne den Boden zu erschöpfen. Geht auch auf fruchtbarer Asche. +25 % je Nachbar-Savanne, +15 % je Nachbar-Aschefeld, +20 % je Nachbar-Pumpe, −25 % je Nachbar-Mine (Staub). Stufe 3 (Bewässerte Farm) bringt 60 % mehr, braucht aber Strom.",
     cost: { wood: 12 },
     unlockLevel: 0,
     allowedBiomes: ["savanna", "forest", "swamp", "ash"],
@@ -401,13 +495,17 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "mine", bonus: -0.25 },
       { building: "power-coal", bonus: -0.2 },
     ],
-    upgrades: [{ cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 }],
+    upgrades: [
+      { cost: { planks: 10, bricks: 10 }, unlockLevel: 4, workers: 4 },
+      // Seb 2026-10-28: power should pay off. Same crew, more food, but it needs power.
+      { name: "Bewässerte Farm", cost: { steel: 10, glass: 5, wire: 5 }, unlockLevel: 6, workers: 4, produces: { resource: "food", perWorker: 0.8 }, energy: -1 },
+    ],
   },
   fishery: {
     name: "Fischerei",
     icon: "🎣",
     category: "food",
-    description: "Fängt Fisch, ohne das Meer leer zu fischen. Muss neben einem Meer stehen, +30 % je Nachbar-Meer.",
+    description: "Fängt Fisch, ohne das Meer leer zu fischen. Muss neben einem Meer stehen, +30 % je Nachbar-Meer. Stufe 3 (Kühlhafen) bringt mehr, braucht aber Strom.",
     cost: { wood: 15, stone: 5 },
     unlockLevel: 1,
     allowedBiomes: LAND,
@@ -415,7 +513,11 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     produces: { resource: "food", perWorker: 0.35 },
     needsNeighbor: ["ocean"],
     adjacency: [{ biome: "ocean", bonus: 0.3 }],
-    upgrades: [{ name: "Fischereihafen", cost: { planks: 10, cloth: 5 }, unlockLevel: 3, workers: 3, produces: { resource: "food", perWorker: 0.45 } }],
+    upgrades: [
+      { name: "Fischereihafen", cost: { planks: 10, cloth: 5 }, unlockLevel: 3, workers: 3, produces: { resource: "food", perWorker: 0.45 } },
+      // Seb 2026-10-28: stage 3 of the basic producers yields more with the same crew, for power.
+      { name: "Kühlhafen", cost: { steel: 10, plastic: 5, wire: 5 }, unlockLevel: 6, workers: 3, produces: { resource: "food", perWorker: 0.7 }, energy: -1 },
+    ],
   },
   "hydro-farm": {
     name: "Gewächshaus",
@@ -434,7 +536,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Sägewerk",
     icon: "🪚",
     category: "production",
-    description: "Macht aus Holz Bretter. Muss neben einem Wald stehen, +30 % je Nachbar-Wald. Verbraucht Werkzeug.",
+    description: "Macht aus Holz Bretter. Muss neben einem Wald stehen, +30 % je Nachbar-Wald. Verbraucht Werkzeug. Stufe 2 und 3 brauchen Strom.",
     cost: { wood: 20, stone: 10 },
     unlockLevel: 1,
     allowedBiomes: LAND,
@@ -443,7 +545,10 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     needsNeighbor: ["forest"],
     adjacency: [{ biome: "forest", bonus: 0.3 }],
     usesTools: true,
-    upgrades: [{ cost: { bricks: 10, tools: 5 }, unlockLevel: 4, workers: 4, crafts: { recipes: ["planks"], speed: 1.5 } }],
+    upgrades: [
+      { cost: { bricks: 10, tools: 5, wire: 5 }, unlockLevel: 4, workers: 4, crafts: { recipes: ["planks"], speed: 1.5 }, energy: -1 },
+      { name: "Elektrosägewerk", cost: { steel: 10, glass: 5, wire: 5 }, unlockLevel: 6, workers: 4, crafts: { recipes: ["planks"], speed: 2.25 }, energy: -2 },
+    ],
   },
   forester: {
     name: "Förster",
@@ -460,7 +565,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Mine",
     icon: "⛏️",
     category: "resources",
-    description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug.",
+    description: "Fördert die Bodenschätze des Feldes, auch die ohne Werkzeug unerreichbaren. Nur auf einem Feld mit Vorkommen. +25 % je Nachbar-Gebirge. Verbraucht Werkzeug. Stufe 2 und 3 (Großmine) brauchen Strom.",
     cost: { wood: 20, stone: 5 },
     unlockLevel: 1,
     allowedBiomes: ["mountains", "desert", "swamp", "tundra", "crystal", "forest", "savanna", "lava", "ash"],
@@ -471,10 +576,19 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     usesTools: true,
     upgrades: [
       {
-        cost: { iron: 15, bricks: 10, tools: 5 },
+        cost: { iron: 15, bricks: 10, tools: 5, wire: 5 },
         unlockLevel: 5,
         workers: 5,
+        energy: -1,
         extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold", "tin", "bauxite", "ilmenite", "silver"], perWorker: 0.8 },
+      },
+      {
+        name: "Großmine",
+        cost: { steel: 15, concrete: 10, electronics: 2 },
+        unlockLevel: 7,
+        workers: 5,
+        energy: -2,
+        extracts: { resources: ["stone", "iron", "copper", "sand", "clay", "coal", "uranium", "aetherite", "gold", "tin", "bauxite", "ilmenite", "silver"], perWorker: 1.2 },
       },
     ],
   },
@@ -499,12 +613,12 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Raffinerie",
     icon: "🛢️",
     category: "space",
-    description: "Macht aus Öl Treibstoff für Raketen. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore. Verbraucht Werkzeug.",
+    description: "Macht aus Öl Treibstoff für Raketen, aus Glutkristall sogar viel davon. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore. Verbraucht Werkzeug.",
     cost: { planks: 15, stone: 20, iron: 10 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["fuel"], speed: 1 },
+    crafts: { recipes: ["fuel", "ember-fuel"], speed: 1 },
     adjacency: [{ building: "pump", bonus: 0.25 }],
     usesTools: true,
   },
@@ -512,36 +626,36 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Werkstatt",
     icon: "🛠️",
     category: "production",
-    description: "Macht Werkzeug, Kupferdraht, Stoff oder Raumanzüge. +15 % je Nachbar-Sägewerk oder -Mine.",
+    description: "Macht Werkzeug (aus Eisen oder sparsamer aus Bronze), Kupferdraht, Stoff oder Raumanzüge. Stufe 2 braucht Strom. +15 % je Nachbar-Sägewerk oder -Mine.",
     cost: { planks: 15, stone: 15 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1 },
+    crafts: { recipes: ["tools", "bronze-tools", "wire", "cloth", "suits"], speed: 1 },
     adjacency: [
       { building: "sawmill", bonus: 0.15 },
       { building: "mine", bonus: 0.15 },
     ],
-    upgrades: [{ cost: { bricks: 15, iron: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "wire", "cloth", "suits"], speed: 1.5 } }],
+    upgrades: [{ cost: { bricks: 15, iron: 10, wire: 5 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["tools", "bronze-tools", "wire", "cloth", "suits", "deep-suit"], speed: 1.5 }, energy: -1 }],
   },
   lab: {
     name: "Labor",
     icon: "🔬",
     category: "research",
-    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk).",
+    description: "Erzeugt Wissen. +15 % je Nachbar-Kristallfeld, +10 % je Nachbar-Hütte, +20 % je Nachbar-Bibliothek, −25 % je lautem Nachbarn (Mine, Gießerei, Raffinerie, Kohlekraftwerk). Stufe 2 braucht Strom.",
     cost: { stone: 20, planks: 10, water: 10 },
     unlockLevel: 2,
     allowedBiomes: LAND,
     workers: 2,
     produces: { resource: "science", perWorker: 0.2 },
     adjacency: [{ biome: "crystal", bonus: 0.15 }, { building: "housing", bonus: 0.1 }, { building: "library", bonus: 0.2 }, ...NOISY],
-    upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 } }],
+    upgrades: [{ cost: { bricks: 10, wire: 5, gold: 3 }, unlockLevel: 5, workers: 4, produces: { resource: "science", perWorker: 0.25 }, energy: -1 }],
   },
   foundry: {
     name: "Gießerei",
     icon: "🏭",
     category: "production",
-    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
+    description: "Brennt Ziegel, Holzkohle, Stahl oder Beton. Darf auf Lava stehen. Stufe 2 (Stahlwerk) braucht Strom und macht aus Neutronium viel Stahl. +30 % je Nachbar-Lavafeld, +10 % je Nachbar-Mine.",
     cost: { stone: 25, clay: 15, planks: 10 },
     unlockLevel: 3,
     allowedBiomes: HOT_GROUND,
@@ -551,7 +665,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
       { building: "mine", bonus: 0.1 },
       { biome: "lava", bonus: 0.3 },
     ],
-    upgrades: [{ name: "Stahlwerk", cost: { bricks: 15, steel: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["bricks", "charcoal", "steel", "concrete"], speed: 1.5 }, energy: -1 }],
+    upgrades: [{ name: "Stahlwerk", cost: { bricks: 15, steel: 10 }, unlockLevel: 5, workers: 4, crafts: { recipes: ["bricks", "charcoal", "steel", "concrete", "neutron-steel"], speed: 1.5 }, energy: -1 }],
   },
   glassworks: {
     name: "Glashütte",
@@ -608,7 +722,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Biogasanlage",
     icon: "🫧",
     category: "production",
-    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
+    description: "Vergärt übrige Nahrung mit Wasser zu Biogas für das Gaskraftwerk und Bioplastik. +20 % je Nachbar-Farm, +15 % je Nachbar-Sumpf.",
     cost: { bricks: 15, planks: 10, iron: 5 },
     unlockLevel: 4,
     allowedBiomes: LAND,
@@ -623,19 +737,19 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     name: "Kunststoffwerk",
     icon: "🧴",
     category: "production",
-    description: "Kocht aus Öl Plastik für Elektronik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
+    description: "Kocht aus Öl Plastik, oder ohne Öl aus Biogas Bioplastik. +25 % je Nachbar-Pumpe. Laut für Hütten und Labore.",
     cost: { bricks: 15, steel: 10, planks: 10 },
     unlockLevel: 5,
     allowedBiomes: LAND,
     workers: 2,
-    crafts: { recipes: ["plastic"], speed: 1 },
+    crafts: { recipes: ["plastic", "bioplastic"], speed: 1 },
     adjacency: [{ building: "pump", bonus: 0.25 }],
   },
   electronics: {
     name: "Elektronikwerk",
     icon: "🔌",
     category: "production",
-    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer. Braucht Strom. +15 % je Nachbar-Werkstatt.",
+    description: "Lötet aus Kupferdraht, Plastik und Glas Elektronik, ab Stufe 2 (Chipfabrik) auch Computer, mit Xenokristall doppelt so viele. Braucht Strom. +15 % je Nachbar-Werkstatt.",
     cost: { steel: 15, glass: 10, bricks: 10 },
     unlockLevel: 6,
     allowedBiomes: LAND,
@@ -643,7 +757,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     crafts: { recipes: ["electronics"], speed: 1 },
     adjacency: [{ building: "workshop", bonus: 0.15 }],
     energy: -1,
-    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer"], speed: 1.25 }, energy: -2 }],
+    upgrades: [{ name: "Chipfabrik", cost: { concrete: 15, steel: 10, electronics: 5 }, unlockLevel: 8, workers: 3, crafts: { recipes: ["electronics", "computer", "quantum-chip"], speed: 1.25 }, energy: -2 }],
   },
   "power-wind": {
     name: "Windrad",
@@ -926,7 +1040,7 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     icon: "🛡️",
     category: "defense",
     description: "Ein Energieschild über dem Planeten, solange jemand ihn bedient: Invasoren können nichts zerstören oder verbrennen, Angreifer würfeln −1. Braucht viel Strom. Nur einer pro Planet.",
-    cost: { steel: 20, glass: 20, electronics: 4 },
+    cost: { steel: 20, glass: 20, electronics: 4, plastic: 5 },
     unlockLevel: 8,
     allowedBiomes: LAND,
     workers: 1,
@@ -946,11 +1060,230 @@ export const BUILDINGS: Record<BuildingId, BuildingDef> = {
     battery: 8,
     energy: -4,
   },
+  // Warp systems (Seb): the gate opens the way to the neighbor systems, the rest uses their exotic matter.
+  warpgate: {
+    name: "Warptor",
+    icon: "🌀",
+    category: "space",
+    description: "Ortet beim ersten Bau fünf Nachbarsysteme und schickt Warpschiffe dorthin. Nur eins pro Planet.",
+    cost: { steel: 40, titanium: 10, computer: 4, aetherite: 20 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    unique: true,
+    coopOnly: true,
+  },
+  "exo-drill": {
+    name: "Exobohrer",
+    icon: "🛰️",
+    category: "resources",
+    description: "Fördert Antimaterie, Neutronium und Xenokristall, die es nur in fremden Sonnensystemen gibt. Bringt seinen eigenen Strom mit. Nur auf einem Feld mit Vorkommen. Verbraucht Werkzeug.",
+    cost: { titanium: 6, steel: 10, electronics: 2 },
+    unlockLevel: 10,
+    allowedBiomes: [...HOT_GROUND, "glacier"],
+    workers: 2,
+    extracts: { resources: ["antimatter", "neutronium", "xenocrystal"], perWorker: 0.15 },
+    needsDeposit: true,
+    usesTools: true,
+  },
+  "power-antimatter": {
+    name: "Antimaterie-Reaktor",
+    icon: "⚛️",
+    category: "energy",
+    description: "+30 Strom mit zwei Arbeitern aus einer Prise Antimaterie. Xenokristalle halten sie in der Schwebe.",
+    cost: { antimatter: 10, xenocrystal: 4, titanium: 15, concrete: 30 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 2,
+    energy: 30,
+    burns: { resource: "antimatter", perSecond: 0.01 },
+  },
+  "neutron-bastion": {
+    name: "Neutroniumwall",
+    icon: "🧱",
+    category: "defense",
+    description: "Ein Wall aus Neutronium: +2 auf die Würfe der Verteidiger, holt 2 Angreifer vor dem Kampf herunter.",
+    cost: { neutronium: 12, steel: 15, concrete: 15 },
+    unlockLevel: 10,
+    allowedBiomes: HOT_GROUND,
+    workers: 0,
+    defense: 2,
+    intercept: 2,
+  },
+  "shell-armor": {
+    name: "Hüllenpanzerung",
+    icon: "🛡️",
+    category: "space",
+    description: "Neutroniumplatten für die Schutzhülle um die Sonne: Invasoren richten an der Hülle nur halb so viel Schaden an. Nur eine pro Planet.",
+    cost: { neutronium: 20, titanium: 10, steel: 20 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    shellArmor: 0.5,
+    unique: true,
+    coopOnly: true,
+  },
+  "xeno-lab": {
+    name: "Xenolabor",
+    icon: "🔬",
+    category: "research",
+    description: "Erforscht fremde Kristalle: sehr viel Wissen je Arbeiter und +4 Aufstiegspunkte pro Umlauf. Braucht Strom.",
+    cost: { xenocrystal: 12, glass: 20, computer: 2 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 3,
+    produces: { resource: "science", perWorker: 1 },
+    ascension: 4,
+    energy: -3,
+  },
+  // Seb: a better war. Unmanned missiles from a silo, only inside their own sun system.
+  "missile-silo": {
+    name: "Raketensilo",
+    icon: "🧨",
+    category: "defense",
+    description: "Startet Raketen ohne Besatzung auf Planeten im selben Sonnensystem: Zielsuchrakete (zerstört ein Gebäude oder trifft ein Mutterschiff), EMP-Rakete (legt Strom und Abwehr lahm) und Atomrakete. Braucht einen Arbeiter.",
+    cost: { steel: 20, concrete: 15, electronics: 2 },
+    unlockLevel: 6,
+    allowedBiomes: LAND,
+    workers: 1,
+    silo: true,
+  },
+  "missile-defense": {
+    name: "Raketenabwehr",
+    icon: "🔰",
+    category: "defense",
+    description: "Holt anfliegende Raketen vom Himmel: je Arbeiter eine pro Umlauf. Braucht Strom.",
+    cost: { aluminium: 10, electronics: 3, wire: 6 },
+    unlockLevel: 7,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    antiMissile: 1,
+    energy: -2,
+  },
+  radar: {
+    name: "Frühwarnradar",
+    icon: "📡",
+    category: "defense",
+    description: "Meldet feindliche Raketen schon beim Start samt Zielfeld und zeigt die Abwehr fremder Planeten im selben Sonnensystem. Braucht Strom. Nur eins pro Planet.",
+    cost: { silver: 4, electronics: 2, glass: 10 },
+    unlockLevel: 7,
+    allowedBiomes: LAND,
+    workers: 1,
+    radar: true,
+    energy: -2,
+    unique: true,
+  },
+
+  // Planet interior (Seb, "Reise zum Mittelpunkt der Erde"): drill down, mine the rare ores inside.
+  "core-drill": {
+    name: "Kernbohrung",
+    icon: "🕳️",
+    category: "resources",
+    description:
+      "Bohrt sich mit 3 Arbeitern und Strom bis ins Innere des Planeten (ein paar Minuten). Nach dem Durchbruch fahren Arbeiter mit Tiefenanzug hinunter, solange die Bohrung steht. Nur eine pro Planet, nicht auf Asteroiden.",
+    cost: { titanium: 15, steel: 25, concrete: 30, platinum: 4, electronics: 3 },
+    unlockLevel: 9,
+    allowedBiomes: ["mountains", "desert", "tundra", "ash", "lava"],
+    workers: 3,
+    usesTools: true,
+    energy: -4,
+    unique: true,
+  },
+  "core-mine": {
+    name: "Kernmine",
+    icon: "⛏️",
+    category: "resources",
+    description: "Die einzige Mine im Planeteninneren: fördert langsam Kerneisen, Glutkristall, Tiefenquarz und was sonst dort liegt. Braucht Strom. Verbraucht Werkzeug. Die Vorkommen wachsen nie nach.",
+    cost: { titanium: 6, steel: 10, tools: 10 },
+    unlockLevel: 9,
+    allowedBiomes: INNER,
+    workers: 3,
+    extracts: { resources: ["core-iron", "ember-crystal", "deep-quartz", "platinum", "diamond", "emerald", "ruby", "uranium", "aetherite"], perWorker: 0.05 },
+    needsDeposit: true,
+    usesTools: true,
+    energy: -2,
+  },
+  "support-pillar": {
+    name: "Stützpfeiler",
+    icon: "🏛️",
+    category: "defense",
+    description: "Ein Pfeiler aus Stahl und Beton: Beben und Magmaausbrüche treffen dieses Feld und seine Nachbarn nur halb so oft. Ohne Arbeiter.",
+    cost: { steel: 10, concrete: 15 },
+    unlockLevel: 9,
+    allowedBiomes: INNER,
+    workers: 0,
+  },
+  "power-geothermal": {
+    name: "Erdwärmekraftwerk",
+    icon: "🌋",
+    category: "energy",
+    description: "Zapft den Magmasee an: +12 Strom mit einem Arbeiter, ohne Brennstoff, für das Innere und die Oberfläche zusammen.",
+    cost: { "ember-crystal": 4, steel: 15, concrete: 10 },
+    unlockLevel: 9,
+    allowedBiomes: ["magma-lake"],
+    workers: 1,
+    energy: 12,
+  },
+  "gravity-cannon": {
+    name: "Gravitationsgeschütz",
+    icon: "🌀",
+    category: "defense",
+    description: "Kerneisen-Spulen schleudern Kerneisen-Geschosse ins All: je Arbeiter 12 Treffer pro Umlauf gegen Invasoren (je Schuss ¼ Kerneisen) und je Arbeiter ein Angreifer weniger. Braucht viel Strom.",
+    cost: { "core-iron": 8, steel: 20, computer: 1 },
+    unlockLevel: 9,
+    allowedBiomes: HOT_GROUND,
+    workers: 2,
+    battery: 12,
+    ammo: { resource: "core-iron", perShot: 0.25 },
+    intercept: 1,
+    energy: -5,
+  },
+  "core-armor": {
+    name: "Kernpanzerung",
+    icon: "🧲",
+    category: "space",
+    description: "Kerneisenplatten für die Schutzhülle um die Sonne: Invasoren richten an der Hülle noch ein Viertel weniger Schaden an, zusätzlich zur Hüllenpanzerung. Nur eine pro Planet.",
+    cost: { "core-iron": 10, titanium: 10, steel: 15 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    coreArmor: 0.25,
+    unique: true,
+    coopOnly: true,
+  },
+  "quantum-lab": {
+    name: "Quantenlabor",
+    icon: "🔮",
+    category: "research",
+    description: "Rechnet mit Tiefenquarz-Kristallen: sehr viel Wissen je Arbeiter und +5 Aufstiegspunkte pro Umlauf. Braucht Strom.",
+    cost: { "deep-quartz": 6, computer: 2, glass: 15 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 2,
+    produces: { resource: "science", perWorker: 1.2 },
+    ascension: 5,
+    energy: -3,
+  },
+  "warp-core": {
+    name: "Warpkern",
+    icon: "💫",
+    category: "space",
+    description: "Glutkristall und Tiefenquarz bündeln den Sprung: Warpschiffe von diesem Planeten sind doppelt so schnell. Nur einer pro Planet.",
+    cost: { "deep-quartz": 8, "ember-crystal": 4, titanium: 10 },
+    unlockLevel: 10,
+    allowedBiomes: LAND,
+    workers: 0,
+    unique: true,
+    coopOnly: true,
+  },
 };
 
 export type RecipeId =
   | "planks" | "tools" | "wire" | "cloth" | "bricks" | "charcoal" | "fuel" | "glass" | "steel" | "concrete" | "greens"
-  | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium";
+  | "plastic" | "biogas" | "electronics" | "computer" | "suits" | "bronze" | "aluminium" | "titanium"
+  | "bronze-tools" | "bioplastic" | "tribute-gold" | "tribute-silver" | "tribute-aetherite"
+  | "neutron-steel" | "quantum-chip"
+  | "deep-suit" | "tribute-quartz" | "ember-fuel";
 
 export interface RecipeDef {
   name: string;
@@ -958,6 +1291,8 @@ export interface RecipeDef {
   outputs: Partial<Record<ResourceId, number>>;
   /** Seconds per craft with one worker at speed 1. */
   seconds: number;
+  /** Ascension points per craft (treasury offerings, which make no goods). */
+  ascension?: number;
 }
 
 /** Recipes; the id is also the main output, so a segment's `gather` names the chosen recipe. */
@@ -973,7 +1308,7 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   steel: { name: "Stahl", inputs: { iron: 2, coal: 1 }, outputs: { steel: 1 }, seconds: 10 },
   concrete: { name: "Beton", inputs: { stone: 2, clay: 1, water: 1 }, outputs: { concrete: 1 }, seconds: 8 },
   greens: { name: "Gemüse", inputs: { water: 1 }, outputs: { food: 2 }, seconds: 5 },
-  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  plastic: { name: "Plastik", inputs: { oil: 2 }, outputs: { plastic: 2 }, seconds: 10 },
   biogas: { name: "Biogas", inputs: { food: 3, water: 1 }, outputs: { biogas: 1 }, seconds: 6 },
   electronics: { name: "Elektronik", inputs: { wire: 2, plastic: 1, glass: 1 }, outputs: { electronics: 1 }, seconds: 16 },
   computer: { name: "Computer", inputs: { electronics: 2, glass: 1, gold: 1 }, outputs: { computer: 1 }, seconds: 24 },
@@ -981,7 +1316,53 @@ export const RECIPES: Record<RecipeId, RecipeDef> = {
   bronze: { name: "Bronze", inputs: { copper: 2, tin: 1, coal: 1 }, outputs: { bronze: 2 }, seconds: 8 },
   aluminium: { name: "Aluminium", inputs: { bauxite: 3 }, outputs: { aluminium: 1 }, seconds: 10 },
   titanium: { name: "Titan", inputs: { ilmenite: 2, coal: 2 }, outputs: { titanium: 1 }, seconds: 14 },
+  // Seb 2026-10-28: iron was short and copper, tin, gold, silver, plastic barely needed.
+  "bronze-tools": { name: "Bronzewerkzeug", inputs: { bronze: 1, planks: 1 }, outputs: { tools: 3 }, seconds: 10 },
+  bioplastic: { name: "Bioplastik", inputs: { biogas: 2 }, outputs: { plastic: 1 }, seconds: 10 },
+  "tribute-gold": { name: "Gold einlagern", inputs: { gold: 1 }, outputs: {}, seconds: 10, ascension: 4 },
+  "tribute-silver": { name: "Silber einlagern", inputs: { silver: 1 }, outputs: {}, seconds: 10, ascension: 4 },
+  // Seb: the warp matter should keep being useful after its few buildings stand.
+  "neutron-steel": { name: "Neutroniumstahl", inputs: { neutronium: 1, iron: 1 }, outputs: { steel: 4 }, seconds: 10 },
+  "quantum-chip": { name: "Quantenchip", inputs: { xenocrystal: 1, electronics: 1 }, outputs: { computer: 2 }, seconds: 20 },
+  "tribute-aetherite": { name: "Ätherit einlagern", inputs: { aetherite: 1 }, outputs: {}, seconds: 10, ascension: 6 },
+  // Planet interior (CORE): suits that are not used up, and the rarest offering.
+  "deep-suit": { name: "Tiefenanzug", inputs: { titanium: 4, aluminium: 2, cloth: 3, electronics: 1 }, outputs: { "deep-suit": 1 }, seconds: 20 },
+  "ember-fuel": { name: "Glut-Treibstoff", inputs: { "ember-crystal": 1 }, outputs: { fuel: 8 }, seconds: 10 },
+  "tribute-quartz": { name: "Tiefenquarz einlagern", inputs: { "deep-quartz": 1 }, outputs: {}, seconds: 10, ascension: 25 },
 };
+
+/**
+ * The planet interior (Seb, "Reise zum Mittelpunkt der Erde"): a core drill opens a ring of cave
+ * fields inside the planet. Only rare ores, no homes; every worker down there needs a deep suit
+ * (kept, not used up), and quakes and magma make it dangerous.
+ */
+export const CORE = {
+  /** Seconds the drill needs with a full crew until it breaks through. */
+  drillSeconds: 240,
+  /** Cave fields inside; the art has every overlay for this count. */
+  segments: 12,
+  /** Fields around the landing spot of the shaft (field 0) that are known at once. */
+  revealRadius: 1,
+  /** Deposit size against the biome's max, drawn per field from the core's own seed stream. */
+  amount: [0.6, 1] as const,
+  /** Extra rare fields: count, picked from `rare`, amount each. */
+  extra: { count: [2, 4] as const, rare: ["platinum", "diamond", "emerald", "ruby", "uranium", "aetherite"] as ResourceId[], amount: [6, 12] as const },
+  /** Chance per cycle that a quake on a worked field kills one worker (and the suit). */
+  quake: { "mushroom-forest": 0.02, "crystal-grotto": 0.03, "magma-lake": 0.05, "primal-sea": 0.03 } as Partial<Record<BiomeId, number>>,
+  /**
+   * Chance per cycle of a magma burst on a built field: on a magma lake, and half as likely next
+   * to one. It knocks the building down a stage (a stage-1 building is wrecked) and kills a worker.
+   */
+  eruption: { lake: 0.04, nextToLake: 0.02 },
+  /** A support pillar on a field or next to it multiplies both chances with this. */
+  pillarMul: 0.5,
+  /** Chance from which a field shows the danger badge. */
+  warnFrom: 0.04,
+  /** Core armor counts up to this, on top of WARP.maxShellArmor. */
+  maxCoreArmor: 0.25,
+  /** Warp flights from a planet with a warp core take this share of the time. */
+  warpCoreMul: 0.5,
+} as const;
 
 /**
  * Invaders from other star systems (design 13.1), coop and solo only. Waves follow from seed and
@@ -1060,6 +1441,20 @@ export interface RocketDef {
   secondsPerDistance: number;
   maxRange: number;
   versusOnly?: boolean;
+  /** Burns this instead (fuel amount × mul) when the economy is short of the main fuel. */
+  altFuel?: { resource: ResourceId; mul: number };
+  /** Flies only between sun systems, from a warp gate (see WARP). */
+  warp?: true;
+  /** Lands to fight (combat rocket, dropship): every arrival on a foreign planet is a battle. */
+  attack?: true;
+  /** A missile without crew (MISSILES): starts from a worked silo, never leaves its sun system. */
+  unmanned?: true;
+  /** Ascension level needed for this rocket (war rockets only; Seb: flying itself has no level). */
+  unlockLevel?: number;
+  /** Shrugs off this many interceptions (pitfalls, flak) before the battle. */
+  armor?: number;
+  /** AI factions pay this instead of `cost` and need no silo (they don't run the late chains). */
+  aiCost?: Partial<Record<ResourceId, number>>;
 }
 
 /**
@@ -1067,7 +1462,7 @@ export interface RocketDef {
  * rockets burn refinery fuel; every start planet has an oil deposit (generate.ts), so nobody is
  * locked out of flying.
  */
-export const ROCKET_IDS = ["colony", "combat", "starship"] as const;
+export const ROCKET_IDS = ["colony", "combat", "starship", "warp", "homing", "emp", "nuke", "dropship"] as const;
 export type RocketId = (typeof ROCKET_IDS)[number];
 
 // Seb: flying has no level limit; launch pad, rocket cost and fuel are the only gates.
@@ -1090,18 +1485,146 @@ export const ROCKETS: Record<RocketId, RocketDef> = {
     secondsPerDistance: 4,
     maxRange: 16,
     versusOnly: true,
+    attack: true,
   },
-  // The big ship after Planet of Mine: computers and ätherite, flies on uranium, far and fast.
+  // The big ship after Planet of Mine: a computer, titanium hull and plastic, flies on uranium, far and fast.
   starship: {
     name: "Sternenschiff",
     icon: "🛸",
-    cost: { computer: 2, aetherite: 10, steel: 20, concrete: 10 },
+    cost: { computer: 1, titanium: 10, aluminium: 10, plastic: 10 },
     capacity: 6,
     fuel: { resource: "uranium", takeoff: 2, perDistance: 0.2, perPassenger: 0.1 },
     secondsPerDistance: 1.5,
     maxRange: 40,
   },
+  // Seb: other sun systems only by warp. The first jumps burn ätherite, antimatter from there is cheaper.
+  warp: {
+    name: "Warpschiff",
+    icon: "🌠",
+    cost: { titanium: 5, computer: 2 },
+    capacity: 6,
+    fuel: { resource: "antimatter", takeoff: 3, perDistance: 0, perPassenger: 0.1 },
+    altFuel: { resource: "aetherite", mul: 3 },
+    secondsPerDistance: 0,
+    maxRange: Infinity,
+    warp: true,
+  },  // War rockets (Seb): missiles without crew, only inside the sun system, and a big dropship.
+  homing: {
+    name: "Zielsuchrakete",
+    icon: "🎯",
+    cost: { plastic: 3, electronics: 1 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 3, perDistance: 0.5, perPassenger: 0 },
+    secondsPerDistance: 2,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 6,
+    aiCost: { iron: 12, stone: 10 },
+  },
+  emp: {
+    name: "EMP-Rakete",
+    icon: "⚡",
+    cost: { copper: 6, silver: 2, electronics: 2 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 3, perDistance: 0.5, perPassenger: 0 },
+    secondsPerDistance: 2,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 7,
+    aiCost: { iron: 15, coal: 10 },
+  },
+  nuke: {
+    name: "Atomrakete",
+    icon: "☢️",
+    cost: { uranium: 15, computer: 1, titanium: 5 },
+    capacity: 0,
+    fuel: { resource: "fuel", takeoff: 8, perDistance: 1, perPassenger: 0 },
+    secondsPerDistance: 3,
+    maxRange: 16,
+    versusOnly: true,
+    unmanned: true,
+    unlockLevel: 9,
+    aiCost: { iron: 60, stone: 60, science: 40 },
+  },
+  dropship: {
+    name: "Landungsschiff",
+    icon: "🛩️",
+    cost: { aluminium: 12, titanium: 4, tools: 5 },
+    capacity: 8,
+    fuel: { resource: "fuel", takeoff: 10, perDistance: 2, perPassenger: 0.75 },
+    secondsPerDistance: 4,
+    maxRange: 16,
+    versusOnly: true,
+    attack: true,
+    unlockLevel: 8,
+    armor: 1,
+  },
+
 };
+
+/** Missiles without crew (Seb: war after a declaration; only inside their own sun system). */
+export const MISSILES = {
+  /** Mothership damage of a homing missile at an invader besieging the launch system. */
+  invaderDamage: 6,
+  /** An EMP shuts down power, shields and manned defenses for this many cycles. */
+  empCycles: 2,
+  /** Fields a nuke destroys on each side of the target field (a worked shield halves it). */
+  nukeRadius: 2,
+  shieldedNukeRadius: 1,
+  /** A silo needs this many cycles to load the next nuke. */
+  nukeReloadCycles: 3,
+  /** Start planets are safe from nukes for the first cycles of a game. */
+  startProtectionCycles: 10,
+  /** A nuked faction refuses peace for this many cycles. */
+  noPeaceCycles: 10,
+  /** Chance that worked flak downs a homing missile once missile defense is used up. */
+  flakChance: 0.5,
+  /** AI factions fire missiles from this level on (warlords also nukes from the nuke level). */
+  aiLevel: 6,
+} as const;
+
+/**
+ * Neighbor sun systems (Seb): found when the first warp gate is built, reachable only by warp ship.
+ * Each one is rich in exotic matter; some are home to a foreign people (an AI faction).
+ */
+export const WARP = {
+  systems: 5,
+  /** Planets per neighbor system (Seb: 7–12). */
+  planets: [7, 12] as const,
+  /** Outermost orbit; the planets share it out evenly, so a full system still fits a phone screen. */
+  maxOrbit: 8,
+  /**
+   * Seb: what a planet is depends on how far from the sun it is. `until` is the share of the way
+   * out (0 = innermost orbit, 1 = outermost); a planet draws its type from the first zone it is in.
+   */
+  zones: [
+    { until: 0.2, types: ["lava", "lava", "toxic"] },
+    { until: 0.45, types: ["arid", "arid", "toxic", "temperate"] },
+    { until: 0.7, types: ["temperate", "temperate", "ocean", "ocean", "arid"] },
+    { until: 1, types: ["ice", "ice", "ice", "arid"] },
+  ] as { until: number; types: PlanetTypeId[] }[],
+  /** Foreign peoples live closest to this point of the way out (the middle of the green zone). */
+  homeZone: 0.55,
+  /** Every system is inhabited with this chance, but at least `inhabited[0]` and at most `inhabited[1]` are. */
+  inhabitedChance: 0.3,
+  inhabited: [1, 2] as const,
+  /** An inhabited system has at least this many settled planets (if it has that many). */
+  settledPlanets: 3,
+  /** Inhabitants of a foreign people on its main planet and on each other settled planet. */
+  people: { main: 8, other: 4 },
+  /** Exotic matter of the systems; inhabited systems keep theirs too. */
+  specialties: [["antimatter"], ["neutronium"], ["xenocrystal"], ["antimatter", "neutronium"], ["neutronium", "xenocrystal"]] as ResourceId[][],
+  /** Exotic fields per planet and their size. */
+  fields: [1, 2] as const,
+  amount: [40, 80] as const,
+  /** Distance used for warp fuel, and seconds per jump. */
+  distance: 10,
+  seconds: 120,
+  /** Shell armor counts up to this (halves shield damage at most). */
+  maxShellArmor: 0.5,
+} as const;
 
 /** Playable peoples (ids from the asset list). Bonuses and abilities come with the balancing data. */
 export const PEOPLE_IDS = ["burrowbeavers", "quillfolk", "axolings", "shellguards", "dunehoppers", "starowls", "tideotters", "hornbeetles", "frostseals", "swapcoons", "glowsnails", "echobats"] as const;
@@ -1170,6 +1693,8 @@ export const SYSTEM = {
   rarePerStartPlanet: 2,
   /** Oil fields every start planet gets (rockets burn fuel from oil). */
   oilFieldsPerStartPlanet: 2,
+  /** More oil fields on dry and swampy worlds, start planets included. */
+  extraOilFields: { arid: 3, toxic: 1 } as Partial<Record<PlanetTypeId, number>>,
   rarePerFreePlanet: { min: 2, max: 4 },
   rareDepositMax: 60,
   sunTypes: ["yellow", "red", "blue", "white"],
@@ -1238,6 +1763,7 @@ export const RULES = {
   handWorkersPerSegment: 2,
   handRatePerWorker: 0.3,
   starvingRateFactor: 0.5,
+  foodOutputMul: BALANCE_RULES.foodOutputMul,
   /**
    * Births, food upkeep and ascension thresholds come from src/data/balance (MODES, RULES), see
    * rules.ts: secondsPerBirth, foodUpkeepPerCycle, nextLevelThreshold. Playtest 2026-10-21: the

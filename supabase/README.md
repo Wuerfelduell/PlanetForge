@@ -32,7 +32,7 @@ If nobody was online for 10 minutes (no command, no heartbeat), the next request
 
 ## State size
 
-A game state is a few hundred KB of JSON. Realtime broadcasts are limited to 256 KB on the free plan, so `save_game_state` broadcasts `{ version, packed, events, by }` where `packed` is the state gzipped and base64-encoded (`src/net/pack.ts`, about a tenth of the size); the client unpacks it. game-command's replies are gzipped too (`Content-Encoding: gzip`) when the client accepts it, which browsers and supabase-js do.
+A game state is a few hundred KB of JSON. Realtime broadcasts are limited to 256 KB on the free plan, so `save_game_packed` broadcasts `{ version, packed, events, by }` where `packed` is the state gzipped and base64-encoded (`src/net/pack.ts`, about a tenth of the size); the client unpacks it. The same packed string is what gets stored (`games.packed`): rewriting the whole jsonb on every move stalled the database. `games.state` then only holds `{ players }` for `my_games` and `taken_peoples`; `load_game` returns `state` only for saves without `packed`. game-command's replies are gzipped too (`Content-Encoding: gzip`) when the client accepts it, which browsers and supabase-js do.
 
 ## Peoples
 

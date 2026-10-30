@@ -1,0 +1,361 @@
+{
+  "assets": [
+    {
+      "id": "ui.icon-ascension",
+      "category": "ui",
+      "src": "art/src/ui/icon-ascension.svg",
+      "out": "public/assets/sprites/ui/icon-ascension.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-ascension"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-planets",
+      "category": "ui",
+      "src": "art/src/ui/icon-planets.svg",
+      "out": "public/assets/sprites/ui/icon-planets.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-planets"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-menu",
+      "category": "ui",
+      "src": "art/src/ui/icon-menu.svg",
+      "out": "public/assets/sprites/ui/icon-menu.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-menu"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-rename",
+      "category": "ui",
+      "src": "art/src/ui/icon-rename.svg",
+      "out": "public/assets/sprites/ui/icon-rename.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-rename"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-thaw",
+      "category": "ui",
+      "src": "art/src/ui/icon-thaw.svg",
+      "out": "public/assets/sprites/ui/icon-thaw.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-thaw"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-unlock",
+      "category": "ui",
+      "src": "art/src/ui/icon-unlock.svg",
+      "out": "public/assets/sprites/ui/icon-unlock.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-unlock"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-factions",
+      "category": "ui",
+      "src": "art/src/ui/icon-factions.svg",
+      "out": "public/assets/sprites/ui/icon-factions.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-factions"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-merge",
+      "category": "ui",
+      "src": "art/src/ui/icon-merge.svg",
+      "out": "public/assets/sprites/ui/icon-merge.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-merge"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-gift",
+      "category": "ui",
+      "src": "art/src/ui/icon-gift.svg",
+      "out": "public/assets/sprites/ui/icon-gift.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-gift"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-vote-yes",
+      "category": "ui",
+      "src": "art/src/ui/icon-vote-yes.svg",
+      "out": "public/assets/sprites/ui/icon-vote-yes.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-vote-yes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-vote-no",
+      "category": "ui",
+      "src": "art/src/ui/icon-vote-no.svg",
+      "out": "public/assets/sprites/ui/icon-vote-no.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-vote-no"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-surrender",
+      "category": "ui",
+      "src": "art/src/ui/icon-surrender.svg",
+      "out": "public/assets/sprites/ui/icon-surrender.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-surrender"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.icon-draw",
+      "category": "ui",
+      "src": "art/src/ui/icon-draw.svg",
+      "out": "public/assets/sprites/ui/icon-draw.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "icon-draw"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-trader",
+      "category": "ui",
+      "src": "art/src/ui/personality-trader.svg",
+      "out": "public/assets/sprites/ui/personality-trader.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-trader"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-warlord",
+      "category": "ui",
+      "src": "art/src/ui/personality-warlord.svg",
+      "out": "public/assets/sprites/ui/personality-warlord.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-warlord"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-builder",
+      "category": "ui",
+      "src": "art/src/ui/personality-builder.svg",
+      "out": "public/assets/sprites/ui/personality-builder.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-builder"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "ui.personality-diplomat",
+      "category": "ui",
+      "src": "art/src/ui/personality-diplomat.svg",
+      "out": "public/assets/sprites/ui/personality-diplomat.png",
+      "viewBox": [
+        128,
+        128
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [],
+      "tags": [
+        "ui",
+        "personality-diplomat"
+      ],
+      "phase": "P1"
+    }
+  ]
+}

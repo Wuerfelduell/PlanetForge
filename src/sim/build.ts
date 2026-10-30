@@ -1,12 +1,13 @@
 import { BUILDINGS, RESOURCE_IDS, RULES, type BuildingId } from "./content";
-import { ringDistance, workersOn } from "./rules";
+import { buildCost, ringDistance, workersOn } from "./rules";
 import { modified } from "./discoveries";
+import { discoverSystems } from "./galaxy";
 import type { GameEvent, GameState, PlanetState, SegmentState } from "./state";
 
 /** Pays for and places a building (already validated by buildBlocker), then reveals the area around it. */
 export function placeBuilding(state: GameState, planet: PlanetState, segment: SegmentState, building: BuildingId, playerId: string, events: GameEvent[]): void {
   const economy = state.economies[planet.economyId!]!;
-  const cost = BUILDINGS[building].cost;
+  const cost = buildCost(economy, BUILDINGS[building].cost);
   for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
   // Hand gatherers go back to idle; their owners re-assign them to the building.
   for (const u of workersOn(state, planet, segment.index)) u.segment = null;
@@ -14,6 +15,7 @@ export function placeBuilding(state: GameState, planet: PlanetState, segment: Se
   delete segment.ruin;
   segment.builtBy = playerId;
   events.push({ type: "built", planetId: planet.id, segment: segment.index, building, playerId });
+  if (building === "warpgate") discoverSystems(state, events);
   const revealed: number[] = [];
   for (const s of planet.segments) {
     if (!s.revealed && ringDistance(s.index, segment.index, planet.segments.length) <= modified(economy, "revealRadius", RULES.buildRevealRadius)) {

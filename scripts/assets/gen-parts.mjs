@@ -5,6 +5,20 @@ import {read,write,round} from './common.mjs';
 
 // Part group id and pivot (in the 256 canvas) per building sprite. Motions live in the game code.
 export const PARTS = {
+ 'building.core-drill':{file:'core-drill',part:'drill',pivot:[110,170]},
+ 'building.core-mine':{file:'core-mine',part:'cart',pivot:[180,211]},
+ 'building.quantum-lab':{file:'quantum-lab',part:'rings',pivot:[128,108]},
+ 'building.warp-core':{file:'warp-core',part:'core',pivot:[128,127]},
+ 'building.gravity-cannon':{file:'gravity-cannon',part:'barrel',pivot:[94,159]},
+ 'building.power-geothermal':{file:'power-geothermal',part:'steam',pivot:[128,142]},
+ 'building.radar':{file:'radar',part:'antenna',pivot:[128,104]},
+ 'building.missile-defense':{file:'missile-defense',part:'turret',pivot:[126,180]},
+ 'building.missile-silo':{file:'missile-silo',part:'rocket',pivot:[106,207]},
+ 'building.shell-armor':{file:'shell-armor',part:'press',pivot:[101,101]},
+ 'building.warpgate':{file:'warpgate',part:'portal',pivot:[128,114]},
+ 'building.exo-drill':{file:'exo-drill',part:'drill',pivot:[112,181]},
+ 'building.power-antimatter':{file:'power-antimatter',part:'core',pivot:[128,94]},
+ 'building.farm.t3':{file:'farm-t3',part:'sprinkler',pivot:[159,43]},
  'building.ion-cannon':{file:'ion-cannon',part:'barrel',pivot:[92,151]},
  'building.shield-generator':{file:'shield-generator',part:'orb',pivot:[128,82]},
  'building.missile-launcher':{file:'missile-launcher',part:'rack',pivot:[128,165]},
@@ -14,6 +28,7 @@ export const PARTS = {
  'building.observatory':{file:'observatory',part:'dome',pivot:[128,145]},
  'building.sawmill.t1':{file:'sawmill-t1',part:'blade',pivot:[152,166]},
  'building.sawmill.t2':{file:'sawmill-t2',part:'blade',pivot:[145,151]},
+ 'building.sawmill.t3':{file:'sawmill-t3',part:'blade',pivot:[143,145]},
  'building.battery':{file:'battery',part:'barrel',pivot:[128,150]},
  'building.power-wind':{file:'power-wind',part:'blades',pivot:[128,99]},
  'building.air-filter':{file:'air-filter',part:'fan',pivot:[128,129]},
@@ -21,6 +36,7 @@ export const PARTS = {
  'building.pump.t2':{file:'pump-t2',part:'pump-arm',pivot:[130,90]},
  'building.mine.t1':{file:'mine-t1',part:'cart',pivot:[105,211]},
  'building.mine.t2':{file:'mine-t2',part:'cart',pivot:[105,211]},
+ 'building.mine.t3':{file:'mine-t3',part:'cart',pivot:[172,212]},
  'building.market':{file:'market',part:'flag',pivot:[179,91]},
 };
 

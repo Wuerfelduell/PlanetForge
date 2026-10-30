@@ -1,5 +1,6 @@
 import { BIOMES, PEOPLE_IDS, PEOPLES as PEOPLE_ICONS, type PeopleId } from "../sim";
-import { PEOPLES } from "../data/balance/peoples";
+import { PEOPLE_BASE, PEOPLES } from "../data/balance/peoples";
+import { discoveryName } from "../sim";
 import { RESOURCES } from "../data/balance/resources";
 
 /** Portraits instead of emoji once the art is loaded (set by the main menu). */
@@ -23,7 +24,8 @@ export function peoplePickerHtml(chosen: PeopleId, taken: ReadonlySet<string> = 
     <div class="people-info">
       <b>${escape(def.name)}</b> <small>(${escape(def.animal)})</small>
       <p><b>${escape(def.ability.name)}:</b> ${escape(def.ability.description)}</p>
-      <p class="people-note">Mag ${escape(BIOMES[def.favoriteBiome].name)} und ${escape(RESOURCES[def.favoriteResource].name)} (Bonus beim Sammeln und Bauen).</p>
+      <p class="people-note">Mag ${escape(BIOMES[def.favoriteBiome].name)} (+${pct(PEOPLE_BASE.favoriteBiomeBonus)} dort) und ${escape(RESOURCES[def.favoriteResource].name)} (+${pct(PEOPLE_BASE.favoriteResourceBonus)}) beim Sammeln und in Gebäuden.</p>
+      <p class="people-note">Bringt mit: ${escape(startGoods(def))}</p>
     </div>`;
 }
 
@@ -47,6 +49,15 @@ export function preferredPeople(): PeopleId {
   } catch {
     return PEOPLE_IDS[0];
   }
+}
+
+const pct = (bonus: number) => `${Math.round(bonus * 100)} %`;
+
+/** Start goods and start discovery of a people, e.g. "20 Holz, Entdeckung Handelswege". */
+function startGoods(def: (typeof PEOPLES)[PeopleId]): string {
+  const goods = Object.entries(def.startBonus).map(([r, n]) => `${n} ${RESOURCES[r as keyof typeof RESOURCES].name}`);
+  if (def.startDiscovery) goods.push(`Entdeckung ${discoveryName(def.startDiscovery)}`);
+  return goods.join(", ");
 }
 
 function escape(text: string): string {

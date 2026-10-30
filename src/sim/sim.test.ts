@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addPlayer,
   advance,
+  advanceOwnedWithEvents,
   advanceWithEvents,
   applyCommand,
   createGame,
@@ -209,7 +210,8 @@ describe("commands", () => {
     const result = attempt(g, { type: "build", segment: edge.index, building: "housing" });
     if (!result.ok) throw new Error(result.error);
     const s = result.state;
-    expect(econ(s).resources.wood).toBe(0);
+    // The default people (Dammbiber) pay 20 % less wood: 12 instead of 15.
+    expect(econ(s).resources.wood).toBe(3);
     expect(housing(s, home(s))).toBe(RULES.baseHousing + 2);
     expect(home(s).segments[edge.index]!.builtBy).toBe(P1.id);
     expect(home(s).segments[edge.index + RULES.buildRevealRadius]!.revealed).toBe(true);
@@ -314,7 +316,8 @@ describe("simulation", () => {
     g = exec(g, { type: "assign", segment: forestIndex, delta: 2 });
     const startWood = econ(g).resources.wood;
     g = run(g, RULES.ticksPerSecond * 10).state;
-    expect(econ(g).resources.wood).toBeCloseTo(startWood + 2 * RULES.handRatePerWorker * 10, 5);
+    // Dammbiber love forest (+30 %) and wood (+25 %).
+    expect(econ(g).resources.wood).toBeCloseTo(startWood + 2 * RULES.handRatePerWorker * 10 * 1.3 * 1.25, 5);
     home(g).segments[forestIndex]!.deposits.find((d) => d.resource === "wood")!.amount = 0.1;
     const { state, events } = run(g, 5);
     expect(home(state).segments[forestIndex]!.deposits.find((d) => d.resource === "wood")!.amount).toBe(0);
@@ -385,7 +388,9 @@ describe("simulation", () => {
     let many = g;
     for (let t = g.simTime; t < end; t += 333) many = advance(many, t);
     many = advance(many, end);
-    expect(many).toEqual(once);
+    // Log entries carry the tick of the advance() call that wrote them, so only their events must match.
+    const events = (g: GameState) => ({ ...g, log: g.log.map((l) => l.event) });
+    expect(events(many)).toEqual(events(once));
   });
 
   it("stays deterministic and JSON-safe across a long session", () => {
@@ -399,4 +404,24 @@ describe("simulation", () => {
     expect(a).toEqual(play());
     expect(JSON.parse(JSON.stringify(a))).toEqual(a);
   });
+});
+
+describe("advanceOwnedWithEvents", () => {
+  it("matches advanceWithEvents frame by frame, without copying", () => {
+    const copied = createGame("owned", [P1, MO], { now: 0, factions: 2 });
+    let a = copied;
+    const b = JSON.parse(JSON.stringify(copied)) as GameState;
+    const seen: GameEvent[][] = [[], []];
+    for (let t = 16; t <= 2 * 60_000; t += 41.7) {
+      const r = advanceWithEvents(a, t);
+      a = r.state;
+      seen[0]!.push(...r.events);
+      const events = advanceOwnedWithEvents(b, t);
+      seen[1]!.push(...events);
+    }
+    expect(JSON.stringify(b)).toBe(JSON.stringify(a));
+    expect(seen[0]!.some((e) => e.type === "cycle")).toBe(true);
+    expect(seen[1]).toEqual(seen[0]);
+    expect(advanceOwnedWithEvents(b, b.simTime + TICK_MS / 2)).toEqual([]);
+  }, 20_000);
 });

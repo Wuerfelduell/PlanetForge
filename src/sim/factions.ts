@@ -1,4 +1,4 @@
-import { BUILDINGS, RECIPES, RESOURCE_IDS, RULES, type BuildingId, type ResourceId } from "./content";
+import { BUILDINGS, MISSILES, RECIPES, RESOURCE_IDS, RULES, type BuildingId, type ResourceId, type RocketId } from "./content";
 import {
   activeFactions,
   atWar,
@@ -32,6 +32,8 @@ import {
   paidFor,
   planetDefense,
   planetDistance,
+  planetShield,
+  ringDistance,
   playerById,
   population,
   rocketCapacity,
@@ -40,6 +42,7 @@ import {
   unitsOn,
   upgradeBlocker,
   workerCapacity,
+  buildCost,
   workerCount,
 } from "./rules";
 import { launch } from "./space";
@@ -59,7 +62,7 @@ const AI_EXPAND_LEVEL = 4;
  * deterministic as the rest of the simulation.
  */
 export function factionsCycle(state: GameState, events: GameEvent[]): void {
-  if (state.settings.factions === 0 || state.result) return;
+  if (state.factions.length === 0 || state.result) return;
   const rng = new Rng(state.rng);
   try {
     for (const faction of activeFactions(state)) {
@@ -249,7 +252,8 @@ function upgradeHousing(state: GameState, planet: PlanetState, events: GameEvent
     if (s.building !== "housing" || !nextUpgrade(s) || upgradeBlocker(state, planet, s)) continue;
     const economy = state.economies[planet.economyId!]!;
     const next = nextUpgrade(s)!;
-    for (const r of RESOURCE_IDS) economy.resources[r] -= next.cost[r] ?? 0;
+    const cost = buildCost(economy, next.cost);
+    for (const r of RESOURCE_IDS) economy.resources[r] -= cost[r] ?? 0;
     s.tier = (s.tier ?? 1) + 1;
     events.push({ type: "upgraded", planetId: planet.id, segment: s.index, building: s.building, tier: s.tier, playerId: player.id });
     return;
@@ -278,7 +282,7 @@ function assignWorkers(state: GameState, faction: FactionState, economy: Economy
     .sort((a, b) => b.score - a.score);
   let next = 0;
   for (const { s } of scored) {
-    const capacity = workerCapacity(s) - workerCount(state, planet, s.index);
+    const capacity = workerCapacity(s, economy) - workerCount(state, planet, s.index);
     for (let i = 0; i < capacity && free > 0; i++) {
       units[next++]!.segment = s.index;
       free--;
@@ -296,7 +300,8 @@ function pickRecipe(s: SegmentState, economy: EconomyState): void {
     const recipe = RECIPES[id];
     const inputs = Object.entries(recipe.inputs) as [ResourceId, number][];
     if (inputs.some(([r, v]) => economy.resources[r] < v * 5)) continue;
-    const made = Object.keys(recipe.outputs)[0] as ResourceId;
+    const made = Object.keys(recipe.outputs)[0] as ResourceId | undefined;
+    if (!made) continue;
     const need = economy.resources[made] / FACTIONS.stockTarget;
     if (!best || need < best.need) best = { id, need };
   }
@@ -317,13 +322,14 @@ function pickGather(s: SegmentState, economy: EconomyState, foodPerCycle: number
 }
 
 function workScore(planet: PlanetState, s: SegmentState, economy: EconomyState, foodLow: boolean): number {
-  if (!s.revealed || s.scorched || workerCapacity(s) === 0) return 0;
+  if (!s.revealed || s.scorched || workerCapacity(s, economy) === 0) return 0;
   const def = buildingStats(s);
   if (def?.crafts) {
     const recipe = RECIPES[segmentRecipe(s)!];
     // Only with the inputs in stock, and not when the shelf is already full.
     for (const [r, v] of Object.entries(recipe.inputs) as [ResourceId, number][]) if (economy.resources[r] < v * 5) return 0;
-    const made = Object.keys(recipe.outputs)[0] as ResourceId;
+    const made = Object.keys(recipe.outputs)[0] as ResourceId | undefined;
+    if (!made) return 1;
     if (economy.resources[made] > FACTIONS.stockTarget * 2) return 1;
     return made === "planks" || made === "tools" ? 6 : 5;
   }
@@ -385,7 +391,7 @@ function mood(state: GameState, faction: FactionState, economy: EconomyState, rn
       return;
     }
     case "war": {
-      if (!canOffer) return;
+      if (!canOffer || state.tick < (faction.noPeaceUntilTick ?? 0)) return;
       const losing = own < team * 0.6;
       const long = state.tick - faction.stanceTick >= cycles(state, 20);
       if ((losing || long) && faction.attitude > -70) makeOffer(state, faction, "peace", events);
@@ -431,6 +437,7 @@ function attack(state: GameState, faction: FactionState, player: PlayerState, pl
     .filter((p) => atWar(state, p.economyId, economy.id))
     .map((p) => ({ p, defense: idleUnits(state, p).filter((u) => !playerById(state, u.owner)?.ai).length + planetDefense(state, p) }))
     .sort((a, b) => a.defense - b.defense);
+  fireMissile(state, faction, player, planets, targets.map((t) => t.p), events);
   for (const from of planets) {
     const capacity = rocketCapacity(economy, "combat");
     const count = Math.min(capacity, idleUnits(state, from, player.id).length - 1);
@@ -441,6 +448,35 @@ function attack(state: GameState, faction: FactionState, player: PlayerState, pl
       if (rng.next() < 0.25) return;
       launch(state, player, from, to, "combat", count, events);
       return;
+    }
+  }
+}
+
+/** Defenses a homing missile goes for first, most annoying first. */
+const MISSILE_TARGETS: BuildingId[] = ["shield-generator", "missile-defense", "flak", "neutron-bastion", "watchtower", "battery"];
+
+/**
+ * At war from MISSILES.aiLevel on: one missile with every attack. A shield gets an EMP, otherwise
+ * a homing missile takes out the best defense; warlords nuke the busiest part of the planet.
+ */
+function fireMissile(state: GameState, faction: FactionState, player: PlayerState, planets: PlanetState[], targets: PlanetState[], events: GameEvent[]): void {
+  const economy = state.economies[player.economyId]!;
+  if (economy.ascension.level < MISSILES.aiLevel) return;
+  for (const to of targets) {
+    const n = to.segments.length;
+    const built = (i: number) => to.segments.filter((s) => s.building && ringDistance(s.index, i, n) <= MISSILES.nukeRadius).length;
+    const busiest = to.segments.reduce((a, b) => (built(b.index) > built(a.index) ? b : a)).index;
+    const defense = MISSILE_TARGETS.map((b) => to.segments.find((s) => s.building === b)).find(Boolean);
+    const shots: [RocketId, number | undefined][] = [];
+    if (faction.personality === "warlord") shots.push(["nuke", busiest]);
+    if (planetShield(state, to) > 0) shots.push(["emp", undefined]);
+    if (defense) shots.push(["homing", defense.index]);
+    for (const [rocket, segment] of shots) {
+      for (const from of planets) {
+        if (launchBlocker(state, player.id, from, to, rocket, 0, segment)) continue;
+        launch(state, player, from, to, rocket, 0, events, segment);
+        return;
+      }
     }
   }
 }

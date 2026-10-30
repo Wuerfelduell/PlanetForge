@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BIOMES, BUILDINGS, GEMS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, SUPERNOVA, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
+import { BIOMES, BUILDINGS, GEMS, PLANET_TYPES, RARE_RESOURCES, RECIPES, ROCKETS, SUPERNOVA, WARP, type BiomeId, type BuildingId, type RecipeId, type ResourceId } from "./content";
 
 /**
  * Walks the whole build and upgrade graph from a fresh home planet (Seb's playtest, 2026-10-21:
@@ -30,6 +30,10 @@ function earliestLevels() {
   for (const g of GEMS.ids) deposits.add(g);
   // Platinum lies only on asteroids and far planets: the fuel cell (level 8) needs a flight out first.
   deposits.add("platinum");
+  // Exotic matter lies only in the neighbor systems behind the warp gate (level 10).
+  for (const r of WARP.specialties.flat()) deposits.add(r);
+  // Core ores lie only inside planets (CORE): the core drill and core mine come at level 9.
+  for (const b of ["mushroom-forest", "crystal-grotto", "magma-lake", "primal-sea"] as BiomeId[]) for (const d of BIOMES[b].deposits) deposits.add(d.resource);
   const costLevel = (cost: Partial<Record<ResourceId, number>>) => Math.max(0, ...Object.keys(cost).map((r) => resource.get(r as ResourceId) ?? Infinity));
 
   for (let changed = true; changed; ) {

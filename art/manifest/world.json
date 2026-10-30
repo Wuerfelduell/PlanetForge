@@ -49,6 +49,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.forest.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.forest.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/forest-wedge-24.svg",
@@ -73,6 +97,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.forest.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.forest.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/forest-wedge-32.svg",
@@ -93,6 +141,30 @@
         "forest",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.forest.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/forest-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/forest-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "forest",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -145,6 +217,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.mountains.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.mountains.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/mountains-wedge-24.svg",
@@ -169,6 +265,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.mountains.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.mountains.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/mountains-wedge-32.svg",
@@ -189,6 +309,30 @@
         "mountains",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.mountains.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/mountains-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/mountains-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "mountains",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -241,6 +385,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.ocean.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.ocean.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/ocean-wedge-24.svg",
@@ -265,6 +433,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.ocean.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.ocean.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/ocean-wedge-32.svg",
@@ -285,6 +477,30 @@
         "ocean",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ocean.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/ocean-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/ocean-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ocean",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -337,6 +553,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.swamp.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.swamp.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/swamp-wedge-24.svg",
@@ -361,6 +601,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.swamp.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.swamp.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/swamp-wedge-32.svg",
@@ -381,6 +645,30 @@
         "swamp",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.swamp.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/swamp-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/swamp-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "swamp",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -433,6 +721,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.savanna.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.savanna.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/savanna-wedge-24.svg",
@@ -457,6 +769,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.savanna.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.savanna.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/savanna-wedge-32.svg",
@@ -477,6 +813,30 @@
         "savanna",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.savanna.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/savanna-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/savanna-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "savanna",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -529,6 +889,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.desert.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.desert.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/desert-wedge-24.svg",
@@ -553,6 +937,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.desert.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.desert.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/desert-wedge-32.svg",
@@ -573,6 +981,30 @@
         "desert",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.desert.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/desert-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/desert-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "desert",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -625,6 +1057,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.tundra.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.tundra.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/tundra-wedge-24.svg",
@@ -649,6 +1105,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.tundra.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.tundra.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/tundra-wedge-32.svg",
@@ -669,6 +1149,30 @@
         "tundra",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.tundra.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/tundra-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/tundra-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "tundra",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -721,6 +1225,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.crystal.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.crystal.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/crystal-wedge-24.svg",
@@ -745,6 +1273,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.crystal.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.crystal.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/crystal-wedge-32.svg",
@@ -765,6 +1317,30 @@
         "crystal",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.crystal.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/crystal-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/crystal-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "crystal",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -817,6 +1393,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.glacier.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.glacier.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/glacier-wedge-24.svg",
@@ -841,6 +1441,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.glacier.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.glacier.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/glacier-wedge-32.svg",
@@ -861,6 +1485,30 @@
         "glacier",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.glacier.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/glacier-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/glacier-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "glacier",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -913,6 +1561,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.lava.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.lava.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/lava-wedge-24.svg",
@@ -937,6 +1609,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.lava.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.lava.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/lava-wedge-32.svg",
@@ -957,6 +1653,30 @@
         "lava",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.lava.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/lava-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/lava-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "lava",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -1009,6 +1729,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.ash.wedge.18",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-18.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.ash.wedge.24",
       "category": "biomes",
       "src": "art/src/biomes/ash-wedge-24.svg",
@@ -1033,6 +1777,30 @@
       "phase": "P0"
     },
     {
+      "id": "biome.ash.wedge.30",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-30.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "biome.ash.wedge.32",
       "category": "biomes",
       "src": "art/src/biomes/ash-wedge-32.svg",
@@ -1053,6 +1821,30 @@
         "ash",
         "wedge",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "biome.ash.wedge.40",
+      "category": "biomes",
+      "src": "art/src/biomes/ash-wedge-40.svg",
+      "out": "public/assets/sprites/biomes/ash-wedge-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "ground"
+      ],
+      "tags": [
+        "ash",
+        "wedge",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -1864,6 +2656,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.fog.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.fog.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-fog-24.svg",
@@ -1888,6 +2704,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.fog.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.fog.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-fog-32.svg",
@@ -1908,6 +2748,30 @@
         "overlay",
         "fog",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.fog.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-fog-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-fog-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "fog",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -1960,6 +2824,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.depleted.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.depleted.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-depleted-24.svg",
@@ -1984,6 +2872,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.depleted.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.depleted.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-depleted-32.svg",
@@ -2004,6 +2916,30 @@
         "overlay",
         "depleted",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.depleted.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-depleted-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-depleted-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "depleted",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -2056,6 +2992,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.polluted.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.polluted.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-polluted-24.svg",
@@ -2080,6 +3040,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.polluted.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.polluted.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-polluted-32.svg",
@@ -2100,6 +3084,30 @@
         "overlay",
         "polluted",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.polluted.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-polluted-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-polluted-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "polluted",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -2152,6 +3160,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.selected.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.selected.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-selected-24.svg",
@@ -2176,6 +3208,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.selected.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.selected.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-selected-32.svg",
@@ -2196,6 +3252,30 @@
         "overlay",
         "selected",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.selected.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-selected-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-selected-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "selected",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -2248,6 +3328,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.hover.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.hover.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-hover-24.svg",
@@ -2272,6 +3376,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.hover.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.hover.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-hover-32.svg",
@@ -2292,6 +3420,30 @@
         "overlay",
         "hover",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.hover.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-hover-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-hover-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "hover",
+        "segments-40"
       ],
       "phase": "P0"
     },
@@ -2344,6 +3496,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.player-ping.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-18"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.player-ping.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-player-ping-24.svg",
@@ -2368,6 +3544,30 @@
       "phase": "P0"
     },
     {
+      "id": "overlay.player-ping.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-30"
+      ],
+      "phase": "P0"
+    },
+    {
       "id": "overlay.player-ping.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-player-ping-32.svg",
@@ -2388,6 +3588,30 @@
         "overlay",
         "player-ping",
         "segments-32"
+      ],
+      "phase": "P0"
+    },
+    {
+      "id": "overlay.player-ping.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-player-ping-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-player-ping-40.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "overlay",
+        "player-ping",
+        "segments-40"
       ],
       "phase": "P0"
     },

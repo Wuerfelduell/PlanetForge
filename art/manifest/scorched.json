@@ -47,6 +47,29 @@
       "phase": "P1"
     },
     {
+      "id": "overlay.scorched.18",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-18.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-18.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "overlay.scorched.24",
       "category": "biomes",
       "src": "art/src/biomes/overlay-scorched-24.svg",
@@ -70,10 +93,56 @@
       "phase": "P1"
     },
     {
+      "id": "overlay.scorched.30",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-30.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-30.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
       "id": "overlay.scorched.32",
       "category": "biomes",
       "src": "art/src/biomes/overlay-scorched-32.svg",
       "out": "public/assets/sprites/biomes/overlay-scorched-32.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "overlay"
+      ],
+      "tags": [
+        "scorched",
+        "biomes"
+      ],
+      "phase": "P1"
+    },
+    {
+      "id": "overlay.scorched.40",
+      "category": "biomes",
+      "src": "art/src/biomes/overlay-scorched-40.svg",
+      "out": "public/assets/sprites/biomes/overlay-scorched-40.png",
       "viewBox": [
         1024,
         1024

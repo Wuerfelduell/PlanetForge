@@ -1,0 +1,244 @@
+{
+  "assets": [
+    {
+      "id": "planet.planet-temperate-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-temperate-b.svg",
+      "out": "public/assets/sprites/planets/planet-temperate-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.planet-temperate-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-temperate-c.svg",
+      "out": "public/assets/sprites/planets/planet-temperate-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P0"
+    },
+    {
+      "id": "planet.planet-arid-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-arid-b.svg",
+      "out": "public/assets/sprites/planets/planet-arid-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-arid-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-arid-c.svg",
+      "out": "public/assets/sprites/planets/planet-arid-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ice-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-ice-b.svg",
+      "out": "public/assets/sprites/planets/planet-ice-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ice-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-ice-c.svg",
+      "out": "public/assets/sprites/planets/planet-ice-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ocean-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-ocean-b.svg",
+      "out": "public/assets/sprites/planets/planet-ocean-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-ocean-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-ocean-c.svg",
+      "out": "public/assets/sprites/planets/planet-ocean-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-lava-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-lava-b.svg",
+      "out": "public/assets/sprites/planets/planet-lava-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-lava-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-lava-c.svg",
+      "out": "public/assets/sprites/planets/planet-lava-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-toxic-b",
+      "category": "planets",
+      "src": "art/src/planets/planet-toxic-b.svg",
+      "out": "public/assets/sprites/planets/planet-toxic-b.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    },
+    {
+      "id": "planet.planet-toxic-c",
+      "category": "planets",
+      "src": "art/src/planets/planet-toxic-c.svg",
+      "out": "public/assets/sprites/planets/planet-toxic-c.png",
+      "viewBox": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": 1,
+      "parts": [
+        "body"
+      ],
+      "tags": [],
+      "phase": "P1"
+    }
+  ]
+}

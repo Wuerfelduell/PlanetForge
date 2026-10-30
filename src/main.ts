@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { cycleOf, homePlanet, type GameEvent } from "./sim";
+import { cycleOf, homePlanet, planetById, type GameEvent } from "./sim";
 import { LocalSession, type GameSession } from "./client/session";
 import { clearSave, loadGame, saveGame } from "./client/save";
 import { ChatPanel } from "./net/chat";
@@ -11,6 +11,7 @@ import { sfx, type SfxId } from "./audio/sfx";
 import { loadArt } from "./render/art";
 import { Ui } from "./ui/ui";
 import { mountLayoutControls } from "./ui/layoutControls";
+import { mountKeyboard } from "./ui/keyboard";
 import { music } from "./audio/music";
 import { unlockMusicOnFirstGesture } from "./audio/musicControl";
 import { MainMenu, worldOptions, type NewGameOptions } from "./ui/mainMenu";
@@ -80,11 +81,11 @@ async function boot(): Promise<void> {
   // What the player is looking at, for chat pins.
   const focus = { planetId: "", segment: 0 };
   function showPlanet(planetId: string): void {
-    const planet = session.state.planets.find((p) => p.id === planetId);
+    const planet = planetById(session.state, planetId);
     if (!planet) return;
     focus.planetId = planet.id;
     ui.setPlanet(planet.id);
-    view.setPlanet(planet.id, planet.segments.length);
+    view.setPlanet(planet.id, planet.segments.length, planet.coreOf !== undefined);
     ui.render(session.state);
   }
   const chat = new ChatPanel({
@@ -201,6 +202,16 @@ async function boot(): Promise<void> {
   );
   // An invite link (?join=CODE) opens the online menu on top of it.
   menu.open();
+  mountKeyboard({
+    ui,
+    turn: (step) => view.turn(step),
+    menuOpen: () => menu.isOpen,
+    menuBack: () => menu.back(),
+    openMenu(screen) {
+      menu.open("pause");
+      if (screen === "settings") menu.open("settings");
+    },
+  });
 
   const relayout = () => {
     const hud = document.getElementById("hud")!.getBoundingClientRect();
@@ -242,6 +253,7 @@ async function boot(): Promise<void> {
     if (events.some((e) => e.type === "cycle")) saveLocal();
     view.update(session.state, ticker.deltaMS);
     map.selected = ui.mapTarget;
+    map.system = ui.mapSystem;
     map.update(session.state, ticker.deltaMS);
     uiTimer += ticker.deltaMS;
     if (uiTimer > 200) {
@@ -263,6 +275,7 @@ window.addEventListener("pointerdown", () => sfx.unlock(), { once: true, capture
 
 /** Sounds for events that are not tied to a spot on the planet (those play in PlanetView). */
 const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
+  missileHit: "build.demolish",
   born: "citizen.born",
   levelUp: "ascension.levelup",
   depleted: "alert.warning",
@@ -284,7 +297,6 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   sunWarning: "alert.warning",
   shieldBuilt: "build.complete",
   upgraded: "build.complete",
-  shieldComplete: "ascension.levelup",
   eliminated: "coop.leave",
   factionOffer: "diplomacy.trade",
   factionTrade: "diplomacy.trade",
@@ -292,6 +304,7 @@ const EVENT_SOUNDS: Partial<Record<GameEvent["type"], SfxId>> = {
   factionDeclined: "diplomacy.angry",
   factionMerged: "coop.join",
   factionEliminated: "coop.leave",
+  systemsFound: "discovery.unlock",
 };
 
 function playEventSounds(events: GameEvent[]): void {
@@ -304,7 +317,7 @@ function playEventSounds(events: GameEvent[]): void {
 /** Tense music while the own people fight or invaders besiege the planet, calm again once they are gone. */
 function updateMusicMood(events: GameEvent[], playerId: string): void {
   for (const e of events) {
-    if (e.type === "battle" && (e.attacker === playerId || e.defender === playerId)) music.alert();
+    if ((e.type === "battle" || e.type === "missileHit") && e.attacker !== e.defender && (e.attacker === playerId || e.defender === playerId)) music.alert();
     else if (e.type === "invasionArrived" || e.type === "siege") music.alert();
     else if (e.type === "invasionDefeated") music.setMood("calm");
   }

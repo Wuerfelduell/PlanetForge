@@ -34,6 +34,8 @@ export const RULES = {
   /** Production multiplier while starving. A second starving cycle in a row kills one citizen. */
   starvingRateFactor: 0.5,
   starvationDeathAfterCycles: 2,
+  /** Seb 2026-10-28: every source of food makes 10 % more (fields, farms, greenhouses, gathering). */
+  foodOutputMul: 1.1,
   birthFoodCost: 15,
   /**
    * Food does not pile up forever (playtest: 60 000 food unused): what is above
@@ -302,7 +304,7 @@ export const MODES = {
      * 2026-10-23: research beyond level 10): each step takes roughly 20–40 minutes with a few
      * colonies, so the team always has the next discovery ahead.
      */
-    thresholds: [25, 100, 270, 600, 1150, 2050, 3300, 5200, 8300, 12900, 17900, 23900, 31400, 40400, 51400, 64400, 79900, 98400, 120400, 146400],
+    thresholds: [15, 60, 170, 600, 1150, 2050, 3300, 5200, 8300, 12900, 17900, 23900, 31400, 40400, 51400, 64400, 79900, 98400, 120400, 146400],
     discoveryCostMul: 1,
     /**
      * Design doc 4.6: base × (0.7 + 0.3·n). One planet, one birth queue (the population cap
@@ -411,7 +413,7 @@ export const COOP = {
 export const PACING = {
   coop: {
     /** Target minute at which a level is reached (index = level − 1), ±20 %. */
-    targetMinute: [3, 8, 15, 25, 38, 55, 75, 100, 135, 180],
+    targetMinute: [2, 5.5, 11, 25, 38, 55, 75, 100, 135, 180],
     discoveriesPerGame: { min: 12, max: 18 },
   },
   versus: {

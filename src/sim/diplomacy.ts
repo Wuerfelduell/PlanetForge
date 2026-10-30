@@ -2,6 +2,7 @@ import { RESOURCES as RESOURCE_VALUES } from "../data/balance/resources";
 import { PEOPLES, RECIPES, RESOURCE_IDS, RESOURCES, type PeopleId, type ResourceId } from "./content";
 import type { Rng } from "./rng";
 import { buildingStats, peopleOf, playerById, ticksPerCycle } from "./rules";
+import { modified } from "./discoveries";
 import type { EconomyState, FactionOfferKind, FactionPersonality, FactionState, FactionStance, FactionVoteAction, GameEvent, GameState, PlayerState } from "./state";
 
 /**
@@ -163,7 +164,8 @@ export function tradeQuote(state: GameState, faction: FactionState, resource: Re
   if (faction.stance === "war" || faction.stance === "merged" || faction.eliminated) return null;
   const economy = factionEconomy(state, faction);
   if (!economy || !Number.isInteger(amount) || amount < 1 || economy.resources[resource] - amount < FACTIONS.keep) return null;
-  const worth = resourceValue(resource) * amount * markup(faction);
+  // Good traders (Tauschbären, Handelswege) pay less for the same goods.
+  const worth = (resourceValue(resource) * amount * markup(faction)) / modified(buyer, "tradeRate", 1);
   const candidates = FACTIONS.payment.filter((r) => r !== resource).map((r) => ({ give: r, giveAmount: Math.max(1, Math.ceil(worth / resourceValue(r))) }));
   // Wants first what it has least of, among what the buyer can actually pay.
   candidates.sort((a, b) => economy.resources[a.give] - economy.resources[b.give]);
@@ -246,6 +248,7 @@ export function proposalBlocker(state: GameState, faction: FactionState, action:
   if (action === "war") return faction.stance === "war" ? "Ihr seid schon im Krieg" : null;
   if (state.tick < faction.nextProposalTick) return "Sie wollen gerade nicht verhandeln. Versuch es später";
   if (action === "peace" && faction.stance !== "war") return "Ihr habt keinen Krieg";
+  if (action === "peace" && state.tick < (faction.noPeaceUntilTick ?? 0)) return "Nach der Atomrakete wollen sie keinen Frieden. Später vielleicht";
   if (action === "alliance" && faction.stance === "allied") return "Ihr seid schon verbündet";
   if (action === "alliance" && faction.stance === "war") return "Erst Frieden schließen";
   if (action === "merge" && faction.stance !== "allied") return "Nur Verbündete schließen sich an";
@@ -330,6 +333,7 @@ export function propose(state: GameState, player: PlayerState, faction: FactionS
   switch (action) {
     case "peace":
       if (faction.stance !== "war") return "Ihr habt keinen Krieg";
+      if (state.tick < (faction.noPeaceUntilTick ?? 0)) return "Nach der Atomrakete wollen sie keinen Frieden. Später vielleicht";
       accepted = faction.attitude >= FACTIONS.peaceAttitude || own < team * 0.6;
       if (accepted) {
         shiftAttitude(faction, 10);
@@ -474,7 +478,7 @@ export function checkFactionEliminations(state: GameState, events: GameEvent[]):
 
 /** With factions around, a team without any inhabitants has lost: the strongest faction wins. */
 export function checkTeamWipe(state: GameState, events: GameEvent[]): void {
-  if (state.result || state.settings.factions === 0) return;
+  if (state.result || state.factions.length === 0) return;
   const humans = state.players.filter((p) => !p.ai);
   if (humans.length === 0 || humans.some((p) => peopleOf(state, p.id) > 0)) return;
   const winner = activeFactions(state)
