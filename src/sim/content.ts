@@ -1591,8 +1591,22 @@ export const MISSILES = {
  */
 export const WARP = {
   systems: 5,
-  /** Planets per neighbor system. */
-  planets: [3, 5] as const,
+  /** Planets per neighbor system (Seb: 7–12). */
+  planets: [7, 12] as const,
+  /** Outermost orbit; the planets share it out evenly, so a full system still fits a phone screen. */
+  maxOrbit: 8,
+  /**
+   * Seb: what a planet is depends on how far from the sun it is. `until` is the share of the way
+   * out (0 = innermost orbit, 1 = outermost); a planet draws its type from the first zone it is in.
+   */
+  zones: [
+    { until: 0.2, types: ["lava", "lava", "toxic"] },
+    { until: 0.45, types: ["arid", "arid", "toxic", "temperate"] },
+    { until: 0.7, types: ["temperate", "temperate", "ocean", "ocean", "arid"] },
+    { until: 1, types: ["ice", "ice", "ice", "arid"] },
+  ] as { until: number; types: PlanetTypeId[] }[],
+  /** Foreign peoples live closest to this point of the way out (the middle of the green zone). */
+  homeZone: 0.55,
   /** Every system is inhabited with this chance, but at least `inhabited[0]` and at most `inhabited[1]` are. */
   inhabitedChance: 0.3,
   inhabited: [1, 2] as const,
