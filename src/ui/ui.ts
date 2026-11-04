@@ -232,8 +232,8 @@ export class Ui {
   }
 
   /** UI icon from the art (ui.<name>) once Codex drew it, else the emoji. */
-  private uicon(name: string, emoji: string): string {
-    return this.art && artTexture(`ui.${name}`) ? `<img class="ri" src="assets/sprites/ui/${name}.png" alt="${emoji}">` : emoji;
+  private uicon(name: string, emoji: string, file = name): string {
+    return this.art && artTexture(`ui.${name}`) ? `<img class="ri" src="assets/sprites/ui/${file}.png" alt="${emoji}">` : emoji;
   }
 
   /** Icon of a faction's stance (peace, war, alliance, merged). */
@@ -1572,7 +1572,7 @@ export class Ui {
           const { icon, name } = t === "terrain" ? { icon: "🌱", name: "Gelände" } : BUILDING_CATEGORIES[t];
           // A dot marks tabs with something that can be built right now.
           const ready = t !== "terrain" && buildable.some((b) => BUILDINGS[b].category === t && !buildBlocker(state, planet, s, b));
-          const art = t === "terrain" ? this.ticon("plantTrees", icon) : this.uicon(`category-${t}`, icon);
+          const art = t === "terrain" ? this.ticon("plantTrees", icon) : this.uicon(`category-${t}`, icon, `icon-category-${t}`); // art id ui.category-*, file icon-category-*
           return `<button class="tab${t === tab ? " on" : ""}" data-action="buildTab" data-value="${t}" title="${name}" aria-label="${name}">${art}${ready ? `<i class="dot"></i>` : ""}</button>`;
         })
         .join("");
