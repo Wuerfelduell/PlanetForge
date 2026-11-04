@@ -240,7 +240,6 @@ export const BUILDINGS = {
     description: "Senkt die Verschmutzung des Planeten.",
     art: "air-filter",
     biomes: "any-land",
-    requires: "ecology",
     tiers: [{ cost: { steel: 10, glass: 5, stone: 20 }, unlockLevel: 5, buildSeconds: 10, workers: 0, energy: -1, pollution: -0.12 }],
   },
   "hydro-farm": {
@@ -290,7 +289,6 @@ export const BUILDINGS = {
     description: "Sehr viel Energie aus wenig Uran, ganz ohne Verschmutzung.",
     art: "power-atomic",
     biomes: "any-land",
-    requires: "atomic-power",
     tiers: [
       { cost: { concrete: 40, steel: 30, electronics: 5 }, unlockLevel: 9, buildSeconds: 20, workers: 2, energy: 15, upkeep: { uranium: 0.02 } },
     ],

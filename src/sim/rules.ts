@@ -176,7 +176,7 @@ export function energySupply(planet: PlanetState, segment: SegmentState, workers
   if (!def?.energy || def.energy <= 0) return 0;
   if (def.burns && !(economy && economy.resources[def.burns.resource] > 0)) return 0;
   const crew = def.workers > 0 ? Math.min(1, workers / def.workers) : 1;
-  return def.energy * adjacencyMultiplier(planet, segment) * crew;
+  return modified(economy, "energyOutput", def.energy, { building: segment.building! }) * adjacencyMultiplier(planet, segment) * crew;
 }
 
 /** Power a segment draws: always for unmanned consumers (housing), else only while somebody works there. */
@@ -280,6 +280,11 @@ export function foodOutputMul(resource: ResourceId): number {
   return resource === "food" ? RULES.foodOutputMul : 1;
 }
 
+/** Goods per deposit unit a building extracts (deep drilling, crystal lore): the field lasts longer. */
+export function depositYield(economy: EconomyState | undefined, segment: SegmentState, resource: ResourceId): number {
+  return segment.building ? modified(economy, "depositYield", 1, { building: segment.building, resource }) : 1;
+}
+
 export function segmentOutput(planet: PlanetState, segment: SegmentState, workers: number, economy?: EconomyState): Partial<Record<ResourceId, number>> {
   const out: Partial<Record<ResourceId, number>> = {};
   if (workers <= 0) return out;
@@ -293,7 +298,7 @@ export function segmentOutput(planet: PlanetState, segment: SegmentState, worker
   if (def?.extracts) {
     const available = segment.deposits.filter((d) => def.extracts!.resources.includes(d.resource) && (d.infinite || d.amount > 0));
     // Workers split evenly over everything the building can reach.
-    for (const d of available) out[d.resource] = ((def.extracts.perWorker * workers * mult) / available.length) * bonus(d.resource);
+    for (const d of available) out[d.resource] = ((def.extracts.perWorker * workers * mult) / available.length) * bonus(d.resource) * depositYield(economy, segment, d.resource);
   }
   if (def?.crafts) {
     const recipe = RECIPES[segmentRecipe(segment)!];
@@ -596,7 +601,11 @@ export function shieldBlocker(state: GameState, playerId: string, from: PlanetSt
 export function shieldFlightPlan(from: PlanetState, repair: boolean, economy?: EconomyState): FlightPlan {
   const plan = flightPlan(from, SUN_POSITION, "colony", SUPERNOVA.crew, economy);
   const cost = { ...plan.cost };
-  for (const [r, v] of Object.entries(repair ? SUPERNOVA.repairCost : SUPERNOVA.segmentCost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) + (v as number);
+  // Shell statics make the materials cheaper (not the research or the fuel).
+  for (const [r, v] of Object.entries(repair ? SUPERNOVA.repairCost : SUPERNOVA.segmentCost)) {
+    const n = r === "science" ? (v as number) : Math.ceil(modified(economy, "shieldCost", v as number) - 1e-9);
+    cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) + n;
+  }
   // The colony rocket price is not paid twice: the crew rides a shuttle.
   for (const [r, v] of Object.entries(ROCKETS.colony.cost)) cost[r as ResourceId] = (cost[r as ResourceId] ?? 0) - (v as number);
   return { ...plan, cost, seconds: plan.seconds + SUPERNOVA.flightSeconds };

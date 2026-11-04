@@ -1,39 +1,54 @@
 import type { BiomeId, ResourceId } from "./resources";
 import type { DiscoveryDef } from "./types";
 
-/** Ids match the discovery icons in the asset brief (art/src/discoveries/). */
+/** Ids match the discovery icons in the asset brief (art/src/discoveries/); new ones fall back to `icon`. */
 export const DISCOVERY_IDS = [
   "swift-feet", "green-thumb", "efficient-housing", "pure-science", "cartography",
-  "medicine", "recycling", "storage-tech", "diplomacy",
-  "ecology", "long-range-sight", "fortification", "survival-kits",
+  "medicine", "recycling",
+  "long-range-sight", "fortification",
   "deep-drilling", "trade-routes",
   "rocketry", "festival", "energy-grid",
   "space-mining", "weather-control",
   "crystal-lore", "automation",
-  "terraforming", "atomic-power",
+  // Pool extension (Seb 2026-11-04: more choices, every one with a real effect).
+  "forestry", "preserves", "fishing-nets", "masonry", "ballistics", "metallurgy",
+  "petrochemistry", "salvage", "shell-statics", "microchips",
   // Late game, levels 11–20 (coop goes on past level 10).
   "genetics", "nanotech", "deep-space-radar", "arcology", "warp-drive", "quantum-computing",
   "force-fields", "biosphere", "golden-age", "matter-replicator", "cloning", "star-forge",
   "galactic-council", "transcendence",
+  "exobiology", "superconductors", "robotics", "orbital-defense",
 ] as const;
 export type DiscoveryId = (typeof DISCOVERY_IDS)[number];
 
 /**
+ * Ids of discoveries that were removed (2026-11-04 audit): they were never offered because the
+ * simulation had nothing for them to do (escape pods, pollution, storage caps, alliances) or
+ * gave something everyone already has (terraforming, the atomic plant unlock by level).
+ * upgradeState() drops them from old saves.
+ */
+export const REMOVED_DISCOVERIES = ["storage-tech", "diplomacy", "ecology", "survival-kits", "terraforming", "atomic-power"] as const;
+
+type Res = ResourceId | "bronze" | "aluminium" | "titanium";
+
+/**
  * Discoveries are side-grades and shortcuts, never required for the main path: every
- * building on the critical path unlocks by ascension level alone. Exceptions are optional
- * buildings (air filter, atomic plant) and hidden deposits (uranium, aetherite on the home
- * planet; on other planets they need the discovery as well).
+ * building on the critical path unlocks by ascension level alone. Every discovery changes
+ * something the simulation uses (discoveries.test.ts checks that each stat is applied);
+ * `when` keeps combat and shield ones out of games without invaders, factions or supernova.
  */
 export const DISCOVERIES = {
   "swift-feet": {
     name: "Flinke Pfoten",
-    description: "Sammeln von Hand +20 %.",
+    icon: "🐾",
+    description: "Sammeln von Hand +30 %.",
     minLevel: 1,
-    modifiers: [{ stat: "handGatherRate", mul: 1.2 }],
+    modifiers: [{ stat: "handGatherRate", mul: 1.3 }],
   },
   "green-thumb": {
     name: "Grüner Daumen",
-    description: "Farmen +25 %, Beeren und Wald wachsen 50 % schneller nach.",
+    icon: "🌱",
+    description: "Farmen +25 %, alle Vorkommen wachsen 50 % schneller nach.",
     minLevel: 1,
     modifiers: [
       { stat: "buildingOutput", mul: 1.25, scope: { building: "farm" } },
@@ -42,24 +57,29 @@ export const DISCOVERIES = {
   },
   "efficient-housing": {
     name: "Gemütlich wohnen",
+    icon: "🛋️",
     description: "+1 Platz in jedem Wohnhaus.",
     minLevel: 1,
     modifiers: [{ stat: "housing", add: 1, scope: { building: "housing" } }],
   },
   "pure-science": {
     name: "Reine Wissenschaft",
-    description: "Alle weiteren Entdeckungen kosten 20 % weniger.",
+    icon: "🔬",
+    description: "Sofort eine weitere Entdeckung zur Wahl, alle weiteren kosten 20 % weniger Wissen.",
     minLevel: 1,
+    extraPicks: 1,
     modifiers: [{ stat: "discoveryCost", mul: 0.8 }],
   },
   cartography: {
     name: "Kartografie",
+    icon: "🗺️",
     description: "Jedes neue Gebäude deckt ein Feld weiter auf.",
     minLevel: 1,
     modifiers: [{ stat: "revealRadius", add: 1 }],
   },
   medicine: {
     name: "Medizin",
+    icon: "💊",
     description: "Nachwuchs kommt 30 % schneller, im Kampf stirbt einer weniger.",
     minLevel: 2,
     modifiers: [
@@ -69,67 +89,55 @@ export const DISCOVERIES = {
   },
   recycling: {
     name: "Recycling",
-    description: "Abriss gibt 90 % statt 50 % der Kosten zurück, Ruinen verschwinden sofort.",
+    icon: "♻️",
+    description: "Abriss gibt 90 % statt 50 % der Kosten zurück.",
     minLevel: 2,
     modifiers: [{ stat: "demolishRefund", add: 0.4 }],
   },
-  "storage-tech": {
-    name: "Lagertechnik",
-    description: "Alle Lagergrenzen +50 %.",
-    minLevel: 2,
-    modifiers: [{ stat: "storage", mul: 1.5 }],
-  },
-  diplomacy: {
-    name: "Diplomatie",
-    description: "Bündnisse werden möglich, Handel bringt 10 % mehr. Gegeneinander: Gefangene werden sofort Teil des eigenen Volks.",
-    minLevel: 2,
-    unlocks: { actions: ["alliance"] },
-    modifiers: [{ stat: "tradeRate", mul: 1.1 }],
-  },
-  ecology: {
-    name: "Ökologie",
-    description: "Schaltet den Luftfilter frei, Verschmutzung baut sich 50 % schneller ab.",
-    minLevel: 3,
-    unlocks: { buildings: ["air-filter"] },
-    modifiers: [{ stat: "pollutionDecay", mul: 1.5 }],
-  },
   "long-range-sight": {
     name: "Fernrohr",
-    description: "+2 Sichtweite auf der Sternkarte.",
+    icon: "🔭",
+    description: "Invasoren werden schon beim Aufbruch entdeckt, Batterien treffen 25 % härter.",
     minLevel: 3,
-    modifiers: [{ stat: "sightRadius", add: 2 }],
+    when: "invaders",
+    modifiers: [
+      { stat: "sightRadius", add: 2 },
+      { stat: "batteryDamage", mul: 1.25 },
+    ],
   },
   fortification: {
     name: "Befestigung",
-    description: "Wachtürme geben +2 extra, +1 auf jeden Kampfwurf (Schilde gegen Angriffe anderer Spieler).",
+    icon: "🏰",
+    description: "Wachtürme geben +2 extra, +1 auf jeden Kampfwurf.",
     minLevel: 3,
+    when: "combat",
     modifiers: [
       { stat: "battleRoll", add: 2, scope: { building: "watchtower" } },
       { stat: "battleRoll", add: 1 },
     ],
   },
-  "survival-kits": {
-    name: "Notfallkisten",
-    description: "Rettungskapseln geben doppelt so viel, neue Kolonien starten mit 20 Holz und 20 Nahrung.",
-    minLevel: 3,
-    modifiers: [{ stat: "escapePodReward", mul: 2 }],
-  },
   "deep-drilling": {
     name: "Tiefbohrung",
-    description: "Minen-Vorkommen +50 %, Uran in der Tundra wird sichtbar.",
+    icon: "⛏️",
+    description: "Minen und Tiefbohrer holen 25 % mehr aus jedem Vorkommen, bevor es erschöpft ist.",
     minLevel: 4,
-    modifiers: [{ stat: "depositMax", mul: 1.5, scope: { building: "mine" } }],
+    modifiers: [
+      { stat: "depositYield", mul: 1.25, scope: { building: "mine" } },
+      { stat: "depositYield", mul: 1.25, scope: { building: "deep-drill" } },
+    ],
   },
   "trade-routes": {
     name: "Handelswege",
-    description: "Handel bringt 25 % mehr.",
+    icon: "🐪",
+    description: "Handel mit Fraktionen bringt 25 % mehr.",
     minLevel: 4,
+    when: "factions",
     modifiers: [{ stat: "tradeRate", mul: 1.25 }],
   },
   rocketry: {
     name: "Raketentechnik",
-    description:
-      "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr. Gegeneinander: +1 auf Angriffswürfe.",
+    icon: "🚀",
+    description: "Raketen brauchen 25 % weniger Treibstoff und tragen einen Einwohner mehr.",
     minLevel: 2,
     modifiers: [
       { stat: "rocketFuel", mul: 0.75 },
@@ -138,81 +146,171 @@ export const DISCOVERIES = {
   },
   festival: {
     name: "Volksfest",
-    description: "+10 % Aufstiegspunkte pro Umlauf.",
+    icon: "🎉",
+    description: "+15 % Aufstiegspunkte von den Einwohnern pro Umlauf.",
     minLevel: 5,
-    modifiers: [{ stat: "ascensionPerCycle", mul: 1.1 }],
+    modifiers: [{ stat: "ascensionPerCycle", mul: 1.15 }],
   },
   "energy-grid": {
     name: "Stromnetz",
-    description: "Alle Kraftwerke +20 %.",
+    icon: "🔌",
+    description: "Alle Kraftwerke liefern 25 % mehr Strom.",
     minLevel: 5,
-    modifiers: [{ stat: "energyOutput", mul: 1.2 }],
+    modifiers: [{ stat: "energyOutput", mul: 1.25 }],
   },
   "space-mining": {
     name: "Weltraumbergbau",
+    icon: "☄️",
     description: "Asteroiden werden sichtbar und besiedelbar.",
     minLevel: 6,
     unlocks: { actions: ["colonize-asteroid"] },
   },
   "weather-control": {
     name: "Wetterkontrolle",
+    icon: "🌦️",
     description: "Alle Vorkommen wachsen doppelt so schnell nach.",
     minLevel: 6,
     modifiers: [{ stat: "regenRate", mul: 2 }],
   },
   "crystal-lore": {
     name: "Kristallkunde",
-    description: "Ätherit auf Kristallfeldern wird sichtbar, Ätherit-Abbau +20 %.",
+    icon: "💎",
+    description: "Ätherit-Vorkommen geben 50 % mehr her.",
     minLevel: 7,
-    modifiers: [{ stat: "buildingOutput", mul: 1.2, scope: { resource: "aetherite" } }],
+    modifiers: [{ stat: "depositYield", mul: 1.5, scope: { resource: "aetherite" } }],
   },
   automation: {
     name: "Automatisierung",
-    description: "In jedem Produktionsgebäude kann ein Automat einen Einwohner ersetzen. Jeder Automat braucht 2 Energie.",
+    icon: "🤖",
+    description: "Alle Werkstätten und Fabriken arbeiten 25 % schneller.",
     minLevel: 7,
-    modifiers: [{ stat: "automatonSlots", add: 1 }],
+    modifiers: [{ stat: "craftSpeed", mul: 1.25 }],
   },
-  terraforming: {
-    name: "Terraforming",
-    description: "Erschöpfte Felder lassen sich für 20 Wasser und 10 Beton wieder zu Wald oder Savanne machen.",
-    minLevel: 8,
-    unlocks: { actions: ["terraform"] },
+  forestry: {
+    name: "Forstwirtschaft",
+    icon: "🪓",
+    description: "Holz +30 %, Wälder wachsen 50 % schneller nach.",
+    minLevel: 1,
+    modifiers: [
+      { stat: "handGatherRate", mul: 1.3, scope: { resource: "wood" } },
+      { stat: "buildingOutput", mul: 1.3, scope: { resource: "wood" } },
+      { stat: "regenRate", mul: 1.5, scope: { resource: "wood" } },
+    ],
   },
-  "atomic-power": {
-    name: "Kernkraft",
-    description: "Schaltet das Atomkraftwerk frei.",
-    minLevel: 9,
-    unlocks: { buildings: ["power-atomic"] },
+  preserves: {
+    name: "Vorratshaltung",
+    icon: "🥫",
+    description: "Alle Einwohner brauchen 15 % weniger Nahrung.",
+    minLevel: 2,
+    modifiers: [{ stat: "foodUpkeep", mul: 0.85 }],
+  },
+  "fishing-nets": {
+    name: "Schleppnetze",
+    icon: "🎣",
+    description: "Fischereien fangen 40 % mehr.",
+    minLevel: 2,
+    modifiers: [{ stat: "buildingOutput", mul: 1.4, scope: { building: "fishery" } }],
+  },
+  masonry: {
+    name: "Baukunst",
+    icon: "🧱",
+    description: "Gebäude und Ausbauten kosten 15 % weniger.",
+    minLevel: 3,
+    modifiers: [{ stat: "buildCost", mul: 0.85 }],
+  },
+  ballistics: {
+    name: "Ballistik",
+    icon: "🎯",
+    description: "Batterien und Raketenwerfer treffen Invasoren 50 % härter.",
+    minLevel: 4,
+    when: "invaders",
+    modifiers: [{ stat: "batteryDamage", mul: 1.5 }],
+  },
+  metallurgy: {
+    name: "Metallurgie",
+    icon: "⚒️",
+    description: "Stahl, Bronze, Aluminium und Titan +25 %.",
+    minLevel: 4,
+    modifiers: [
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "steel" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "bronze" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "aluminium" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "titanium" } },
+    ],
+  },
+  petrochemistry: {
+    name: "Petrochemie",
+    icon: "🛢️",
+    description: "Ölfelder geben 30 % mehr her, Treibstoff und Plastik +25 %.",
+    minLevel: 5,
+    modifiers: [
+      { stat: "depositYield", mul: 1.3, scope: { resource: "oil" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "fuel" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "plastic" } },
+    ],
+  },
+  salvage: {
+    name: "Bergungstechnik",
+    icon: "🧲",
+    description: "Besiegte Invasoren hinterlassen doppelt so viel Beute.",
+    minLevel: 5,
+    when: "invaders",
+    modifiers: [{ stat: "invaderLoot", mul: 2 }],
+  },
+  "shell-statics": {
+    name: "Hüllenstatik",
+    icon: "🌞",
+    description: "Segmente der Sonnenschutzhülle und ihre Reparatur kosten 30 % weniger.",
+    minLevel: 6,
+    when: "supernova",
+    modifiers: [{ stat: "shieldCost", mul: 0.7 }],
+  },
+  microchips: {
+    name: "Mikroelektronik",
+    icon: "💾",
+    description: "Kupferdraht, Elektronik und Computer +25 %.",
+    minLevel: 7,
+    modifiers: [
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "wire" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "electronics" } },
+      { stat: "buildingOutput", mul: 1.25, scope: { resource: "computer" } },
+    ],
   },
   genetics: {
     name: "Genetik",
+    icon: "🧬",
     description: "Nachwuchs kommt 20 % schneller.",
     minLevel: 11,
     modifiers: [{ stat: "birthTime", mul: 0.8 }],
   },
   nanotech: {
     name: "Nanotechnik",
+    icon: "🔩",
     description: "Alle Gebäude produzieren 15 % mehr.",
     minLevel: 11,
     modifiers: [{ stat: "buildingOutput", mul: 1.15 }],
   },
   "deep-space-radar": {
     name: "Tiefraumradar",
-    description: "+4 Sichtweite auf der Sternkarte, jedes neue Gebäude deckt ein Feld weiter auf.",
+    icon: "📡",
+    description: "Invasoren werden schon beim Aufbruch entdeckt, Batterien und Raketenwerfer treffen 50 % härter.",
     minLevel: 12,
+    when: "invaders",
     modifiers: [
       { stat: "sightRadius", add: 4 },
-      { stat: "revealRadius", add: 1 },
+      { stat: "batteryDamage", mul: 1.5 },
     ],
   },
   arcology: {
     name: "Arkologie",
+    icon: "🏙️",
     description: "+2 Plätze in jedem Wohnhaus.",
     minLevel: 12,
     modifiers: [{ stat: "housing", add: 2, scope: { building: "housing" } }],
   },
   "warp-drive": {
     name: "Warpantrieb",
+    icon: "🌀",
     description: "Raketen brauchen 40 % weniger Treibstoff und tragen zwei Einwohner mehr.",
     minLevel: 13,
     modifiers: [
@@ -222,14 +320,18 @@ export const DISCOVERIES = {
   },
   "quantum-computing": {
     name: "Quantenrechner",
-    description: "Alle weiteren Entdeckungen kosten 25 % weniger.",
+    icon: "🧮",
+    description: "Sofort eine weitere Entdeckung zur Wahl, alle weiteren kosten 25 % weniger Wissen.",
     minLevel: 13,
+    extraPicks: 1,
     modifiers: [{ stat: "discoveryCost", mul: 0.75 }],
   },
   "force-fields": {
     name: "Kraftfelder",
+    icon: "🛡️",
     description: "+2 auf jeden Kampfwurf, im Kampf stirbt einer weniger.",
     minLevel: 14,
+    when: "combat",
     modifiers: [
       { stat: "battleRoll", add: 2 },
       { stat: "battleLosses", add: -1 },
@@ -237,6 +339,7 @@ export const DISCOVERIES = {
   },
   biosphere: {
     name: "Biosphäre",
+    icon: "🌍",
     description: "Farmen +25 %, alle Vorkommen wachsen 50 % schneller nach.",
     minLevel: 14,
     modifiers: [
@@ -246,31 +349,36 @@ export const DISCOVERIES = {
   },
   "golden-age": {
     name: "Goldenes Zeitalter",
-    description: "+20 % Aufstiegspunkte pro Umlauf.",
+    icon: "👑",
+    description: "+20 % Aufstiegspunkte von den Einwohnern pro Umlauf.",
     minLevel: 15,
     modifiers: [{ stat: "ascensionPerCycle", mul: 1.2 }],
   },
   "matter-replicator": {
     name: "Materiewandler",
-    description: "Sammeln von Hand +50 %.",
+    icon: "⚗️",
+    description: "Gebäude und Ausbauten kosten 25 % weniger.",
     minLevel: 16,
-    modifiers: [{ stat: "handGatherRate", mul: 1.5 }],
+    modifiers: [{ stat: "buildCost", mul: 0.75 }],
   },
   cloning: {
     name: "Klonlabor",
+    icon: "🧪",
     description: "Nachwuchs kommt 25 % schneller.",
     minLevel: 17,
     modifiers: [{ stat: "birthTime", mul: 0.75 }],
   },
   "star-forge": {
     name: "Sternenschmiede",
+    icon: "✨",
     description: "Alle Gebäude produzieren 20 % mehr.",
     minLevel: 18,
     modifiers: [{ stat: "buildingOutput", mul: 1.2 }],
   },
   "galactic-council": {
     name: "Galaktischer Rat",
-    description: "+25 % Aufstiegspunkte pro Umlauf, Entdeckungen kosten 20 % weniger.",
+    icon: "🌌",
+    description: "+25 % Aufstiegspunkte von den Einwohnern pro Umlauf, Entdeckungen kosten 20 % weniger.",
     minLevel: 19,
     modifiers: [
       { stat: "ascensionPerCycle", mul: 1.25 },
@@ -279,14 +387,50 @@ export const DISCOVERIES = {
   },
   transcendence: {
     name: "Transzendenz",
-    description: "Die höchste Erkenntnis: +50 % Aufstiegspunkte, alle Gebäude +25 %.",
+    icon: "🌟",
+    description: "Die höchste Erkenntnis: +50 % Aufstiegspunkte von den Einwohnern, alle Gebäude +25 %.",
     minLevel: 20,
     modifiers: [
       { stat: "ascensionPerCycle", mul: 1.5 },
       { stat: "buildingOutput", mul: 1.25 },
     ],
   },
-} as const satisfies Record<DiscoveryId, DiscoveryDef<ResourceId, BiomeId>>;
+  exobiology: {
+    name: "Exobiologie",
+    icon: "🦠",
+    description: "Alle Einwohner brauchen 20 % weniger Nahrung, Raumanzüge halten doppelt so lange.",
+    minLevel: 11,
+    modifiers: [
+      { stat: "foodUpkeep", mul: 0.8 },
+      { stat: "suitWear", mul: 0.5 },
+    ],
+  },
+  superconductors: {
+    name: "Supraleiter",
+    icon: "⚡",
+    description: "Alle Kraftwerke liefern 30 % mehr Strom.",
+    minLevel: 12,
+    modifiers: [{ stat: "energyOutput", mul: 1.3 }],
+  },
+  robotics: {
+    name: "Robotik",
+    icon: "🦾",
+    description: "Alle Werkstätten und Fabriken arbeiten 30 % schneller.",
+    minLevel: 14,
+    modifiers: [{ stat: "craftSpeed", mul: 1.3 }],
+  },
+  "orbital-defense": {
+    name: "Orbitalabwehr",
+    icon: "🛰️",
+    description: "Batterien und Raketenwerfer treffen doppelt so hart, +1 auf jeden Kampfwurf.",
+    minLevel: 15,
+    when: "invaders",
+    modifiers: [
+      { stat: "batteryDamage", mul: 2 },
+      { stat: "battleRoll", add: 1 },
+    ],
+  },
+} as const satisfies Record<DiscoveryId, DiscoveryDef<Res, BiomeId>>;
 
 export const DISCOVERY_RULES = {
   /** Cost of the n-th discovery bought (0-based): round(baseCost × growth^n). */

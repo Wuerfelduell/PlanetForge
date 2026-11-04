@@ -19,7 +19,7 @@ import {
 import { Rng, seedFromString } from "./rng";
 import { appendLog, advanceInPlace } from "./step";
 import { createUnit } from "./units";
-import { syncPeoples } from "./discoveries";
+import { dropRemovedDiscoveries, syncPeoples } from "./discoveries";
 import { growSystems } from "./galaxy";
 import { PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
 import { ringDistance } from "./rules";
@@ -593,6 +593,8 @@ export function upgradeState(state: unknown): GameState | null {
   // Seb: neighbor systems have 7–12 planets now; systems found before get the rest.
   growSystems(s);
   syncPeoples(s);
+  // 2026-11-04: discoveries without any effect were removed.
+  dropRemovedDiscoveries(s);
   (s as { version: number }).version = 12;
   return s;
 }

@@ -110,6 +110,7 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
     const planet = planetById(state, inv.target)!;
     const residents = Object.values(state.units).filter((u) => u.planetId === planet.id);
     const stock = economyOf(state, planet) ?? economy;
+    let battery = 0;
     for (const s of planet.segments) {
       const stats = buildingStats(s);
       if (!stats?.battery) continue;
@@ -119,8 +120,10 @@ function siegeRound(state: GameState, economy: EconomyState, inv: Invasion, rng:
         crew = Math.min(crew, Math.floor(stock.resources[stats.ammo.resource] / stats.ammo.perShot));
         stock.resources[stats.ammo.resource] -= crew * stats.ammo.perShot;
       }
-      damage += stats.battery * crew;
+      battery += modified(stock, "batteryDamage", stats.battery, { building: s.building! }) * crew;
     }
+    // Whole hits only; ballistics turns 2 worked batteries into 3 hits.
+    damage += Math.round(battery);
     const defenders = residents.filter((u) => u.segment === null).slice(0, 10);
     const defense = planetDefense(state, planet);
     for (const d of defenders) {
@@ -199,8 +202,9 @@ function hasResidents(state: GameState, planetId: string): boolean {
 function defeated(state: GameState, economy: EconomyState, inv: Invasion, rng: Rng, events: GameEvent[]): void {
   const loot: Partial<Record<ResourceId, number>> = {};
   for (const [r, v] of Object.entries(INVADERS.reward) as [ResourceId, number][]) {
-    economy.resources[r] += v * inv.wave;
-    loot[r] = v * inv.wave;
+    const n = Math.round(modified(economy, "invaderLoot", v * inv.wave));
+    economy.resources[r] += n;
+    loot[r] = n;
   }
   events.push({ type: "invasionDefeated", target: inv.target, wave: inv.wave, loot });
   endInvasion(state, rng);

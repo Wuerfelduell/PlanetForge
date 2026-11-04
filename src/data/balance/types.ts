@@ -177,7 +177,18 @@ export type StatKey =
   | "demolishRefund"
   | "escapePodReward"
   | "automatonSlots"
-  | "suitWear";
+  | "suitWear"
+  /** Hits per worker of batteries and missile launchers against invaders. */
+  | "batteryDamage"
+  /** Material cost of supernova shield segments and repairs. */
+  | "shieldCost"
+  /** Loot from a defeated invader fleet. */
+  | "invaderLoot"
+  /** Goods won per unit a building takes out of a deposit (more from the same field, not just faster). */
+  | "depositYield";
+
+/** Game settings a discovery only makes sense with; it is not offered otherwise. */
+export type DiscoveryCondition = "invaders" | "combat" | "factions" | "supernova";
 
 export interface PeopleDef<R extends string = string, B extends string = string> {
   name: string;
@@ -196,8 +207,14 @@ export interface PeopleDef<R extends string = string, B extends string = string>
 export interface DiscoveryDef<R extends string = string, B extends string = string> {
   name: string;
   description: string;
+  /** Emoji shown until (or instead of) the discovery's art. */
+  icon: string;
   /** Can be offered from this ascension level on. */
   minLevel: number;
+  /** Only offered in games where this matters (e.g. invaders switched on). */
+  when?: DiscoveryCondition;
+  /** Extra choices granted the moment it is discovered (science piles up; picks are what is scarce). */
+  extraPicks?: number;
   modifiers?: Modifier<R, B>[];
   unlocks?: { buildings?: string[]; recipes?: string[]; actions?: string[] };
 }

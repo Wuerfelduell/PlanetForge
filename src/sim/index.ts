@@ -18,7 +18,7 @@ export { applyCommand } from "./commands";
 export { NOT_SCORCHED, TERRAFORM, TERRAFORM_START_FILL, terraformBlocker, type TerraformDef } from "./terraform";
 export { novaTickNow } from "./invaders";
 export { activeFactions, atWar, attitudeLabel, bundleSize, FACTIONS, factionById, factionEconomy, factionOfEconomy, markup, PERSONALITY_NAMES, sellable, STANCE_NAMES, strength, TEAM_ECONOMY, tradeQuote, type TradeQuote, VOTE_NAMES, voters } from "./diplomacy";
-export { discoveryCost, discoveryDescription, discoveryName, modified, OFFERABLE, type DiscoveryId } from "./discoveries";
+export { discoveryCost, discoveryDescription, discoveryIcon, discoveryName, discoveryUseful, modified, OFFERABLE, type DiscoveryId } from "./discoveries";
 export { advance, advanceOwnedWithEvents, advanceWithEvents } from "./step";
 export { nextRandom, Rng, seedFromString } from "./rng";
 export { allPlanets, coreAccessBlocker, coreHazard, coreOf, coreWorkers, drillProgress, freeDeepSuits, shaftOpen, surfaceOf } from "./core";

@@ -54,7 +54,7 @@ import {
   type SegmentState,
 } from "../../src/sim/index";
 import { resourceValue } from "../../src/sim/diplomacy";
-import { modified } from "../../src/sim/discoveries";
+import { DISCOVERIES, modified } from "../../src/sim/discoveries";
 import { writeFileSync, mkdirSync } from "node:fs";
 
 type Strategy = "smart" | "naive";
@@ -72,6 +72,10 @@ interface Cfg {
   aggressor?: number;
   /** Pull workers off a deposit before it runs dry (untouched deposits regrow, empty ones never). */
   careful?: boolean;
+  /** Discovery A/B test: "none" never votes for an offered discovery. */
+  discoveries?: "vote" | "none";
+  /** Discoveries granted for free as soon as the economy reaches their minLevel (A/B test). */
+  grant?: string[];
   out: string;
 }
 
@@ -1062,11 +1066,14 @@ function attack(eid: string) {
 
 // ---------------------------------------------------------------- misc
 
-const DISCOVERY_PRIORITY = ["green-thumb", "efficient-housing", "medicine", "space-mining", "pure-science", "long-range-sight", "fortification", "energy-grid", "automation", "festival", "recycling", "storage-tech", "deep-drilling", "rocketry", "crystal-lore", "swift-feet"];
+const DISCOVERY_PRIORITY = ["pure-science", "green-thumb", "efficient-housing", "masonry", "preserves", "medicine", "ballistics", "space-mining", "festival", "automation", "energy-grid", "metallurgy", "deep-drilling", "shell-statics", "quantum-computing", "nanotech", "arcology", "matter-replicator", "robotics", "star-forge", "long-range-sight", "fortification", "forestry", "petrochemistry", "microchips", "recycling", "rocketry", "crystal-lore", "swift-feet"];
 
 function discoveries(eid: string) {
   const econ = g.economies[eid]!;
-  if (!econ.offer) return;
+  for (const id of cfg.grant ?? []) {
+    if (!econ.discoveries.includes(id) && (DISCOVERIES as Record<string, { minLevel: number }>)[id]!.minLevel <= econ.ascension.level) econ.discoveries.push(id);
+  }
+  if (!econ.offer || cfg.discoveries === "none") return;
   const opts = econ.offer.options;
   const pick = [...opts].sort((a, b) => rank(a) - rank(b))[0]!;
   for (const m of membersOf(eid)) if (econ.offer?.votes[m.id] !== pick) run(m.id, { type: "voteDiscovery", discovery: pick });
