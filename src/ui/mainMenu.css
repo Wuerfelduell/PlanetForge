@@ -8,26 +8,57 @@
   padding: calc(env(safe-area-inset-top) + 16px) max(16px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 16px) max(16px, env(safe-area-inset-left));
   /* The planet keeps turning behind the menu. */
   background: radial-gradient(circle at 50% 40%, rgba(14, 16, 34, 0.35), rgba(5, 6, 16, 0.85) 70%);
-  overflow-y: auto;
+  --menu-line: rgba(255, 255, 255, 0.08);
+  --menu-tile: rgba(255, 255, 255, 0.06);
+  --menu-on: #3a3f6e;
 }
 
+/* Card: fixed title row, scrolling content, fixed bottom row (the start button never scrolls away). */
 #main-menu .menu-card {
   width: min(440px, 100%);
   max-height: 100%;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px 16px;
-  border-radius: 20px;
-  background: rgba(14, 16, 34, 0.88);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(6px);
+  border-radius: 22px;
+  border: 1px solid var(--menu-line);
+  background: linear-gradient(180deg, rgba(26, 29, 58, 0.92), rgba(14, 16, 34, 0.94));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
 }
+#main-menu .menu-card.enter { animation: menu-in 0.22s ease-out; }
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { #main-menu .menu-card.enter { animation: none; } }
 #main-menu .menu-card.busy { cursor: progress; }
 #main-menu .menu-card.busy button { opacity: 0.6; pointer-events: none; }
 
-#main-menu .menu-title { text-align: center; margin-bottom: 6px; }
+#main-menu .menu-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 16px 16px;
+}
+#main-menu .menu-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--menu-line);
+  background: rgba(10, 12, 26, 0.55);
+}
+#main-menu .screen-home .menu-foot { border-top: 0; background: none; padding-top: 0; }
+
+/* Title screen header. */
+#main-menu .menu-title { text-align: center; padding: 18px 16px 8px; }
 #main-menu h1 {
   margin: 0;
   font-size: 34px;
@@ -35,27 +66,77 @@
   color: var(--accent);
   text-shadow: 0 2px 18px rgba(255, 209, 102, 0.35);
 }
+#main-menu .menu-logo { display: block; width: min(300px, 80%); height: auto; margin: -6px auto -4px; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45)); }
+#main-menu .menu-logo.small { width: 72px; margin: 0 auto 4px; }
 #main-menu .menu-title p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+#main-menu .menu-fine { margin: 0; text-align: center; color: var(--muted); font-size: 12px; opacity: 0.8; }
+
+/* Sub screen header: back arrow + title. */
+#main-menu .menu-head { display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px; border-bottom: 1px solid var(--menu-line); }
+#main-menu .menu-head h2 { flex: 1; margin: 0; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+#main-menu .menu-back {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  border-radius: 12px;
+  background: var(--menu-tile);
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#main-menu .menu-back.close { font-size: 18px; }
 #main-menu h2 { margin: 0 0 4px; font-size: 20px; }
 #main-menu p { margin: 0; }
 
+/* Buttons: soft hover and a small press. */
+#main-menu button { transition: transform 0.08s ease, background-color 0.15s ease, box-shadow 0.15s ease; }
+#main-menu button:active:not(:disabled) { transform: scale(0.97); }
+#main-menu button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) {
+  #main-menu .menu-item:hover:not(.primary), #main-menu .menu-choice:hover:not(.on):not(:disabled), #main-menu .menu-chip:hover:not(.on), #main-menu .menu-back:hover, #main-menu button.secondary:hover { background: #30355f; }
+}
+
+/* Big entries of the title and pause screen. */
 #main-menu .menu-list { display: flex; flex-direction: column; gap: 8px; }
 #main-menu .menu-item {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 12px 14px;
-  border-radius: 14px;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--menu-line);
   background: var(--surface-2);
   text-align: left;
   font-size: 17px;
 }
-#main-menu .menu-item small { color: var(--muted); font-size: 13px; }
-#main-menu .menu-item.primary { background: var(--accent); color: #1a1d2e; font-weight: 700; }
-#main-menu .menu-item.primary small { color: #4a4330; font-weight: 400; }
+#main-menu .mi-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--menu-tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+#main-menu .mi-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+#main-menu .mi-text b { font-weight: 600; }
+#main-menu .mi-text small { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
+#main-menu .mi-chev { flex: none; font-size: 24px; color: var(--muted); opacity: 0.7; }
+#main-menu .menu-item.primary { background: var(--accent); color: #1a1d2e; border-color: transparent; box-shadow: 0 6px 20px rgba(255, 179, 92, 0.25); }
+#main-menu .menu-item.primary b { font-weight: 800; }
+#main-menu .menu-item.primary small, #main-menu .menu-item.primary .mi-chev { color: #4a4330; }
+#main-menu .menu-item.primary .mi-icon { background: rgba(255, 255, 255, 0.3); }
 
-#main-menu .menu-label { color: var(--muted); font-size: 13px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+/* Sections of the new-game and settings screens. */
+#main-menu .menu-section { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; border-radius: 16px; background: rgba(255, 255, 255, 0.035); border: 1px solid var(--menu-line); }
+#main-menu .menu-label { color: var(--muted); font-size: 12px; font-weight: 600; margin: 2px 0 0; text-transform: uppercase; letter-spacing: 0.08em; }
 #main-menu .menu-choices { display: flex; gap: 8px; }
 #main-menu .menu-choice {
   flex: 1;
@@ -63,17 +144,34 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
+  margin: 0;
   padding: 10px 6px;
   border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--surface-2);
   text-align: center;
+  font-weight: 600;
 }
-#main-menu .menu-choice small { color: var(--muted); font-size: 12px; }
-#main-menu .menu-choice.on { outline: 2px solid var(--accent); background: #34385f; }
+#main-menu .menu-choices.compact .menu-choice { padding: 8px 6px; }
+#main-menu .menu-choice .ci { display: flex; align-items: center; justify-content: center; height: 34px; font-size: 26px; line-height: 1; }
+#main-menu .menu-choice small { color: var(--muted); font-size: 12px; font-weight: 400; }
+#main-menu .menu-choice.on { border-color: var(--accent); background: var(--menu-on); box-shadow: 0 0 0 1px var(--accent), 0 4px 14px rgba(255, 209, 102, 0.15); }
+#main-menu .menu-choice:disabled { opacity: 0.45; }
 
-#main-menu .menu-actions { display: flex; gap: 8px; margin-top: 8px; }
-#main-menu .menu-actions button { flex: 1; padding: 12px; border-radius: 12px; margin: 0; }
-#main-menu button.primary { background: var(--accent); color: #1a1d2e; font-weight: 700; }
+/* Folded sections (world options, key list). */
+#main-menu .menu-fold > summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; gap: 2px; padding-right: 26px; position: relative; }
+#main-menu .menu-fold > summary::-webkit-details-marker { display: none; }
+#main-menu .menu-fold > summary::after { content: "▾"; position: absolute; right: 2px; top: 50%; transform: translateY(-50%); color: var(--muted); transition: transform 0.15s; }
+#main-menu .menu-fold[open] > summary::after { transform: translateY(-50%) rotate(180deg); }
+#main-menu .menu-fold > summary small { color: var(--text); font-size: 13px; opacity: 0.85; }
+
+#main-menu .menu-actions { display: flex; gap: 8px; }
+#main-menu .menu-actions button { flex: 1; padding: 12px; border-radius: 14px; margin: 0; font-size: 16px; }
+#main-menu .menu-actions button.primary { flex: 1.6; }
+#main-menu button.secondary { background: var(--surface-2); border: 1px solid var(--menu-line); }
+#main-menu button.primary { background: var(--accent); color: #1a1d2e; font-weight: 800; }
 #main-menu button.danger { background: var(--bad); color: #fff; }
 
 #main-menu .menu-confirm {
@@ -84,26 +182,38 @@
   padding: 10px;
   border-radius: 12px;
   background: rgba(255, 107, 107, 0.12);
+  border: 1px solid rgba(255, 107, 107, 0.35);
 }
 #main-menu .menu-confirm span { flex-basis: 100%; }
+#main-menu .menu-confirm button { flex: 1; margin: 0; }
 
-#main-menu .menu-field { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; }
+#main-menu .menu-field { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 4px 0; }
 #main-menu .menu-field > span, #main-menu .menu-field > label { min-width: 110px; }
 #main-menu .menu-field input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--accent); }
 #main-menu .menu-field input:not([type]) {
   flex: 1;
   min-width: 0;
-  border: 1px solid var(--surface-2);
+  border: 1px solid var(--menu-line);
   border-radius: 10px;
-  padding: 8px 10px;
-  background: var(--surface);
+  padding: 9px 10px;
+  background: rgba(0, 0, 0, 0.25);
   color: var(--text);
   font: inherit;
   font-size: 16px;
+  user-select: text;
+  -webkit-user-select: text;
 }
+#main-menu .menu-field input:not([type]):focus { outline: 2px solid var(--accent); outline-offset: 0; }
 #main-menu input[type="checkbox"] { accent-color: var(--accent); width: 18px; height: 18px; vertical-align: -3px; }
 #main-menu .menu-note { color: var(--muted); font-size: 13px; }
-#main-menu .menu-error { color: var(--bad); }
+#main-menu .center { text-align: center; }
+#main-menu .menu-error { color: var(--bad); padding: 8px 10px; border-radius: 12px; background: rgba(255, 107, 107, 0.12); }
+
+/* Credits */
+#main-menu .credits { align-items: stretch; text-align: center; }
+#main-menu .menu-credits { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; margin: 4px 0 0; text-align: left; font-size: 14px; }
+#main-menu .menu-credits dt { color: var(--accent); font-weight: 700; }
+#main-menu .menu-credits dd { margin: 0; color: var(--muted); }
 
 /* Opens the menu during the game. */
 #menu-button { min-width: 38px; background: var(--surface); }
@@ -126,53 +236,61 @@ body.menu-open #hud, body.menu-open #panel, body.menu-open #chat-button { visibi
       var(--bg);
   }
 }
-#main-menu.art .menu-card { background: rgba(14, 16, 34, 0.78); }
+#main-menu.art .menu-card { background: linear-gradient(180deg, rgba(26, 29, 58, 0.86), rgba(14, 16, 34, 0.9)); }
 #main-menu .menu-icon { width: 1.4em; height: 1.4em; vertical-align: -0.35em; }
-#main-menu h2 .menu-icon { width: 1.3em; height: 1.3em; }
-/* Orange 9-slice button for the main action. */
-#main-menu.art button.primary, #main-menu.art .menu-item.primary {
-  background: transparent;
+#main-menu h2 .menu-icon { width: 1.4em; height: 1.4em; }
+#main-menu .mi-icon .menu-icon { width: 34px; height: 34px; }
+#main-menu .menu-choice .menu-icon { width: 34px; height: 34px; display: block; }
+/* Orange 9-slice button for the start button. */
+#main-menu.art button.primary {
+  background: var(--accent) padding-box;
   border: 14px solid transparent;
   border-image: var(--menu-button) 40 fill / 14px stretch;
   padding: 2px 6px;
   color: #2a1a0a;
 }
-#main-menu.art button.primary:active, #main-menu.art .menu-item.primary:active {
-  border-image-source: var(--menu-button-pressed);
-}
-#main-menu.art .menu-item.primary small { color: #5a3a14; }
-#main-menu .menu-item .menu-icon { width: 1.6em; height: 1.6em; vertical-align: -0.45em; }
-#main-menu .menu-choice .menu-icon { width: 36px; height: 36px; display: block; margin: 0 auto 2px; }
-/* Leave the planet of the background picture visible below the card. */
+#main-menu.art button.primary:active { border-image-source: var(--menu-button-pressed); }
+#main-menu.art .menu-item.primary { background: linear-gradient(180deg, #ffc35c, #ff9f2e); color: #2a1a0a; }
+#main-menu.art .menu-item.primary small, #main-menu.art .menu-item.primary .mi-chev { color: #5a3a14; }
+/* Phones: the card sits at the top so the planet of the background picture stays visible below. */
 #main-menu.art { align-items: flex-start; }
 @media (min-aspect-ratio: 4/3) { #main-menu.art { align-items: center; justify-content: flex-start; padding-left: max(5vw, 16px); } }
+/* Longer screens take the whole height on phones. */
+#main-menu.art .menu-card.screen-new, #main-menu.art .menu-card.screen-settings { align-self: stretch; }
+@media (min-aspect-ratio: 4/3) { #main-menu.art .menu-card.screen-new, #main-menu.art .menu-card.screen-settings { align-self: center; } }
 #main-menu .menu-saved { text-align: center; color: var(--good); font-size: 14px; }
 #main-menu .menu-saved.bad { color: var(--bad); }
 /* Easy to find in the top bar: back to the menu (saves the game). */
 #menu-button { outline: 2px solid var(--accent); outline-offset: -2px; font-weight: 700; }
-/* If the button art cannot load, the main action still reads as a solid orange button. */
-#main-menu.art button.primary, #main-menu.art .menu-item.primary { background: var(--accent) padding-box; }
+
+/* Wide screens: the new-game screen shows its options in two columns. */
+#main-menu .menu-columns { display: flex; flex-direction: column; gap: 10px; }
+#main-menu .menu-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+@media (min-width: 860px) {
+  #main-menu .menu-card.screen-new { width: min(860px, 100%); }
+  #main-menu .menu-columns { flex-direction: row; align-items: flex-start; }
+  #main-menu .menu-col { flex: 1; }
+  #main-menu .screen-new .menu-foot .menu-actions { max-width: 420px; margin-left: auto; width: 100%; }
+}
 
 /* People picker: 12 portraits, 6 per row on phones. */
 #main-menu .people-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-#main-menu .people-pick { padding: 4px; aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+#main-menu .people-pick { margin: 0; padding: 4px; aspect-ratio: 1; border-radius: 12px; border: 1px solid transparent; background: var(--surface-2); display: flex; align-items: center; justify-content: center; }
 #main-menu .people-pick img { width: 100%; height: 100%; object-fit: contain; }
 #main-menu .people-pick .people-emoji { font-size: 24px; }
-#main-menu .people-pick.on { outline: 2px solid var(--accent); background: #34385f; }
-#main-menu .people-info { padding: 8px 10px; border-radius: 12px; background: var(--surface); font-size: 14px; }
+#main-menu .people-pick.on { border-color: var(--accent); background: var(--menu-on); box-shadow: 0 0 0 1px var(--accent); }
+#main-menu .people-info { padding: 8px 10px; border-radius: 12px; background: rgba(0, 0, 0, 0.22); font-size: 14px; }
 #main-menu .people-info small { color: var(--muted); }
 #main-menu .people-info p { margin: 4px 0 0; }
 #main-menu .people-note { color: var(--muted); font-size: 13px; }
 
 /* World options: label column + wrapping chips. */
-#main-menu .menu-world { display: flex; flex-direction: column; gap: 4px; }
+#main-menu .menu-world { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
 #main-menu .menu-world > span { color: var(--muted); font-size: 13px; margin-top: 4px; }
 #main-menu .menu-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-#main-menu .menu-chip { padding: 6px 10px; border-radius: 999px; font-size: 14px; }
-#main-menu .menu-chip.on { outline: 2px solid var(--accent); background: #34385f; }
+#main-menu .menu-chip { margin: 0; padding: 7px 12px; border-radius: 999px; border: 1px solid transparent; background: var(--surface-2); font-size: 14px; }
+#main-menu .menu-chip.on { border-color: var(--accent); background: var(--menu-on); }
 
-#main-menu .menu-keys { margin: 4px 0 8px; }
-#main-menu .menu-keys summary { cursor: pointer; padding: 6px 0; }
 #main-menu .menu-keys dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 6px 0 0; font-size: 14px; }
 #main-menu .menu-keys dt { font-weight: 700; color: var(--accent); white-space: nowrap; }
 #main-menu .menu-keys dd { margin: 0; color: var(--muted); }

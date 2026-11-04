@@ -38,6 +38,7 @@ export function worldOptions(world: WorldChoice): WorldOptions {
 }
 
 const SUN_NAMES: Record<string, string> = { yellow: "🟡 Gelb", red: "🔴 Rot", blue: "🔵 Blau", white: "⚪ Weiß" };
+const SIZE_NAMES: Record<string, string> = { small: "Klein", normal: "Normal", large: "Groß" };
 const PLANET_COUNTS = [1, 2, 3, 4, 6, 8, 10, 12, 16].filter((n) => n >= WORLD_LIMITS.planets.min && n <= WORLD_LIMITS.planets.max);
 const DEFAULT_WORLD: WorldChoice = { planets: "random", start: "temperate", sun: "random", size: "normal" };
 
@@ -57,6 +58,16 @@ export interface MainMenuActions {
 }
 
 type Screen = "home" | "pause" | "new" | "settings" | "credits";
+
+/** What a screen shows: a fixed title row, the scrolling content and a fixed bottom row. */
+/** A choice card: icon on top, title, optional line below. */
+type Pick = (group: string, value: string, icon: string, title: string, on: boolean, note?: string) => string;
+
+interface View {
+  head?: string;
+  body: string;
+  foot?: string;
+}
 
 const OPTIONS_KEY = "planetforge.newGameOptions";
 
@@ -84,6 +95,15 @@ export class MainMenu {
     this.root.hidden = true;
     this.root.addEventListener("click", (e) => this.onClick(e));
     this.root.addEventListener("input", (e) => this.onInput(e));
+    // <details> toggles do not bubble; remember the world fold so a re-render keeps it.
+    this.root.addEventListener(
+      "toggle",
+      (e) => {
+        const fold = e.target as HTMLDetailsElement;
+        if (fold.dataset?.fold === "world") this.worldOpen = fold.open;
+      },
+      true,
+    );
     document.body.append(this.root);
   }
 
@@ -105,8 +125,20 @@ export class MainMenu {
   /** Result of the last save, shown on the home screen. */
   private saved: { ok: boolean; text: string } | null = null;
 
+  /** Menu icon from the art (ui/<file>.png), else the emoji. Short names mean ui-icon-<name>. */
   private icon(name: string, emoji: string): string {
-    return this.hasArt ? `<img class="menu-icon" src="assets/sprites/ui/ui-icon-${name}.png" alt="">` : emoji;
+    const file = name.includes("/") ? name : `ui/ui-icon-${name}`;
+    return this.hasArt ? `<img class="menu-icon" src="assets/sprites/${file}.png" alt="">` : emoji;
+  }
+
+  /** A big menu entry: icon tile, title, one line below, arrow. */
+  private item(go: string, icon: string, title: string, sub = "", primary = false): string {
+    return `<button class="menu-item${primary ? " primary" : ""}" data-go="${go}"><span class="mi-icon">${icon}</span><span class="mi-text"><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</span><span class="mi-chev" aria-hidden="true">›</span></button>`;
+  }
+
+  /** Title row of a sub screen with a back arrow. */
+  private head(icon: string, title: string, back = "back"): string {
+    return `<header class="menu-head"><button class="menu-back" data-go="${back}" aria-label="Zurück" title="Zurück (Esc)">‹</button><h2>${icon} ${title}</h2></header>`;
   }
 
   get isOpen(): boolean {
@@ -161,86 +193,133 @@ export class MainMenu {
   }
 
   private render(): void {
-    const body =
-      this.screen === "pause" ? this.renderPause() : this.screen === "new" ? this.renderNew() : this.screen === "settings" ? this.renderSettings() : this.screen === "credits" ? this.renderCredits() : this.renderHome();
-    this.root.innerHTML = `<div class="menu-card${this.busy ? " busy" : ""}">${this.error ? `<p class="menu-error">${escape(this.error)}</p>` : ""}${body}</div>`;
+    const screen = this.screen;
+    const keep = this.lastScreen === screen ? (this.root.querySelector(".menu-body")?.scrollTop ?? 0) : 0;
+    this.lastScreen = screen;
+    const view =
+      screen === "pause" ? this.renderPause() : screen === "new" ? this.renderNew() : screen === "settings" ? this.renderSettings() : screen === "credits" ? this.renderCredits() : this.renderHome();
+    const error = this.error ? `<p class="menu-error">⚠️ ${escape(this.error)}</p>` : "";
+    this.root.innerHTML = `<div class="menu-card screen-${screen}${this.busy ? " busy" : ""}">${view.head ?? ""}<div class="menu-body">${error}${view.body}</div>${view.foot ? `<footer class="menu-foot">${view.foot}</footer>` : ""}</div>`;
+    const body = this.root.querySelector(".menu-body");
+    if (body && keep) body.scrollTop = keep;
+    if (!keep) this.root.querySelector(".menu-card")?.classList.add("enter");
   }
+  /** Screen of the last render: picking an option keeps the scroll position, a new screen starts at the top. */
+  private lastScreen: Screen | null = null;
+  /** Whether the world options are unfolded in the new-game screen. */
+  private worldOpen = false;
 
-  private renderHome(): string {
+  private renderHome(): View {
     const current = this.actions.current();
-    return `
-      <header class="menu-title">
-        <h1>PlanetForge</h1>
-        <p>Baue deinen Planeten, rette dein Sonnensystem.</p>
-      </header>
+    const logo = this.hasArt
+      ? `<img class="menu-logo" src="assets/sprites/brand/logo${(window.devicePixelRatio || 1) > 1.25 ? "@2x" : ""}.png" alt="PlanetForge">`
+      : `<h1>PlanetForge</h1>`;
+    const saved = this.saved && current ? `<p class="menu-saved${this.saved.ok ? "" : " bad"}">${this.saved.ok ? "✅" : "⚠️"} ${escape(this.saved.text)}</p>` : "";
+    return {
+      head: `<header class="menu-title">${logo}<p>Baue deinen Planeten, rette dein Sonnensystem.</p></header>`,
+      body: `${saved}
       <nav class="menu-list">
-        ${current ? `<button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiter</span><small>${escape(current)}</small></button>` : ""}
-        <button class="menu-item${current ? "" : " primary"}" data-go="new"><span>${this.icon("new-game", "✨")} Neues Spiel</span><small>Allein oder mit Freunden</small></button>
-        <button class="menu-item" data-go="online"><span>${this.icon("load", "☁️")} Online-Spiele</span><small>Spielstände, mit Code beitreten, einladen</small></button>
-        <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
-        <button class="menu-item" data-go="credits"><span>${this.icon("credits", "📜")} Credits</span></button>
-      </nav>`;
+        ${current ? this.item("continue", this.icon("continue", "▶️"), "Weiter", escape(current), true) : ""}
+        ${this.item("new", this.icon("new-game", "✨"), "Neues Spiel", "Allein oder mit Freunden", !current)}
+        ${this.item("online", this.icon("load", "☁️"), "Online-Spiele", "Spielstände, mit Code beitreten, einladen")}
+        ${this.item("settings", this.icon("ui/tab-settings", "⚙️"), "Einstellungen", "Name, Musik, Geräusche, Tasten")}
+        ${this.item("credits", this.icon("credits", "📜"), "Credits", "Wer PlanetForge gemacht hat")}
+      </nav>`,
+      foot: `<p class="menu-fine">Fan-Projekt · inspiriert von <i>A Planet of Mine</i></p>`,
+    };
   }
 
   /** In-game menu behind ☰: the game is already saved when it opens. */
-  private renderPause(): string {
+  private renderPause(): View {
     const current = this.actions.current() ?? "";
     const saved = this.saved;
-    return `
-      <h2>⏸️ Pause</h2>
-      <p class="menu-note">${escape(current)}</p>
+    return {
+      head: `<header class="menu-head"><h2>${this.icon("ui/icon-pause", "⏸️")} Pause</h2><button class="menu-back close" data-go="continue" aria-label="Weiterspielen" title="Weiterspielen (Esc)">✕</button></header>`,
+      body: `
+      <p class="menu-note center">${escape(current)}</p>
       ${saved ? `<p class="menu-saved${saved.ok ? "" : " bad"}">${saved.ok ? "✅" : "⚠️"} ${escape(saved.text)}</p>` : ""}
       <nav class="menu-list">
-        <button class="menu-item primary" data-go="continue"><span>${this.icon("continue", "▶️")} Weiterspielen</span></button>
-        <button class="menu-item" data-go="save"><span>💾 Speichern</span><small>Spielstand jetzt sichern</small></button>
-        <button class="menu-item" data-go="toHome"><span>🏠 Speichern &amp; zum Hauptmenü</span><small>Neues Spiel, Online-Spiele, Credits</small></button>
-        <button class="menu-item" data-go="settings"><span>${this.icon("profile", "⚙️")} Einstellungen</span><small>Name, Musik, Geräusche</small></button>
-      </nav>`;
+        ${this.item("continue", this.icon("continue", "▶️"), "Weiterspielen", "", true)}
+        ${this.item("save", this.icon("load", "💾"), "Speichern", "Spielstand jetzt sichern")}
+        ${this.item("toHome", this.icon("quit", "🏠"), "Speichern &amp; zum Hauptmenü", "Neues Spiel, Online-Spiele, Credits")}
+        ${this.item("settings", this.icon("ui/tab-settings", "⚙️"), "Einstellungen", "Name, Musik, Geräusche, Tasten")}
+      </nav>`,
+    };
   }
 
-  private renderNew(): string {
+  private renderNew(): View {
     const c = this.choice;
-    const pick = (group: string, value: string, label: string, on: boolean, note = "") =>
-      `<button class="menu-choice${on ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}${note ? `<small>${note}</small>` : ""}</button>`;
+    const pick: Pick = (group, value, icon, title, on, note = "") =>
+      `<button class="menu-choice${on ? " on" : ""}" data-pick="${group}" data-value="${value}" aria-pressed="${on}">${icon ? `<span class="ci">${icon}</span>` : ""}<b>${title}</b>${note ? `<small>${note}</small>` : ""}</button>`;
     const versus = c.mode === "versus";
     const confirm = this.confirmNew
       ? `<div class="menu-confirm"><span>Dein Planet auf diesem Gerät wird überschrieben.</span><button class="danger" data-go="start!">Ja, neu starten</button><button data-go="cancelStart">Nein</button></div>`
       : "";
-    return `
-      <h2>${this.icon("new-game", "✨")} Neues Spiel</h2>
-      <p class="menu-label">Spielmodus</p>
-      <div class="menu-choices">
-        ${pick("mode", "coop", `${this.icon("mode-coop", "🤝")} Koop`, !versus, "Gemeinsamer Planet, wahlweise mit Fraktionen")}
-        ${pick("mode", "versus", `${this.icon("mode-versus", "⚔️")} Versus`, versus, "Jeder gegen jeden")}
-      </div>
-      ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : ""}
-      ${versus ? "" : this.renderCoopChoices(pick)}
-      ${this.renderPeople()}
-      ${this.renderWorld(!versus)}
-      <p class="menu-label">Spielen</p>
-      <div class="menu-choices">
-        ${versus ? `<button class="menu-choice" disabled>🧑 Allein<small>Nur im Koop</small></button>` : pick("where", "local", "🧑 Allein", this.where === "local", "Offline auf diesem Gerät")}
-        ${pick("where", "online", `${this.icon("join", "👥")} Online`, versus || this.where === "online", this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
-      </div>
-      ${confirm}
+    const online = versus || this.where === "online";
+    return {
+      head: this.head(this.icon("new-game", "✨"), "Neues Spiel", "home"),
+      body: `
+      <div class="menu-columns">
+        <div class="menu-col">
+          <section class="menu-section">
+            <p class="menu-label">Spielmodus</p>
+            <div class="menu-choices">
+              ${pick("mode", "coop", this.icon("mode-coop", "🤝"), "Koop", !versus, "Gemeinsamer Planet")}
+              ${pick("mode", "versus", this.icon("mode-versus", "⚔️"), "Versus", versus, "Jeder gegen jeden")}
+            </div>
+            ${versus ? `<p class="menu-note">Jeder hat einen eigenen Planeten. Wer zuletzt noch ein Volk hat, gewinnt. Nur online, lade Freunde per Code ein.</p>` : ""}
+            <p class="menu-label">Spielen</p>
+            <div class="menu-choices">
+              ${versus ? `<button class="menu-choice" disabled><span class="ci">🧑</span><b>Allein</b><small>Nur im Koop</small></button>` : pick("where", "local", "🧑", "Allein", this.where === "local", "Offline auf diesem Gerät")}
+              ${pick("where", "online", this.icon("join", "👥"), "Online", online, this.slot ? `Platz ${this.slot}, Freunde per Code` : "Freunde per Code einladen")}
+            </div>
+          </section>
+          ${versus ? "" : this.renderCoopChoices(pick)}
+        </div>
+        <div class="menu-col">
+          ${this.renderPeople()}
+          ${this.renderWorld(!versus)}
+        </div>
+      </div>`,
+      foot: `${confirm}
       <div class="menu-actions">
-        <button data-go="home">Zurück</button>
+        <button class="secondary" data-go="home">Zurück</button>
         <button class="primary" data-go="start">Los geht's</button>
-      </div>`;
+      </div>`,
+    };
+  }
+
+  /** One line about the chosen world, shown on the folded world options. */
+  private worldSummary(withFactions: boolean): string {
+    const c = this.choice;
+    const w = c.world;
+    const parts = [
+      w.planets === "random" ? "🎲 Planeten" : `${w.planets} Planet${w.planets === 1 ? "" : "en"}`,
+      w.start === "random" ? "🎲 Start" : PLANET_TYPES[w.start as keyof typeof PLANET_TYPES]?.name ?? String(w.start),
+      w.size === "random" ? "🎲 Größe" : SIZE_NAMES[w.size] ?? w.size,
+      w.sun === "random" ? "🎲 Sonne" : `${SUN_NAMES[w.sun] ?? w.sun}`,
+    ];
+    if (withFactions) parts.push(c.factions ? `${c.factions} Fraktionen` : "keine Fraktionen");
+    return parts.join(" · ");
   }
 
   /**
    * Star system like in Planet of Mine: planet count, start planet, sun, size, each with Zufall.
    * Coop adds the AI factions living in the system (each on its own extra planet) and their strength.
+   * Folded by default so the new-game screen stays short; the summary shows what is chosen.
    */
   private renderWorld(withFactions: boolean): string {
     const c = this.choice;
     const w = c.world;
-    const chip = (group: string, value: string | number, label: string) =>
-      `<button class="menu-chip${String(w[group as keyof WorldChoice]) === String(value) ? " on" : ""}" data-pick="world.${group}" data-value="${value}">${label}</button>`;
+    const chip = (group: string, value: string | number, label: string) => {
+      const on = String(w[group as keyof WorldChoice]) === String(value);
+      return `<button class="menu-chip${on ? " on" : ""}" data-pick="world.${group}" data-value="${value}" aria-pressed="${on}">${label}</button>`;
+    };
     const random = (group: string) => chip(group, "random", "🎲 Zufall");
-    const option = (group: "factions" | "difficulty", value: string | number, label: string) =>
-      `<button class="menu-chip${String(c[group]) === String(value) ? " on" : ""}" data-pick="${group}" data-value="${value}">${label}</button>`;
+    const option = (group: "factions" | "difficulty", value: string | number, label: string) => {
+      const on = String(c[group]) === String(value);
+      return `<button class="menu-chip${on ? " on" : ""}" data-pick="${group}" data-value="${value}" aria-pressed="${on}">${label}</button>`;
+    };
     const factions = withFactions
       ? `
         <span>🏳️ Fraktionen</span><div class="menu-chips">${option("factions", 0, "Keine")}${([2, 3, 4] as const).map((n) => option("factions", n, String(n))).join("")}</div>
@@ -248,64 +327,84 @@ export class MainMenu {
       : "";
     const note = withFactions && c.factions ? `<p class="menu-note">Andere Völker starten gleichzeitig auf eigenen Planeten im System. Handelt mit ihnen, verbündet euch, schließt euch zusammen oder führt Krieg.</p>` : "";
     return `
-      <p class="menu-label">Welt</p>
-      <div class="menu-world">
-        <span>Planeten</span><div class="menu-chips">${random("planets")}${PLANET_COUNTS.map((n) => chip("planets", n, String(n))).join("")}</div>
-        <span>Startplanet</span><div class="menu-chips">${random("start")}${PLANET_TYPE_IDS.map((t) => chip("start", t, PLANET_TYPES[t].name)).join("")}</div>
-        <span>Größe</span><div class="menu-chips">${random("size")}${chip("size", "small", "Klein")}${chip("size", "normal", "Normal")}${chip("size", "large", "Groß")}</div>
-        <span>Sonne</span><div class="menu-chips">${random("sun")}${SYSTEM.sunTypes.map((s) => chip("sun", s, SUN_NAMES[s] ?? s)).join("")}</div>${factions}
-      </div>${note}`;
+      <details class="menu-section menu-fold" data-fold="world"${this.worldOpen ? " open" : ""}>
+        <summary><span class="menu-label">Welt</span><small>${escape(this.worldSummary(withFactions))}</small></summary>
+        <div class="menu-world">
+          <span>Planeten</span><div class="menu-chips">${random("planets")}${PLANET_COUNTS.map((n) => chip("planets", n, String(n))).join("")}</div>
+          <span>Startplanet</span><div class="menu-chips">${random("start")}${PLANET_TYPE_IDS.map((t) => chip("start", t, PLANET_TYPES[t].name)).join("")}</div>
+          <span>Größe</span><div class="menu-chips">${random("size")}${chip("size", "small", "Klein")}${chip("size", "normal", "Normal")}${chip("size", "large", "Groß")}</div>
+          <span>Sonne</span><div class="menu-chips">${random("sun")}${SYSTEM.sunTypes.map((s) => chip("sun", s, SUN_NAMES[s] ?? s)).join("")}</div>${factions}
+        </div>${note}
+      </details>`;
   }
 
   private renderPeople(): string {
-    return `<p class="menu-label">Dein Volk</p>${peoplePickerHtml(this.choice.people)}`;
+    return `<section class="menu-section"><p class="menu-label">Dein Volk</p>${peoplePickerHtml(this.choice.people)}</section>`;
   }
 
-  private renderCoopChoices(pick: (group: string, value: string, label: string, on: boolean, note?: string) => string): string {
+  private renderCoopChoices(pick: Pick): string {
     const c = this.choice;
     return `
-      <p class="menu-label">Ziel</p>
-      <div class="menu-choices">
-        ${pick("goal", "supernova", "☀️ Supernova abwenden", c.goal === "supernova", "Schild um die Sonne bauen")}
-        ${pick("goal", "endless", "♾️ Endlos", c.goal === "endless", "Ohne Ende weiterbauen")}
-      </div>
-      <p class="menu-label">Invasoren</p>
-      <div class="menu-choices">
-        ${pick("invaders", "off", "Aus", c.invaders === "off")}
-        ${pick("invaders", "normal", "Normal", c.invaders === "normal")}
-        ${pick("invaders", "strong", "Stark", c.invaders === "strong")}
-      </div>`;
+      <section class="menu-section">
+        <p class="menu-label">Ziel</p>
+        <div class="menu-choices">
+          ${pick("goal", "supernova", "☀️", "Supernova", c.goal === "supernova", "Schild um die Sonne bauen")}
+          ${pick("goal", "endless", "♾️", "Endlos", c.goal === "endless", "Ohne Ende weiterbauen")}
+        </div>
+        <p class="menu-label">Invasoren</p>
+        <div class="menu-choices compact">
+          ${pick("invaders", "off", "", "Aus", c.invaders === "off")}
+          ${pick("invaders", "normal", "", "Normal", c.invaders === "normal")}
+          ${pick("invaders", "strong", "", "Stark", c.invaders === "strong")}
+        </div>
+      </section>`;
   }
 
-  private renderSettings(): string {
+  private renderSettings(): View {
     const m = this.music.state;
     const s = this.sfx.settings;
-    return `
-      <h2>${this.icon("profile", "⚙️")} Einstellungen</h2>
-      <label class="menu-field"><span>Dein Name</span><input data-set="name" maxlength="24" value="${escape(readName())}" placeholder="Spieler"></label>
-      <div class="menu-field">
-        <label><input type="checkbox" data-set="music" ${m.enabled ? "checked" : ""}> 🎵 Musik</label>
-        <input type="range" data-set="musicVolume" min="0" max="100" step="5" value="${Math.round(m.volume * 100)}" ${m.enabled ? "" : "disabled"} aria-label="Musik-Lautstärke">
-      </div>
-      <div class="menu-field">
-        <label><input type="checkbox" data-set="sfx" ${s.muted ? "" : "checked"}> 🔊 Geräusche</label>
-        <input type="range" data-set="sfxVolume" min="0" max="100" step="5" value="${Math.round(s.volume * 100)}" ${s.muted ? "disabled" : ""} aria-label="Geräusch-Lautstärke">
-      </div>
-      <p class="menu-note">Alles wird in diesem Browser gespeichert.</p>
-      <details class="menu-keys"${matchMedia("(pointer: fine)").matches ? " open" : ""}>
-        <summary>⌨️ Tastatur am PC</summary>
+    return {
+      head: this.head(this.icon("ui/tab-settings", "⚙️"), "Einstellungen"),
+      body: `
+      <section class="menu-section">
+        <p class="menu-label">Profil</p>
+        <label class="menu-field"><span>Dein Name</span><input data-set="name" maxlength="24" value="${escape(readName())}" placeholder="Spieler"></label>
+      </section>
+      <section class="menu-section">
+        <p class="menu-label">Ton</p>
+        <div class="menu-field">
+          <label><input type="checkbox" data-set="music" ${m.enabled ? "checked" : ""}> 🎵 Musik</label>
+          <input type="range" data-set="musicVolume" min="0" max="100" step="5" value="${Math.round(m.volume * 100)}" ${m.enabled ? "" : "disabled"} aria-label="Musik-Lautstärke">
+        </div>
+        <div class="menu-field">
+          <label><input type="checkbox" data-set="sfx" ${s.muted ? "" : "checked"}> 🔊 Geräusche</label>
+          <input type="range" data-set="sfxVolume" min="0" max="100" step="5" value="${Math.round(s.volume * 100)}" ${s.muted ? "disabled" : ""} aria-label="Geräusch-Lautstärke">
+        </div>
+      </section>
+      <details class="menu-section menu-fold menu-keys"${matchMedia("(pointer: fine)").matches ? " open" : ""}>
+        <summary><span class="menu-label">⌨️ Tastatur am PC</span></summary>
         <dl>${KEY_HELP.map(([keys, what]) => `<dt>${keys}</dt><dd>${what}</dd>`).join("")}</dl>
       </details>
-      <div class="menu-actions"><button data-go="back">Zurück</button></div>`;
+      <p class="menu-note center">Alles wird in diesem Browser gespeichert.</p>`,
+    };
   }
 
-  private renderCredits(): string {
-    return `
-      <h2>${this.icon("credits", "📜")} Credits</h2>
-      <p>Ein Fan-Projekt von <b>Seb</b>, inspiriert von <i>A Planet of Mine</i> (Tuesday Quest).</p>
-      <p class="menu-note">Programmiert mit Claude. Grafiken mit Codex erstellt. Musik und Geräusche werden live im Code erzeugt, ohne fremde Aufnahmen.</p>
-      <p class="menu-note">Technik: TypeScript, PixiJS, Supabase, Capacitor.</p>
-      <div class="menu-actions"><button data-go="back">Zurück</button></div>`;
+  private renderCredits(): View {
+    const logo = this.hasArt ? `<img class="menu-logo small" src="assets/sprites/brand/logo-mark.png" alt="">` : "";
+    return {
+      head: this.head(this.icon("credits", "📜"), "Credits"),
+      body: `
+      <section class="menu-section credits">
+        ${logo}
+        <p>Ein Fan-Projekt von <b>Seb</b>, inspiriert von <i>A Planet of Mine</i> (Tuesday Quest).</p>
+        <dl class="menu-credits">
+          <dt>Programmierung</dt><dd>Claude</dd>
+          <dt>Grafiken</dt><dd>Codex</dd>
+          <dt>Musik &amp; Geräusche</dt><dd>Live im Code erzeugt, ohne fremde Aufnahmen</dd>
+          <dt>Technik</dt><dd>TypeScript, PixiJS, Supabase, Capacitor</dd>
+        </dl>
+      </section>`,
+    };
   }
 
   private onClick(e: MouseEvent): void {
