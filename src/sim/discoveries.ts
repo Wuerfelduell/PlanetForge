@@ -1,15 +1,15 @@
-import { DISCOVERIES, DISCOVERY_RULES, type DiscoveryId } from "../data/balance/discoveries";
+import { DISCOVERIES, DISCOVERY_RULES, REMOVED_DISCOVERIES, type DiscoveryId } from "../data/balance/discoveries";
 import { discoveryBaseCost } from "../data/balance/index";
 import { MODES } from "../data/balance/progression";
 import { PEOPLE_BASE, PEOPLES as PEOPLE_DEFS } from "../data/balance/peoples";
-import type { StatKey } from "../data/balance/types";
+import type { DiscoveryCondition } from "../data/balance/types";
 import type { PeopleId } from "./content";
 import { Rng } from "./rng";
 import type { EconomyState, GameEvent, GameState } from "./state";
 
-export { DISCOVERIES, type DiscoveryId };
+export { DISCOVERIES, REMOVED_DISCOVERIES, type DiscoveryId };
 
-/** Stats the simulation applies so far; discoveries that change anything else are not offered yet. */
+/** Stats the simulation applies; discoveries that change anything else are not offered. */
 export const SUPPORTED_STATS = [
   "handGatherRate",
   "buildingOutput",
@@ -25,6 +25,17 @@ export const SUPPORTED_STATS = [
   "rocketCapacity",
   "ascensionPerCycle",
   "sightRadius",
+  "buildCost",
+  "craftSpeed",
+  "foodUpkeep",
+  "tradeRate",
+  "suitWear",
+  "workerSlots",
+  "energyOutput",
+  "batteryDamage",
+  "shieldCost",
+  "invaderLoot",
+  "depositYield",
 ] as const;
 export type StatId = (typeof SUPPORTED_STATS)[number];
 /** Unlocked actions the simulation implements. */
@@ -37,18 +48,34 @@ interface Modifier {
   scope?: { building?: string; resource?: string; biome?: string };
 }
 
-const defOf = (id: string) => (DISCOVERIES as Record<string, { name: string; description: string; minLevel: number; modifiers?: readonly Modifier[]; unlocks?: { actions?: readonly string[] } }>)[id];
+const defOf = (id: string) =>
+  (DISCOVERIES as Record<string, { name: string; icon: string; description: string; minLevel: number; when?: DiscoveryCondition; extraPicks?: number; modifiers?: readonly Modifier[]; unlocks?: { actions?: readonly string[] } }>)[id];
 
 /** Discoveries that can be offered: everything they do is implemented. */
 export const OFFERABLE: DiscoveryId[] = (Object.keys(DISCOVERIES) as DiscoveryId[]).filter((id) => {
   const def = defOf(id)!;
   const mods = def.modifiers ?? [];
   const actions = def.unlocks?.actions ?? [];
-  return mods.length + actions.length > 0 && mods.every((m) => (SUPPORTED_STATS as readonly string[]).includes(m.stat)) && actions.every((a) => (SUPPORTED_ACTIONS as readonly string[]).includes(a));
+  return mods.length + actions.length + (def.extraPicks ?? 0) > 0 && mods.every((m) => (SUPPORTED_STATS as readonly string[]).includes(m.stat)) && actions.every((a) => (SUPPORTED_ACTIONS as readonly string[]).includes(a));
 });
 
-/** Stats only peoples change (no discovery offers them yet). */
-type PeopleStat = Extract<StatKey, "buildCost" | "workerSlots" | "craftSpeed" | "foodUpkeep" | "tradeRate" | "suitWear">;
+/** Whether a discovery's `when` holds in this game (no invaders → no battery bonus on offer). */
+export function discoveryUseful(state: GameState, id: string): boolean {
+  const when = defOf(id)?.when;
+  const s = state.settings;
+  switch (when) {
+    case undefined:
+      return true;
+    case "invaders":
+      return s.mode === "coop" && s.invaders !== "off";
+    case "factions":
+      return s.factions > 0;
+    case "supernova":
+      return s.mode === "coop" && s.goal === "supernova";
+    case "combat":
+      return s.mode === "versus" || s.invaders !== "off" || s.factions > 0;
+  }
+}
 
 /** Modifiers grouped by stat, so modified() (asked for every field on every tick) only looks at matching ones. */
 function byStat(mods: readonly Modifier[]): Map<string, Modifier[]> {
@@ -90,7 +117,7 @@ export function syncPeoples(state: GameState): void {
  * narrows to modifiers for one building, resource or biome; unscoped modifiers always apply,
  * scoped ones only when the scope matches.
  */
-export function modified(economy: EconomyState | undefined, stat: StatId | PeopleStat, base: number, scope: { building?: string; resource?: string; biome?: string } = {}): number {
+export function modified(economy: EconomyState | undefined, stat: StatId, base: number, scope: { building?: string; resource?: string; biome?: string } = {}): number {
   if (!economy) return base;
   let value = base;
   const apply = (mods: readonly Modifier[] | undefined) => {
@@ -129,7 +156,7 @@ export function grantPick(state: GameState, economy: EconomyState): void {
 
 function ensureOffer(state: GameState, economy: EconomyState): void {
   if (economy.offer || economy.picks <= 0) return;
-  const eligible = OFFERABLE.filter((id) => defOf(id)!.minLevel <= economy.ascension.level && !economy.discoveries.includes(id));
+  const eligible = OFFERABLE.filter((id) => defOf(id)!.minLevel <= economy.ascension.level && !economy.discoveries.includes(id) && discoveryUseful(state, id));
   if (eligible.length === 0) return;
   const rng = new Rng(state.rng);
   const options: DiscoveryId[] = [];
@@ -162,7 +189,7 @@ export function resolveOffer(state: GameState, economy: EconomyState, final: boo
   const chosen = top[0]![0];
   economy.resources.science -= cost;
   economy.discoveries.push(chosen);
-  economy.picks -= 1;
+  economy.picks -= 1 - (defOf(chosen)!.extraPicks ?? 0);
   economy.offer = null;
   events.push({ type: "discovered", economyId: economy.id, discovery: chosen });
   ensureOffer(state, economy);
@@ -170,6 +197,22 @@ export function resolveOffer(state: GameState, economy: EconomyState, final: boo
 
 export function discoveryName(id: string): string {
   return defOf(id)?.name ?? id;
+}
+
+export function discoveryIcon(id: string): string {
+  return defOf(id)?.icon ?? "📜";
+}
+
+/** Removed discoveries vanish from saves; an open offer naming one is drawn again. */
+export function dropRemovedDiscoveries(state: GameState): void {
+  const gone = (id: string) => (REMOVED_DISCOVERIES as readonly string[]).includes(id) || !defOf(id);
+  for (const economy of Object.values(state.economies)) {
+    economy.discoveries = economy.discoveries.filter((id) => !gone(id));
+    if (economy.offer?.options.some(gone)) {
+      economy.offer = null;
+      ensureOffer(state, economy);
+    }
+  }
 }
 
 export function discoveryDescription(id: string): string {

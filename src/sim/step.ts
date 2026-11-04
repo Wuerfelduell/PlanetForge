@@ -4,6 +4,7 @@ import {
   buildingStats,
   cloneState,
   craftRate,
+  depositYield,
   energyDemand,
   energySupply,
   housing,
@@ -172,8 +173,10 @@ function stepInPlace(state: GameState, events: GameEvent[]): void {
         // Producers (farm, pump, lab) create from nothing; everything else draws from the ground.
         const deposit = resource === made ? undefined : segment.deposits.find((d) => d.resource === resource);
         if (deposit && !deposit.infinite) {
-          amount = Math.min(amount, deposit.amount);
-          deposit.amount -= amount;
+          // A better yield takes less out of the ground for the same output.
+          const yieldMul = depositYield(economy, segment, resource);
+          amount = Math.min(amount, deposit.amount * yieldMul);
+          deposit.amount -= amount / yieldMul;
           drawn.add(resource);
           if (deposit.amount <= 1e-9) {
             deposit.amount = 0;

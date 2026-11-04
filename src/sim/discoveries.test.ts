@@ -117,7 +117,7 @@ describe("discoveries", () => {
     const economy = economyOfPlayer(g, P1.id)!;
     const before = segmentOutput(planet, forest, 2, economy).wood!;
     economy.discoveries.push("swift-feet");
-    expect(segmentOutput(planet, forest, 2, economy).wood!).toBeCloseTo(before * 1.2);
+    expect(segmentOutput(planet, forest, 2, economy).wood!).toBeCloseTo(before * 1.3);
   });
 
   it("coop goes on past level 10 and offers late research there, versus stops at 10", () => {

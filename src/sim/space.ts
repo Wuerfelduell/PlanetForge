@@ -130,12 +130,13 @@ function battle(state: GameState, flight: Flight, planet: PlanetState, attacker:
   }
   state.rng = rng.seed;
   state.lastCombatTick = state.tick;
-  // Medicine: the side that holds the field loses one fewer.
-  if (attackers > 0 && attackerLosses > 0 && modified(state.economies[attacker.economyId], "battleLosses", 0) < 0) {
-    attackers++;
-    attackerLosses--;
-  } else if (attackers === 0 && killed.length > 0 && modified(loserEconomy, "battleLosses", 0) < 0) {
-    killed.pop();
+  // Medicine, force fields: the side that holds the field loses one fewer for each.
+  if (attackers > 0 && attackerLosses > 0) {
+    const saved = Math.min(attackerLosses, Math.max(0, -modified(state.economies[attacker.economyId], "battleLosses", 0)));
+    attackers += saved;
+    attackerLosses -= saved;
+  } else if (attackers === 0 && killed.length > 0) {
+    killed.splice(Math.max(0, killed.length - Math.max(0, -modified(loserEconomy, "battleLosses", 0))));
   }
 
   for (const u of killed) delete state.units[u.id];

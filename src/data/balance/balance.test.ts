@@ -55,8 +55,9 @@ describe("references", () => {
     expect(buildingSprite("market")).toBe("building.market");
     for (const r of Object.values(resources)) expect(r.icon).toMatch(/^resource\.[a-z]+$/);
     expect(IDS.peoples).toHaveLength(12);
-    // 24 from the art brief plus 14 late-game discoveries (levels 11–20, no art yet).
-    expect(IDS.discoveries).toHaveLength(38);
+    // 24 from the art brief plus 14 late-game ones, minus 6 without effect (2026-11-04 audit),
+    // plus 10 early and 4 late ones from the pool extension.
+    expect(IDS.discoveries).toHaveLength(46);
   });
 });
 

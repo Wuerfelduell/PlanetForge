@@ -20,7 +20,9 @@ import {
   needsSuits,
   OFFERABLE,
   discoveryDescription,
+  discoveryIcon,
   discoveryName,
+  discoveryUseful,
   flightPlan,
   novaTickNow,
   shieldBlocker,
@@ -185,8 +187,8 @@ export class Ui {
   }
 
   private dicon(id: string): string {
-    // Late discoveries may not have art yet: fall back to the scroll.
-    return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="" onerror="this.replaceWith('📜')">` : "📜";
+    // Discoveries without art yet fall back to their emoji.
+    return this.art ? `<img class="bi" src="assets/sprites/discoveries/${id}.png" alt="" onerror="this.replaceWith('${discoveryIcon(id)}')">` : discoveryIcon(id);
   }
 
   /** HUD badge from the ui atlas (single PNG), the emoji until the art is loaded. */
@@ -1432,7 +1434,7 @@ export class Ui {
         .join("")}</div>`;
       if (!enough) html += `<p class="muted">Labore erzeugen Wissen. Die Wahl gilt, sobald genug da ist.</p>`;
     } else {
-      const open = OFFERABLE.some((id) => !economy.discoveries.includes(id));
+      const open = OFFERABLE.some((id) => !economy.discoveries.includes(id) && (!this.state || discoveryUseful(this.state, id)));
       html += `<p class="muted">${open ? "Die nächste Wahl kommt mit der nächsten Aufstiegsstufe." : "Alle Entdeckungen sind erforscht."}</p>`;
     }
     if (economy.discoveries.length) {

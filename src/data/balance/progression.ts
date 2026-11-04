@@ -241,7 +241,6 @@ export const SPACE = {
   landingSalvage: { steel: 5, plastic: 3 } as Cost<ResourceId>,
   colony: {
     startRevealRadius: 1,
-    /** survival-kits doubles this. */
     startResources: { wood: 10, food: 10 } as Cost<ResourceId>,
   },
   escapePods: {
