@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# A new push to a PR cancels the older run of the same PR; main runs always finish.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
     runs-on: ubuntu-latest

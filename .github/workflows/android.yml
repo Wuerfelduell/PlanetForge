@@ -1,7 +1,7 @@
 name: Android
 
 # Packs the web build into the Capacitor Android shell. Every push to main produces a debug APK
-# (Actions run > Artifacts > planetforge-debug-apk). When the ANDROID_KEYSTORE_BASE64 secret is set,
+# (Actions run > Artifacts > planetforge-debug-apk, kept 7 days). When the ANDROID_KEYSTORE_BASE64 secret is set,
 # a signed release bundle (.aab) for the Play Store is built as well.
 on:
   push:
@@ -53,6 +53,8 @@ jobs:
         with:
           name: planetforge-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          # ~90 MB per run; the default 90 days filled the Actions storage with old APKs.
+          retention-days: 7
       - name: Build signed release bundle
         if: env.ANDROID_KEYSTORE_BASE64 != '' && github.event_name != 'pull_request'
         working-directory: android
@@ -68,3 +70,4 @@ jobs:
         with:
           name: planetforge-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30

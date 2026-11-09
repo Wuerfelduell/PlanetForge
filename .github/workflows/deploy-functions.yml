@@ -46,5 +46,6 @@ jobs:
         if: env.SUPABASE_ACCESS_TOKEN != ''
         working-directory: deploy
         run: |
+          # Newer CLI versions ask for confirmation and fail without a terminal, hence --yes.
           printf 'project_id = "planetforge"\n\n[functions.game-command]\nverify_jwt = true\nentrypoint = "./functions/game-command/index.js"\n' > supabase/config.toml
-          supabase functions deploy game-command --project-ref "$PROJECT_REF" --use-api
+          supabase functions deploy game-command --project-ref "$PROJECT_REF" --use-api --yes
