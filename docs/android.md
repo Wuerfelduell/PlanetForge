@@ -7,7 +7,8 @@ Spiellogik und Grafik kommen unverändert aus dem Vite-Build.
 
 Jeder Push auf `main` startet den Workflow **Android**. Die fertige APK liegt im Lauf unter
 *Artifacts → planetforge-debug-apk* (ZIP mit `app-debug.apk`). Auf dem Handy "Installation aus
-unbekannten Quellen" erlauben und die APK öffnen.
+unbekannten Quellen" erlauben und die APK öffnen. Die APK bleibt 7 Tage liegen (danach den
+Workflow per *Run workflow* neu starten).
 
 Lokal (braucht Android SDK + JDK 21):
 
